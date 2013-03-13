@@ -25,21 +25,19 @@ DockedPanel {
             currentIndex: 2
             onCurrentItemChanged: panel.camera.flash.mode = currentItem.value
             visible: panel.camera.captureMode == Camera.Still
+            //: Flash Settings
             menu: ContextMenu {
                 SettingsMenuItem {
-                    //: Flash Settings
                     //% "Off"
                     text: qsTrId("camera-me-flash-off")
                     value: Flash.Off
                 }
                 SettingsMenuItem {
-                    //: Flash Settings
                     //% "On"
                     text: qsTrId("camera-me-flash-on")
                     value: Flash.On
                 }
                 SettingsMenuItem {
-                    //: Flash Settings
                     //% "Auto"
                     text: qsTrId("camera-me-flash-auto")
                     value: Flash.Auto
@@ -59,27 +57,24 @@ DockedPanel {
                     panel.camera.focus.distance = currentItem.value
                 }
             }
+            //: Focus Settings
             menu: ContextMenu {
                 SettingsMenuItem {
-                    //: Focus Settings
                     //% "Normal"
                     text: qsTrId("camera-me-focus-normal")
                     value: Focus.Normal
                 }
                 SettingsMenuItem {
-                    //: Focus Settings
                     //% "Hyperfocal"
                     text: qsTrId("camera-me-flash-hyperfocal")
                     value: Focus.Hyperfocal
                 }
                 SettingsMenuItem {
-                    //: Focus Settings
                     //% "Infinite"
                     text: qsTrId("camera-me-flash-auto")
                     value: Focus.Infinite
                 }
                 SettingsMenuItem {
-                    //: Focus Settings
                     //% "Macro"
                     text: qsTrId("camera-me-flash-auto")
                     value: Focus.Macro
@@ -95,57 +90,49 @@ DockedPanel {
             label: qsTrId("camera-cb-white-balance")
             currentIndex: 0
             onCurrentItemChanged: panel.camera.whiteBalance = currentItem.value
+            //: White Balance Settings
             menu: ContextMenu {
                 SettingsMenuItem {
-                    //: White Balance Settings
                     //% "Auto"
                     text: qsTrId("camera-me-white-balance-auto")
                     value: WhiteBalance.Auto
                 }
                 SettingsMenuItem {
-                    //: White Balance Settings
                     //% "Sunlight"
                     text: qsTrId("camera-me-white-balance-sunlight")
                     value: WhiteBalance.Sunlight
                 }
                 SettingsMenuItem {
-                    //: White Balance Settings
                     //% "Cloudy"
                     text: qsTrId("camera-me-white-balance-cloudy")
                     value: WhiteBalance.Cloudy
                 }
                 SettingsMenuItem {
-                    //: White Balance Settings
                     //% "Shade"
                     text: qsTrId("camera-me-white-balance-shade")
                     value: WhiteBalance.Shade
                 }
                 SettingsMenuItem {
-                    //: White Balance Settings
                     //% "Tungsten"
                     text: qsTrId("camera-me-white-balance-tungsten")
                     value: WhiteBalance.Tungsten
                 }
                 SettingsMenuItem {
-                    //: White Balance Settings
                     //% "Fluorescent"
                     text: qsTrId("camera-me-white-balance-fluorescent")
                     value: WhiteBalance.Fluorescent
                 }
                 SettingsMenuItem {
-                    //: White Balance Settings
                     //% "Incandescent"
                     text: qsTrId("camera-me-white-balance-incandescent")
                     value: WhiteBalance.Incandescent
                 }
                 SettingsMenuItem {
-                    //: White Balance Settings
                     //% "Flash"
                     text: qsTrId("camera-me-white-balance-flash")
                     value: WhiteBalance.Flash
                 }
                 SettingsMenuItem {
-                    //: White Balance Settings
                     //% "Sunset"
                     text: qsTrId("camera-me-white-balance-sunset")
                     value: WhiteBalance.Sunset

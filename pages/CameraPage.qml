@@ -41,8 +41,11 @@ Page {
             MenusPanel {
                 id: menusPanel
                 open: true
-                settingsPanel: settingsPanel
 
+                onOpenSettings: settingsPanel.show()
+                onOpenGallery: {
+                    pageStack.push(camera.captureMode == Camera.Still ? photosPage : videosPage)
+                }
             }
         }
     }
@@ -59,5 +62,18 @@ Page {
         id: capturePanel
         open: true
         camera: camera
+    }
+
+    // ### Defer loading of components.
+    Component {
+        id: photosPage
+        PhotosPage {
+        }
+    }
+
+    Component {
+        id: videosPage
+        VideosPage {
+        }
     }
 }

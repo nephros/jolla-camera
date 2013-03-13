@@ -19,6 +19,12 @@ Requires:  ambient-icons-closed
 Requires:  sailfishsilica
 Requires:  mapplauncherd-booster-jolla
 Requires:  libdeclarative-multimedia
+Requires:  declarative-transferengine => 0.0.12
+Requires:  nemo-qml-plugins-accounts
+Requires:  nemo-qml-plugins-gstvideo-thumbnailer
+Requires:  nemo-qml-plugins-thumbnailer
+Requires:  jolla-gallery-facebook
+Requires:  jollacomponents-internal
 
 %description
 The Jolla Camera application.

@@ -2,11 +2,12 @@ import QtQuick 1.1
 import Sailfish.Silica 1.0
 
 DockedPanel {
-    property SettingsPanel settingsPanel
-
     width: row.width
     height: theme.paddingLarge + theme.itemSizeExtraLarge
     dock: Dock.Top
+
+    signal openSettings
+    signal openGallery
 
     Row {
         id: row
@@ -18,16 +19,14 @@ DockedPanel {
             // ### Settings icon
             icon.source: "image://theme/icon-m-developer-mode"
 
-            onClicked: settingsPanel.show()
+            onClicked: openSettings()
         }
 
         IconButton {
             // ### gallery icon
             icon.source: "image://theme/icon-m-share"
 
-            onClicked: {
-                console.log("open gallery")
-            }
+            onClicked: openGallery()
         }
     }
 }
