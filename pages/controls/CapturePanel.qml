@@ -2,7 +2,7 @@ import QtQuick 1.1
 import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
 
-PopupPanel {
+DockedPanel {
     id: panel
 
     property Camera camera
@@ -13,7 +13,7 @@ PopupPanel {
 
     width: theme.paddingSmall + theme.itemSizeExtraLarge
     height: parent.height
-    alignment: PanelAlignment.Right
+    dock: Dock.Right
 
     onModeChanged: open = false
     onExpandedChanged: reopenTimer.restart()

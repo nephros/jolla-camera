@@ -14,6 +14,10 @@
 
 #include "declarativecamera.h"
 #include "declarativecameraviewport.h"
+#include "declarativeexposure.h"
+#include "declarativeflash.h"
+#include "declarativefocus.h"
+#include "declarativewhitebalance.h"
 
 Q_DECL_EXPORT int main(int argc, char *argv[])
 {
@@ -37,6 +41,10 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 
     qmlRegisterType<DeclarativeCamera>("com.jolla.camera", 1, 0, "Camera");
     qmlRegisterType<DeclarativeCameraViewport>("com.jolla.camera", 1, 0, "CameraViewport");
+    qmlRegisterUncreatableType<DeclarativeExposure>("com.jolla.camera", 1, 0, "Exposure", QString());
+    qmlRegisterUncreatableType<DeclarativeFlash>("com.jolla.camera", 1, 0, "Flash", QString());
+    qmlRegisterUncreatableType<DeclarativeFocus>("com.jolla.camera", 1, 0, "Focus", QString());
+    qmlRegisterUncreatableType<DeclarativeWhiteBalance>("com.jolla.camera", 1, 0, "WhiteBalance", QString());
 
     view->setAttribute(Qt::WA_OpaquePaintEvent);
     view->setAttribute(Qt::WA_NoSystemBackground);

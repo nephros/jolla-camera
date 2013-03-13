@@ -7,15 +7,27 @@
 
 #include <QCamera>
 #include <QCameraImageCaptureControl>
+#include <QCameraImageProcessingControl>
 #include <QMediaRecorderControl>
+
+#include "declarativewhitebalance.h"
+
+class DeclarativeExposure;
+class DeclarativeFlash;
+class DeclarativeFocus;
 
 class DeclarativeCamera : public QObject, public QDeclarativeParserStatus
 {
     Q_OBJECT
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(CaptureMode captureMode READ captureMode WRITE setCaptureMode NOTIFY captureModeChanged)
+    Q_PROPERTY(DeclarativeExposure *exposure READ exposure CONSTANT)
+    Q_PROPERTY(DeclarativeFlash *flash READ flash CONSTANT)
+    Q_PROPERTY(DeclarativeFocus *focus READ focus CONSTANT)
+    Q_PROPERTY(DeclarativeWhiteBalance::Mode whiteBalance READ whiteBalance WRITE setWhiteBalance NOTIFY whiteBalanceChanged)
     Q_ENUMS(Status)
     Q_ENUMS(CaptureMode)
+    Q_ENUMS(DeclarativeWhiteBalance::Mode)
     Q_INTERFACES(QDeclarativeParserStatus)
 public:
     enum Status
@@ -45,6 +57,13 @@ public:
     CaptureMode captureMode() const;
     void setCaptureMode(CaptureMode mode);
 
+    DeclarativeExposure *exposure();
+    DeclarativeFlash *flash();
+    DeclarativeFocus *focus();
+
+    DeclarativeWhiteBalance::Mode whiteBalance() const;
+    void setWhiteBalance(DeclarativeWhiteBalance::Mode mode);
+
     QCamera *camera() const;
 
 public Q_SLOTS:
@@ -55,6 +74,7 @@ public Q_SLOTS:
 Q_SIGNALS:
     void statusChanged();
     void captureModeChanged();
+    void whiteBalanceChanged();
 
 private Q_SLOTS:
     void cameraStateChanged(QCamera::State state);
@@ -69,6 +89,10 @@ private:
     QCamera m_camera;
     QCameraImageCaptureControl *m_captureControl;
     QMediaRecorderControl *m_recorderControl;
+    QCameraImageProcessingControl *m_processingControl;
+    DeclarativeExposure *m_exposure;
+    DeclarativeFlash *m_flash;
+    DeclarativeFocus *m_focus;
     Status m_status;
 };
 

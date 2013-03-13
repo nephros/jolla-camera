@@ -1,5 +1,9 @@
 #include "declarativecamera.h"
 
+#include "declarativeexposure.h"
+#include "declarativeflash.h"
+#include "declarativefocus.h"
+
 #include <QDeclarativeInfo>
 #include <QDateTime>
 
@@ -7,6 +11,9 @@ DeclarativeCamera::DeclarativeCamera(QObject *parent)
     : QObject(parent)
     , m_captureControl(0)
     , m_recorderControl(0)
+    , m_exposure(0)
+    , m_flash(0)
+    , m_focus(0)
     , m_status(Null)
 {
     connect(&m_camera, SIGNAL(captureModeChanged(QCamera::CaptureMode)),
@@ -17,10 +24,14 @@ DeclarativeCamera::DeclarativeCamera(QObject *parent)
             this, SLOT(cameraStatusChanged(QCamera::Status)));
     connect(&m_camera, SIGNAL(error(QCamera::Error)),
             this, SLOT(cameraError(QCamera::Error)));
+
+    m_processingControl = m_camera.service()->requestControl<QCameraImageProcessingControl *>();
 }
 
 DeclarativeCamera::~DeclarativeCamera()
 {
+    delete m_flash;
+    delete m_exposure;
 }
 
 void DeclarativeCamera::classBegin()
@@ -80,6 +91,46 @@ void DeclarativeCamera::requestControls()
         } else {
             qmlInfo(this) << "Video recording is not supported by the camera";
         }
+    }
+}
+
+DeclarativeExposure *DeclarativeCamera::exposure()
+{
+    if (!m_exposure) {
+        m_exposure = new DeclarativeExposure(&m_camera, this);
+    }
+    return m_exposure;
+}
+
+DeclarativeFlash *DeclarativeCamera::flash()
+{
+    if (!m_flash) {
+        m_flash = new DeclarativeFlash(&m_camera, this);
+    }
+    return m_flash;
+}
+
+DeclarativeFocus *DeclarativeCamera::focus()
+{
+    if (!m_focus) {
+        m_focus = new DeclarativeFocus(&m_camera, this);
+    }
+    return m_focus;
+}
+
+DeclarativeWhiteBalance::Mode DeclarativeCamera::whiteBalance() const
+{
+    return m_processingControl
+            ? DeclarativeWhiteBalance::Mode(m_processingControl->whiteBalanceMode())
+            : DeclarativeWhiteBalance::Auto;
+}
+
+void DeclarativeCamera::setWhiteBalance(DeclarativeWhiteBalance::Mode mode)
+{
+    if (m_processingControl
+            && m_processingControl->whiteBalanceMode() != QCameraImageProcessing::WhiteBalanceMode(mode)) {
+        m_processingControl->setWhiteBalanceMode(QCameraImageProcessing::WhiteBalanceMode(mode));
+        emit whiteBalanceChanged();
     }
 }
 

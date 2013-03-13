@@ -4,36 +4,60 @@ import com.jolla.camera 1.0
 import "controls"
 
 Page {
+    id: page
+
     allowedOrientations: Orientation.Landscape
 
     Camera {
-        id: cameraObject
-    }
-
-    CameraViewport {
-        anchors.fill: parent
-
-        camera: cameraObject
+        id: camera
     }
 
     MouseArea {
         anchors.fill: parent
 
         onClicked: {
-            settingsPanel.open = true
+            settingsPanel.open = false
+            menusPanel.open = true
             capturePanel.open = true
+        }
+    }
+
+    Item {
+        clip: settingsPanel.expanded
+        anchors {
+            fill: parent
+            leftMargin: settingsPanel.visibleSize
+        }
+
+        CameraViewport {
+            x: -parent.x
+            y: -parent.y
+            width: page.width
+            height: page.height
+
+            camera: camera
+
+
+            MenusPanel {
+                id: menusPanel
+                open: true
+                settingsPanel: settingsPanel
+
+            }
         }
     }
 
     SettingsPanel {
         id: settingsPanel
-        open: true
-        camera: cameraObject
+
+        camera: camera
+
+        onOpenChanged: capturePanel.open = !open
     }
 
     CapturePanel {
         id: capturePanel
         open: true
-        camera: cameraObject
+        camera: camera
     }
 }
