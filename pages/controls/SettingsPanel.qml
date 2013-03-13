@@ -7,15 +7,14 @@ DockedPanel {
 
     property Camera camera
 
-    width: parent.height
-    height: parent.height
-    dock: Dock.Left
+    width: panel.dock == Dock.Left ? parent.height : parent.width
+    height: panel.dock == Dock.Left ? parent.height : Math.min(parent.width,  column.height)
 
     contentHeight: column.height
 
     Column {
-        width: parent.width
         id: column
+        width: parent.width
         ComboBox {
             id: flashMode
             width: parent.width

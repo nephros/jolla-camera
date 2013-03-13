@@ -11,9 +11,8 @@ DockedPanel {
 
     property int status: camera.status
 
-    width: theme.paddingSmall + theme.itemSizeExtraLarge
-    height: parent.height
-    dock: Dock.Right
+    width: panel.dock == Dock.Right ? theme.paddingSmall + theme.itemSizeExtraLarge : parent.width
+    height: panel.dock == Dock.Bottom ? theme.paddingSmall + theme.itemSizeExtraLarge : parent.height
 
     onModeChanged: open = false
     onExpandedChanged: reopenTimer.restart()
@@ -42,8 +41,9 @@ DockedPanel {
 
         anchors {
             horizontalCenter: parent.horizontalCenter
-            horizontalCenterOffset: -theme.paddingSmall
+            horizontalCenterOffset: panel.dock == Dock.Right ? -theme.paddingSmall : 0
             verticalCenter: parent.verticalCenter
+            verticalCenterOffset: panel.dock == Dock.Bottom ? -theme.paddingSmall : 0
         }
 
         enabled: !checked
@@ -59,25 +59,35 @@ DockedPanel {
         }
     }
 
-    IconButton {
-        objectName: "modeButton"
+    Item {
+        width: theme.paddingSmall + theme.itemSizeExtraLarge
+        height: theme.paddingSmall + theme.itemSizeExtraLarge
 
         anchors {
-            horizontalCenter: parent.horizontalCenter
-            horizontalCenterOffset: -theme.paddingSmall
+            left: parent.left
             bottom: parent.bottom
-            bottomMargin: theme.paddingLarge
         }
 
-        icon.source: panel._managedMode == Camera.Still
-                ? "image://theme/icon-m-image"
-                : "image://theme/icon-m-video"
+        IconButton {
+            objectName: "modeButton"
 
-        onClicked: {
-            if (panel.mode == Camera.Still) {
-                camera.captureMode = Camera.Video
-            } else if (panel.mode == Camera.Video) {
-                camera.captureMode = Camera.Still
+            anchors {
+                horizontalCenter: parent.horizontalCenter
+                horizontalCenterOffset: panel.dock == Dock.Right ? -theme.paddingSmall : 0
+                verticalCenter: parent.verticalCenter
+                verticalCenterOffset: panel.dock == Dock.Bottom ? -theme.paddingSmall : 0
+            }
+
+            icon.source: panel._managedMode == Camera.Still
+                    ? "image://theme/icon-m-image"
+                    : "image://theme/icon-m-video"
+
+            onClicked: {
+                if (panel.mode == Camera.Still) {
+                    camera.captureMode = Camera.Video
+                } else if (panel.mode == Camera.Video) {
+                    camera.captureMode = Camera.Still
+                }
             }
         }
     }

@@ -6,7 +6,7 @@ import "controls"
 Page {
     id: page
 
-    allowedOrientations: Orientation.Landscape
+    allowedOrientations: Orientation.Portrait | Orientation.Landscape
 
     Camera {
         id: camera
@@ -26,7 +26,8 @@ Page {
         clip: settingsPanel.expanded
         anchors {
             fill: parent
-            leftMargin: settingsPanel.visibleSize
+            leftMargin: page.orientation == Orientation.Landscape ? settingsPanel.visibleSize : 0
+            topMargin: page.orientation == Orientation.Portrait ? settingsPanel.visibleSize : 0
         }
 
         CameraViewport {
@@ -37,10 +38,10 @@ Page {
 
             camera: camera
 
-
             MenusPanel {
                 id: menusPanel
                 open: true
+                dock: page.orientation == Orientation.Portrait ? Dock.Right : Dock.Top
 
                 onOpenSettings: settingsPanel.show()
                 onOpenGallery: {
@@ -54,6 +55,7 @@ Page {
         id: settingsPanel
 
         camera: camera
+        dock: page.orientation == Orientation.Portrait ? Dock.Top : Dock.Left
 
         onOpenChanged: capturePanel.open = !open
     }
