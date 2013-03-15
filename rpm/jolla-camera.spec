@@ -53,7 +53,7 @@ This package contains QML unit tests for Jolla Camera application
 
 %build
 
-%qmake
+%qmake %{name}.pro
 
 make %{?jobs:-j%jobs}
 
