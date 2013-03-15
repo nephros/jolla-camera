@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Camera
+Icon=icon-launcher-camera
+Exec=invoker --type=j -s /usr/bin/jolla-camera
+Comment=Jolla Camera
+
