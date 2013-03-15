@@ -16,7 +16,7 @@ BuildRequires:  desktop-file-utils
 BuildRequires:  pkgconfig(qdeclarative-boostable)
 
 Requires:  ambient-icons-closed
-Requires:  sailfishsilica
+Requires:  sailfishsilica >= 0.8.0
 Requires:  mapplauncherd-booster-jolla
 Requires:  libdeclarative-multimedia
 Requires:  declarative-transferengine => 0.0.12
