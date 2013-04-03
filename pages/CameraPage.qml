@@ -42,11 +42,9 @@ Page {
                 id: menusPanel
                 open: true
                 dock: page.orientation == Orientation.Portrait ? Dock.Right : Dock.Top
+                camera: camera
 
                 onOpenSettings: settingsPanel.show()
-                onOpenGallery: {
-                    pageStack.push(camera.captureMode == Camera.Still ? photosPage : videosPage)
-                }
             }
         }
     }
@@ -64,18 +62,7 @@ Page {
         id: capturePanel
         open: true
         camera: camera
+        dock: page.orientation == Orientation.Portrait ? Dock.Bottom : Dock.Right
     }
 
-    // ### Defer loading of components.
-    Component {
-        id: photosPage
-        PhotosPage {
-        }
-    }
-
-    Component {
-        id: videosPage
-        VideosPage {
-        }
-    }
 }
