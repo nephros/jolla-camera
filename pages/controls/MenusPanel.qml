@@ -1,14 +1,17 @@
 import QtQuick 1.1
 import Sailfish.Silica 1.0
+import Sailfish.Silica.private 1.0
+import com.jolla.camera 1.0
 
 DockedPanel {
     id: panel
+
+    property Camera camera
 
     width: theme.paddingLarge + (panel.dock == Dock.Top ? flow.width : theme.itemSizeExtraLarge)
     height: theme.paddingLarge + (panel.dock == Dock.Right ? flow.height : theme.itemSizeExtraLarge)
 
     signal openSettings
-    signal openGallery
 
     Flow {
         id: flow
@@ -28,7 +31,21 @@ DockedPanel {
             // ### gallery icon
             icon.source: "image://theme/icon-m-share"
 
-            onClicked: openGallery()
+            onClicked: {
+                if (camera.captureMode == Camera.Still) {
+                    galleryService.call("showPhotos", undefined)
+                } else if (camera.captureMode == Camera.Video) {
+                    galleryService.call("showVideos", undefined)
+                }
+            }
         }
+    }
+
+    DBusInterface {
+        id: galleryService
+
+        destination: "com.jolla.gallery"
+        path: "/com/jolla/gallery/ui"
+        iface: "com.jolla.gallery.ui"
     }
 }
