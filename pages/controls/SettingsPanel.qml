@@ -7,76 +7,49 @@ DockedPanel {
 
     property Camera camera
 
-    width: panel.dock == Dock.Left ? parent.height : parent.width
-    height: panel.dock == Dock.Left ? parent.height : Math.min(parent.width,  column.height)
+    width: parent.height
+    height: parent.height
 
     contentHeight: column.height
 
+    PullDownMenu {
+        id: menu
+    }
+
     Column {
-        id: column
-        width: parent.width
-        ComboBox {
-            id: flashMode
-            width: parent.width
+        PageHeader {
             //: Settings
-            //% "Flash"
-            label: qsTrId("camera-cb-flash-mode")
-            currentIndex: 2
-            onCurrentItemChanged: panel.camera.flash.mode = currentItem.value
-            visible: panel.camera.captureMode == Camera.Still
-            //: Flash Settings
-            menu: ContextMenu {
-                SettingsMenuItem {
-                    //% "Off"
-                    text: qsTrId("camera-me-flash-off")
-                    value: Flash.Off
-                }
-                SettingsMenuItem {
-                    //% "On"
-                    text: qsTrId("camera-me-flash-on")
-                    value: Flash.On
-                }
-                SettingsMenuItem {
-                    //% "Auto"
-                    text: qsTrId("camera-me-flash-auto")
-                    value: Flash.Auto
-                }
-            }
+            //% "Photo settings"
+            title: qsTrId("camera-ph-photo-settings")
         }
 
+        id: column
+        width: parent.width
+
         ComboBox {
-            id: focusDistance
+            id: iso
             width: parent.width
             //: Settings
-            //% "Focus"
-            label: qsTrId("camera-cb-focus-distance")
+            //% "ISO"
+            label: qsTrId("camera-cb-iso")
             currentIndex: 0
             onCurrentItemChanged: {
                 if (currentItem) {
-                    panel.camera.focus.distance = currentItem.value
+                    panel.camera.exposure.iso = currentItem.value
                 }
             }
             //: Focus Settings
             menu: ContextMenu {
                 SettingsMenuItem {
-                    //% "Normal"
-                    text: qsTrId("camera-me-focus-normal")
-                    value: Focus.Normal
+                    //% "Automatic"
+                    text: qsTrId("camera-me-iso-automatic")
                 }
-                SettingsMenuItem {
-                    //% "Hyperfocal"
-                    text: qsTrId("camera-me-flash-hyperfocal")
-                    value: Focus.Hyperfocal
-                }
-                SettingsMenuItem {
-                    //% "Infinite"
-                    text: qsTrId("camera-me-flash-auto")
-                    value: Focus.Infinite
-                }
-                SettingsMenuItem {
-                    //% "Macro"
-                    text: qsTrId("camera-me-flash-auto")
-                    value: Focus.Macro
+                Repeater {
+                    model: panel.exposure.supportedIso
+                    SettingsMenuItem {
+                        text: modelData
+                        value: modelData
+                    }
                 }
             }
         }
@@ -140,24 +113,67 @@ DockedPanel {
         }
 
         ComboBox {
-            id: exposure
+            id: aspectRatio
+            //: Settings
+            //% "Aspect Ratio"
+            label: qsTrId("camera-cb-aspect-ratio")
+            currentIndex: 0
+            // Hook up to something.
+
+            //: Focus Settings
+            menu: ContextMenu {
+                SettingsMenuItem {
+                    //% "16:9"
+                    text: qsTrId("camera-me-16-9")
+                }
+                SettingsMenuItem {
+                    //% "4:3"
+                    text: qsTrId("camera-me-4-3")
+                }
+            }
+        }
+
+        ComboBox {
+            id: focusDistance
             width: parent.width
             //: Settings
-            //% "Exposure"
-            label: qsTrId("camera-cb-exposure")
-            currentIndex: 4
-            onCurrentItemChanged: camera.exposure.compensation = currentItem.value
-            menu: ContextMenu {
-                SettingsMenuItem { text: value ; value: -2 }
-                SettingsMenuItem { text: value ; value: -1.5 }
-                SettingsMenuItem { text: value ; value: -1 }
-                SettingsMenuItem { text: value ; value: -0.5 }
-                SettingsMenuItem { text: value ; value: 0 }
-                SettingsMenuItem { text: value ; value: 0.5 }
-                SettingsMenuItem { text: value ; value: 1 }
-                SettingsMenuItem { text: value ; value: 1.5 }
-                SettingsMenuItem { text: value ; value: 2 }
+            //% "Focus length"
+            label: qsTrId("camera-cb-focus-distance")
+            currentIndex: 0
+            onCurrentItemChanged: {
+                if (currentItem) {
+                    panel.camera.focus.distance = currentItem.value
+                }
             }
+            //: Focus Settings
+            menu: ContextMenu {
+                SettingsMenuItem {
+                    //% "Automatic"
+                    text: qsTrId("camera-me-focus-automatic")
+                    value: Focus.Normal
+                }
+                SettingsMenuItem {
+                    //% "Hyperfocal"
+                    text: qsTrId("camera-me-focus-hyperfocal")
+                    value: Focus.Hyperfocal
+                }
+                SettingsMenuItem {
+                    //% "Infinite"
+                    text: qsTrId("camera-me-focus-infinite")
+                    value: Focus.Infinite
+                }
+                SettingsMenuItem {
+                    //% "Macro"
+                    text: qsTrId("camera-me-focus-macro")
+                    value: Focus.Macro
+                }
+            }
+        }
+
+        PageHeader {
+            //: Settings
+            //% "Video settings"
+            title: qsTrId("camera-ph-video-settings")
         }
     }
 }

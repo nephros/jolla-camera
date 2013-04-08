@@ -6,7 +6,7 @@ import "controls"
 Page {
     id: page
 
-    allowedOrientations: Orientation.Portrait | Orientation.Landscape
+    allowedOrientations: Orientation.Landscape
 
     Camera {
         id: camera
@@ -24,28 +24,34 @@ Page {
 
     Item {
         clip: settingsPanel.expanded
-        anchors {
-            fill: parent
-            leftMargin: page.orientation == Orientation.Landscape ? settingsPanel.visibleSize : 0
-            topMargin: page.orientation == Orientation.Portrait ? settingsPanel.visibleSize : 0
-        }
+
+        width: page.width
+        height: page.width
+        x: settingsPanel.visibleSize
 
         CameraViewport {
-            x: -parent.x
-            y: -parent.y
+            x: -parent.x / 2
+            y: -parent.y / 2
             width: page.width
             height: page.height
 
             camera: camera
+        }
 
-            MenusPanel {
-                id: menusPanel
-                open: true
-                dock: page.orientation == Orientation.Portrait ? Dock.Right : Dock.Top
-                camera: camera
+        MenusPanel {
+            id: menusPanel
+            open: true
+            dock: Dock.Top
+            camera: camera
 
-                onOpenSettings: settingsPanel.show()
-            }
+            onOpenSettings: settingsPanel.show()
+        }
+
+        CapturePanel {
+            id: capturePanel
+            open: true
+            camera: camera
+            dock: Dock.Right
         }
     }
 
@@ -53,16 +59,8 @@ Page {
         id: settingsPanel
 
         camera: camera
-        dock: page.orientation == Orientation.Portrait ? Dock.Top : Dock.Left
+        dock: Dock.Left
 
         onOpenChanged: capturePanel.open = !open
     }
-
-    CapturePanel {
-        id: capturePanel
-        open: true
-        camera: camera
-        dock: page.orientation == Orientation.Portrait ? Dock.Bottom : Dock.Right
-    }
-
 }
