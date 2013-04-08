@@ -16,7 +16,7 @@ MouseArea {
         height: button.height
         radius: button.width / 2
 
-        color: theme.highlightColor
+        color: theme.highlightBackgroundColor
         opacity: 0.5
     }
 

@@ -17,6 +17,7 @@ Page {
 
         onClicked: {
             settingsPanel.open = false
+            shootingModePanel.open = false
             menusPanel.open = true
             capturePanel.open = true
         }
@@ -38,33 +39,81 @@ Page {
             camera: camera
         }
 
-        MenusPanel {
-            id: menusPanel
-            open: true
-            dock: Dock.Top
-            camera: camera
+        Item {
+            width: page.width
+            height: page.height
+            y: -shootingModePanel.visibleSize
 
-            onOpenSettings: settingsPanel.show()
-        }
+            MenusPanel {
+                id: menusPanel
+                open: true
+                dock: Dock.Top
+                camera: camera
 
-        CapturePanel {
-            id: capturePanel
-            open: true
-            camera: camera
-            dock: Dock.Right
-        }
+                onOpenSettings: settingsPanel.show()
+            }
 
+            CapturePanel {
+                id: capturePanel
+                open: true
+                camera: camera
+                dock: Dock.Right
+            }
 
-        CaptureModeButton {
-            camera: camera
+            Rectangle {
+                id: focus
 
-            anchors {
-                right: parent.right
-                bottom: parent.bottom
-                bottomMargin: theme.paddingLarge
-                rightMargin: theme.paddingLarge
+                width: theme.itemSizeExtraLarge
+                height: theme.itemSizeExtraLarge
+
+                anchors.centerIn: parent
+
+                radius: theme.itemSizeExtraLarge / 2
+                border.width: 3
+                border.color: theme.highlightColor
+                color: "#00000000"
+            }
+
+            CaptureModeButton {
+                camera: camera
+
+                anchors {
+                    right: parent.right
+                    bottom: parent.bottom
+                    bottomMargin: theme.paddingLarge
+                    rightMargin: theme.paddingLarge
+                }
+            }
+
+            ShootingModeButton {
+                id: shootingModeButton
+
+                panel: shootingModePanel
+
+                anchors {
+                    left: parent.left
+                    bottom: parent.bottom
+                    bottomMargin: theme.paddingLarge
+                    leftMargin: theme.paddingLarge
+                }
             }
         }
+
+        Rectangle {
+            width: page.width
+            height: page.height
+
+            visible: shootingModePanel.expanded
+            opacity: 0.3 - (1 - shootingModeButton.opacity)
+            color: theme.highlightBackgroundColor
+        }
+    }
+
+    ShootingModePanel {
+        id: shootingModePanel
+
+        camera: camera
+        dock: Dock.Bottom
     }
 
     SettingsPanel {

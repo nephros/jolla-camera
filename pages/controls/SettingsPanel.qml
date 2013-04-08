@@ -45,7 +45,7 @@ DockedPanel {
                     text: qsTrId("camera-me-iso-automatic")
                 }
                 Repeater {
-                    model: panel.exposure.supportedIso
+                    model: panel.camera.exposure.supportedIso
                     SettingsMenuItem {
                         text: modelData
                         value: modelData
