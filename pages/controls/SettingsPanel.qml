@@ -7,7 +7,7 @@ DockedPanel {
 
     property Camera camera
 
-    width: parent.height
+    width: parent.width / 2
     height: parent.height
 
     contentHeight: column.height

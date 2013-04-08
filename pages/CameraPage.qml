@@ -26,7 +26,7 @@ Page {
         clip: settingsPanel.expanded
 
         width: page.width
-        height: page.width
+        height: page.height
         x: settingsPanel.visibleSize
 
         CameraViewport {
@@ -52,6 +52,18 @@ Page {
             open: true
             camera: camera
             dock: Dock.Right
+        }
+
+
+        CaptureModeButton {
+            camera: camera
+
+            anchors {
+                right: parent.right
+                bottom: parent.bottom
+                bottomMargin: theme.paddingLarge
+                rightMargin: theme.paddingLarge
+            }
         }
     }
 

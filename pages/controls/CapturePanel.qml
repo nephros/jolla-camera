@@ -58,37 +58,4 @@ DockedPanel {
             }
         }
     }
-
-    Item {
-        width: theme.paddingSmall + theme.itemSizeExtraLarge
-        height: theme.paddingSmall + theme.itemSizeExtraLarge
-
-        anchors {
-            left: parent.left
-            bottom: parent.bottom
-        }
-
-        IconButton {
-            objectName: "modeButton"
-
-            anchors {
-                horizontalCenter: parent.horizontalCenter
-                horizontalCenterOffset: panel.dock == Dock.Right ? -theme.paddingSmall : 0
-                verticalCenter: parent.verticalCenter
-                verticalCenterOffset: panel.dock == Dock.Bottom ? -theme.paddingSmall : 0
-            }
-
-            icon.source: panel._managedMode == Camera.Still
-                    ? "image://theme/icon-m-image"
-                    : "image://theme/icon-m-video"
-
-            onClicked: {
-                if (panel.mode == Camera.Still) {
-                    camera.captureMode = Camera.Video
-                } else if (panel.mode == Camera.Video) {
-                    camera.captureMode = Camera.Still
-                }
-            }
-        }
-    }
 }
