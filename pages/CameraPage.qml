@@ -53,37 +53,6 @@ Page {
                 onOpenSettings: settingsPanel.show()
             }
 
-            CapturePanel {
-                id: capturePanel
-                open: true
-                camera: camera
-                dock: Dock.Right
-            }
-
-            Rectangle {
-                id: focus
-
-                width: theme.itemSizeExtraLarge
-                height: theme.itemSizeExtraLarge
-
-                anchors.centerIn: parent
-
-                radius: theme.itemSizeExtraLarge / 2
-                border.width: 3
-                border.color: theme.highlightColor
-                color: "#00000000"
-            }
-
-            CaptureModeButton {
-                camera: camera
-
-                anchors {
-                    right: parent.right
-                    bottom: parent.bottom
-                    bottomMargin: theme.paddingLarge
-                    rightMargin: theme.paddingLarge
-                }
-            }
 
             ShootingModeButton {
                 id: shootingModeButton
@@ -97,6 +66,43 @@ Page {
                     leftMargin: theme.paddingLarge
                 }
             }
+
+            Rectangle {
+                id: focus
+
+                width: 2 * theme.itemSizeMedium
+                height: width
+
+                anchors.centerIn: parent
+
+                radius: width / 2
+                border.width: 3
+                border.color: theme.highlightColor
+                color: "#00000000"
+            }
+
+            CaptureCompass {
+                id: captureCompass
+
+                camera: camera
+
+                anchors {
+                    right: parent.right
+                    verticalCenter: parent.verticalCenter
+                    margins: theme.paddingLarge
+                }
+            }
+
+            CaptureModeButton {
+                camera: camera
+
+                anchors {
+                    top: captureCompass.bottom
+                    right: parent.right
+                    margins: theme.paddingLarge
+                }
+            }
+
         }
 
         Rectangle {
