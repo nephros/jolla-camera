@@ -7,7 +7,7 @@ CircularButton {
 
     property Camera camera
 
-    diameter: theme.itemSizeLarge
+    diameter: theme.itemSizeMedium
     enabled: !switchAnimation.running
 
     Image {

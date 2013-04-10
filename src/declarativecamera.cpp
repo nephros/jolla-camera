@@ -6,6 +6,7 @@
 
 #include <QDeclarativeInfo>
 #include <QDateTime>
+#include <QDir>
 
 DeclarativeCamera::DeclarativeCamera(QObject *parent)
     : QObject(parent)
@@ -26,6 +27,10 @@ DeclarativeCamera::DeclarativeCamera(QObject *parent)
             this, SLOT(cameraError(QCamera::Error)));
 
     m_processingControl = m_camera.service()->requestControl<QCameraImageProcessingControl *>();
+
+    QDir dir;
+    dir.mkpath(QLatin1String("/home/nemo/Pictures/Camera/"));
+    dir.mkpath(QLatin1String("/home/nemo/Videos/Camera/"));
 }
 
 DeclarativeCamera::~DeclarativeCamera()
@@ -143,7 +148,7 @@ void DeclarativeCamera::capture()
 {
     if (m_captureControl) {
         const QString fileName = QDateTime::currentDateTimeUtc().toString(
-                    QLatin1String("'/home/nemo/Pictures/'yyyyMMdd-hhmmss'.jpg'"));
+                    QLatin1String("'/home/nemo/Pictures/Camera/'yyyyMMdd-hhmmss'.jpg'"));
         m_status = Capturing;
         m_captureControl->capture(fileName);
         emit statusChanged();
@@ -154,7 +159,7 @@ void DeclarativeCamera::record()
 {
     if (m_recorderControl) {
         const QString fileName = QDateTime::currentDateTimeUtc().toString(
-                    QLatin1String("'/home/nemo/Videos/'yyyyMMdd-hhmmss'.mp4'"));
+                    QLatin1String("'/home/nemo/Videos/Camera/'yyyyMMdd-hhmmss'.mp4'"));
         m_recorderControl->setOutputLocation(QUrl::fromLocalFile(fileName));
         m_recorderControl->record();
     }

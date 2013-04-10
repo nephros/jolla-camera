@@ -1,6 +1,7 @@
 import QtQuick 1.2
 import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
+import QtMobility.feedback 1.1
 
 ClipArea {
     id: clipArea
@@ -28,11 +29,10 @@ ClipArea {
     property real _currentPosition: _verticalDrag ? _verticalPosition : _horizontalPosition
     property bool activated: Math.abs(_verticalDrag ? _verticalPosition : _horizontalPosition) < 16
 
-    property real position: _currentPosition
-    onPositionChanged: console.log("current position", position, clipArea.width)
-
     onActivatedChanged: {
-        console.log("feedback")
+        if (activated) {
+            buttonBuzz.play()
+        }
     }
 
     function _activate() {
@@ -47,8 +47,13 @@ ClipArea {
         }
     }
 
-    width: 2 * theme.itemSizeMedium
+    width: theme.itemSizeExtraLarge
     height: width
+
+    ThemeEffect {
+        id: buttonBuzz
+        effect: ThemeEffect.BasicButton
+    }
 
     MouseArea {
         id: horizontalDrag
@@ -129,7 +134,6 @@ ClipArea {
         height: clipArea.height
 
         opacity: Math.abs(clipArea._currentPosition / clipArea.width)
-        onOpacityChanged: console.log("opacity", opacity, clipArea._currentPosition)
 
         NumberAnimation on x {
             id: horizontalAnimation

@@ -7,7 +7,7 @@ CircularButton {
 
     property ShootingModePanel panel
 
-    diameter: theme.itemSizeLarge
+    diameter: theme.itemSizeMedium
     opacity: 1.0 - (panel.visibleSize / panel.height)
 
     onClicked: panel.show()

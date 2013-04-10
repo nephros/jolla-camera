@@ -19,6 +19,8 @@ Requires:  ambient-icons-closed
 Requires:  sailfishsilica >= 0.8.0
 Requires:  mapplauncherd-booster-jolla
 Requires:  libdeclarative-multimedia
+Requires: libdeclarative-feedback
+Requires: qt-mobility-haptics-ffmemless
 Requires:  declarative-transferengine => 0.0.12
 Requires:  nemo-qml-plugins-accounts
 Requires:  nemo-qml-plugins-gstvideo-thumbnailer

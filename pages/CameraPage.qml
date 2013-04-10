@@ -19,7 +19,6 @@ Page {
             settingsPanel.open = false
             shootingModePanel.open = false
             menusPanel.open = true
-            capturePanel.open = true
         }
     }
 
@@ -44,15 +43,19 @@ Page {
             height: page.height
             y: -shootingModePanel.visibleSize
 
-            MenusPanel {
-                id: menusPanel
-                open: true
-                dock: Dock.Top
+            SettingsCompass {
+                id: settingsCompass
+
                 camera: camera
 
-                onOpenSettings: settingsPanel.show()
-            }
+                anchors {
+                    left: parent.left
+                    verticalCenter: parent.verticalCenter
+                    margins: theme.paddingLarge
+                }
 
+                onClicked: settingsPanel.show()
+            }
 
             ShootingModeButton {
                 id: shootingModeButton
@@ -61,16 +64,15 @@ Page {
 
                 anchors {
                     left: parent.left
-                    bottom: parent.bottom
-                    bottomMargin: theme.paddingLarge
-                    leftMargin: theme.paddingLarge
+                    top: settingsCompass.bottom
+                    margins: theme.paddingLarge
                 }
             }
 
             Rectangle {
                 id: focus
 
-                width: 2 * theme.itemSizeMedium
+                width: theme.itemSizeExtraLarge
                 height: width
 
                 anchors.centerIn: parent
@@ -79,6 +81,16 @@ Page {
                 border.width: 3
                 border.color: theme.highlightColor
                 color: "#00000000"
+            }
+
+            LastPhotoIcon {
+                camera: camera
+
+                anchors {
+                    bottom: captureCompass.top
+                    right: parent.right
+                    margins: theme.paddingLarge
+                }
             }
 
             CaptureCompass {
@@ -102,7 +114,6 @@ Page {
                     margins: theme.paddingLarge
                 }
             }
-
         }
 
         Rectangle {
@@ -127,7 +138,5 @@ Page {
 
         camera: camera
         dock: Dock.Left
-
-        onOpenChanged: capturePanel.open = !open
     }
 }
