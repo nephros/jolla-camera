@@ -132,8 +132,6 @@ SplitItem {
                 margins: theme.paddingLarge
             }
 
-            north.onActivated: captureView.openCameraRoll()
-
             onClicked: camera.imageCapture.capture()
         }
     }

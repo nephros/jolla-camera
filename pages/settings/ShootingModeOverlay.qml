@@ -41,27 +41,27 @@ Item {
 
             ShootingModeItem {
                 mode: Settings.Auto
-                icon: "image://theme/icon-cover-cancel"
+                icon: "image://theme/icon-camera-automatic"
             }
             ShootingModeItem {
                 mode: Settings.Program
-                icon: "image://theme/icon-cover-play"
+                icon: "image://theme/icon-camera-program"
             }
             ShootingModeItem {
                 mode: Settings.Macro
-                icon: "image://theme/icon-cover-new"
+                icon: "image://theme/icon-camera-macro"
             }
             ShootingModeItem {
                 mode: Settings.Sports
-                icon: "image://theme/icon-cover-shuffle"
+                icon: "image://theme/icon-camera-sports"
             }
             ShootingModeItem {
                 mode: Settings.Landscape
-                icon: "image://theme/icon-l-image"
+                icon: "image://theme/icon-camera-landscape"
             }
             ShootingModeItem {
                 mode: Settings.Portrait
-                icon: "image://theme/icon-cover-people"
+                icon: "image://theme/icon-camera-portrait"
             }
         }
     }

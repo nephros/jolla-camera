@@ -218,32 +218,32 @@ Item {
                 opacity: Math.abs(compass._currentPosition / compass.width)
 
                 Image {
-                    anchors { top: parent.top; horizontalCenter: parent.horizontalCenter }
-                    width: 32; height: 32
+                    anchors { top: parent.top; horizontalCenter: parent.horizontalCenter; margins: theme.paddingSmall }
+                    width: 24; height: 24
                     fillMode: Image.PreserveAspectFit
                     source: north.smallIcon
                     visible: north.enabled
                 }
 
                 Image {
-                    anchors { left: parent.left; verticalCenter: parent.verticalCenter }
-                    width: 32; height: 32
+                    anchors { left: parent.left; verticalCenter: parent.verticalCenter; margins: theme.paddingSmall }
+                    width: 24; height: 24
                     fillMode: Image.PreserveAspectFit
                     source: west.smallIcon
                     visible: west.enabled
                 }
 
                 Image {
-                    anchors { right: parent.right; verticalCenter: parent.verticalCenter }
-                    width: 32; height: 32
+                    anchors { right: parent.right; verticalCenter: parent.verticalCenter; margins: theme.paddingSmall }
+                    width: 24; height: 24
                     fillMode: Image.PreserveAspectFit
                     source: east.smallIcon
                     visible: east.enabled
                 }
 
                 Image {
-                    anchors { bottom: parent.bottom; horizontalCenter: parent.horizontalCenter }
-                    width: 32; height: 32
+                    anchors { bottom: parent.bottom; horizontalCenter: parent.horizontalCenter; margins: theme.paddingSmall }
+                    width: 24; height: 24
                     fillMode: Image.PreserveAspectFit
                     source: south.smallIcon
                     visible: south.enabled
@@ -252,9 +252,6 @@ Item {
                 Image {
                     id: centerImage
                     anchors.centerIn: parent
-                    width: theme.itemSizeSmall
-                    height: theme.itemSizeSmall
-                    fillMode: Image.PreserveAspectFit
                 }
             }
             Item {

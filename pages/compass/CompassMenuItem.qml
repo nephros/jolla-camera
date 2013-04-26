@@ -5,7 +5,7 @@ BackgroundItem {
     property alias icon: image.source
 
     width: parent.width
-    height: image.height + theme.paddingMedium
+    height: image.height + theme.paddingLarge
 
     onClicked: parent._compass.closeMenu()
 

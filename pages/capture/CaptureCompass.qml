@@ -12,24 +12,11 @@ Compass {
     property bool _recording: camera.videoRecorder.recorderState == CameraRecorder.RecordingState
     property bool _showStopIcon: true
 
+    property int metering: 0
+
     onAnimatingChanged: {
         if (!animating) {
             _showStopIcon = _recording
-        }
-    }
-
-    function flashIcon(mode) {
-        switch (mode) {
-        case Camera.FlashAuto:
-            return "image://theme/icon-s-cloud-upload"
-        case Camera.FlashOff:
-            return "image://theme/icon-s-cloud-upload"
-        case Camera.FlashOn:
-            return "image://theme/icon-s-cloud-upload"
-        case Camera.FlashRedEyeReduction:
-            return "image://theme/icon-s-cloud-upload"
-        default:
-            return ""
         }
     }
 
@@ -49,25 +36,64 @@ Compass {
     }
 
     north {
-        smallIcon: "image://theme/icon-s-cloud-upload"
-        largeIcon: "image://theme/icon-s-cloud-upload"
+        smallIcon: {
+            switch (compass.metering) {
+            case 0:
+                return "image://theme/icon-camera-metering-matrix"
+            case 1:
+                return "image://theme/icon-camera-metering-spot"
+            case 2:
+                return "image://theme/icon-camera-metering-weighted"
+            }
+        }
+        largeIcon: "image://theme/icon-camera-metering-mode"
         enabled: !compass._recording
+        onActivated: compass.openMenu(meteringMenu)
     }
     west {
-        smallIcon: flashIcon(settings.flash)
-        largeIcon: flashIcon(settings.flash)
+        smallIcon: {
+            switch (settings.flash) {
+            case Camera.FlashAuto:
+                return "image://theme/icon-camera-flash-automatic"
+            case Camera.FlashOff:
+                return "image://theme/icon-camera-flash-off"
+            case Camera.FlashOn:
+                return "image://theme/icon-camera-flash-on"
+            case Camera.FlashRedEyeReduction:
+                return "image://theme/icon-camera-flash-redeye"
+            }
+        }
+        largeIcon: "image://theme/icon-camera-flash"
         enabled: !compass._recording && !(settings.shootingModeProperties & Settings.Flash)
         onActivated: compass.openMenu(flashMenu)
     }
     east {
-        smallIcon: "image://theme/icon-cover-sync"
-        largeIcon: "image://theme/icon-cover-sync"
+        smallIcon: {
+            switch (settings.exposureCompensation) {
+            case -2:
+                return "image://theme/icon-camera-ec-minus2"
+            case -1.5:
+                return "image://theme/icon-camera-ec-minus15"
+            case -1:
+                return "image://theme/icon-camera-ec-minus1"
+            case 0:
+                return "image://theme/icon-camera-exposure-compensation"
+            case 1:
+                return "image://theme/icon-camera-ec-plus1"
+            case 1.5:
+                return "image://theme/icon-camera-ec-plus15"
+            case 2:
+                return "image://theme/icon-camera-ec-plus2"
+            }
+        }
+
+        largeIcon: "image://theme/icon-camera-exposure-compensation"
         enabled: !compass._recording && !(settings.shootingModeProperties & Settings.Exposure)
         onActivated: compass.openMenu(exposureMenu)
     }
     south {
-        smallIcon: !compass._recording ? "image://theme/icon-cover-new" : "image://theme/icon-cover-sync"
-        largeIcon: !compass._showStopIcon ? "image://theme/icon-cover-new" : "image://theme/icon-cover-sync"
+        smallIcon: !compass._recording ? "image://theme/icon-camera-record" : "image://theme/icon-camera-stop"
+        largeIcon: !compass._showStopIcon ? "image://theme/icon-camera-record" : "image://theme/icon-camera-stop"
         onActivated: {
             if (!compass._recording) {
                 camera.captureMode = Camera.CaptureVideo
@@ -80,10 +106,32 @@ Compass {
         }
     }
 
-    icon: "image://theme/icon-cover-camera"
-
+    icon: "image://theme/icon-camera-shutter-release"
 
     keepSelection: camera.captureMode == Camera.CaptureVideo && camera.cameraStatus != Camera.ActiveStatus
+
+
+    Component {
+        id: meteringMenu
+
+        CompassMenu {
+            //% "metering"
+            title: qsTrId("camera-me-metering-mode")
+
+             CompassMenuItem {
+                icon: "image://theme/icon-camera-metering-matrix"
+                onClicked: compass.metering = 0
+            }
+            CompassMenuItem {
+                icon: "image://theme/icon-camera-metering-spot"
+                onClicked: compass.metering = 1
+            }
+            CompassMenuItem {
+                icon: "image://theme/icon-camera-metering-weighted"
+                onClicked: compass.metering = 2
+            }
+        }
+    }
 
     Component {
         id: flashMenu
@@ -92,20 +140,20 @@ Compass {
             //% "flash"
             title: qsTrId("camera-me-flash")
 
-             CompassMenuIcon {
-                icon: flashIcon(Camera.FlashAuto)
+             CompassMenuItem {
+                icon: "image://theme/icon-camera-flash-automatic"
                 onClicked: settings.flash = Camera.FlashAuto
             }
-            CompassMenuIcon {
-                icon: flashIcon(Camera.FlashOff)
+            CompassMenuItem {
+                icon: "image://theme/icon-camera-flash-off"
                 onClicked: settings.flash = Camera.FlashOff
             }
-            CompassMenuIcon {
-                icon: flashIcon(Camera.FlashOn)
+            CompassMenuItem {
+                icon: "image://theme/icon-camera-flash-on"
                 onClicked: settings.flash = Camera.FlashOn
             }
-            CompassMenuIcon {
-                icon: flashIcon(Camera.FlashRedEyeReduction)
+            CompassMenuItem {
+                icon: "image://theme/icon-camera-flash-redeye"
                 onClicked: settings.flash = Camera.FlashRedEyeReduction
             }
         }
@@ -118,11 +166,30 @@ Compass {
             //% "exposure"
             title: qsTrId("camera-me-exposure")
 
-            CompassMenuText { label: "-2"; onClicked: settings.exposure = -2 }
-            CompassMenuText { label: "-1"; onClicked: settings.exposure = -1 }
-            CompassMenuText { label: "0"; onClicked: settings.exposure = 0 }
-            CompassMenuText { label: "+1"; onClicked: settings.exposure = 1 }
-            CompassMenuText { label: "+2"; onClicked: settings.exposure = 2 }
+            CompassMenuItem {
+                icon: "image://theme/icon-camera-ec-minus2"
+                onClicked: settings.exposureCompensation = -2
+            }
+            CompassMenuItem {
+                icon: "image://theme/icon-camera-ec-minus15"
+                onClicked: settings.exposureCompensation = -1.5
+            }
+            CompassMenuItem {
+                icon: "image://theme/icon-camera-ec-minus1"
+                onClicked: settings.exposureCompensation = -1
+            }
+            CompassMenuItem {
+                icon: "image://theme/icon-camera-ec-plus1"
+                onClicked: settings.exposureCompensation = 1
+            }
+            CompassMenuItem {
+                icon: "image://theme/icon-camera-ec-plus15"
+                onClicked: settings.exposureCompensation = 1.5
+            }
+            CompassMenuItem {
+                icon: "image://theme/icon-camera-ec-plus2"
+                onClicked: settings.exposureCompensation = 2
+            }
         }
     }
 }
