@@ -19,6 +19,8 @@ Item {
     property bool animating: horizontalAnimation.running || verticalAnimation.running
     property bool expanded: _menu != null
 
+    property bool pressed: (horizontalDrag.pressed || verticalDrag.pressed) && !_drag
+
     property bool _drag
     property bool _verticalDrag
     property CompassAction _verticalAction: dragArea.y > 0 ? north: south
@@ -28,7 +30,8 @@ Item {
     property real _verticalPosition: 2 * dragArea.y + (dragArea.y > 0 ? - compass.height : compass.height)
     property real _horizontalPosition: 2 * dragArea.x + (dragArea.x > 0 ? - compass.width : compass.width)
     property real _currentPosition: _verticalDrag ? _verticalPosition : _horizontalPosition
-    property bool activated: Math.abs(_verticalDrag ? _verticalPosition : _horizontalPosition) < 16
+    property bool activated: (horizontalDrag.pressed || verticalDrag.pressed || keepSelection)
+                && Math.abs(_verticalDrag ? _verticalPosition : _horizontalPosition) < 16
 
     property Item _menu
     property real _menuOpacity: 1.0 - buttons.opacity
@@ -92,8 +95,6 @@ Item {
 
     width: theme.itemSizeExtraLarge
     height: width
-
-
 
     CompassAction { id: north }
     CompassAction { id: west }
@@ -178,7 +179,10 @@ Item {
 
         radius: compass.width / 2
         color: theme.highlightBackgroundColor
-        opacity: compass.activated ? 1.0 : 0.3
+        opacity: compass.activated || compass.pressed ? 1.0 : 0.3
+        Behavior on opacity {
+            NumberAnimation { duration: 100 }
+        }
     }
 
     ClipArea {
