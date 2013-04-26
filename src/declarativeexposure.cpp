@@ -6,8 +6,10 @@ DeclarativeExposure::DeclarativeExposure(QCamera *camera, QObject *parent)
     , m_control(0)
     , m_autoIso(true)
 {
-    if ((m_control = m_camera->service()->requestControl<QCameraExposureControl *>())) {
-        connect(m_control, SIGNAL(flashReady(bool)), this, SIGNAL(readyChanged()));
+    if (m_camera->service()
+            && (m_control = m_camera->service()->requestControl<QCameraExposureControl *>())) {
+        connect(m_control, SIGNAL(exposureParameterChanged(int)), this, SLOT(parameterChanged(int)));
+        connect(m_control, SIGNAL(exposureParameterRangeChanged(int)), this, SLOT(parameterRangeChanged(int)));
     }
 }
 
@@ -32,6 +34,20 @@ void DeclarativeExposure::setCompensation(qreal compensation)
     }
 }
 
+DeclarativeCamera::ExposureMode DeclarativeExposure::mode() const
+{
+    return m_control
+            ? DeclarativeCamera::ExposureMode(m_control->exposureMode())
+            : DeclarativeCamera::ExposureAuto;
+}
+
+void DeclarativeExposure::setMode(DeclarativeCamera::ExposureMode mode)
+{
+    if (m_control) {
+        m_control->setExposureMode(QCameraExposure::ExposureMode(mode));
+        emit modeChanged();
+    }
+}
 
 int DeclarativeExposure::iso() const
 {
@@ -52,7 +68,7 @@ void DeclarativeExposure::setIso(int iso)
     }
 }
 
-void DeclarativeExposure::resetIso()
+void DeclarativeExposure::setAutoIsoSensitivity()
 {
     if (m_control && !m_autoIso) {
         m_autoIso = false;

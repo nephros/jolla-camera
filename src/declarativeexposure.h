@@ -4,13 +4,17 @@
 
 #include <QCameraExposureControl>
 
+#include "declarativecamera.h"
+
 class DeclarativeExposure : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(qreal compensation READ compensation WRITE setCompensation NOTIFY compensationChanged)
-    Q_PROPERTY(int iso READ iso WRITE setIso RESET resetIso NOTIFY isoChanged)
+    Q_PROPERTY(qreal exposureCompensation READ compensation WRITE setCompensation NOTIFY compensationChanged)
+    Q_PROPERTY(DeclarativeCamera::ExposureMode exposureMode READ mode WRITE setMode NOTIFY modeChanged)
+    Q_PROPERTY(int manualIso READ iso WRITE setIso RESET setAutoIsoSensitivity NOTIFY isoChanged)
     Q_PROPERTY(bool automaticIso READ hasAutomaticIso NOTIFY automaticIsoChanged)
     Q_PROPERTY(QVariantList supportedIso READ supportedIso NOTIFY supportedIsoChanged)
+    Q_ENUMS(DeclarativeCamera::ExposureMode)
 public:
     DeclarativeExposure(QCamera *camera, QObject *parent = 0);
     ~DeclarativeExposure();
@@ -18,15 +22,19 @@ public:
     qreal compensation() const;
     void setCompensation(qreal compensation);
 
+    DeclarativeCamera::ExposureMode mode() const;
+    void setMode(DeclarativeCamera::ExposureMode mode);
+
     int iso() const;
     void setIso(int iso);
-    void resetIso();
+    void setAutoIsoSensitivity();
     bool hasAutomaticIso() const;
 
     QVariantList supportedIso() const;
 
 Q_SIGNALS:
     void compensationChanged();
+    void modeChanged();
     void isoChanged();
     void automaticIsoChanged();
     void supportedIsoChanged();

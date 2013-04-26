@@ -1,11 +1,13 @@
-import QtQuick 1.2
-import Sailfish.Silica 1.0
+import QtQuick 1.1
+import com.jolla.camera.settings 1.0
 
 MouseArea {
     id: item
 
-    property bool selected: panel.currentItem == item
+    property int mode
+    property bool selected: settings.shootingMode == mode
     property url icon
+    property url selectionIcon: icon + "?" + theme.highlightColor
 
     width: theme.itemSizeExtraLarge
     height: theme.itemSizeExtraLarge
@@ -19,7 +21,7 @@ MouseArea {
     }
 
     onClicked: {
-        panel.currentItem = item
-        panel.open = false
+        settings.shootingMode = mode
+        overlay.open = false
     }
 }

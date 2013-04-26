@@ -3,24 +3,19 @@
 
 #include <QCameraFlashControl>
 
+#include "declarativecamera.h"
+
 class DeclarativeFlash : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(Mode mode READ mode WRITE setMode NOTIFY modeChanged)
-    Q_ENUMS(Mode)
+    Q_PROPERTY(DeclarativeCamera::FlashMode flashMode READ mode WRITE setMode NOTIFY modeChanged)
+    Q_ENUMS(DeclarativeCamera::FlashMode)
 public:
-    enum Mode
-    {
-        Off     = QCameraExposure::FlashOff,
-        On      = QCameraExposure::FlashOn,
-        Auto    = QCameraExposure::FlashAuto
-    };
-
     DeclarativeFlash(QCamera *camera, QObject *parent = 0);
     ~DeclarativeFlash();
 
-    Mode mode() const;
-    void setMode(Mode mode);
+    DeclarativeCamera::FlashMode mode() const;
+    void setMode(DeclarativeCamera::FlashMode mode);
 
     bool isReady() const;
 

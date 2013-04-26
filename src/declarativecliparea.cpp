@@ -15,7 +15,8 @@ DeclarativeClipArea::~DeclarativeClipArea()
 
 QPainterPath DeclarativeClipArea::shape() const
 {
+    const qreal radius = qMin(width(), height()) / 2;
     QPainterPath path;
-    path.addEllipse(boundingRect());
+    path.addRoundedRect(boundingRect(), radius, radius);
     return path;
 }

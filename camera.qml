@@ -4,6 +4,7 @@ import "pages"
 import "cover"
 
 ApplicationWindow {
+    id: window
     cover: Component{
         CameraCover {
         }
@@ -11,6 +12,7 @@ ApplicationWindow {
 
     initialPage: Component {
         CameraPage {
+            windowActive: window.applicationActive
         }
     }
 }

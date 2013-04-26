@@ -10,48 +10,31 @@
 
 DeclarativeCamera::DeclarativeCamera(QObject *parent)
     : QObject(parent)
-    , m_captureControl(0)
-    , m_recorderControl(0)
+    , m_imageCapture(0)
+    , m_videoRecorder(0)
     , m_exposure(0)
     , m_flash(0)
     , m_focus(0)
-    , m_status(Null)
+    , m_imageProcessing(0)
 {
     connect(&m_camera, SIGNAL(captureModeChanged(QCamera::CaptureMode)),
             this, SIGNAL(captureModeChanged()));
-    connect(&m_camera, SIGNAL(stateChanged(QCamera::State)),
-            this, SLOT(cameraStateChanged(QCamera::State)));
-    connect(&m_camera, SIGNAL(statusChanged(QCamera::Status)),
-            this, SLOT(cameraStatusChanged(QCamera::Status)));
-    connect(&m_camera, SIGNAL(error(QCamera::Error)),
-            this, SLOT(cameraError(QCamera::Error)));
-
-    m_processingControl = m_camera.service()->requestControl<QCameraImageProcessingControl *>();
-
-    QDir dir;
-    dir.mkpath(QLatin1String("/home/nemo/Pictures/Camera/"));
-    dir.mkpath(QLatin1String("/home/nemo/Videos/Camera/"));
+    connect(&m_camera, SIGNAL(stateChanged(QCamera::State)), this, SIGNAL(cameraStateChanged()));
+    connect(&m_camera, SIGNAL(statusChanged(QCamera::Status)), this, SIGNAL(cameraStatusChanged()));
 }
 
 DeclarativeCamera::~DeclarativeCamera()
 {
+    delete m_imageCapture;
+    delete m_videoRecorder;
     delete m_flash;
     delete m_exposure;
-}
-
-void DeclarativeCamera::classBegin()
-{
-}
-
-void DeclarativeCamera::componentComplete()
-{
-    requestControls();
-    m_camera.load();
+    delete m_imageProcessing;
 }
 
 DeclarativeCamera::Status DeclarativeCamera::status() const
 {
-    return m_status;
+    return Status(m_camera.status());
 }
 
 DeclarativeCamera::CaptureMode DeclarativeCamera::captureMode() const
@@ -62,41 +45,48 @@ DeclarativeCamera::CaptureMode DeclarativeCamera::captureMode() const
 void DeclarativeCamera::setCaptureMode(CaptureMode mode)
 {
     if (QCamera::CaptureMode(mode) != m_camera.captureMode()) {
-        if (m_captureControl) {
-            disconnect(m_captureControl, SIGNAL(imageSaved(int,QString)),
-                       this, SLOT(imageSaved(int,QString)));
-            m_camera.service()->releaseControl(m_captureControl);
-            m_captureControl = 0;
-        } else if (m_recorderControl) {
-            disconnect(m_recorderControl, SIGNAL(stateChanged(QMediaRecorder::State)),
-                    this, SLOT(recorderStateChanged(QMediaRecorder::State)));
-            m_camera.service()->releaseControl(m_recorderControl);
-            m_recorderControl = 0;
-        }
-
         m_camera.setCaptureMode(QCamera::CaptureMode(mode));
-
-        requestControls();
     }
 }
 
-void DeclarativeCamera::requestControls()
+DeclarativeCamera::State DeclarativeCamera::state() const
 {
-    if (m_camera.captureMode() == QCamera::CaptureStillImage && !m_captureControl) {
-        if ((m_captureControl = m_camera.service()->requestControl<QCameraImageCaptureControl *>())) {
-            connect(m_captureControl, SIGNAL(imageSaved(int,QString)),
-                    this, SLOT(imageSaved(int,QString)));
+    return State(m_camera.state());
+}
+
+void DeclarativeCamera::setState(DeclarativeCamera::State state)
+{
+    switch (state) {
+    case LoadedState:
+        if (m_camera.state() == QCamera::ActiveState) {
+            m_camera.stop();
         } else {
-            qmlInfo(this) << "Image capture is not supported by the camera";
+            m_camera.load();
         }
-    } else if (m_camera.captureMode() == QCamera::CaptureVideo && !m_recorderControl) {
-        if ((m_recorderControl = m_camera.service()->requestControl<QMediaRecorderControl *>())) {
-            connect(m_recorderControl, SIGNAL(stateChanged(QMediaRecorder::State)),
-                    this, SLOT(recorderStateChanged(QMediaRecorder::State)));
-        } else {
-            qmlInfo(this) << "Video recording is not supported by the camera";
-        }
+        break;
+    case UnloadedState:
+        m_camera.unload();
+        break;
+    case ActiveState:
+        m_camera.start();
+        break;
     }
+}
+
+DeclarativeImageCapture *DeclarativeCamera::imageCapture()
+{
+    if (!m_imageCapture) {
+        m_imageCapture = new DeclarativeImageCapture(&m_camera, this);
+    }
+    return m_imageCapture;
+}
+
+DeclarativeVideoRecorder *DeclarativeCamera::videoRecorder()
+{
+    if (!m_videoRecorder) {
+        m_videoRecorder = new DeclarativeVideoRecorder(&m_camera, this);
+    }
+    return m_videoRecorder;
 }
 
 DeclarativeExposure *DeclarativeCamera::exposure()
@@ -123,20 +113,13 @@ DeclarativeFocus *DeclarativeCamera::focus()
     return m_focus;
 }
 
-DeclarativeWhiteBalance::Mode DeclarativeCamera::whiteBalance() const
-{
-    return m_processingControl
-            ? DeclarativeWhiteBalance::Mode(m_processingControl->whiteBalanceMode())
-            : DeclarativeWhiteBalance::Auto;
-}
 
-void DeclarativeCamera::setWhiteBalance(DeclarativeWhiteBalance::Mode mode)
+DeclarativeImageProcessing *DeclarativeCamera::imageProcessing()
 {
-    if (m_processingControl
-            && m_processingControl->whiteBalanceMode() != QCameraImageProcessing::WhiteBalanceMode(mode)) {
-        m_processingControl->setWhiteBalanceMode(QCameraImageProcessing::WhiteBalanceMode(mode));
-        emit whiteBalanceChanged();
+    if (!m_imageProcessing) {
+        m_imageProcessing = new DeclarativeImageProcessing(&m_camera, this);
     }
+    return m_imageProcessing;
 }
 
 QCamera *DeclarativeCamera::camera() const
@@ -144,18 +127,70 @@ QCamera *DeclarativeCamera::camera() const
     return const_cast<QCamera *>(&m_camera);
 }
 
-void DeclarativeCamera::capture()
+DeclarativeImageCapture::DeclarativeImageCapture(QCamera *camera, QObject *parent)
+    : QObject(parent)
+    , m_camera(camera)
 {
-    if (m_captureControl) {
-        const QString fileName = QDateTime::currentDateTimeUtc().toString(
-                    QLatin1String("'/home/nemo/Pictures/Camera/'yyyyMMdd-hhmmss'.jpg'"));
-        m_status = Capturing;
-        m_captureControl->capture(fileName);
-        emit statusChanged();
+    if (m_camera->service()
+            && (m_captureControl = m_camera->service()->requestControl<QCameraImageCaptureControl *>())) {
+        // connections.
     }
 }
 
-void DeclarativeCamera::record()
+DeclarativeImageCapture::~DeclarativeImageCapture()
+{
+    if (m_captureControl) {
+        m_camera->service()->releaseControl(m_captureControl);
+    }
+}
+
+void DeclarativeImageCapture::capture()
+{
+    if (m_captureControl) {
+        const QString fileName = QDateTime::currentDateTimeUtc().toString(
+                QLatin1String("'/home/nemo/Pictures/Camera/'yyyyMMdd-hhmmss'.jpg'"));
+        m_captureControl->capture(fileName);
+    }
+}
+
+QSize DeclarativeImageCapture::resolution() const
+{
+    return m_resolution;
+}
+
+void DeclarativeImageCapture::setResolution(const QSize &resolution)
+{
+    if (m_resolution != resolution) {
+        m_resolution = resolution;
+        emit resolutionChanged();
+    }
+}
+
+DeclarativeVideoRecorder::DeclarativeVideoRecorder(QCamera *camera, QObject *parent)
+    : QObject(parent)
+    , m_camera(camera)
+    , m_frameRate(15)
+{
+    if (m_camera->service()
+            && (m_recorderControl = m_camera->service()->requestControl<QMediaRecorderControl *>())) {
+        connect(m_recorderControl, SIGNAL(stateChanged(QMediaRecorder::State)),
+                this, SIGNAL(stateChanged()));
+    }
+}
+
+DeclarativeVideoRecorder::~DeclarativeVideoRecorder()
+{
+    if (m_recorderControl) {
+        m_camera->service()->releaseControl(m_recorderControl);
+    }
+}
+
+DeclarativeVideoRecorder::State DeclarativeVideoRecorder::state() const
+{
+    return m_recorderControl ? State(m_recorderControl->state()) : StoppedState;
+}
+
+void DeclarativeVideoRecorder::record()
 {
     if (m_recorderControl) {
         const QString fileName = QDateTime::currentDateTimeUtc().toString(
@@ -165,79 +200,67 @@ void DeclarativeCamera::record()
     }
 }
 
-void DeclarativeCamera::stop()
+void DeclarativeVideoRecorder::stop()
 {
     if (m_recorderControl) {
         m_recorderControl->stop();
-    } else if (m_captureControl) {
-        m_captureControl->cancelCapture();
     }
 }
 
-void DeclarativeCamera::cameraStateChanged(QCamera::State state)
+QSize DeclarativeVideoRecorder::resolution() const
 {
-    switch (state) {
-    case QCamera::LoadedState:
-        m_camera.start();
-        break;
-    case QCamera::UnloadedState:
-        break;
-    case QCamera::ActiveState:
-        if (m_status == Null || m_status == Error) {
-            m_status = Previewing;
-            emit statusChanged();
-        }
-        break;
-    default:
-         break;
+    return m_resolution;
+}
+
+void DeclarativeVideoRecorder::setResolution(const QSize &resolution)
+{
+    if (m_resolution != resolution) {
+        m_resolution = resolution;
+        emit resolutionChanged();
     }
 }
 
-void DeclarativeCamera::cameraStatusChanged(QCamera::Status)
+qreal DeclarativeVideoRecorder::frameRate() const
 {
+    return m_frameRate;
 }
 
-void DeclarativeCamera::cameraError(QCamera::Error error)
+void DeclarativeVideoRecorder::setFrameRate(qreal rate)
 {
-    qmlInfo(this) << "The camera reported an error" << int(error);
-    if (m_status != Error) {
-        m_status = Error;
-        emit statusChanged();
+    if (m_frameRate != rate) {
+        m_frameRate = rate;
+        emit frameRateChanged();
     }
 }
 
-void DeclarativeCamera::recorderStateChanged(QMediaRecorder::State state)
+DeclarativeImageProcessing::DeclarativeImageProcessing(QCamera *camera, QObject *parent)
+    : QObject(parent)
+    , m_camera(camera)
 {
-    switch (state) {
-    case QMediaRecorder::StoppedState:
-        {
-            Status status = m_camera.state() == QCamera::ActiveState
-                    ? Previewing
-                    : Null;
-            if (m_status != status) {
-                m_status = status;
-                emit statusChanged();
-            }
-        }
-    case QMediaRecorder::PausedState:
-        if (m_status != Previewing) {
-            m_status = Previewing;
-            emit statusChanged();
-        }
-    case QMediaRecorder::RecordingState:
-        if (m_status != Recording) {
-            m_status = Recording;
-            emit statusChanged();
-        }
-    default:
-        break;
+    if (m_camera->service()
+            && (m_imageProcessingControl = m_camera->service()->requestControl<QCameraImageProcessingControl *>())) {
+        // connections.
     }
 }
 
-void DeclarativeCamera::imageSaved(int,const QString &)
+DeclarativeImageProcessing::~DeclarativeImageProcessing()
 {
-    if (m_status == Capturing) {
-        m_status = Previewing;
-        emit statusChanged();
+    if (m_imageProcessingControl) {
+        m_camera->service()->releaseControl(m_imageProcessingControl);
+    }
+}
+
+DeclarativeImageProcessing::WhiteBalanceMode DeclarativeImageProcessing::whiteBalanceMode() const
+{
+    return m_imageProcessingControl
+            ? WhiteBalanceMode(m_imageProcessingControl->whiteBalanceMode())
+            : WhiteBalanceAuto;
+}
+
+void DeclarativeImageProcessing::setWhiteBalanceMode(WhiteBalanceMode mode)
+{
+    if (m_imageProcessingControl) {
+        m_imageProcessingControl->setWhiteBalanceMode(QCameraImageProcessing::WhiteBalanceMode(mode));
+        emit whiteBalanceModeChanged();
     }
 }
