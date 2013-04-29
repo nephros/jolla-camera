@@ -1,6 +1,7 @@
 import QtQuick 1.1
 import Sailfish.Silica 1.0
 import QtMultimediaKit 1.1
+import org.nemomobile.thumbnailer 1.0
 
 MouseArea {
     id: videoItem
@@ -8,6 +9,9 @@ MouseArea {
     property Video player
     property bool active
     property url source
+    property string mimeType
+
+    onSourceChanged: console.log("Source", source)
 
     enabled: false
 
@@ -35,11 +39,29 @@ MouseArea {
                 break;
             }
         }
-        onPlaybackStateChanged: videoItem.enabled = (videoItem.player.playing && !videoItem.player.paused)
+        onPlayingChanged: videoItem.enabled = (videoItem.player.playing && !videoItem.player.paused)
+        onPausedChanged: videoItem.enabled = (videoItem.player.playing && !videoItem.player.paused)
     }
 
-
     // Poster
+    Thumbnail {
+        id: poster
+
+        anchors.centerIn: parent
+
+        width: videoItem.width
+        height: videoItem.height
+
+        sourceSize.width: screen.height
+        sourceSize.height: screen.height
+
+        source: videoItem.source
+        mimeType: videoItem.mimeType
+
+        priority: Thumbnail.HighPriority
+        fillMode: Thumbnail.PreserveAspectFit
+        visible: !videoItem.active || !videoItem.player.visible
+    }
 
     Item {
         width: videoItem.width
@@ -56,6 +78,7 @@ MouseArea {
                 anchors.fill: parent
                 enabled: !videoItem.enabled
                 onClicked: {
+                    videoItem.player.visible = true
                     videoItem.player.source = videoItem.source
                     videoItem.player.play()
                 }

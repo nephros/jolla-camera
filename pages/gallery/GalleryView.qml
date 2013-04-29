@@ -40,6 +40,7 @@ SplitItem {
 
         pressDelay: 50
         boundsBehavior: Flickable.StopAtBounds
+        cacheBuffer: width * 3
 
         orientation: ListView.Horizontal
         layoutDirection: Qt.RightToLeft
@@ -63,6 +64,7 @@ SplitItem {
                 }
                 video.stop()
                 video.source = ""
+                video.visible = false
                 galleryView._activeItem = currentItem
                 if (galleryView._activeItem) {
                     galleryView._activeItem.active = true
@@ -105,6 +107,7 @@ SplitItem {
                     player: video
                     active: galleryItem.active
                     source: url
+                    mimeType: model.mimeType
                 }
             }
 
@@ -130,6 +133,7 @@ SplitItem {
             Video {
                 id: video
 
+                visible: false
                 width: galleryView.width
                 height: galleryView.height
                 anchors.centerIn: galleryView._activeItem

@@ -4,6 +4,7 @@
 #include <QCameraFocus>
 #include <QCameraExposure>
 #include <QCameraImageProcessing>
+#include <QDir>
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 #include <QStandardPaths>
@@ -53,6 +54,9 @@ DeclarativeSettings::DeclarativeSettings(QObject *parent)
     connect(&m_videoFocus, SIGNAL(valueChanged()), this, SIGNAL(videoFocusChanged()));
     connect(&m_flash, SIGNAL(valueChanged()), this, SIGNAL(flashChanged()));
     connect(&m_exposureCompensation, SIGNAL(valueChanged()), this, SIGNAL(exposureChanged()));
+
+    QDir(photoDirectory()).mkpath(QLatin1String("."));
+    QDir(videoDirectory()).mkpath(QLatin1String("."));
 }
 
 DeclarativeSettings::~DeclarativeSettings()
@@ -293,9 +297,9 @@ int DeclarativeSettings::exposureMode() const
 QString DeclarativeSettings::photoDirectory() const
 {
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-    return QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).value(0);
+    return QStandardPaths::writableLocation(QStandardPaths::PicturesLocation) + QLatin1String("/Camera");
 #else
-    return QDesktopServices::storageLocation(QDesktopServices::PicturesLocation);
+    return QDesktopServices::storageLocation(QDesktopServices::PicturesLocation) + QLatin1String("/Camera");
 #endif
 
 }
@@ -303,8 +307,8 @@ QString DeclarativeSettings::photoDirectory() const
 QString DeclarativeSettings::videoDirectory() const
 {
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-    return QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).value(0);
+    return QStandardPaths::writableLocation(QStandardPaths::MoviesLocation) + QLatin1String("/Camera");
 #else
-    return QDesktopServices::storageLocation(QDesktopServices::MoviesLocation);
+    return QDesktopServices::storageLocation(QDesktopServices::MoviesLocation) + QLatin1String("/Camera");
 #endif
 }

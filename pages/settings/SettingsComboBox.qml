@@ -5,8 +5,7 @@ import com.jolla.camera.settings 1.0
 ComboBox {
     property string property
 
-    property variant value: Settings[property]
-    onValueChanged: {
+    function updateCurrentIndex() {
         for (var i = 0; i < menu.children.length; ++i) {
             var item = menu.children[i]
             if (item.value !== undefined && item.value == value) {
@@ -17,9 +16,14 @@ ComboBox {
         currentIndex = -1
     }
 
+    Component.onCompleted: updateCurrentIndex()
+
+    property variant value: settings[property]
+    onValueChanged: updateCurrentIndex()
+
     onCurrentItemChanged: {
         if (currentItem) {
-            Settings[property] = currentItem.value
+            settings[property] = currentItem.value
         }
     }
 }

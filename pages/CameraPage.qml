@@ -15,7 +15,7 @@ Page {
 
     allowedOrientations: Orientation.Landscape
 
-    SilicaListView {
+    ListView {
         id: listView
 
         width: page.width
@@ -26,6 +26,9 @@ Page {
         snapMode: ListView.SnapOneItem
         highlightRangeMode: ListView.StrictlyEnforceRange
         highlightMoveDuration: 500
+
+        pressDelay: 50
+        boundsBehavior: Flickable.StopAtBounds
 
         interactive: !captureView.menuOpen && !galleryView.menuOpen
 
