@@ -14,7 +14,9 @@ class DeclarativeExposure : public QObject
     Q_PROPERTY(int manualIso READ iso WRITE setIso RESET setAutoIsoSensitivity NOTIFY isoChanged)
     Q_PROPERTY(bool automaticIso READ hasAutomaticIso NOTIFY automaticIsoChanged)
     Q_PROPERTY(QVariantList supportedIso READ supportedIso NOTIFY supportedIsoChanged)
+    Q_PROPERTY(DeclarativeCamera::MeteringMode meteringMode READ meteringMode WRITE setMeteringMode NOTIFY meteringModeChanged)
     Q_ENUMS(DeclarativeCamera::ExposureMode)
+    Q_ENUMS(DeclarativeCamera::MeteringMode)
 public:
     DeclarativeExposure(QCamera *camera, QObject *parent = 0);
     ~DeclarativeExposure();
@@ -27,10 +29,13 @@ public:
 
     int iso() const;
     void setIso(int iso);
-    void setAutoIsoSensitivity();
+    Q_INVOKABLE void setAutoIsoSensitivity();
     bool hasAutomaticIso() const;
 
     QVariantList supportedIso() const;
+
+    DeclarativeCamera::MeteringMode meteringMode() const;
+    void setMeteringMode(DeclarativeCamera::MeteringMode mode);
 
 Q_SIGNALS:
     void compensationChanged();
@@ -38,6 +43,7 @@ Q_SIGNALS:
     void isoChanged();
     void automaticIsoChanged();
     void supportedIsoChanged();
+    void meteringModeChanged();
 
 private Q_SLOTS:
     void parameterChanged(int parameter);

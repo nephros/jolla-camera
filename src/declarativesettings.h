@@ -47,6 +47,8 @@ class DeclarativeSettings : public QObject
     Q_PROPERTY(int effectiveFlash READ effectiveFlash NOTIFY flashChanged)
     Q_PROPERTY(int exposureCompensation READ exposureCompensation WRITE setExposureCompensation NOTIFY exposureChanged)
     Q_PROPERTY(int exposureMode READ exposureMode NOTIFY exposureChanged)
+    Q_PROPERTY(int meteringMode READ meteringMode WRITE setMeteringMode NOTIFY meteringModeChanged)
+    Q_PROPERTY(int effectiveMeteringMode READ effectiveMeteringMode NOTIFY meteringModeChanged)
     Q_PROPERTY(QString photoDirectory READ photoDirectory CONSTANT)
     Q_PROPERTY(QString videoDirectory READ videoDirectory CONSTANT)
     Q_ENUMS(ShootingMode)
@@ -73,7 +75,9 @@ public:
         WhiteBalance = 0x04,
         FocusDistance = 0x08,
         Flash = 0x10,
-        Exposure = 0x20
+        Exposure = 0x20,
+        MeteringMode = 0x40
+
     };
 
     Q_DECLARE_FLAGS(Properties, PropertyFlag)
@@ -102,12 +106,10 @@ public:
     int whiteBalance() const;
     int effectiveWhiteBalance() const;
     void setWhiteBalance(int balance);
-    bool shootingModeWhiteBalance() const;
 
     int focusDistance() const;
     int effectiveFocusDistance() const;
     void setFocusDistance(int distance);
-    bool shootingModeFocusDistance() const;
 
     int videoFocus() const;
     void setVideoFocus(int focus);
@@ -115,12 +117,14 @@ public:
     int flash() const;
     int effectiveFlash() const;
     void setFlash(int flash);
-    bool shootingModeFlash() const;
 
     int exposureCompensation() const;
     void setExposureCompensation(int compensation);
     int exposureMode() const;
-    bool shootingModeExposure() const;
+
+    int meteringMode() const;
+    void setMeteringMode(int mode);
+    int effectiveMeteringMode() const;
 
     QString photoDirectory() const;
     QString videoDirectory() const;
@@ -134,6 +138,7 @@ signals:
     void videoFocusChanged();
     void flashChanged();
     void exposureChanged();
+    void meteringModeChanged();
 
 private:
     MGConfItem m_imageRatio_4_3;
@@ -148,6 +153,7 @@ private:
     MGConfItem m_videoFocus;
     MGConfItem m_flash;
     MGConfItem m_exposureCompensation;
+    MGConfItem m_meteringMode;
 };
 
 #endif

@@ -12,8 +12,6 @@ Compass {
     property bool _recording: camera.videoRecorder.recorderState == CameraRecorder.RecordingState
     property bool _showStopIcon: true
 
-    property int metering: 0
-
     onAnimatingChanged: {
         if (!animating) {
             _showStopIcon = _recording
@@ -37,17 +35,17 @@ Compass {
 
     topAction {
         smallIcon: {
-            switch (compass.metering) {
-            case 0:
+            switch (settings.meteringMode) {
+            case Camera.MeteringMatrix:
                 return "image://theme/icon-camera-metering-matrix"
-            case 1:
-                return "image://theme/icon-camera-metering-spot"
-            case 2:
+            case Camera.MeteringAverage:
                 return "image://theme/icon-camera-metering-weighted"
+            case Camera.MeteringSpot:
+                return "image://theme/icon-camera-metering-spot"
             }
         }
         largeIcon: "image://theme/icon-camera-metering-mode"
-        enabled: !compass._recording
+        enabled: !compass._recording && !(settings.shootingModeProperties & Settings.MeteringMode)
         onActivated: compass.openMenu(meteringMenu)
     }
     leftAction {
@@ -110,7 +108,6 @@ Compass {
 
     keepSelection: camera.captureMode == Camera.CaptureVideo && camera.cameraStatus != Camera.ActiveStatus
 
-
     Component {
         id: meteringMenu
 
@@ -120,15 +117,15 @@ Compass {
 
              CompassMenuItem {
                 icon: "image://theme/icon-camera-metering-matrix"
-                onClicked: compass.metering = 0
+                onClicked: settings.meteringMode = Camera.MeteringMatrix
             }
+            CompassMenuItem {
+                 icon: "image://theme/icon-camera-metering-weighted"
+                 onClicked: settings.meteringMode = Camera.MeteringAverage
+             }
             CompassMenuItem {
                 icon: "image://theme/icon-camera-metering-spot"
-                onClicked: compass.metering = 1
-            }
-            CompassMenuItem {
-                icon: "image://theme/icon-camera-metering-weighted"
-                onClicked: compass.metering = 2
+                onClicked: settings.meteringMode = Camera.MeteringSpot
             }
         }
     }

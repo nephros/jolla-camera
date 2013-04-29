@@ -6,6 +6,7 @@
 #include <QDeclarativeParserStatus>
 
 #include <QCamera>
+#include <QCameraExposure>
 #include <QCameraImageCaptureControl>
 #include <QCameraImageProcessingControl>
 #include <QImageEncoderControl>
@@ -37,6 +38,7 @@ class DeclarativeCamera : public QObject
     Q_ENUMS(FlashMode)
     Q_ENUMS(ExposureMode)
     Q_ENUMS(FocusMode)
+    Q_ENUMS(MeteringMode)
 public:
     enum Status
     {
@@ -99,6 +101,13 @@ public:
         FocusAuto = QCameraFocus::AutoFocus,
         FocusContinuous = QCameraFocus::ContinuousFocus,
         FocusMacro = QCameraFocus::MacroFocus
+    };
+
+    enum MeteringMode
+    {
+        MeteringMatrix = QCameraExposure::MeteringMatrix,
+        MeteringAverage = QCameraExposure::MeteringAverage,
+        MeteringSpot = QCameraExposure::MeteringSpot
     };
 
     DeclarativeCamera(QObject *parent = 0);

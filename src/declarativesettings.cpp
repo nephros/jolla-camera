@@ -19,12 +19,13 @@ enum PropertyFlag {
     WhiteBalance = 0x04,
     FocusDistance = 0x08,
     Flash = 0x10,
-    Exposure = 0x20
+    Exposure = 0x20,
+    MeteringMode = 0x040
 };
 }
 
 static const int g_shootingModeProperties[] = {
-    /*Auto      */  Iso | WhiteBalance | FocusDistance | Flash | Exposure | Flash,
+    /*Auto      */  Iso | WhiteBalance | FocusDistance | Flash | Exposure | Flash | MeteringMode,
     /*Program   */  0,
     /*Macro     */  FocusDistance | Exposure,
     /*Sports    */  Exposure,
@@ -46,6 +47,7 @@ DeclarativeSettings::DeclarativeSettings(QObject *parent)
     , m_videoFocus("/desktop/jolla/camera/videoFocus")
     , m_flash("/desktop/jolla/camera/flash")
     , m_exposureCompensation("/desktop/jolla/camera/exposureCompensation")
+    , m_meteringMode("/desktop/jolla/camera/meteringMode")
 {
     connect(&m_aspectRatio, SIGNAL(valueChanged()), this, SIGNAL(aspectRatioChanged()));
     connect(&m_iso, SIGNAL(valueChanged()), this, SIGNAL(isoChanged()));
@@ -54,6 +56,7 @@ DeclarativeSettings::DeclarativeSettings(QObject *parent)
     connect(&m_videoFocus, SIGNAL(valueChanged()), this, SIGNAL(videoFocusChanged()));
     connect(&m_flash, SIGNAL(valueChanged()), this, SIGNAL(flashChanged()));
     connect(&m_exposureCompensation, SIGNAL(valueChanged()), this, SIGNAL(exposureChanged()));
+    connect(&m_meteringMode, SIGNAL(valueChanged()), this, SIGNAL(meteringModeChanged()));
 
     QDir(photoDirectory()).mkpath(QLatin1String("."));
     QDir(videoDirectory()).mkpath(QLatin1String("."));
@@ -116,6 +119,8 @@ void DeclarativeSettings::setShootingMode(ShootingMode mode)
             emit flashChanged();
         if (changedProperties & Exposure)
             emit exposureChanged();
+        if (changedProperties & MeteringMode)
+            emit meteringModeChanged();
 
         emit shootingModeChanged();
     }
@@ -248,22 +253,6 @@ void DeclarativeSettings::setFlash(int flash)
     m_flash.set(flash);
 }
 
-bool DeclarativeSettings::shootingModeFlash() const
-{
-    switch (shootingMode()) {
-    case Auto:
-        return true;
-    case Program:
-    case Macro:
-    case Sports:
-    case Landscape:
-    case Portrait:
-        return false;
-    default:
-        return false;
-    }
-}
-
 int DeclarativeSettings::exposureCompensation() const
 {
     return m_exposureCompensation.value(0).value<int>();
@@ -292,6 +281,31 @@ int DeclarativeSettings::exposureMode() const
     default:
         return QCameraExposure::ExposureAuto;
     }
+}
+
+int DeclarativeSettings::meteringMode() const
+{
+    return m_meteringMode.value(QCameraExposure::MeteringMatrix).value<int>();
+}
+
+void DeclarativeSettings::setMeteringMode(int mode)
+{
+    m_meteringMode.set(mode);
+}
+
+int DeclarativeSettings::effectiveMeteringMode() const
+{
+    switch (shootingMode()) {
+    case Auto:
+        return QCameraExposure::MeteringMatrix;
+    case Macro:
+    case Landscape:
+    case Program:
+    case Sports:
+    case Portrait:
+        return meteringMode();
+    }
+    return meteringMode();
 }
 
 QString DeclarativeSettings::photoDirectory() const

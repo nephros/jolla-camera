@@ -55,6 +55,7 @@ SplitItem {
         exposure {
             exposureMode: settings.exposureMode
             exposureCompensation: settings.exposureCompensation / 2.0
+            meteringMode: settings.effectiveMeteringMode
         }
     }
 

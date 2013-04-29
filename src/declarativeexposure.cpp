@@ -89,6 +89,21 @@ QVariantList DeclarativeExposure::supportedIso() const
             : QVariantList();
 }
 
+DeclarativeCamera::MeteringMode DeclarativeExposure::meteringMode() const
+{
+    return m_control
+            ? DeclarativeCamera::MeteringMode(m_control->meteringMode())
+            : DeclarativeCamera::MeteringMatrix;
+}
+
+void DeclarativeExposure::setMeteringMode(DeclarativeCamera::MeteringMode mode)
+{
+    if (m_control) {
+        m_control->setMeteringMode(QCameraExposure::MeteringMode(mode));
+        emit meteringModeChanged();
+    }
+}
+
 void DeclarativeExposure::parameterChanged(int parameter)
 {
     if (parameter == QCameraExposureControl::ExposureCompensation) {
