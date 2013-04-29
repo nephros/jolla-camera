@@ -17,26 +17,26 @@ Compass {
 
     buttonEnabled: camera.captureMode == Camera.CaptureStillImage
 
-    north {
+    topAction {
         smallIcon: "image://theme/icon-camera-zoom-in"
         largeIcon: "image://theme/icon-camera-zoom-tele"
         enabled: camera.digitalZoom < camera.maximumDigitalZoom
                     && compass.zoomIndex < compass._zoomLevels.length
         onActivated: ++compass.zoomIndex
     }
-    west {
+    leftAction {
         smallIcon: "image://theme/icon-camera-wb-default"
         largeIcon: "image://theme/icon-camera-whitebalance"
         enabled: compass.buttonEnabled && !(settings.shootingModeProperties & Settings.WhiteBalance)
         onActivated: compass.openMenu(whiteBalanceMenu)
     }
-    east {
+    rightAction {
         smallIcon: "image://theme/icon-camera-timer-off"
         largeIcon: "image://theme/icon-camera-timer"
         enabled: compass.buttonEnabled
         onActivated: compass.openMenu(timerMenu)
     }
-    south {
+    bottomAction {
         smallIcon: "image://theme/icon-camera-zoom-out"
         largeIcon: "image://theme/icon-camera-zoom-wide"
         enabled: camera.digitalZoom > 1.0 && compass.zoomIndex > 0

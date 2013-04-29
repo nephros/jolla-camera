@@ -7,10 +7,10 @@ Item {
 
     signal clicked
 
-    property alias north: north
-    property alias west: west
-    property alias east: east
-    property alias south: south
+    property alias topAction: topAction
+    property alias leftAction: leftAction
+    property alias rightAction: rightAction
+    property alias bottomAction: bottomAction
     property alias icon: centerImage.source
     property alias buttonEnabled: centerImage.visible
 
@@ -23,8 +23,8 @@ Item {
 
     property bool _drag
     property bool _verticalDrag
-    property CompassAction _verticalAction: dragArea.y > 0 ? north: south
-    property CompassAction _horizontalAction: dragArea.x > 0 ? west : east
+    property CompassAction _verticalAction: dragArea.y > 0 ? topAction: bottomAction
+    property CompassAction _horizontalAction: dragArea.x > 0 ? leftAction : rightAction
     property CompassAction _currentAction: _verticalDrag ? _verticalAction : _horizontalAction
 
     property real _verticalPosition: 2 * dragArea.y + (dragArea.y > 0 ? - compass.height : compass.height)
@@ -37,12 +37,14 @@ Item {
     property real _menuOpacity: 1.0 - buttons.opacity
     property bool _closingMenu
 
-    property QtObject buttonBuzz: Qt.createQmlObject("
-                import QtMobility.feedback 1.1
-                ThemeEffect {
-                    effect: ThemeEffect.BasicButton
-                }
-                ", compass)
+    property QtObject buttonBuzz
+
+    Component.onCompleted: {
+        buttonBuzz = Qt.createQmlObject(
+                    "import QtQuick 1.1; import QtMobility.feedback 1.1; ThemeEffect { effect: ThemeEffect.BasicButton }",
+                    compass,
+                    'ThemeEffect')
+    }
 
     onActivatedChanged: {
         if (activated && buttonBuzz) {
@@ -96,10 +98,10 @@ Item {
     width: theme.itemSizeExtraLarge
     height: width
 
-    CompassAction { id: north }
-    CompassAction { id: west }
-    CompassAction { id: east }
-    CompassAction { id: south }
+    CompassAction { id: topAction }
+    CompassAction { id: leftAction }
+    CompassAction { id: rightAction }
+    CompassAction { id: bottomAction }
 
     MouseArea {
         id: horizontalDrag
@@ -115,8 +117,8 @@ Item {
             filterChildren: true
             target: dragArea
             axis: Drag.XAxis
-            minimumX: east.enabled ? -compass.width / 2 : 0
-            maximumX: west.enabled ? compass.width / 2 : 0
+            minimumX: rightAction.enabled ? -compass.width / 2 : 0
+            maximumX: leftAction.enabled ? compass.width / 2 : 0
 
             onActiveChanged: {
                 if (drag.active) {
@@ -131,7 +133,7 @@ Item {
             if (compass.activated) {
                 compass._currentAction.activated()
             }
-            if (!compass._menu && !compass.keepSelection) {
+            if (compass._drag && !compass._menu && (!compass.activated || !compass.keepSelection)) {
                 horizontalAnimation.start()
             }
         }
@@ -152,8 +154,8 @@ Item {
             drag {
                 target: dragArea
                 axis: Drag.YAxis
-                minimumY: south.enabled ? -compass.height / 2 : 0
-                maximumY: north.enabled ? compass.height / 2 : 0
+                minimumY: bottomAction.enabled ? -compass.height / 2 : 0
+                maximumY: topAction.enabled ? compass.height / 2 : 0
 
                 onActiveChanged: {
                     if (drag.active) {
@@ -167,7 +169,7 @@ Item {
                 if (compass.activated) {
                     compass._currentAction.activated()
                 }
-                if (!compass._menu && !compass.keepSelection) {
+                if (compass._drag && !compass._menu && (!compass.activated || !compass.keepSelection)) {
                     verticalAnimation.start()
                 }
             }
@@ -225,32 +227,32 @@ Item {
                     anchors { top: parent.top; horizontalCenter: parent.horizontalCenter; margins: theme.paddingSmall }
                     width: 24; height: 24
                     fillMode: Image.PreserveAspectFit
-                    source: north.smallIcon
-                    visible: north.enabled
+                    source: topAction.smallIcon
+                    visible: topAction.enabled
                 }
 
                 Image {
                     anchors { left: parent.left; verticalCenter: parent.verticalCenter; margins: theme.paddingSmall }
                     width: 24; height: 24
                     fillMode: Image.PreserveAspectFit
-                    source: west.smallIcon
-                    visible: west.enabled
+                    source: leftAction.smallIcon
+                    visible: leftAction.enabled
                 }
 
                 Image {
                     anchors { right: parent.right; verticalCenter: parent.verticalCenter; margins: theme.paddingSmall }
                     width: 24; height: 24
                     fillMode: Image.PreserveAspectFit
-                    source: east.smallIcon
-                    visible: east.enabled
+                    source: rightAction.smallIcon
+                    visible: rightAction.enabled
                 }
 
                 Image {
                     anchors { bottom: parent.bottom; horizontalCenter: parent.horizontalCenter; margins: theme.paddingSmall }
                     width: 24; height: 24
                     fillMode: Image.PreserveAspectFit
-                    source: south.smallIcon
-                    visible: south.enabled
+                    source: bottomAction.smallIcon
+                    visible: bottomAction.enabled
                 }
 
                 Image {

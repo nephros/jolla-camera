@@ -35,7 +35,7 @@ Compass {
         }
     }
 
-    north {
+    topAction {
         smallIcon: {
             switch (compass.metering) {
             case 0:
@@ -50,7 +50,7 @@ Compass {
         enabled: !compass._recording
         onActivated: compass.openMenu(meteringMenu)
     }
-    west {
+    leftAction {
         smallIcon: {
             switch (settings.flash) {
             case Camera.FlashAuto:
@@ -67,7 +67,7 @@ Compass {
         enabled: !compass._recording && !(settings.shootingModeProperties & Settings.Flash)
         onActivated: compass.openMenu(flashMenu)
     }
-    east {
+    rightAction {
         smallIcon: {
             switch (settings.exposureCompensation) {
             case -2:
@@ -91,7 +91,7 @@ Compass {
         enabled: !compass._recording && !(settings.shootingModeProperties & Settings.Exposure)
         onActivated: compass.openMenu(exposureMenu)
     }
-    south {
+    bottomAction {
         smallIcon: !compass._recording ? "image://theme/icon-camera-record" : "image://theme/icon-camera-stop"
         largeIcon: !compass._showStopIcon ? "image://theme/icon-camera-record" : "image://theme/icon-camera-stop"
         onActivated: {
