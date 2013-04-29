@@ -7,6 +7,8 @@
 #include <QDeclarativeInfo>
 #include <QDateTime>
 #include <QDir>
+#include <QImageEncoderSettings>
+#include <QVideoEncoderSettings>
 
 DeclarativeCamera::DeclarativeCamera(QObject *parent)
     : QObject(parent)
@@ -130,10 +132,14 @@ QCamera *DeclarativeCamera::camera() const
 DeclarativeImageCapture::DeclarativeImageCapture(QCamera *camera, QObject *parent)
     : QObject(parent)
     , m_camera(camera)
+    , m_imageEncoderControl(0)
 {
     if (m_camera->service()
             && (m_captureControl = m_camera->service()->requestControl<QCameraImageCaptureControl *>())) {
         // connections.
+    }
+    if (m_camera->service()
+            && (m_imageEncoderControl = m_camera->service()->requestControl<QImageEncoderControl *>())) {
     }
 }
 
@@ -155,13 +161,17 @@ void DeclarativeImageCapture::capture()
 
 QSize DeclarativeImageCapture::resolution() const
 {
-    return m_resolution;
+    return m_imageEncoderControl
+            ? m_imageEncoderControl->imageSettings().resolution()
+            : QSize();
 }
 
 void DeclarativeImageCapture::setResolution(const QSize &resolution)
 {
-    if (m_resolution != resolution) {
-        m_resolution = resolution;
+    if (m_imageEncoderControl) {
+        QImageEncoderSettings settings = m_imageEncoderControl->imageSettings();
+        settings.setResolution(resolution);
+        m_imageEncoderControl->setImageSettings(settings);
         emit resolutionChanged();
     }
 }
@@ -169,12 +179,16 @@ void DeclarativeImageCapture::setResolution(const QSize &resolution)
 DeclarativeVideoRecorder::DeclarativeVideoRecorder(QCamera *camera, QObject *parent)
     : QObject(parent)
     , m_camera(camera)
-    , m_frameRate(15)
+    , m_recorderControl(0)
+    , m_videoEncoderControl(0)
 {
     if (m_camera->service()
             && (m_recorderControl = m_camera->service()->requestControl<QMediaRecorderControl *>())) {
         connect(m_recorderControl, SIGNAL(stateChanged(QMediaRecorder::State)),
                 this, SIGNAL(stateChanged()));
+    }
+    if (m_camera->service()
+            && (m_videoEncoderControl = m_camera->service()->requestControl<QVideoEncoderControl *>())) {
     }
 }
 
@@ -194,7 +208,7 @@ void DeclarativeVideoRecorder::record()
 {
     if (m_recorderControl) {
         const QString fileName = QDateTime::currentDateTimeUtc().toString(
-                    QLatin1String("'/home/nemo/Videos/Camera/'yyyyMMdd-hhmmss'.mp4'"));
+                    QLatin1String("'/home/nemo/Videos/Camera/'yyyyMMdd-hhmmss'.mkv'"));
         m_recorderControl->setOutputLocation(QUrl::fromLocalFile(fileName));
         m_recorderControl->record();
     }
@@ -209,27 +223,35 @@ void DeclarativeVideoRecorder::stop()
 
 QSize DeclarativeVideoRecorder::resolution() const
 {
-    return m_resolution;
+    return m_videoEncoderControl
+            ? m_videoEncoderControl->videoSettings().resolution()
+            : QSize();
 }
 
 void DeclarativeVideoRecorder::setResolution(const QSize &resolution)
 {
-    if (m_resolution != resolution) {
-        m_resolution = resolution;
+    if (m_videoEncoderControl) {
+        QVideoEncoderSettings settings = m_videoEncoderControl->videoSettings();
+        settings.setResolution(resolution);
+        m_videoEncoderControl->setVideoSettings(settings);
         emit resolutionChanged();
     }
 }
 
 qreal DeclarativeVideoRecorder::frameRate() const
 {
-    return m_frameRate;
+    return m_videoEncoderControl
+            ? m_videoEncoderControl->videoSettings().frameRate()
+            : 15;
 }
 
 void DeclarativeVideoRecorder::setFrameRate(qreal rate)
 {
-    if (m_frameRate != rate) {
-        m_frameRate = rate;
-        emit frameRateChanged();
+    if (m_videoEncoderControl) {
+        QVideoEncoderSettings settings = m_videoEncoderControl->videoSettings();
+        settings.setFrameRate(rate);
+        m_videoEncoderControl->setVideoSettings(settings);
+        emit resolutionChanged();
     }
 }
 

@@ -8,7 +8,9 @@
 #include <QCamera>
 #include <QCameraImageCaptureControl>
 #include <QCameraImageProcessingControl>
+#include <QImageEncoderControl>
 #include <QMediaRecorderControl>
+#include <QVideoEncoderControl>
 
 class DeclarativeExposure;
 class DeclarativeFlash;
@@ -156,6 +158,7 @@ signals:
 private:
     QCamera *m_camera;
     QCameraImageCaptureControl *m_captureControl;
+    QImageEncoderControl *m_imageEncoderControl;
     QSize m_resolution;
 };
 
@@ -196,8 +199,7 @@ signals:
 private:
     QCamera *m_camera;
     QMediaRecorderControl *m_recorderControl;
-    QSize m_resolution;
-    qreal m_frameRate;
+    QVideoEncoderControl *m_videoEncoderControl;
 };
 
 class DeclarativeImageProcessing : public QObject

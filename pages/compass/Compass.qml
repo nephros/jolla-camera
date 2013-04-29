@@ -19,7 +19,7 @@ Item {
     property bool animating: horizontalAnimation.running || verticalAnimation.running
     property bool expanded: _menu != null
 
-    property bool pressed: (horizontalDrag.pressed || verticalDrag.pressed) && !_drag
+    property bool pressed: (horizontalDrag.pressed || verticalDrag.pressed) && !_drag && centerImage.visible
 
     property bool _drag
     property bool _verticalDrag
