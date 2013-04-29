@@ -50,6 +50,7 @@ SplitItem {
         focus.focusMode: captureMode == Camera.CaptureStillImage
                     ? settings.effectiveFocusDistance
                     : settings.videoFocus
+        flash.flashMode: settings.effectiveFlash
         imageProcessing.whiteBalanceMode: settings.effectiveWhiteBalance
 
         exposure {
