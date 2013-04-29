@@ -30,7 +30,10 @@ Page {
         pressDelay: 50
         boundsBehavior: Flickable.StopAtBounds
 
-        interactive: !captureView.menuOpen && !galleryView.menuOpen
+        // Disallow swiping into the camera roll for the time being as it is impossible to swipe
+        // out again.
+//        interactive: !captureView.menuOpen && !galleryView.menuOpen
+        interactive: false
 
         model: VisualItemModel {
             CaptureView {
