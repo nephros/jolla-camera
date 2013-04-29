@@ -260,12 +260,12 @@ bool DeclarativeSettings::shootingModeFlash() const
     }
 }
 
-qreal DeclarativeSettings::exposureCompensation() const
+int DeclarativeSettings::exposureCompensation() const
 {
-    return m_exposureCompensation.value(0).value<qreal>();
+    return m_exposureCompensation.value(0).value<int>();
 }
 
-void DeclarativeSettings::setExposureCompensation(qreal compensation)
+void DeclarativeSettings::setExposureCompensation(int compensation)
 {
     m_exposureCompensation.set(compensation);
 }

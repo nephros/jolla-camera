@@ -32,7 +32,6 @@ SplitItem {
         }
     }
 
-    //
     Component.onCompleted: _complete = true
 
     Camera {
@@ -55,7 +54,7 @@ SplitItem {
 
         exposure {
             exposureMode: settings.exposureMode
-            exposureCompensation: settings.exposureCompensation
+            exposureCompensation: settings.exposureCompensation / 2.0
         }
     }
 

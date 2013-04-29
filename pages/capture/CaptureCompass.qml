@@ -68,21 +68,21 @@ Compass {
         onActivated: compass.openMenu(flashMenu)
     }
     rightAction {
-        smallIcon: {
+        smallIcon: {    // Exposure is value * 2 so it can be stored as an integer
             switch (settings.exposureCompensation) {
-            case -2:
+            case -4:
                 return "image://theme/icon-camera-ec-minus2"
-            case -1.5:
+            case -3:
                 return "image://theme/icon-camera-ec-minus15"
-            case -1:
+            case -2:
                 return "image://theme/icon-camera-ec-minus1"
             case 0:
                 return "image://theme/icon-camera-exposure-compensation"
-            case 1:
-                return "image://theme/icon-camera-ec-plus1"
-            case 1.5:
-                return "image://theme/icon-camera-ec-plus15"
             case 2:
+                return "image://theme/icon-camera-ec-plus1"
+            case 3:
+                return "image://theme/icon-camera-ec-plus15"
+            case 4:
                 return "image://theme/icon-camera-ec-plus2"
             }
         }
@@ -168,27 +168,31 @@ Compass {
 
             CompassMenuItem {
                 icon: "image://theme/icon-camera-ec-minus2"
-                onClicked: settings.exposureCompensation = -2
+                onClicked: settings.exposureCompensation = -4
             }
             CompassMenuItem {
                 icon: "image://theme/icon-camera-ec-minus15"
-                onClicked: settings.exposureCompensation = -1.5
+                onClicked: settings.exposureCompensation = -3
             }
             CompassMenuItem {
                 icon: "image://theme/icon-camera-ec-minus1"
-                onClicked: settings.exposureCompensation = -1
+                onClicked: settings.exposureCompensation = -2
+            }
+            CompassMenuItem {
+                icon: "image://theme/icon-camera-exposure-compensation"
+                onClicked: settings.exposureCompensation = 0
             }
             CompassMenuItem {
                 icon: "image://theme/icon-camera-ec-plus1"
-                onClicked: settings.exposureCompensation = 1
+                onClicked: settings.exposureCompensation = 2
             }
             CompassMenuItem {
                 icon: "image://theme/icon-camera-ec-plus15"
-                onClicked: settings.exposureCompensation = 1.5
+                onClicked: settings.exposureCompensation = 3
             }
             CompassMenuItem {
                 icon: "image://theme/icon-camera-ec-plus2"
-                onClicked: settings.exposureCompensation = 2
+                onClicked: settings.exposureCompensation = 4
             }
         }
     }

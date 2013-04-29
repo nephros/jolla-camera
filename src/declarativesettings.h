@@ -45,7 +45,7 @@ class DeclarativeSettings : public QObject
     Q_PROPERTY(int effectiveFocusDistance READ effectiveFocusDistance NOTIFY focusDistanceChanged)
     Q_PROPERTY(int flash READ flash WRITE setFlash NOTIFY flashChanged)
     Q_PROPERTY(int effectiveFlash READ effectiveFlash NOTIFY flashChanged)
-    Q_PROPERTY(qreal exposureCompensation READ exposureCompensation WRITE setExposureCompensation NOTIFY exposureChanged)
+    Q_PROPERTY(int exposureCompensation READ exposureCompensation WRITE setExposureCompensation NOTIFY exposureChanged)
     Q_PROPERTY(int exposureMode READ exposureMode NOTIFY exposureChanged)
     Q_PROPERTY(QString photoDirectory READ photoDirectory CONSTANT)
     Q_PROPERTY(QString videoDirectory READ videoDirectory CONSTANT)
@@ -117,8 +117,8 @@ public:
     void setFlash(int flash);
     bool shootingModeFlash() const;
 
-    qreal exposureCompensation() const;
-    void setExposureCompensation(qreal compensation);
+    int exposureCompensation() const;
+    void setExposureCompensation(int compensation);
     int exposureMode() const;
     bool shootingModeExposure() const;
 

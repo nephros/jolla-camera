@@ -12,6 +12,8 @@ BackgroundItem {
     Image {
         id: image
 
+        // temporary while some images do not fit.
+        width: 24; height: 24; fillMode: Image.PreserveAspectFit
         anchors.centerIn: parent
     }
 }
