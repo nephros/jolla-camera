@@ -1,2 +1,4 @@
 plugin jollacameraplugin
-CapturePanel 1.0 /usr/share/jolla-camera/pages/controls/CapturePanel.qml
+Compass 1.0 /usr/share/jolla-camera/pages/compass/Compass.qml
+CompassMenu 1.0 /usr/share/jolla-camera/pages/compass/CompassMenu.qml
+CompassMenuItem 1.0 /usr/share/jolla-camera/pages/compass/CompassMenuItem.qml

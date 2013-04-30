@@ -5,7 +5,8 @@ DeclarativeFlash::DeclarativeFlash(QCamera *camera, QObject *parent)
     , m_camera(camera)
     , m_control(0)
 {
-    if ((m_control = m_camera->service()->requestControl<QCameraFlashControl *>())) {
+    if (m_camera->service()
+            && (m_control = m_camera->service()->requestControl<QCameraFlashControl *>())) {
         connect(m_control, SIGNAL(flashReady(bool)), this, SIGNAL(readyChanged()));
     }
 }
@@ -17,12 +18,12 @@ DeclarativeFlash::~DeclarativeFlash()
     }
 }
 
-DeclarativeFlash::Mode DeclarativeFlash::mode() const
+DeclarativeCamera::FlashMode DeclarativeFlash::mode() const
 {
-    return m_control ? Mode(int(m_control->flashMode())) : Off;
+    return m_control ? DeclarativeCamera::FlashMode(int(m_control->flashMode())) : DeclarativeCamera::FlashOff;
 }
 
-void DeclarativeFlash::setMode(Mode mode)
+void DeclarativeFlash::setMode(DeclarativeCamera::FlashMode mode)
 {
     if (m_control && m_control->flashMode() != QCameraExposure::FlashModes(mode)) {
         m_control->setFlashMode(QCameraExposure::FlashModes(mode));

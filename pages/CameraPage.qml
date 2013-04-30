@@ -1,68 +1,61 @@
 import QtQuick 1.1
 import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
-import "controls"
+import com.jolla.camera.settings 1.0
+import QtMultimediaKit 1.1
+import "capture"
+import "settings"
+import "gallery"
+import "views"
 
 Page {
     id: page
 
-    allowedOrientations: Orientation.Portrait | Orientation.Landscape
+    property bool windowActive
 
-    Camera {
-        id: camera
-    }
+    allowedOrientations: Orientation.Landscape
 
-    MouseArea {
-        anchors.fill: parent
+    ListView {
+        id: listView
 
-        onClicked: {
-            settingsPanel.open = false
-            menusPanel.open = true
-            capturePanel.open = true
-        }
-    }
+        width: page.width
+        height: page.height
 
-    Item {
-        clip: settingsPanel.expanded
-        anchors {
-            fill: parent
-            leftMargin: page.orientation == Orientation.Landscape ? settingsPanel.visibleSize : 0
-            topMargin: page.orientation == Orientation.Portrait ? settingsPanel.visibleSize : 0
-        }
+        orientation: ListView.Horizontal
+        layoutDirection: Qt.RightToLeft
+        snapMode: ListView.SnapOneItem
+        highlightRangeMode: ListView.StrictlyEnforceRange
+        highlightMoveDuration: 500
 
-        CameraViewport {
-            x: -parent.x
-            y: -parent.y
-            width: page.width
-            height: page.height
+        pressDelay: 50
+        boundsBehavior: Flickable.StopAtBounds
 
-            camera: camera
+        // Disallow swiping into the camera roll for the time being as it is impossible to swipe
+        // out again.
+//        interactive: !captureView.menuOpen && !galleryView.menuOpen
+        interactive: false
 
-            MenusPanel {
-                id: menusPanel
-                open: true
-                dock: page.orientation == Orientation.Portrait ? Dock.Right : Dock.Top
-                camera: camera
+        model: VisualItemModel {
+            CaptureView {
+                id: captureView
 
-                onOpenSettings: settingsPanel.show()
+                width: page.width
+                height: page.height
+                active: !listView.atXBeginning
+                windowActive: page.windowActive
+
+                onOpenCameraRoll: {
+                    listView.currentIndex = 1
+                }
+            }
+            GalleryView {
+                id: galleryView
+
+                width: page.width
+                height: page.height
+                active: !listView.atXEnd
+                windowActive: page.windowActive
             }
         }
     }
-
-    SettingsPanel {
-        id: settingsPanel
-
-        camera: camera
-        dock: page.orientation == Orientation.Portrait ? Dock.Top : Dock.Left
-
-        onOpenChanged: capturePanel.open = !open
-    }
-
-    CapturePanel {
-        id: capturePanel
-        open: true
-        camera: camera
-        dock: page.orientation == Orientation.Portrait ? Dock.Bottom : Dock.Right
-    }
-
 }

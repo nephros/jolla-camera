@@ -54,11 +54,9 @@ DeclarativeFocus::DeclarativeFocus(QCamera *camera, QObject *parent)
     : QObject(parent)
     , m_camera(camera)
     , m_control(0)
-    , m_mode(OneShot)
-    , m_target(Scene)
-    , m_distance(Normal)
 {
-    m_control = m_camera->service()->requestControl<QCameraFocusControl *>();
+    if (QMediaService *service = m_camera->service())
+        m_control = service->requestControl<QCameraFocusControl *>();
 }
 
 DeclarativeFocus::~DeclarativeFocus()
@@ -68,51 +66,18 @@ DeclarativeFocus::~DeclarativeFocus()
     }
 }
 
-DeclarativeFocus::Mode DeclarativeFocus::mode() const
+DeclarativeCamera::FocusMode DeclarativeFocus::mode() const
 {
-    return m_mode;
+    return m_control
+            ? DeclarativeCamera::FocusMode(m_control->focusMode())
+            : DeclarativeCamera::FocusAuto;
 }
 
-void DeclarativeFocus::setMode(Mode mode)
+void DeclarativeFocus::setMode(DeclarativeCamera::FocusMode mode)
 {
-    if (m_mode != mode) {
-        m_mode = mode;
-        if (m_control) {
-            m_control->setFocusMode(QCameraFocus::FocusMode(m_mode | m_mode));
-        }
+    if (m_control) {
+        m_control->setFocusMode(QCameraFocus::FocusMode(mode));
         emit modeChanged();
-    }
-}
-
-DeclarativeFocus::Target DeclarativeFocus::target() const
-{
-    return m_target;
-}
-
-void DeclarativeFocus::setTarget(Target target)
-{
-    if (m_target != target) {
-        m_target = target;
-        if (m_control) {
-            m_control->setFocusPointMode(QCameraFocus::FocusPointMode(target));
-        }
-        emit targetChanged();
-    }
-}
-
-DeclarativeFocus::Distance DeclarativeFocus::distance() const
-{
-    return m_distance;
-}
-
-void DeclarativeFocus::setDistance(Distance distance)
-{
-    if (m_distance != distance) {
-        m_distance = distance;
-        if (m_control) {
-            m_control->setFocusMode(QCameraFocus::FocusMode(m_mode | m_distance));
-        }
-        emit distanceChanged();
     }
 }
 

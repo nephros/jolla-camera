@@ -30,6 +30,15 @@ void DeclarativeCameraViewport::setCamera(DeclarativeCamera *camera)
     }
 }
 
+DeclarativeCameraViewport::FillMode DeclarativeCameraViewport::fillMode() const
+{
+    return PreserveAspectFit;
+}
+
+void DeclarativeCameraViewport::setFillMode(FillMode)
+{
+}
+
 void DeclarativeCameraViewport::geometryChanged(const QRectF &newGeometry, const QRectF &)
 {
     m_videoItem.setSize(newGeometry.size());

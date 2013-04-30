@@ -8,7 +8,14 @@ CAMERA_SOURCE_PATH = $$PWD/../../../../../src
 INCLUDEPATH += $$CAMERA_SOURCE_PATH
 
 SOURCES += \
-        camera.cpp
+        camera.cpp \
+        $$CAMERA_SOURCE_PATH/declarativecliparea.cpp \
+        $$CAMERA_SOURCE_PATH/declarativecompassaction.cpp \
+
+HEADERS += \
+        $$CAMERA_SOURCE_PATH/declarativecliparea.h \
+        $$CAMERA_SOURCE_PATH/declarativecompassaction.h \
+
 
 import.files = qmldir
 import.path = $$TARGETPATH
