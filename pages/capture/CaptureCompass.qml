@@ -18,16 +18,16 @@ Compass {
         }
     }
 
-    function startRecording() {
+    function _startRecording() {
         switch (camera.cameraStatus) {
         case Camera.ActiveStatus:
-            camera.cameraStatusChanged.disconnect(startRecording)
+            camera.cameraStatusChanged.disconnect(_startRecording)
             camera.videoRecorder.record()
             break;
         case Camera.UnavailableStatus:
         case Camera.UnloadedStatus:
         case Camera.StandbyStatus:
-            camera.cameraStatusChanged.disconnect(startRecording)
+            camera.cameraStatusChanged.disconnect(_startRecording)
             camera.captureMode = Camera.CaptureStillImage
             break;
         }
@@ -68,27 +68,34 @@ Compass {
     rightAction {
         smallIcon: "image://theme/icon-camera-wb-default"
         largeIcon: "image://theme/icon-camera-whitebalance"
-        enabled: compass.buttonEnabled && !(settings.shootingModeProperties & Settings.WhiteBalance)
+        enabled: !compass._recording && !(settings.shootingModeProperties & Settings.WhiteBalance)
         onActivated: compass.openMenu(whiteBalanceMenu)
     }
     bottomAction {
-        smallIcon: !compass._recording ? "image://theme/icon-camera-record" : "image://theme/icon-camera-stop"
-        largeIcon: !compass._showStopIcon ? "image://theme/icon-camera-record" : "image://theme/icon-camera-stop"
+        smallIcon: "image://theme/icon-camera-video"
+        largeIcon: "image://theme/icon-camera-record"
+        enabled: !compass._recording
         onActivated: {
-            if (!compass._recording) {
-                camera.captureMode = Camera.CaptureVideo
-                // Don't try and start recording until the camera has switched modes.
-                camera.cameraStatusChanged.connect(compass.startRecording)
-            } else {
-                camera.videoRecorder.stop()
-                camera.captureMode = Camera.CaptureStillImage
-            }
+            // Don't try and start recording until the camera has switched modes.
+            camera.cameraStatusChanged.connect(compass._startRecording)
+            camera.captureMode = Camera.CaptureVideo
         }
     }
 
-    icon: "image://theme/icon-camera-shutter-release?" + theme.highlightColor
+    icon: !_recording
+          ? "image://theme/icon-camera-shutter-release?" + theme.highlightColor
+          : "image://theme/icon-camera-stop?" + theme.highlightColor
 
     keepSelection: camera.captureMode == Camera.CaptureVideo && camera.cameraStatus != Camera.ActiveStatus
+
+    onClicked: {
+        if (camera.captureMode == Camera.CaptureStillImage) {
+            camera.imageCapture.capture()
+        } else {
+            camera.videoRecorder.stop()
+            camera.captureMode = Camera.CaptureStillImage
+        }
+    }
 
     Component {
         id: meteringMenu

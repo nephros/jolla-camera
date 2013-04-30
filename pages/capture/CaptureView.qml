@@ -133,8 +133,54 @@ SplitItem {
                 verticalCenter: parent.verticalCenter
                 margins: theme.paddingLarge
             }
+        }
 
-            onClicked: camera.imageCapture.capture()
+        Item {
+            anchors {
+                horizontalCenter: captureCompass.horizontalCenter
+                top: captureCompass.bottom
+                margins: theme.paddingLarge + theme.paddingMedium
+            }
+
+            width: durationText.width
+            height: durationText.height
+
+            opacity: camera.videoRecorder.recorderState == CameraRecorder.RecordingState
+                    ? 1.0
+                    : 0.0
+            Behavior on opacity {
+                NumberAnimation { duration: 100 }
+            }
+
+            Rectangle {
+                radius: height / 2
+                color: theme.highlightBackgroundColor
+                opacity: 0.3
+                anchors {
+                    fill: parent
+                    margins: -theme.paddingMedium
+                }
+            }
+
+            Label {
+                id: durationText
+
+                text: {
+                    var seconds = parseInt(camera.videoRecorder.duration);
+                    var hours = Math.floor(seconds / 3600)
+                    seconds -= hours * 3600
+                    var minutes = Math.floor(seconds / 60);
+                    seconds -= minutes * 60
+
+                    var date = new Date();
+                    date.setSeconds(seconds);
+                    date.setMinutes(minutes);
+                    date.setHours(hours);
+                    return Qt.formatTime(date, "hh:mm:ss");
+                }
+
+                font.pixelSize: theme.fontSizeExtraSmall
+            }
         }
     }
 

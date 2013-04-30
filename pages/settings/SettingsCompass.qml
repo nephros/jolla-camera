@@ -34,7 +34,7 @@ Compass {
         }
 
         largeIcon: "image://theme/icon-camera-exposure-compensation"
-        enabled: !compass._recording && !(settings.shootingModeProperties & Settings.Exposure)
+        enabled: compass.buttonEnabled && !(settings.shootingModeProperties & Settings.Exposure)
         onActivated: compass.openMenu(exposureMenu)
     }
     bottomAction {
