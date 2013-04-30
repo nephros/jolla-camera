@@ -104,7 +104,7 @@ Compass {
         }
     }
 
-    icon: "image://theme/icon-camera-shutter-release"
+    icon: "image://theme/icon-camera-shutter-release?" + theme.highlightColor
 
     keepSelection: camera.captureMode == Camera.CaptureVideo && camera.cameraStatus != Camera.ActiveStatus
 

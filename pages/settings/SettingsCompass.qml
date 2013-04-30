@@ -43,7 +43,7 @@ Compass {
         onActivated: --compass.zoomIndex
     }
 
-    icon: "image://theme/icon-camera-settings"
+    icon: "image://theme/icon-camera-settings?" + theme.highlightColor
 
     Component {
         id: whiteBalanceMenu
