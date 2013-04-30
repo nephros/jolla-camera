@@ -32,6 +32,7 @@ class DeclarativeCamera : public QObject
     Q_PROPERTY(DeclarativeFlash *flash READ flash CONSTANT)
     Q_PROPERTY(DeclarativeFocus *focus READ focus CONSTANT)
     Q_PROPERTY(DeclarativeImageProcessing *imageProcessing READ imageProcessing CONSTANT)
+    Q_PROPERTY(QVariant mediaObject READ mediaObject CONSTANT)
     Q_ENUMS(Status)
     Q_ENUMS(State)
     Q_ENUMS(CaptureMode)
@@ -129,6 +130,7 @@ public:
     DeclarativeImageProcessing *imageProcessing();
 
     QCamera *camera() const;
+    QVariant mediaObject() const { return QVariant::fromValue<QObject *>(camera()); }
 
 Q_SIGNALS:
     void cameraStatusChanged();

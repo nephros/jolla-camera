@@ -37,6 +37,8 @@ SplitItem {
     Camera {
         id: camera
 
+        property alias locks: cameraLocks
+
         captureMode: Camera.CaptureStillImage
         cameraState: captureView._complete && captureView.windowActive
                     ? (captureView.active ? Camera.ActiveState : Camera.LoadedState)
@@ -58,6 +60,11 @@ SplitItem {
             exposureCompensation: settings.exposureCompensation / 2.0
             meteringMode: settings.effectiveMeteringMode
         }
+    }
+
+    CameraLocks {
+        id: cameraLocks
+        camera: camera
     }
 
     MouseArea {

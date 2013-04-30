@@ -28,6 +28,7 @@
 #include <MDeclarativeCache>
 #endif
 
+#include "declarativecameralocks.h"
 #include "declarativecompassaction.h"
 #include "declarativesettings.h"
 
@@ -67,6 +68,7 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     translator.load(QLocale(), "jolla-camera", "-", translationPath);
     qApp->installTranslator(&translator);
 
+    qmlRegisterType<DeclarativeCameraLocks>("com.jolla.camera", 1, 0, "CameraLocks");
     qmlRegisterType<DeclarativeCompassAction>("com.jolla.camera", 1, 0, "CompassAction");
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)

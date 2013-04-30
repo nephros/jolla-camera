@@ -12,6 +12,8 @@ Compass {
     property Camera camera
 
     buttonEnabled: camera.captureMode == Camera.CaptureStillImage
+    keepSelection: camera.locks.focusStatus == CameraLocks.Searching
+                || camera.locks.exposureStatus == CameraLocks.Searching
 
     topAction {
         smallIcon: {    // Exposure is value * 2 so it can be stored as an integer
@@ -54,10 +56,36 @@ Compass {
         enabled: compass.buttonEnabled && !(settings.shootingModeProperties & Settings.Timer)
         onActivated: compass.openMenu(timerMenu)
     }
+    leftAction {
+        smallIcon: compass.camera.locks.exposureStatus == CameraLocks.Locked
+                ? "image://theme/icon-camera-zoom-in?" + theme.highlightColor
+                : "image://theme/icon-camera-zoom-in"
+        largeIcon: "image://theme/icon-camera-zoom-tele"
+        enabled: compass.buttonEnabled && !(settings.shootingModeProperties & Settings.Exposure)
+        onActivated: {
+            if (compass.camera.locks.exposureStatus == CameraLocks.Unlocked) {
+                compass.camera.locks.lockExposure()
+            } else {
+                compass.camera.locks.unlockExposure()
+            }
+        }
+    }
+    rightAction {
+        smallIcon: compass.camera.locks.focusStatus == CameraLocks.Locked
+                ? "image://theme/icon-camera-zoom-out?" + theme.highlightColor
+                : "image://theme/icon-camera-zoom-out"
+        largeIcon: "image://theme/icon-camera-zoom-wide"
+        enabled: compass.buttonEnabled && !(settings.shootingModeProperties & Settings.Focus)
+        onActivated: {
+            if (compass.camera.locks.focusStatus == CameraLocks.Unlocked) {
+                compass.camera.locks.lockFocus()
+            } else {
+                compass.camera.locks.unlockFocus()
+            }
+        }
+    }
 
     icon: "image://theme/icon-camera-settings?" + theme.highlightColor
-
-
 
     Component {
         id: timerMenu
