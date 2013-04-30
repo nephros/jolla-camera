@@ -6,12 +6,11 @@ SilicaFlickable {
 
     property Item compass
     property alias contentItem: contentItem
-    property alias title: titleLabel.text
 
     default property alias _data: contentItem.data
     property real _minimumHeight: compass.width
     property real _maximumHeight: screen.width - theme.itemSizeLarge
-    property real _paddedHeight: contentItem.height + menu._minimumHeight - theme.paddingMedium
+    property real _paddedHeight: contentItem.height + (2 * theme.paddingLarge)
 
     width: compass.width
     height: Math.min(menu._paddedHeight, menu._maximumHeight)
@@ -20,23 +19,14 @@ SilicaFlickable {
 
     contentHeight: _paddedHeight
 
-    Label {
-        id: titleLabel
-
-        width: menu.width
-        anchors { bottom: contentItem.top }
-        font.pixelSize: theme.fontSizeExtraSmall
-
-        horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
-    }
+    Component.onCompleted: contentY = (_paddedHeight - height) / 2
 
     Column {
         id: contentItem
 
         property Item _compass: menu.compass
 
-        y: theme.paddingSmall + menu._minimumHeight / 2
+        y: theme.paddingLarge
         width: menu.width
     }
 }

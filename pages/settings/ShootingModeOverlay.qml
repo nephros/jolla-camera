@@ -83,10 +83,6 @@ Item {
 
         source: overlay._currentItem.selectionIcon
 
-        width: implicitWidth * 0.75
-        height: implicitHeight * 0.75
-        smooth: true
-
         MouseArea {
             enabled: overlay.interactive && !overlay.expanded
             anchors.fill: parent

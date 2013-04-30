@@ -48,8 +48,6 @@ Compass {
     Component {
         id: whiteBalanceMenu
         CompassMenu {
-            //% "balance"
-            title: qsTrId("camera-me-white-balance")
             CompassMenuItem {
                 icon: "image://theme/icon-camera-wb-automatic"
                 onClicked: settings.whiteBalance = CameraImageProcessing.WhiteBalanceAuto
@@ -77,9 +75,10 @@ Compass {
         id: timerMenu
 
         CompassMenu {
-            //% "seconds"
-            title: qsTrId("camera-me-seconds")
-
+            CompassMenuItem {
+                icon: "image://theme/icon-camera-timer-off"
+                onClicked: compass.timer = 0
+            }
             CompassMenuItem {
                 icon: "image://theme/icon-camera-timer-3s"
                 onClicked: compass.timer = 3

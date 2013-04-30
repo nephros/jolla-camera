@@ -60,7 +60,7 @@ void DeclarativeExposure::setIso(int iso)
 {
     if (m_control) {
         bool autoIso = m_autoIso;
-        m_autoIso = true;
+        m_autoIso = false;
         m_control->setExposureParameter(QCameraExposureControl::ISO, iso);
         if (!autoIso) {
             emit automaticIsoChanged();
@@ -71,7 +71,7 @@ void DeclarativeExposure::setIso(int iso)
 void DeclarativeExposure::setAutoIsoSensitivity()
 {
     if (m_control && !m_autoIso) {
-        m_autoIso = false;
+        m_autoIso = true;
         m_control->setExposureParameter(QCameraExposureControl::ISO, QVariant());
         emit automaticIsoChanged();
     }

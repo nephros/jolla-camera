@@ -24,6 +24,8 @@ SilicaFlickable {
         }
     }
 
+    VerticalScrollDecorator {}
+
     Column {
         SectionHeader {
             //% "Photo settings"

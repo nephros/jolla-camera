@@ -112,9 +112,6 @@ Compass {
         id: meteringMenu
 
         CompassMenu {
-            //% "metering"
-            title: qsTrId("camera-me-metering-mode")
-
              CompassMenuItem {
                 icon: "image://theme/icon-camera-metering-matrix"
                 onClicked: settings.meteringMode = Camera.MeteringMatrix
@@ -134,9 +131,6 @@ Compass {
         id: flashMenu
 
         CompassMenu {
-            //% "flash"
-            title: qsTrId("camera-me-flash")
-
              CompassMenuItem {
                 icon: "image://theme/icon-camera-flash-automatic"
                 onClicked: settings.flash = Camera.FlashAuto
@@ -160,9 +154,6 @@ Compass {
         id: exposureMenu
 
         CompassMenu {
-            //% "exposure"
-            title: qsTrId("camera-me-exposure")
-
             CompassMenuItem {
                 icon: "image://theme/icon-camera-ec-minus2"
                 onClicked: settings.exposureCompensation = -4
