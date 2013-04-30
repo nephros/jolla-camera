@@ -13,6 +13,8 @@ SplitItem {
     property bool windowActive
     property Item _activeItem
 
+    property Item page
+
     property bool _playingState: video.playing && !video.paused
 
     dock: Dock.Right
@@ -34,6 +36,8 @@ SplitItem {
     }
 
     SilicaListView {
+        id: pageView
+
         x: -parent.x / 2
         width: galleryView.width
         height: galleryView.height
@@ -48,7 +52,6 @@ SplitItem {
         highlightRangeMode: ListView.StrictlyEnforceRange
 
         interactive: !galleryView._playingState
-        contentItem.enabled: !galleryView.contracted
 
         onCurrentItemChanged: {
             if (!galleryView._activeItem && currentItem) {
@@ -83,9 +86,10 @@ SplitItem {
             }
         }
 
-        delegate: MouseArea {
+        delegate: Item {
             id: galleryItem
 
+            property QtObject modelData: model
             property bool isImage: mimeType.indexOf("image/") == 0
             property bool active
 
@@ -97,6 +101,7 @@ SplitItem {
 
                 ZoomableImage {
                     source: url
+                    onClicked: galleryView.split = !galleryView.split
                 }
             }
 
@@ -148,8 +153,14 @@ SplitItem {
 //            asynchronous: true
 
             ShareMenu {
+                page: galleryView.page
+
                 width: galleryView.backgroundItem.width
                 height: galleryView.backgroundItem.height
+
+                title: pageView.currentItem ? pageView.currentItem.modelData.title : ""
+                mimeType: pageView.currentItem ? pageView.currentItem.modelData.mimeType : ""
+                isImage: pageView.currentItem ? pageView.currentItem.isImage : ""
             }
         }
     ]

@@ -12,6 +12,7 @@ Page {
     id: page
 
     property bool windowActive
+    property Item pageStack
 
     allowedOrientations: Orientation.Landscape
 
@@ -50,6 +51,8 @@ Page {
             }
             GalleryView {
                 id: galleryView
+
+                page: page
 
                 width: page.width
                 height: page.height

@@ -56,7 +56,10 @@ DEFINES *= DEPLOYMENT_PATH=\"\\\"\"$${DEPLOYMENT_PATH}/\"\\\"\"
 qml.path = $$DEPLOYMENT_PATH
 qml.files = *.qml cover pages
 
-INSTALLS += target desktop qml ts_install engineering_english_install
+service.files = com.jolla.camera.service
+service.path  = /usr/share/dbus-1/services
+
+INSTALLS += target desktop qml ts_install engineering_english_install service
 
 equals(QT_MAJOR_VERSION, 4): packagesExist(qdeclarative-boostable) {
     message("Building with qdeclarative-boostable support")
@@ -67,7 +70,7 @@ equals(QT_MAJOR_VERSION, 4): packagesExist(qdeclarative-boostable) {
 }
 
 !contains(CONFIG, desktop) {
-    equals(QT_MAJOR_VERSION, 4): PKGCONFIG += mlite
+    equals(QT_MAJOR_VERSION, 4): PKGCONFIG += mlite libjollasignonuiservice
     equals(QT_MAJOR_VERSION, 5): PKGCONFIG += mlite5
 } else {
     DEFINES += DESKTOP

@@ -75,6 +75,7 @@ desktop-file-install --delete-original       \
 %{_datadir}/jolla-camera/*
 %{_bindir}/jolla-camera
 %{_datadir}/translations/jolla-camera_eng_en.qm
+%{_datadir}/dbus-1/services/com.jolla.camera.service
 
 %files ts-devel
 %defattr(-,root,root,-)
