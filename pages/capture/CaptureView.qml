@@ -85,6 +85,7 @@ SplitItem {
 
         camera: camera
 
+        x: -parent.x / 2
         width: page.width
         height: page.height
 
