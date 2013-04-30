@@ -95,7 +95,7 @@ Item {
         }
     }
 
-    width: theme.itemSizeExtraLarge
+    width: theme.itemSizeExtraLarge + theme.paddingMedium
     height: width
 
     CompassAction { id: topAction }
