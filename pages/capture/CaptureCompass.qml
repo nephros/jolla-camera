@@ -112,17 +112,18 @@ Compass {
         id: meteringMenu
 
         CompassMenu {
-             CompassMenuItem {
+            property: "meteringMode"
+            CompassMenuItem {
                 icon: "image://theme/icon-camera-metering-matrix"
-                onClicked: settings.meteringMode = Camera.MeteringMatrix
+                value: Camera.MeteringMatrix
             }
             CompassMenuItem {
                  icon: "image://theme/icon-camera-metering-weighted"
-                 onClicked: settings.meteringMode = Camera.MeteringAverage
+                 value: Camera.MeteringAverage
              }
             CompassMenuItem {
                 icon: "image://theme/icon-camera-metering-spot"
-                onClicked: settings.meteringMode = Camera.MeteringSpot
+                value: Camera.MeteringSpot
             }
         }
     }
@@ -131,21 +132,22 @@ Compass {
         id: flashMenu
 
         CompassMenu {
-             CompassMenuItem {
+            property: "flash"
+            CompassMenuItem {
                 icon: "image://theme/icon-camera-flash-automatic"
-                onClicked: settings.flash = Camera.FlashAuto
+                value: Camera.FlashAuto
             }
             CompassMenuItem {
                 icon: "image://theme/icon-camera-flash-off"
-                onClicked: settings.flash = Camera.FlashOff
+                value: Camera.FlashOff
             }
             CompassMenuItem {
                 icon: "image://theme/icon-camera-flash-on"
-                onClicked: settings.flash = Camera.FlashOn
+                value: Camera.FlashOn
             }
             CompassMenuItem {
                 icon: "image://theme/icon-camera-flash-redeye"
-                onClicked: settings.flash = Camera.FlashRedEyeReduction
+                value: Camera.FlashRedEyeReduction
             }
         }
     }
@@ -154,33 +156,34 @@ Compass {
         id: exposureMenu
 
         CompassMenu {
+            property: "exposureCompensation"
             CompassMenuItem {
                 icon: "image://theme/icon-camera-ec-minus2"
-                onClicked: settings.exposureCompensation = -4
+                value: -4
             }
             CompassMenuItem {
                 icon: "image://theme/icon-camera-ec-minus15"
-                onClicked: settings.exposureCompensation = -3
+                value: -3
             }
             CompassMenuItem {
                 icon: "image://theme/icon-camera-ec-minus1"
-                onClicked: settings.exposureCompensation = -2
+                value: -2
             }
             CompassMenuItem {
                 icon: "image://theme/icon-camera-exposure-compensation"
-                onClicked: settings.exposureCompensation = 0
+                value: 0
             }
             CompassMenuItem {
                 icon: "image://theme/icon-camera-ec-plus1"
-                onClicked: settings.exposureCompensation = 2
+                value: 2
             }
             CompassMenuItem {
                 icon: "image://theme/icon-camera-ec-plus15"
-                onClicked: settings.exposureCompensation = 3
+                value: 3
             }
             CompassMenuItem {
                 icon: "image://theme/icon-camera-ec-plus2"
-                onClicked: settings.exposureCompensation = 4
+                value: 4
             }
         }
     }

@@ -1,13 +1,21 @@
 import QtQuick 1.1
 import Sailfish.Silica 1.0
 
-BackgroundItem {
-    property alias icon: image.source
+MouseArea {
+    id: menuItem
+
+    property url icon: image.source
+    property variant value
+
+    property bool selected: settings[parent._property] == value
 
     width: parent.width
     height: image.height + theme.paddingLarge
 
-    onClicked: parent._compass.closeMenu()
+    onClicked: {
+        settings[parent._property] = value
+        parent._compass.closeMenu()
+    }
 
     Image {
         id: image
@@ -15,5 +23,8 @@ BackgroundItem {
         // temporary while some images do not fit.
         width: 24; height: 24; fillMode: Image.PreserveAspectFit
         anchors.centerIn: parent
+        source: menuItem.selected || menuItem.pressed
+                ? menuItem.icon + "?" + theme.highlightColor
+                : menuItem.icon
     }
 }

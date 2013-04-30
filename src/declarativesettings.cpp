@@ -20,7 +20,8 @@ enum PropertyFlag {
     FocusDistance = 0x08,
     Flash = 0x10,
     Exposure = 0x20,
-    MeteringMode = 0x040
+    MeteringMode = 0x40,
+    Timer = 0x80
 };
 }
 
@@ -48,6 +49,7 @@ DeclarativeSettings::DeclarativeSettings(QObject *parent)
     , m_flash("/desktop/jolla/camera/flash")
     , m_exposureCompensation("/desktop/jolla/camera/exposureCompensation")
     , m_meteringMode("/desktop/jolla/camera/meteringMode")
+    , m_timer("/desktop/jolla/camera/timer")
 {
     connect(&m_aspectRatio, SIGNAL(valueChanged()), this, SIGNAL(aspectRatioChanged()));
     connect(&m_iso, SIGNAL(valueChanged()), this, SIGNAL(isoChanged()));
@@ -57,6 +59,7 @@ DeclarativeSettings::DeclarativeSettings(QObject *parent)
     connect(&m_flash, SIGNAL(valueChanged()), this, SIGNAL(flashChanged()));
     connect(&m_exposureCompensation, SIGNAL(valueChanged()), this, SIGNAL(exposureChanged()));
     connect(&m_meteringMode, SIGNAL(valueChanged()), this, SIGNAL(meteringModeChanged()));
+    connect(&m_timer, SIGNAL(valueChanged()), this, SIGNAL(timerChanged()));
 
     QDir(photoDirectory()).mkpath(QLatin1String("."));
     QDir(videoDirectory()).mkpath(QLatin1String("."));
@@ -121,6 +124,8 @@ void DeclarativeSettings::setShootingMode(ShootingMode mode)
             emit exposureChanged();
         if (changedProperties & MeteringMode)
             emit meteringModeChanged();
+        if (changedProperties & Timer)
+            emit timerChanged();
 
         emit shootingModeChanged();
     }
@@ -306,6 +311,30 @@ int DeclarativeSettings::effectiveMeteringMode() const
         return meteringMode();
     }
     return meteringMode();
+}
+
+int DeclarativeSettings::timer() const
+{
+    return m_timer.value(0).value<int>();
+}
+
+void DeclarativeSettings::setTimer(int timeout)
+{
+    m_timer.set(timeout);
+}
+
+int DeclarativeSettings::effectiveTimer()
+{
+    switch (shootingMode()) {
+    case Auto:
+    case Macro:
+    case Landscape:
+    case Program:
+    case Sports:
+    case Portrait:
+        return timer();
+    }
+    return timer();
 }
 
 QString DeclarativeSettings::photoDirectory() const

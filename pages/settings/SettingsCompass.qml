@@ -31,7 +31,18 @@ Compass {
         onActivated: compass.openMenu(whiteBalanceMenu)
     }
     rightAction {
-        smallIcon: "image://theme/icon-camera-timer-off"
+        smallIcon: {
+            switch (settings.timer) {
+            case 0:
+                return "image://theme/icon-camera-timer-off"
+            case 3:
+                return "image://theme/icon-camera-timer-3s"
+            case 15:
+                return "image://theme/icon-camera-timer-15s"
+            case 20:
+                return "image://theme/icon-camera-timer-20s"
+            }
+        }
         largeIcon: "image://theme/icon-camera-timer"
         enabled: compass.buttonEnabled
         onActivated: compass.openMenu(timerMenu)
@@ -48,25 +59,26 @@ Compass {
     Component {
         id: whiteBalanceMenu
         CompassMenu {
+            property: "whiteBalance"
             CompassMenuItem {
                 icon: "image://theme/icon-camera-wb-automatic"
-                onClicked: settings.whiteBalance = CameraImageProcessing.WhiteBalanceAuto
+                value: CameraImageProcessing.WhiteBalanceAuto
             }
             CompassMenuItem {
                 icon: "image://theme/icon-camera-wb-fluorecent"
-                onClicked: settings.whiteBalance = CameraImageProcessing.WhiteBalanceFluorescent
+                value: CameraImageProcessing.WhiteBalanceFluorescent
             }
             CompassMenuItem {
                 icon: "image://theme/icon-camera-wb-shade"
-                onClicked: settings.whiteBalance = CameraImageProcessing.WhiteBalanceShade
+                value: CameraImageProcessing.WhiteBalanceShade
             }
             CompassMenuItem {
                 icon: "image://theme/icon-camera-wb-sunset"
-                onClicked: settings.whiteBalance = CameraImageProcessing.WhiteBalanceSunset
+                value: CameraImageProcessing.WhiteBalanceSunset
             }
             CompassMenuItem {
                 icon: "image://theme/icon-camera-wb-tungsten"
-                onClicked: settings.whiteBalance = CameraImageProcessing.WhiteBalanceTungsten
+                value: CameraImageProcessing.WhiteBalanceTungsten
             }
         }
     }
@@ -75,21 +87,22 @@ Compass {
         id: timerMenu
 
         CompassMenu {
+            property: "timer"
             CompassMenuItem {
                 icon: "image://theme/icon-camera-timer-off"
-                onClicked: compass.timer = 0
+                value: 0
             }
             CompassMenuItem {
                 icon: "image://theme/icon-camera-timer-3s"
-                onClicked: compass.timer = 3
+                value: 3
             }
             CompassMenuItem {
                 icon: "image://theme/icon-camera-timer-15s"
-                onClicked: compass.timer = 15
+                value: 15
             }
             CompassMenuItem {
                 icon: "image://theme/icon-camera-timer-20s"
-                onClicked: compass.timer = 20
+                value: 20
             }
         }
     }
