@@ -11,85 +11,138 @@ Compass {
 
     property Camera camera
 
-    property int zoomIndex: 0
-    onZoomIndexChanged: camera.digitalZoom = _zoomLevels[zoomIndex]
-    property variant _zoomLevels: [ 1, 1.5, 2, 2.5, 3, 4, 6, 8, 10, 12, 16 ]
-
     buttonEnabled: camera.captureMode == Camera.CaptureStillImage
+    keepSelection: camera.locks.focusStatus == CameraLocks.Searching
+                || camera.locks.exposureStatus == CameraLocks.Searching
 
     topAction {
-        smallIcon: "image://theme/icon-camera-zoom-in"
-        largeIcon: "image://theme/icon-camera-zoom-tele"
-        enabled: camera.digitalZoom < camera.maximumDigitalZoom
-                    && compass.zoomIndex < compass._zoomLevels.length
-        onActivated: ++compass.zoomIndex
-    }
-    leftAction {
-        smallIcon: "image://theme/icon-camera-wb-default"
-        largeIcon: "image://theme/icon-camera-whitebalance"
-        enabled: compass.buttonEnabled && !(settings.shootingModeProperties & Settings.WhiteBalance)
-        onActivated: compass.openMenu(whiteBalanceMenu)
-    }
-    rightAction {
-        smallIcon: "image://theme/icon-camera-timer-off"
-        largeIcon: "image://theme/icon-camera-timer"
-        enabled: compass.buttonEnabled
-        onActivated: compass.openMenu(timerMenu)
+        smallIcon: {    // Exposure is value * 2 so it can be stored as an integer
+            switch (settings.exposureCompensation) {
+            case -4:
+                return "image://theme/icon-camera-ec-minus2"
+            case -3:
+                return "image://theme/icon-camera-ec-minus15"
+            case -2:
+                return "image://theme/icon-camera-ec-minus1"
+            case 0:
+                return "image://theme/icon-camera-exposure-compensation"
+            case 2:
+                return "image://theme/icon-camera-ec-plus1"
+            case 3:
+                return "image://theme/icon-camera-ec-plus15"
+            case 4:
+                return "image://theme/icon-camera-ec-plus2"
+            }
+        }
+
+        largeIcon: "image://theme/icon-camera-exposure-compensation"
+        enabled: compass.buttonEnabled && !(settings.shootingModeProperties & Settings.Exposure)
+        onActivated: compass.openMenu(exposureMenu)
     }
     bottomAction {
-        smallIcon: "image://theme/icon-camera-zoom-out"
-        largeIcon: "image://theme/icon-camera-zoom-wide"
-        enabled: camera.digitalZoom > 1.0 && compass.zoomIndex > 0
-        onActivated: --compass.zoomIndex
+        smallIcon: {
+            switch (settings.timer) {
+            case 0:
+                return "image://theme/icon-camera-timer-off"
+            case 3:
+                return "image://theme/icon-camera-timer-3s"
+            case 15:
+                return "image://theme/icon-camera-timer-15s"
+            case 20:
+                return "image://theme/icon-camera-timer-20s"
+            }
+        }
+        largeIcon: "image://theme/icon-camera-timer"
+        enabled: compass.buttonEnabled && !(settings.shootingModeProperties & Settings.Timer)
+        onActivated: compass.openMenu(timerMenu)
     }
-
-    icon: "image://theme/icon-camera-settings"
-
-    Component {
-        id: whiteBalanceMenu
-        CompassMenu {
-            CompassMenuItem {
-                icon: "image://theme/icon-camera-wb-automatic"
-                onClicked: settings.whiteBalance = CameraImageProcessing.WhiteBalanceAuto
-            }
-            CompassMenuItem {
-                icon: "image://theme/icon-camera-wb-fluorecent"
-                onClicked: settings.whiteBalance = CameraImageProcessing.WhiteBalanceFluorescent
-            }
-            CompassMenuItem {
-                icon: "image://theme/icon-camera-wb-shade"
-                onClicked: settings.whiteBalance = CameraImageProcessing.WhiteBalanceShade
-            }
-            CompassMenuItem {
-                icon: "image://theme/icon-camera-wb-sunset"
-                onClicked: settings.whiteBalance = CameraImageProcessing.WhiteBalanceSunset
-            }
-            CompassMenuItem {
-                icon: "image://theme/icon-camera-wb-tungsten"
-                onClicked: settings.whiteBalance = CameraImageProcessing.WhiteBalanceTungsten
+    leftAction {
+        smallIcon: compass.camera.locks.exposureStatus == CameraLocks.Locked
+                ? "image://theme/icon-camera-zoom-in?" + theme.highlightColor
+                : "image://theme/icon-camera-zoom-in"
+        largeIcon: "image://theme/icon-camera-zoom-tele"
+        enabled: compass.buttonEnabled && !(settings.shootingModeProperties & Settings.Exposure)
+        onActivated: {
+            if (compass.camera.locks.exposureStatus == CameraLocks.Unlocked) {
+                compass.camera.locks.lockExposure()
+            } else {
+                compass.camera.locks.unlockExposure()
             }
         }
     }
+    rightAction {
+        smallIcon: compass.camera.locks.focusStatus == CameraLocks.Locked
+                ? "image://theme/icon-camera-zoom-out?" + theme.highlightColor
+                : "image://theme/icon-camera-zoom-out"
+        largeIcon: "image://theme/icon-camera-zoom-wide"
+        enabled: compass.buttonEnabled && !(settings.shootingModeProperties & Settings.Focus)
+        onActivated: {
+            if (compass.camera.locks.focusStatus == CameraLocks.Unlocked) {
+                compass.camera.locks.lockFocus()
+            } else {
+                compass.camera.locks.unlockFocus()
+            }
+        }
+    }
+
+    icon: "image://theme/icon-camera-settings?" + theme.highlightColor
 
     Component {
         id: timerMenu
 
         CompassMenu {
+            property: "timer"
             CompassMenuItem {
                 icon: "image://theme/icon-camera-timer-off"
-                onClicked: compass.timer = 0
+                value: 0
             }
             CompassMenuItem {
                 icon: "image://theme/icon-camera-timer-3s"
-                onClicked: compass.timer = 3
+                value: 3
             }
             CompassMenuItem {
                 icon: "image://theme/icon-camera-timer-15s"
-                onClicked: compass.timer = 15
+                value: 15
             }
             CompassMenuItem {
                 icon: "image://theme/icon-camera-timer-20s"
-                onClicked: compass.timer = 20
+                value: 20
+            }
+        }
+    }
+
+    Component {
+        id: exposureMenu
+
+        CompassMenu {
+            property: "exposureCompensation"
+            CompassMenuItem {
+                icon: "image://theme/icon-camera-ec-minus2"
+                value: -4
+            }
+            CompassMenuItem {
+                icon: "image://theme/icon-camera-ec-minus15"
+                value: -3
+            }
+            CompassMenuItem {
+                icon: "image://theme/icon-camera-ec-minus1"
+                value: -2
+            }
+            CompassMenuItem {
+                icon: "image://theme/icon-camera-exposure-compensation"
+                value: 0
+            }
+            CompassMenuItem {
+                icon: "image://theme/icon-camera-ec-plus1"
+                value: 2
+            }
+            CompassMenuItem {
+                icon: "image://theme/icon-camera-ec-plus15"
+                value: 3
+            }
+            CompassMenuItem {
+                icon: "image://theme/icon-camera-ec-plus2"
+                value: 4
             }
         }
     }

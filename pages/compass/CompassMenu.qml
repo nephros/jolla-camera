@@ -5,6 +5,8 @@ SilicaFlickable {
     id: menu
 
     property Item compass
+
+    property string property
     property alias contentItem: contentItem
 
     default property alias _data: contentItem.data
@@ -24,7 +26,8 @@ SilicaFlickable {
     Column {
         id: contentItem
 
-        property Item _compass: menu.compass
+        property alias _compass: menu.compass
+        property alias _property: menu.property
 
         y: theme.paddingLarge
         width: menu.width

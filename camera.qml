@@ -12,6 +12,7 @@ ApplicationWindow {
 
     initialPage: Component {
         CameraPage {
+            pageStack: window.pageStack
             windowActive: window.applicationActive
         }
     }

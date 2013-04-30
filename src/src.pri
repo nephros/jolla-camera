@@ -2,10 +2,12 @@
 INCLUDEPATH += $$PWD
 
 SOURCES += \
+        $$PWD/declarativecameralocks.cpp \
         $$PWD/declarativecompassaction.cpp \
         $$PWD/declarativesettings.cpp \
 
 HEADERS += \
+        $$PWD/declarativecameralocks.h \
         $$PWD/declarativecompassaction.h \
         $$PWD/declarativesettings.h \
 

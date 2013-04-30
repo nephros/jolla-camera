@@ -49,6 +49,8 @@ class DeclarativeSettings : public QObject
     Q_PROPERTY(int exposureMode READ exposureMode NOTIFY exposureChanged)
     Q_PROPERTY(int meteringMode READ meteringMode WRITE setMeteringMode NOTIFY meteringModeChanged)
     Q_PROPERTY(int effectiveMeteringMode READ effectiveMeteringMode NOTIFY meteringModeChanged)
+    Q_PROPERTY(int timer READ timer WRITE setTimer NOTIFY timerChanged)
+    Q_PROPERTY(int effectiveTimer READ effectiveTimer NOTIFY timerChanged)
     Q_PROPERTY(QString photoDirectory READ photoDirectory CONSTANT)
     Q_PROPERTY(QString videoDirectory READ videoDirectory CONSTANT)
     Q_ENUMS(ShootingMode)
@@ -76,8 +78,8 @@ public:
         FocusDistance = 0x08,
         Flash = 0x10,
         Exposure = 0x20,
-        MeteringMode = 0x40
-
+        MeteringMode = 0x40,
+        Timer = 0x80
     };
 
     Q_DECLARE_FLAGS(Properties, PropertyFlag)
@@ -126,6 +128,10 @@ public:
     void setMeteringMode(int mode);
     int effectiveMeteringMode() const;
 
+    int timer() const;
+    void setTimer(int timeout);
+    int effectiveTimer();
+
     QString photoDirectory() const;
     QString videoDirectory() const;
 
@@ -139,6 +145,7 @@ signals:
     void flashChanged();
     void exposureChanged();
     void meteringModeChanged();
+    void timerChanged();
 
 private:
     MGConfItem m_imageRatio_4_3;
@@ -154,6 +161,7 @@ private:
     MGConfItem m_flash;
     MGConfItem m_exposureCompensation;
     MGConfItem m_meteringMode;
+    MGConfItem m_timer;
 };
 
 #endif

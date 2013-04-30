@@ -32,6 +32,7 @@ class DeclarativeCamera : public QObject
     Q_PROPERTY(DeclarativeFlash *flash READ flash CONSTANT)
     Q_PROPERTY(DeclarativeFocus *focus READ focus CONSTANT)
     Q_PROPERTY(DeclarativeImageProcessing *imageProcessing READ imageProcessing CONSTANT)
+    Q_PROPERTY(QVariant mediaObject READ mediaObject CONSTANT)
     Q_ENUMS(Status)
     Q_ENUMS(State)
     Q_ENUMS(CaptureMode)
@@ -129,6 +130,7 @@ public:
     DeclarativeImageProcessing *imageProcessing();
 
     QCamera *camera() const;
+    QVariant mediaObject() const { return QVariant::fromValue<QObject *>(camera()); }
 
 Q_SIGNALS:
     void cameraStatusChanged();
@@ -177,6 +179,7 @@ class DeclarativeVideoRecorder : public QObject
     Q_PROPERTY(State recorderState READ state NOTIFY stateChanged)
     Q_PROPERTY(QSize resolution READ resolution WRITE setResolution NOTIFY resolutionChanged)
     Q_PROPERTY(qreal frameRate READ frameRate WRITE setFrameRate NOTIFY frameRateChanged)
+    Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
     Q_ENUMS(State)
 public:
     DeclarativeVideoRecorder(QCamera *camera, QObject *parent = 0);
@@ -200,10 +203,13 @@ public:
     QSize resolution() const;
     void setResolution(const QSize &resolution);
 
+    qint64 duration() const;
+
 signals:
     void stateChanged();
     void frameRateChanged();
     void resolutionChanged();
+    void durationChanged();
 
 private:
     QCamera *m_camera;

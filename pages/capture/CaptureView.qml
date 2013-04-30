@@ -37,6 +37,8 @@ SplitItem {
     Camera {
         id: camera
 
+        property alias locks: cameraLocks
+
         captureMode: Camera.CaptureStillImage
         cameraState: captureView._complete && captureView.windowActive
                     ? (captureView.active ? Camera.ActiveState : Camera.LoadedState)
@@ -58,6 +60,11 @@ SplitItem {
             exposureCompensation: settings.exposureCompensation / 2.0
             meteringMode: settings.effectiveMeteringMode
         }
+    }
+
+    CameraLocks {
+        id: cameraLocks
+        camera: camera
     }
 
     MouseArea {
@@ -85,6 +92,7 @@ SplitItem {
 
         camera: camera
 
+        x: -parent.x / 2
         width: page.width
         height: page.height
 
@@ -132,8 +140,43 @@ SplitItem {
                 verticalCenter: parent.verticalCenter
                 margins: theme.paddingLarge
             }
+        }
 
-            onClicked: camera.imageCapture.capture()
+        Item {
+            anchors {
+                horizontalCenter: captureCompass.horizontalCenter
+                top: captureCompass.bottom
+                margins: theme.paddingLarge + theme.paddingMedium
+            }
+
+            width: durationText.width
+            height: durationText.height
+
+            opacity: camera.videoRecorder.recorderState == CameraRecorder.RecordingState
+                    ? 1.0
+                    : 0.0
+            Behavior on opacity { FadeAnimation {} }
+
+            Rectangle {
+                radius: height / 2
+                color: theme.highlightBackgroundColor
+                opacity: 0.3
+                anchors {
+                    fill: parent
+                    margins: -theme.paddingMedium
+                }
+            }
+
+            Formatter {
+                id: formatter
+            }
+
+            Label {
+                id: durationText
+
+                text: formatter.formatDuration(camera.videoRecorder.duration, Formatter.DurationLong)
+                font.pixelSize: theme.fontSizeExtraSmall
+            }
         }
     }
 

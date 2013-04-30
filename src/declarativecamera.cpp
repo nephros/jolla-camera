@@ -186,6 +186,7 @@ DeclarativeVideoRecorder::DeclarativeVideoRecorder(QCamera *camera, QObject *par
             && (m_recorderControl = m_camera->service()->requestControl<QMediaRecorderControl *>())) {
         connect(m_recorderControl, SIGNAL(stateChanged(QMediaRecorder::State)),
                 this, SIGNAL(stateChanged()));
+        connect(m_recorderControl, SIGNAL(durationChanged(qint64)), this, SIGNAL(durationChanged()));
     }
     if (m_camera->service()
             && (m_videoEncoderControl = m_camera->service()->requestControl<QVideoEncoderControl *>())) {
@@ -209,7 +210,7 @@ void DeclarativeVideoRecorder::record()
     if (m_recorderControl) {
         const QString fileName = QDateTime::currentDateTimeUtc().toString(
                     QLatin1String("'/home/nemo/Videos/Camera/'yyyyMMdd-hhmmss'.mkv'"));
-        m_recorderControl->setOutputLocation(QUrl::fromLocalFile(fileName));
+        m_recorderControl->setOutputLocation(fileName);
         m_recorderControl->record();
     }
 }
@@ -253,6 +254,11 @@ void DeclarativeVideoRecorder::setFrameRate(qreal rate)
         m_videoEncoderControl->setVideoSettings(settings);
         emit resolutionChanged();
     }
+}
+
+qint64 DeclarativeVideoRecorder::duration() const
+{
+    return m_recorderControl ? m_recorderControl->duration() : 0;
 }
 
 DeclarativeImageProcessing::DeclarativeImageProcessing(QCamera *camera, QObject *parent)
