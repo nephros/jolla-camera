@@ -21,7 +21,7 @@ Item {
         width: overlay.width
         height: overlay.height
 
-        visible: panel.expanded
+        visible: overlay.expanded
         color: theme.highlightBackgroundColor
         opacity: 0.5 * panel.visibleSize / panel.height
     }

@@ -6,15 +6,10 @@ import com.jolla.components.accounts 1.0
 ShareMethodList {
     id: menuList
 
-    property alias mimeType: transferMethodsModel.filter
     property bool isImage
     property string title
 
     property Item page
-
-    model:SailfishTransferMethodsModel {
-        id: transferMethodsModel
-    }
 
     //% "Share"
     listHeader: qsTrId("camera-la-share")

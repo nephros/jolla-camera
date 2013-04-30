@@ -114,6 +114,7 @@ void DeclarativeCameraLocks::lockStatusChanged(QCamera::LockType type)
         break;
     case QCamera::LockWhiteBalance:
         emit whiteBalanceStatusChanged();
+        break;
     case QCamera::LockFocus:
         emit focusStatusChanged();
         break;

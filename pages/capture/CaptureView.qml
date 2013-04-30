@@ -155,9 +155,7 @@ SplitItem {
             opacity: camera.videoRecorder.recorderState == CameraRecorder.RecordingState
                     ? 1.0
                     : 0.0
-            Behavior on opacity {
-                NumberAnimation { duration: 100 }
-            }
+            Behavior on opacity { FadeAnimation {} }
 
             Rectangle {
                 radius: height / 2
@@ -169,23 +167,14 @@ SplitItem {
                 }
             }
 
+            Formatter {
+                id: formatter
+            }
+
             Label {
                 id: durationText
 
-                text: {
-                    var seconds = parseInt(camera.videoRecorder.duration);
-                    var hours = Math.floor(seconds / 3600)
-                    seconds -= hours * 3600
-                    var minutes = Math.floor(seconds / 60);
-                    seconds -= minutes * 60
-
-                    var date = new Date();
-                    date.setSeconds(seconds);
-                    date.setMinutes(minutes);
-                    date.setHours(hours);
-                    return Qt.formatTime(date, "hh:mm:ss");
-                }
-
+                text: formatter.formatDuration(camera.videoRecorder.duration, Formatter.DurationLong)
                 font.pixelSize: theme.fontSizeExtraSmall
             }
         }

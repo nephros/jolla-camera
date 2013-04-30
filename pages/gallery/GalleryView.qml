@@ -159,7 +159,7 @@ SplitItem {
                 height: galleryView.backgroundItem.height
 
                 title: pageView.currentItem ? pageView.currentItem.modelData.title : ""
-                mimeType: pageView.currentItem ? pageView.currentItem.modelData.mimeType : ""
+                filter: pageView.currentItem ? pageView.currentItem.modelData.mimeType : ""
                 isImage: pageView.currentItem ? pageView.currentItem.isImage : ""
             }
         }
