@@ -14,6 +14,7 @@ BuildRequires:  pkgconfig(QtNetwork)
 BuildRequires:  pkgconfig(QtMultimediaKit)
 BuildRequires:  desktop-file-utils
 BuildRequires:  pkgconfig(qdeclarative-boostable)
+BuildRequires:  pkgconfig(mlite)
 
 Requires:  ambient-icons-closed
 Requires:  sailfishsilica >= 0.8.0
