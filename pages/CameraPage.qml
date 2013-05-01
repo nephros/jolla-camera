@@ -14,7 +14,7 @@ Page {
     property bool windowActive
     property Item pageStack
 
-    allowedOrientations: Orientation.Landscape
+    allowedOrientations: Orientation.Portrait | Orientation.Landscape
 
     /*
         This won't snap the header to position without modifiying Qt first.  There is an alternative
@@ -42,6 +42,7 @@ Page {
         page: page
         active: currentIndex != -1
         windowActive: page.windowActive
+        orientation: page.orientation
 
         interactive: !captureView.menuOpen && !galleryView.menuOpen
 
@@ -69,6 +70,7 @@ Page {
 
             active: galleryView.currentIndex == -1
 
+            orientation: page.orientation
             windowActive: page.windowActive
         }
     }

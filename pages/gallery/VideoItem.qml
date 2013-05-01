@@ -47,7 +47,6 @@ MouseArea {
         anchors.centerIn: parent
 
         width: videoItem.width
-        height: videoItem.height
 
         sourceSize.width: screen.height
         sourceSize.height: screen.height

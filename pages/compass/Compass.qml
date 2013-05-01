@@ -15,6 +15,7 @@ Item {
     property alias buttonEnabled: centerImage.visible
 
     property bool keepSelection
+    property bool centerMenu
 
     property bool animating: horizontalAnimation.running || verticalAnimation.running
     property bool expanded: _menu != null
@@ -27,8 +28,8 @@ Item {
     property CompassAction _horizontalAction: dragArea.x > 0 ? leftAction : rightAction
     property CompassAction _currentAction: _verticalDrag ? _verticalAction : _horizontalAction
 
-    property real _verticalPosition: 2 * dragArea.y + (dragArea.y > 0 ? - compass.height : compass.height)
-    property real _horizontalPosition: 2 * dragArea.x + (dragArea.x > 0 ? - compass.width : compass.width)
+    property real _verticalPosition: 2 * dragArea.y + (dragArea.y > 0 ? -compass.width : compass.width)
+    property real _horizontalPosition: 2 * dragArea.x + (dragArea.x > 0 ? -compass.width : compass.width)
     property real _currentPosition: _verticalDrag ? _verticalPosition : _horizontalPosition
     property bool activated: (horizontalDrag.pressed || verticalDrag.pressed || keepSelection)
                 && Math.abs(_verticalDrag ? _verticalPosition : _horizontalPosition) < 16
@@ -82,7 +83,7 @@ Item {
     function closeMenu() {
         if (_menu && !compass._closingMenu) {
             opacityAnimation.to = 1.0
-            heightAnimation.to = compass.height
+            heightAnimation.to = compass.width
             compass._closingMenu = true
 
             if (!menuAnimation.running) {
@@ -103,11 +104,20 @@ Item {
     CompassAction { id: rightAction }
     CompassAction { id: bottomAction }
 
+
+    Item {
+        id: edgePositioner
+        width: clipArea.width
+        height: clipArea.height
+        anchors.bottom: compass.bottom
+    }
+
     MouseArea {
         id: horizontalDrag
 
         width: compass.width
-        height: compass.height
+        height: compass.width
+        anchors.centerIn: clipArea.anchors.centerIn
         enabled: !horizontalAnimation.running
                     && !verticalAnimation.running
                     && !compass._menu
@@ -147,15 +157,15 @@ Item {
             id: verticalDrag
 
             width: compass.width
-            height: compass.height
+            height: compass.width
 
             enabled: horizontalDrag.enabled
 
             drag {
                 target: dragArea
                 axis: Drag.YAxis
-                minimumY: bottomAction.enabled ? -compass.height / 2 : 0
-                maximumY: topAction.enabled ? compass.height / 2 : 0
+                minimumY: bottomAction.enabled ? -compass.width / 2 : 0
+                maximumY: topAction.enabled ? compass.width / 2 : 0
 
                 onActiveChanged: {
                     if (drag.active) {
@@ -193,22 +203,22 @@ Item {
         property alias contentItem: clipArea
 
         width: compass.width
-        height: compass.height
+        height: compass.width
 
-        anchors.centerIn: parent
+        anchors.centerIn: compass.centerMenu ? compass : edgePositioner
 
         Item {
             id: buttons
 
             width: compass.width
-            height: compass.height
+            height: compass.width
             anchors.centerIn: parent
 
             Item {
                 id: dragArea
 
                 width: compass.width
-                height: compass.height
+                height: compass.width
 
 
                 NumberAnimation on x {
@@ -265,7 +275,7 @@ Item {
                 x: !compass._verticalDrag ? compass._horizontalPosition : 0
                 y: compass._verticalDrag ? compass._verticalPosition : 0
                 width: compass.width
-                height: compass.height
+                height: compass.width
 
                 Image {
                     id: actionIcon

@@ -10,6 +10,7 @@ SplitItem {
 
     property bool active
     property bool windowActive
+    property int orientation
     property int effectiveIso: settings.effectiveIso
 
     property bool menuOpen: captureView.contracted
@@ -19,7 +20,7 @@ SplitItem {
 
     property bool _complete
 
-    dock: Dock.Right
+    dock: orientation == Orientation.Portrait ? Dock.Bottom : Dock.Right
 
     onEffectiveIsoChanged: {
         if (effectiveIso == 0) {
@@ -64,19 +65,11 @@ SplitItem {
         camera: camera
     }
 
-    MouseArea {
-        anchors.fill: parent
 
-        onClicked: {
-            captureView.split = false
-            shootingModeOverlay.open = false
-            settingsCompass.closeMenu()
-            captureCompass.closeMenu()
-        }
-    }
 
     VideoOutput {
         x: -parent.x / 2
+        y: -parent.y / 2
         width: page.width
         height: page.height
 
@@ -90,21 +83,35 @@ SplitItem {
         camera: camera
 
         x: -parent.x / 2
+        y: -parent.y / 2
         width: page.width
         height: page.height
 
-        enabled: !captureView.contracted
-        interactive: !settingsCompass.expanded && !captureCompass.expanded
+        interactive: !settingsCompass.expanded && !captureCompass.expanded && !captureView.contracted
+        orientation: captureView.orientation
+
+        MouseArea {
+            anchors.fill: parent
+
+            onClicked: {
+                captureView.split = false
+                shootingModeOverlay.open = false
+                settingsCompass.closeMenu()
+                captureCompass.closeMenu()
+            }
+        }
 
         SettingsCompass {
             id: settingsCompass
 
             camera: camera
             enabled: !shootingModeOverlay.expanded
+            centerMenu: captureView.orientation == Orientation.Landscape
 
             anchors {
                 left: parent.left
-                verticalCenter: parent.verticalCenter
+                top: parent.top
+                bottom: parent.bottom
                 margins: theme.paddingLarge
             }
 
@@ -114,7 +121,7 @@ SplitItem {
         Rectangle {
             id: focus
 
-            width: theme.itemSizeExtraLarge
+            width: theme.itemSizeExtraLarge + theme.paddingMedium
             height: width
 
             anchors.centerIn: parent
@@ -131,10 +138,12 @@ SplitItem {
             camera: camera
 
             enabled: !shootingModeOverlay.expanded
+            centerMenu: captureView.orientation == Orientation.Landscape
 
             anchors {
                 right: parent.right
-                verticalCenter: parent.verticalCenter
+                top: parent.top
+                bottom: parent.bottom
                 margins: theme.paddingLarge
             }
         }

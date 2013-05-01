@@ -11,6 +11,7 @@ SplitItem {
     property bool menuOpen: galleryView.contracted || _playingState
     property bool active
     property bool windowActive
+    property int orientation
     property Item _activeItem
 
     property alias contentItem: pageView.contentItem
@@ -22,7 +23,7 @@ SplitItem {
 
     property bool _playingState: video.playing && !video.paused
 
-    dock: Dock.Right
+    dock: orientation == Orientation.Portrait ? Dock.Bottom : Dock.Right
 
     onActiveChanged: {
         if (!active) {
@@ -48,6 +49,7 @@ SplitItem {
         id: pageView
 
         x: -parent.x / 2
+        y: -parent.y / 2
         width: galleryView.width
         height: galleryView.height
 
@@ -107,6 +109,7 @@ SplitItem {
 
             width: galleryView.width
             height: galleryView.height
+            clip: true
 
             Component {
                 id: imageComponent
@@ -114,6 +117,8 @@ SplitItem {
                 ZoomableImage {
                     source: url
                     onClicked: galleryView.split = !galleryView.split
+                    isPortrait: galleryView.orientation == Orientation.Portrait
+                    menuOpen: galleryView.contracted
                 }
             }
 
