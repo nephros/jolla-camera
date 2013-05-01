@@ -1,4 +1,4 @@
-import QtQuick 1.1
+import QtQuick 1.2
 import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
 import com.jolla.camera.settings 1.0
@@ -16,49 +16,61 @@ Page {
 
     allowedOrientations: Orientation.Landscape
 
-    ListView {
-        id: listView
+    /*
+        This won't snap the header to position without modifiying Qt first.  There is an alternative
+        mechanism which involves nesting ListViews which will work with a bleeding edge Qt but will
+        cause the page to get stuck in the GalleryView on deployed versions.
+
+        ListView {
+            orientation: ListView.Horizontal
+            layoutDirection: Qt.RightToLeft
+            snapMode: ListView.SnapOneItem
+            highlightRangeMode: ListView.StrictlyEnforceRange
+            model: VisualItemModel {
+                CaptureView {}
+                GalleryView{}
+            }
+        }
+    */
+
+    GalleryView {
+        id: galleryView
 
         width: page.width
         height: page.height
 
-        orientation: ListView.Horizontal
-        layoutDirection: Qt.RightToLeft
-        snapMode: ListView.SnapOneItem
-        highlightRangeMode: ListView.StrictlyEnforceRange
-        highlightMoveDuration: 500
+        page: page
+        active: currentIndex != -1
+        windowActive: page.windowActive
 
-        pressDelay: 50
-        boundsBehavior: Flickable.StopAtBounds
+        interactive: !captureView.menuOpen && !galleryView.menuOpen
 
-        // Disallow swiping into the camera roll for the time being as it is impossible to swipe
-        // out again.
-//        interactive: !captureView.menuOpen && !galleryView.menuOpen
-        interactive: false
+        header: Item {
+            // The ListView header item is sometimes destroyed and recreated by the ListView
+            // in response to model and orientation changes.  We don't want that to ever happen to
+            // the CaptureView so we make a placeholder header and anchor the real header to it.
+            id: headerItem
 
-        model: VisualItemModel {
-            CaptureView {
-                id: captureView
+            width: page.width
+            height: page.height
 
-                width: page.width
-                height: page.height
-                active: !listView.atXBeginning
-                windowActive: page.windowActive
-
-                onOpenCameraRoll: {
-                    listView.currentIndex = 1
+            onParentChanged: {
+                if (parent) {
+                    captureView.anchors.left = headerItem.left
                 }
             }
-            GalleryView {
-                id: galleryView
+        }
 
-                page: page
+        contentItem.children: CaptureView {
+            id: captureView
 
-                width: page.width
-                height: page.height
-                active: !listView.atXEnd
-                windowActive: page.windowActive
-            }
+            width: page.width
+            height: page.height
+
+            active: galleryView.currentIndex == -1
+
+            windowActive: page.windowActive
         }
     }
 }
+

@@ -19,9 +19,6 @@ SplitItem {
 
     property bool _complete
 
-
-    signal openCameraRoll
-
     dock: Dock.Right
 
     onEffectiveIsoChanged: {

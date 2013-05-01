@@ -13,6 +13,11 @@ SplitItem {
     property bool windowActive
     property Item _activeItem
 
+    property alias contentItem: pageView.contentItem
+    property alias header: pageView.header
+    property bool interactive: true
+    property alias currentIndex: pageView.currentIndex
+
     property Item page
 
     property bool _playingState: video.playing && !video.paused
@@ -35,6 +40,10 @@ SplitItem {
         }
     }
 
+    Formatter {
+        id: durationFormatter
+    }
+
     SilicaListView {
         id: pageView
 
@@ -45,13 +54,13 @@ SplitItem {
         pressDelay: 50
         boundsBehavior: Flickable.StopAtBounds
         cacheBuffer: width * 3
+        currentIndex: -1
 
         orientation: ListView.Horizontal
         layoutDirection: Qt.RightToLeft
         snapMode: ListView.SnapOneItem
-        highlightRangeMode: ListView.StrictlyEnforceRange
 
-        interactive: !galleryView._playingState
+        interactive: !galleryView._playingState && galleryView.interactive
 
         onCurrentItemChanged: {
             if (!galleryView._activeItem && currentItem) {
@@ -61,6 +70,9 @@ SplitItem {
         }
 
         onMovingChanged: {
+            // ListView.StrictlyEnforceRange prevents snapping to the the header, so we update the
+            // currentIndex ourselves.
+            currentIndex = indexAt(contentX + width / 2, contentY + height / 2)
             if (!moving && galleryView._activeItem != currentItem) {
                 if (galleryView._activeItem) {
                     galleryView._activeItem.active = false
@@ -113,6 +125,15 @@ SplitItem {
                     active: galleryItem.active
                     source: url
                     mimeType: model.mimeType
+                    formatter: durationFormatter
+
+                    onClicked: {
+                        if (video.playing && !video.paused) {
+                            video.pause()
+                        } else {
+                            galleryView.split = !galleryView.split
+                        }
+                    }
                 }
             }
 
