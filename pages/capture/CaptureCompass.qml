@@ -52,7 +52,7 @@ Compass {
         smallIcon: {
             switch (settings.flash) {
             case Camera.FlashAuto:
-                return "image://theme/icon-camera-flash-automatic"
+                return "image://theme/icon-camera-flash"
             case Camera.FlashOff:
                 return "image://theme/icon-camera-flash-off"
             case Camera.FlashOn:
@@ -123,7 +123,7 @@ Compass {
         CompassMenu {
             property: "flash"
             CompassMenuItem {
-                icon: "image://theme/icon-camera-flash-automatic"
+                icon: "image://theme/icon-camera-flash"
                 value: Camera.FlashAuto
             }
             CompassMenuItem {

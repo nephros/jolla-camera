@@ -43,7 +43,7 @@ Compass {
         smallIcon: {
             switch (settings.timer) {
             case 0:
-                return "image://theme/icon-camera-timer-off"
+                return "image://theme/icon-camera-timer"
             case 3:
                 return "image://theme/icon-camera-timer-3s"
             case 15:
@@ -93,7 +93,7 @@ Compass {
         CompassMenu {
             property: "timer"
             CompassMenuItem {
-                icon: "image://theme/icon-camera-timer-off"
+                icon: "image://theme/icon-camera-timer"
                 value: 0
             }
             CompassMenuItem {
