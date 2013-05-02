@@ -7,7 +7,9 @@ import "../pages/settings/SettingsIcons.js" as SettingsIcons
 Cover {
     anchors.fill: parent
 
-    CoverBackground {
+    Rectangle {
+        anchors.fill: parent
+        color: theme.rgba(theme.highlightBackgroundColor, 0.6)
     }
 
     Image {
@@ -17,7 +19,7 @@ Cover {
             top: parent.top
             margins: theme.paddingLarge
         }
-        source: SettingsIcons.shootingMode(Settings, settings.shootingMode)
+        source: SettingsIcons.shootingMode(Settings, settings.shootingMode) + "?" + theme.highlightDimmerColor
     }
 
     Image {
@@ -27,7 +29,7 @@ Cover {
             right: parent.right
             margins: theme.paddingLarge
         }
-        source: SettingsIcons.iso(settings.effectiveIso)
+        source: SettingsIcons.iso(settings.effectiveIso) + "?" + theme.highlightDimmerColor
     }
 
     Image {
@@ -36,7 +38,7 @@ Cover {
             left: parent.left
             margins: theme.paddingLarge
         }
-        source: SettingsIcons.timer(settings.effectiveTimer)
+        source: SettingsIcons.timer(settings.effectiveTimer) + "?" + theme.highlightDimmerColor
     }
 
     Image {
@@ -45,7 +47,7 @@ Cover {
             left: parent.left
             margins: theme.paddingLarge
         }
-        source: SettingsIcons.whiteBalance(CameraImageProcessing, settings.effectiveWhiteBalance)
+        source: SettingsIcons.whiteBalance(CameraImageProcessing, settings.effectiveWhiteBalance) + "?" + theme.highlightDimmerColor
     }
 
     Image {
@@ -54,7 +56,7 @@ Cover {
             right: parent.right
             margins: theme.paddingLarge
         }
-        source: SettingsIcons.flash(Camera, settings.effectiveFlash)
+        source: SettingsIcons.flash(Camera, settings.effectiveFlash) + "?" + theme.highlightDimmerColor
     }
 
     Image {
@@ -64,7 +66,7 @@ Cover {
             left: parent.left
             margins: theme.paddingLarge
         }
-        source: SettingsIcons.meteringMode(Camera, settings.effectiveMeteringMode)
+        source: SettingsIcons.meteringMode(Camera, settings.effectiveMeteringMode) + "?" + theme.highlightDimmerColor
     }
 
     Image {
@@ -76,6 +78,6 @@ Cover {
         }
         source: SettingsIcons.exposure(!(settings.shootingModeProperties & Settings.Exposure)
                 ? settings.exposureCompensation
-                : 0)
+                : 0) + "?" + theme.highlightDimmerColor
     }
 }
