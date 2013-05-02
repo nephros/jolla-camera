@@ -2,6 +2,7 @@ import QtQuick 1.1
 import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
 import com.jolla.camera.settings 1.0
+import "SettingsIcons.js" as SettingsIcons
 
 Item {
     id: overlay
@@ -107,27 +108,27 @@ Item {
 
             ShootingModeItem {
                 mode: Settings.Auto
-                icon: "image://theme/icon-camera-automatic"
+                icon: SettingsIcons.shootingMode(Settings, Settings.Auto)
             }
             ShootingModeItem {
                 mode: Settings.Program
-                icon: "image://theme/icon-camera-program"
+                icon: SettingsIcons.shootingMode(Settings, Settings.Program)
             }
             ShootingModeItem {
                 mode: Settings.Macro
-                icon: "image://theme/icon-camera-macro"
+                icon: SettingsIcons.shootingMode(Settings, Settings.Macro)
             }
             ShootingModeItem {
                 mode: Settings.Sports
-                icon: "image://theme/icon-camera-sports"
+                icon: SettingsIcons.shootingMode(Settings, Settings.Sports)
             }
             ShootingModeItem {
                 mode: Settings.Landscape
-                icon: "image://theme/icon-camera-landscape"
+                icon: SettingsIcons.shootingMode(Settings, Settings.Landscape)
             }
             ShootingModeItem {
                 mode: Settings.Portrait
-                icon: "image://theme/icon-camera-portrait"
+                icon: SettingsIcons.shootingMode(Settings, Settings.Portrait)
             }
         }
 

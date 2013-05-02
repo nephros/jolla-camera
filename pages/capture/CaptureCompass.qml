@@ -3,6 +3,7 @@ import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
 import com.jolla.camera.settings 1.0
 import "../compass"
+import "../settings/SettingsIcons.js" as SettingsIcons
 
 Compass {
     id: compass
@@ -34,33 +35,13 @@ Compass {
     }
 
     leftAction {
-        smallIcon: {
-            switch (settings.meteringMode) {
-            case Camera.MeteringMatrix:
-                return "image://theme/icon-camera-metering-matrix"
-            case Camera.MeteringAverage:
-                return "image://theme/icon-camera-metering-weighted"
-            case Camera.MeteringSpot:
-                return "image://theme/icon-camera-metering-spot"
-            }
-        }
+        smallIcon: SettingsIcons.meteringMode(Camera, settings.meteringMode)
         largeIcon: "image://theme/icon-camera-metering-mode"
         enabled: !compass._recording && !(settings.shootingModeProperties & Settings.MeteringMode)
         onActivated: compass.openMenu(meteringMenu)
     }
     topAction {
-        smallIcon: {
-            switch (settings.flash) {
-            case Camera.FlashAuto:
-                return "image://theme/icon-camera-flash"
-            case Camera.FlashOff:
-                return "image://theme/icon-camera-flash-off"
-            case Camera.FlashOn:
-                return "image://theme/icon-camera-flash-on"
-            case Camera.FlashRedEyeReduction:
-                return "image://theme/icon-camera-flash-redeye"
-            }
-        }
+        smallIcon: SettingsIcons.flash(Camera, settings.flash)
         largeIcon: "image://theme/icon-camera-flash"
         enabled: !compass._recording && !(settings.shootingModeProperties & Settings.Flash)
         onActivated: compass.openMenu(flashMenu)
@@ -103,16 +84,16 @@ Compass {
         CompassMenu {
             property: "meteringMode"
             CompassMenuItem {
-                icon: "image://theme/icon-camera-metering-matrix"
                 value: Camera.MeteringMatrix
+                icon: SettingsIcons.meteringMode(Camera, Camera.MeteringMatrix)
             }
             CompassMenuItem {
-                 icon: "image://theme/icon-camera-metering-weighted"
                  value: Camera.MeteringAverage
+                 icon: SettingsIcons.meteringMode(Camera, Camera.MeteringAverage)
              }
             CompassMenuItem {
-                icon: "image://theme/icon-camera-metering-spot"
                 value: Camera.MeteringSpot
+                icon: SettingsIcons.meteringMode(Camera, Camera.MeteringSpot)
             }
         }
     }
@@ -123,20 +104,20 @@ Compass {
         CompassMenu {
             property: "flash"
             CompassMenuItem {
-                icon: "image://theme/icon-camera-flash"
                 value: Camera.FlashAuto
+                icon: SettingsIcons.flash(Camera, Camera.FlashAuto)
             }
             CompassMenuItem {
-                icon: "image://theme/icon-camera-flash-off"
                 value: Camera.FlashOff
+                icon: SettingsIcons.flash(Camera, Camera.FlashOff)
             }
             CompassMenuItem {
-                icon: "image://theme/icon-camera-flash-on"
                 value: Camera.FlashOn
+                icon: SettingsIcons.flash(Camera, Camera.FlashOn)
             }
             CompassMenuItem {
-                icon: "image://theme/icon-camera-flash-redeye"
                 value: Camera.FlashRedEyeReduction
+                icon: SettingsIcons.flash(Camera, Camera.FlashRedEyeReduction)
             }
         }
     }
@@ -146,24 +127,32 @@ Compass {
         CompassMenu {
             property: "whiteBalance"
             CompassMenuItem {
-                icon: "image://theme/icon-camera-wb-automatic"
                 value: CameraImageProcessing.WhiteBalanceAuto
+                icon: SettingsIcons.whiteBalance(CameraImageProcessing, CameraImageProcessing.WhiteBalanceAuto)
             }
             CompassMenuItem {
-                icon: "image://theme/icon-camera-wb-fluorecent"
-                value: CameraImageProcessing.WhiteBalanceFluorescent
+                value: CameraImageProcessing.WhiteBalanceSunlight
+                icon: SettingsIcons.whiteBalance(CameraImageProcessing, CameraImageProcessing.WhiteBalanceSunlight)
             }
             CompassMenuItem {
-                icon: "image://theme/icon-camera-wb-shade"
+                value: CameraImageProcessing.WhiteBalanceCloudy
+                icon: SettingsIcons.whiteBalance(CameraImageProcessing, CameraImageProcessing.WhiteBalanceCloudy)
+            }
+            CompassMenuItem {
                 value: CameraImageProcessing.WhiteBalanceShade
+                icon: SettingsIcons.whiteBalance(CameraImageProcessing, CameraImageProcessing.WhiteBalanceShade)
             }
             CompassMenuItem {
-                icon: "image://theme/icon-camera-wb-sunset"
                 value: CameraImageProcessing.WhiteBalanceSunset
+                icon: SettingsIcons.whiteBalance(CameraImageProcessing, CameraImageProcessing.WhiteBalanceSunset)
             }
             CompassMenuItem {
-                icon: "image://theme/icon-camera-wb-tungsten"
+                value: CameraImageProcessing.WhiteBalanceFluorescent
+                icon: SettingsIcons.whiteBalance(CameraImageProcessing, CameraImageProcessing.WhiteBalanceFluorescent)
+            }
+            CompassMenuItem {
                 value: CameraImageProcessing.WhiteBalanceTungsten
+                icon: SettingsIcons.whiteBalance(CameraImageProcessing, CameraImageProcessing.WhiteBalanceTungsten)
             }
         }
     }
