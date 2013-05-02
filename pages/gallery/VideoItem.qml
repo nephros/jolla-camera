@@ -10,16 +10,13 @@ MouseArea {
     property bool active
     property url source
     property string mimeType
+    property Formatter formatter
 
-    onSourceChanged: console.log("Source", source)
-
-    enabled: false
-
-    onClicked: player.pause()
+    property bool _playing
 
     onActiveChanged: {
         if (!active) {
-            enabled = false
+            _playing = false
         }
     }
 
@@ -33,14 +30,14 @@ MouseArea {
             case Video.NoMedia:
             case Video.InvalidMedia:
             case Video.EndOfMedia:
-                videoItem.enabled = false
+                videoItem._playing = false
                 break
             default:
                 break;
             }
         }
-        onPlayingChanged: videoItem.enabled = (videoItem.player.playing && !videoItem.player.paused)
-        onPausedChanged: videoItem.enabled = (videoItem.player.playing && !videoItem.player.paused)
+        onPlayingChanged: videoItem._playing = (videoItem.player.playing && !videoItem.player.paused)
+        onPausedChanged: videoItem._playing = (videoItem.player.playing && !videoItem.player.paused)
     }
 
     // Poster
@@ -50,7 +47,6 @@ MouseArea {
         anchors.centerIn: parent
 
         width: videoItem.width
-        height: videoItem.height
 
         sourceSize.width: screen.height
         sourceSize.height: screen.height
@@ -67,8 +63,8 @@ MouseArea {
         width: videoItem.width
         height: videoItem.height
 
-        opacity: videoItem.enabled ? 0.0 : 1.0
-        Behavior on opacity { NumberAnimation {} }
+        opacity: videoItem._playing ? 0.0 : 1.0
+        Behavior on opacity { FadeAnimation {} }
 
         Image {
             anchors.centerIn: parent
@@ -76,7 +72,7 @@ MouseArea {
 
             MouseArea {
                 anchors.fill: parent
-                enabled: !videoItem.enabled
+                enabled: !videoItem._playing
                 onClicked: {
                     videoItem.player.visible = true
                     videoItem.player.source = videoItem.source
@@ -93,7 +89,7 @@ MouseArea {
             height: theme.itemSizeSmall
             handleVisible: false
             minimumValue: 0
-//            valueText: Locale.formatDuration(value)
+            valueText: videoItem.formatter.formatDuration(value, Formatter.DurationShort)
 
             onReleased: videoItem.player.position = value * 1000
         }

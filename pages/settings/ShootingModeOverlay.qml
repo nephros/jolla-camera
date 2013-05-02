@@ -8,7 +8,8 @@ Item {
 
     property Camera camera
     property bool open
-    property bool expanded: open || verticalAnimation.running
+    property bool expanded: open || verticalAnimation.running || dragArea.drag.active
+    property int orientation
     default property alias _data: container.data
     property Item _currentItem: row.children[settings.shootingMode]
 
@@ -23,7 +24,7 @@ Item {
 
         visible: overlay.expanded
         color: theme.highlightBackgroundColor
-        opacity: 0.5 * panel.visibleSize / panel.height
+        opacity: 0.5 * container.y / panel.height
     }
 
     MouseArea {
@@ -32,6 +33,7 @@ Item {
         width: overlay.width
         height: overlay.height
 
+        enabled: overlay.interactive
         drag {
             target: panel
             minimumY: -panel.height
@@ -75,64 +77,77 @@ Item {
             }
 
             width: overlay.width
-            height: theme.itemSizeExtraLarge
-
-            Row {
-                id: row
-
-                height: panel.height
-                anchors.centerIn: parent
-
-                spacing: theme.paddingMedium
-
-                ShootingModeItem {
-                    mode: Settings.Auto
-                    icon: "image://theme/icon-camera-automatic"
-                }
-                ShootingModeItem {
-                    mode: Settings.Program
-                    icon: "image://theme/icon-camera-program"
-                }
-                ShootingModeItem {
-                    mode: Settings.Macro
-                    icon: "image://theme/icon-camera-macro"
-                }
-                ShootingModeItem {
-                    mode: Settings.Sports
-                    icon: "image://theme/icon-camera-sports"
-                }
-                ShootingModeItem {
-                    mode: Settings.Landscape
-                    icon: "image://theme/icon-camera-landscape"
-                }
-                ShootingModeItem {
-                    mode: Settings.Portrait
-                    icon: "image://theme/icon-camera-portrait"
-                }
-            }
+            height: overlay.orientation == Orientation.Portrait
+                ? theme.itemSizeExtraLarge * 2
+                : theme.itemSizeExtraLarge
         }
 
         Item {
             id: container
 
-            y: panel.y + panel.height
+            anchors.top: row.bottom
             width: overlay.width
             height: overlay.height
             opacity: 1 - 0.6 * container.y / panel.height
         }
 
-        Image {
-            x: row.x + overlay._currentItem.x + (overlay._currentItem.width - width) / 2
-            y: theme.paddingMedium
-            opacity: 1 - container.y / panel.height
+        Flow {
+            id: row
 
-            source: overlay._currentItem.selectionIcon
+            y: height * panel.y / panel.height
+            width: overlay.orientation == Orientation.Portrait
+                    ? theme.itemSizeExtraLarge
+                    : overlay.width
+            height: overlay.orientation == Orientation.Landscape
+                    ? theme.itemSizeExtraLarge
+                    : overlay.height
+            anchors.horizontalCenter: panel.horizontalCenter
 
-            MouseArea {
-                enabled: overlay.interactive && !overlay.expanded
-                anchors.fill: parent
-                anchors.margins: -parent.width / 4
-                onClicked: overlay.open = true
+            spacing: theme.paddingMedium
+
+            ShootingModeItem {
+                mode: Settings.Auto
+                icon: "image://theme/icon-camera-automatic"
+            }
+            ShootingModeItem {
+                mode: Settings.Program
+                icon: "image://theme/icon-camera-program"
+            }
+            ShootingModeItem {
+                mode: Settings.Macro
+                icon: "image://theme/icon-camera-macro"
+            }
+            ShootingModeItem {
+                mode: Settings.Sports
+                icon: "image://theme/icon-camera-sports"
+            }
+            ShootingModeItem {
+                mode: Settings.Landscape
+                icon: "image://theme/icon-camera-landscape"
+            }
+            ShootingModeItem {
+                mode: Settings.Portrait
+                icon: "image://theme/icon-camera-portrait"
+            }
+        }
+
+        MouseArea {
+            enabled: overlay.interactive && !overlay.expanded
+            anchors {
+                left: row.left
+                leftMargin: overlay._currentItem.x
+            }
+            width: theme.itemSizeExtraLarge
+            height: theme.itemSizeExtraLarge
+            onClicked: overlay.open = true
+
+            Image {
+                anchors.centerIn: parent
+
+                opacity: 1 - container.y / panel.height
+
+                source: overlay._currentItem.selectionIcon
+
             }
         }
     }

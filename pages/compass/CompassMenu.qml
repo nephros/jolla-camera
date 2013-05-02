@@ -10,12 +10,10 @@ SilicaFlickable {
     property alias contentItem: contentItem
 
     default property alias _data: contentItem.data
-    property real _minimumHeight: compass.width
-    property real _maximumHeight: screen.width - theme.itemSizeLarge
     property real _paddedHeight: contentItem.height + (2 * theme.paddingLarge)
 
     width: compass.width
-    height: Math.min(menu._paddedHeight, menu._maximumHeight)
+    height: Math.min(menu._paddedHeight, menu.compass.height)
     anchors.centerIn: parent
     opacity: compass._menuOpacity
 
