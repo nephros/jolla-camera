@@ -71,18 +71,19 @@ Compass {
         }
     }
     rightAction {
-        smallIcon: compass.camera.locks.focusStatus == CameraLocks.Locked
-                ? "image://theme/icon-camera-zoom-out?" + theme.highlightColor
-                : "image://theme/icon-camera-zoom-out"
-        largeIcon: "image://theme/icon-camera-zoom-wide"
-        enabled: compass.buttonEnabled && !(settings.shootingModeProperties & Settings.Focus)
-        onActivated: {
-            if (compass.camera.locks.focusStatus == CameraLocks.Unlocked) {
-                compass.camera.locks.lockFocus()
-            } else {
-                compass.camera.locks.unlockFocus()
+        smallIcon: {
+            switch (settings.iso) {
+            case 0: return "image://theme/icon-camera-iso" // automatic
+            case 100: return "image://theme/icon-camera-iso-100"
+            case 200: return "image://theme/icon-camera-iso-200"
+            case 400: return "image://theme/icon-camera-iso-400"
+            case 800: return "image://theme/icon-camera-iso-800"
+            case 1600: return "image://theme/icon-camera-iso-1600"
             }
         }
+        largeIcon: "image://theme/icon-camera-iso"
+        enabled: compass.buttonEnabled && !(settings.shootingModeProperties & Settings.Iso)
+        onActivated: compass.openMenu(isoMenu)
     }
 
     icon: "image://theme/icon-camera-settings?" + theme.highlightColor
@@ -144,6 +145,20 @@ Compass {
                 icon: "image://theme/icon-camera-ec-plus2"
                 value: 4
             }
+        }
+    }
+
+    Component {
+        id: isoMenu
+
+        CompassMenu {
+            property: "iso"
+            CompassMenuItem { icon: "image://theme/icon-camera-iso"; value: 0 } // automatic.
+            CompassMenuItem { icon: "image://theme/icon-camera-iso-100"; value: 100 }
+            CompassMenuItem { icon: "image://theme/icon-camera-iso-200"; value: 200 }
+            CompassMenuItem { icon: "image://theme/icon-camera-iso-400"; value: 400 }
+            CompassMenuItem { icon: "image://theme/icon-camera-iso-800"; value: 800 }
+            CompassMenuItem { icon: "image://theme/icon-camera-iso-1600"; value: 1600 }
         }
     }
 }

@@ -24,5 +24,6 @@ MouseArea {
         source: menuItem.selected || menuItem.pressed
                 ? menuItem.icon + "?" + theme.highlightColor
                 : menuItem.icon
+        smooth: true
     }
 }
