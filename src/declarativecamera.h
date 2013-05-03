@@ -39,6 +39,7 @@ class DeclarativeCamera : public QObject
     Q_ENUMS(FlashMode)
     Q_ENUMS(ExposureMode)
     Q_ENUMS(FocusMode)
+    Q_ENUMS(FocusPointMode)
     Q_ENUMS(MeteringMode)
 public:
     enum Status
@@ -102,6 +103,14 @@ public:
         FocusAuto = QCameraFocus::AutoFocus,
         FocusContinuous = QCameraFocus::ContinuousFocus,
         FocusMacro = QCameraFocus::MacroFocus
+    };
+
+    enum FocusPointMode
+    {
+        FocusPointAuto = QCameraFocus::FocusPointAuto,
+        FocusPointCenter = QCameraFocus::FocusPointCenter,
+        FocusPointFaceDetection = QCameraFocus::FocusPointFaceDetection,
+        FocusPointCustom = QCameraFocus::FocusPointCustom
     };
 
     enum MeteringMode

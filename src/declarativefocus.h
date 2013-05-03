@@ -44,6 +44,8 @@ class DeclarativeFocus : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(DeclarativeCamera::FocusMode focusMode READ mode WRITE setMode NOTIFY modeChanged)
+    Q_PROPERTY(DeclarativeCamera::FocusPointMode focusPointMode READ focusPointMode WRITE setFocusPointMode NOTIFY focusPointModeChanged)
+    Q_PROPERTY(QPointF customFocusPoint READ customFocusPoint WRITE setCustomFocusPoint NOTIFY customFocusPointChanged)
     Q_ENUMS(DeclarativeCamera::FocusMode)
 public:
     DeclarativeFocus(QCamera *camera, QObject *parent);
@@ -53,6 +55,12 @@ public:
     DeclarativeCamera::FocusMode mode() const;
     void setMode(DeclarativeCamera::FocusMode mode);
 
+    DeclarativeCamera::FocusPointMode focusPointMode() const;
+    void setFocusPointMode(DeclarativeCamera::FocusPointMode mode);
+
+    QPointF customFocusPoint() const;
+    void setCustomFocusPoint(const QPointF &point);
+
     DeclarativeFocusZoneModel *focusZones();
 
 public Q_SLOTS:
@@ -60,6 +68,8 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void modeChanged();
+    void focusPointModeChanged();
+    void customFocusPointChanged();
 
 private Q_SLOTS:
     void updateFocusZones();
