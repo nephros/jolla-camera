@@ -6,6 +6,7 @@ SilicaFlickable {
 
     property Item compass
 
+    property QtObject settings
     property string property
     property alias contentItem: contentItem
     property alias model: repeater.model
@@ -28,6 +29,7 @@ SilicaFlickable {
 
         property alias _compass: menu.compass
         property alias _property: menu.property
+        property alias _settings: menu.settings
 
         y: theme.paddingLarge
         width: menu.width

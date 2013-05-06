@@ -19,17 +19,17 @@ Cover {
         Image {
             // Scale down to match the size of the individual settings icons.
             width: referenceIcon.width; height: referenceIcon.height; fillMode: Image.PreserveAspectFit
-            source: SettingsIcons.shootingMode(Settings, settings.shootingMode) + "?" + theme.highlightDimmerColor
+            source: SettingsIcons.shootingMode(Settings, globalSettings.shootingMode) + "?" + theme.highlightDimmerColor
         }
 
         Image {
             width: referenceIcon.width; height: referenceIcon.height; fillMode: Image.PreserveAspectFit
-            source: SettingsIcons.iso(settings.effectiveIso) + "?" + theme.highlightDimmerColor
+            source: SettingsIcons.iso(modeSettings.iso) + "?" + theme.highlightDimmerColor
         }
 
         Image {
             width: referenceIcon.width; height: referenceIcon.height; fillMode: Image.PreserveAspectFit
-            source: SettingsIcons.timer(settings.effectiveTimer) + "?" + theme.highlightDimmerColor
+            source: SettingsIcons.timer(modeSettings.timer) + "?" + theme.highlightDimmerColor
         }
 
         Item { // Placeholder item.
@@ -38,20 +38,20 @@ Cover {
 
         Image {
             id: referenceIcon
-            source: SettingsIcons.whiteBalance(CameraImageProcessing, settings.effectiveWhiteBalance) + "?" + theme.highlightDimmerColor
+            source: SettingsIcons.whiteBalance(CameraImageProcessing, modeSettings.whiteBalance) + "?" + theme.highlightDimmerColor
         }
 
         Image {
-            source: SettingsIcons.flash(Camera, settings.effectiveFlash) + "?" + theme.highlightDimmerColor
+            source: SettingsIcons.flash(Camera, modeSettings.flash) + "?" + theme.highlightDimmerColor
         }
 
         Image {
-            source: SettingsIcons.meteringMode(Camera, settings.effectiveMeteringMode) + "?" + theme.highlightDimmerColor
+            source: SettingsIcons.meteringMode(Camera, modeSettings.meteringMode) + "?" + theme.highlightDimmerColor
         }
 
         Image {
             width: referenceIcon.width; height: referenceIcon.height; fillMode: Image.PreserveAspectFit
-            source: SettingsIcons.exposure(!(settings.shootingModeProperties & Settings.Exposure)
+            source: SettingsIcons.exposure(modeSettings.exposureConfigurable
                     ? settings.exposureCompensation
                     : 0) + "?" + theme.highlightDimmerColor
         }

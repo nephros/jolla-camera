@@ -33,6 +33,8 @@
 
 #include "declarativecameralocks.h"
 #include "declarativecompassaction.h"
+#include "declarativegconfschema.h"
+#include "declarativegconfsettings.h"
 #include "declarativesettings.h"
 
 Q_DECL_EXPORT int main(int argc, char *argv[])
@@ -71,26 +73,10 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     translator.load(QLocale(), "jolla-camera", "-", translationPath);
     qApp->installTranslator(&translator);
 
-    // We want to have SignonUI in process, if user wants to create account from Gallery
-    SignonUiService *ssoui = new SignonUiService(0, true); // in process
-    ssoui->setInProcessServiceName(QLatin1String("com.jolla.camera"));
-    ssoui->setInProcessObjectPath(QLatin1String("/JollaCameraSignonUi"));
-
-    QDBusConnection sessionBus = QDBusConnection::sessionBus();
-    bool registeredService = sessionBus.registerService(QLatin1String("com.jolla.camera"));
-    bool registeredObject = sessionBus.registerObject(QLatin1String("/JollaGallerySignonUi"), ssoui,
-            QDBusConnection::ExportAllContents);
-
-    if (!registeredService || !registeredObject) {
-        qWarning() << Q_FUNC_INFO << "CRITICAL: unable to register signon ui service:"
-                   << QLatin1String("com.jolla.camera") << "at object path:"
-                   << QLatin1String("/JollaCameraSignonUi");
-    }
-
-    view->rootContext()->setContextProperty("jolla_signon_ui_service", ssoui);
-
     qmlRegisterType<DeclarativeCameraLocks>("com.jolla.camera", 1, 0, "CameraLocks");
     qmlRegisterType<DeclarativeCompassAction>("com.jolla.camera", 1, 0, "CompassAction");
+    qmlRegisterType<DeclarativeGConfSettings>("com.jolla.camera", 1, 0, "GConfSettings");
+    qmlRegisterUncreatableType<DeclarativeGConf>("com.jolla.camera", 1, 0, "GConf", QString());
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     qmlRegisterSingletonType<DeclarativeSettings>("com.jolla.camera.settings", 1, 0, "Settings", DeclarativeSettings::factory);
@@ -116,6 +102,44 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     DeclarativeSettings settings;
     view->rootContext()->setContextProperty("settings", &settings);
 #endif
+
+    // Ideally this would be done at build time, but it's non-trivial to boot-strap so something
+    // that can run during install will do.
+    if (app->arguments().contains("-install-schema")) {
+        qmlRegisterType<DeclarativeGConfSchema>("com.jolla.camera", 1, 0, "GConfSchema");
+        qmlRegisterType<DeclarativeGConfDescription>("com.jolla.camera", 1, 0, "GConfDescription");
+
+        const QString source = path + QLatin1String("gconf/schema.qml");
+
+        QDeclarativeComponent component(view->engine(), source);
+        QScopedPointer<QObject> object(component.create());
+        if (DeclarativeGConfSchema *schema = qobject_cast<DeclarativeGConfSchema *>(object.data())) {
+            schema->writeSchema(QLatin1String("/etc/gconf/schemas/jolla-camera.schemas"));
+        } else {
+            qWarning() << "Failed to create schema from" << source;
+            qWarning() << component.errorString();
+        }
+
+        return 0;
+    }
+
+    // We want to have SignonUI in process, if user wants to create account from Gallery
+    SignonUiService *ssoui = new SignonUiService(0, true); // in process
+    ssoui->setInProcessServiceName(QLatin1String("com.jolla.camera"));
+    ssoui->setInProcessObjectPath(QLatin1String("/JollaCameraSignonUi"));
+
+    QDBusConnection sessionBus = QDBusConnection::sessionBus();
+    bool registeredService = sessionBus.registerService(QLatin1String("com.jolla.camera"));
+    bool registeredObject = sessionBus.registerObject(QLatin1String("/JollaGallerySignonUi"), ssoui,
+            QDBusConnection::ExportAllContents);
+
+    if (!registeredService || !registeredObject) {
+        qWarning() << Q_FUNC_INFO << "CRITICAL: unable to register signon ui service:"
+                   << QLatin1String("com.jolla.camera") << "at object path:"
+                   << QLatin1String("/JollaCameraSignonUi");
+    }
+
+    view->rootContext()->setContextProperty("jolla_signon_ui_service", ssoui);
 
     view->setSource(path + QLatin1String("camera.qml"));
 

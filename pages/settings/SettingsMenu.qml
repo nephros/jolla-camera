@@ -40,6 +40,7 @@ SilicaFlickable {
             width: parent.width
             //% "ISO"
             label: qsTrId("camera-cb-iso")
+            settings: modeSettings
             property: "iso"
             visible: !(settings.shootingModeProperties & Settings.Iso)
             menu: ContextMenu {
@@ -63,6 +64,7 @@ SilicaFlickable {
             width: parent.width
             //% "White Balance"
             label: qsTrId("camera-cb-white-balance")
+            settings: modeSettings
             property: "whiteBalance"
             visible: !(settings.shootingModeProperties & Settings.WhiteBalance)
             menu: ContextMenu {
@@ -118,6 +120,7 @@ SilicaFlickable {
             id: aspectRatio
             //% "Aspect Ratio"
             label: qsTrId("camera-cb-aspect-ratio")
+            settings: globalSettings
             property: "aspectRatio"
             menu: ContextMenu {
                 SettingsMenuItem {
@@ -138,6 +141,7 @@ SilicaFlickable {
             width: parent.width
             //% "Focus length"
             label: qsTrId("camera-cb-focus-distance")
+            settings: modeSettings
             property: "focusDistance"
             visible: !(settings.shootingModeProperties & Settings.FocusDistance)
             menu: ContextMenu {
@@ -175,6 +179,7 @@ SilicaFlickable {
             //: Continuous auto focus
             //% "Continuous AF"
             label: qsTrId("camera-cb-continuous-autofocus")
+            settings: modeSettings
             property: "videoFocus"
             menu: ContextMenu {
                 SettingsMenuItem {

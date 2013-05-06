@@ -88,7 +88,12 @@ desktop-file-install --delete-original       \
 /opt/tests/jolla-camera/*
 # << files tests
 
-%post -n jolla-camera -p /sbin/ldconfig
-%postun -n jolla-camera -p /sbin/ldconfig
+%post
+/usr/bin/jolla-camera -install-schema
+export GCONF_CONFIG_SOURCE="$(gconftool-2 --get-default-source)"
+gconftool-2 --makefile-install-rule /etc/gconf/schemas/jolla-camera.schemas &>/dev/null || :
+
+%postun
+rm -f /etc/gconf/schemas/jolla-camera.schemas
 
 

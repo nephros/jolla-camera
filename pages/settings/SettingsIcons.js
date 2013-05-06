@@ -1,14 +1,7 @@
 
 
 function shootingMode(Settings, mode) {
-    switch (mode) {
-    case Settings.Auto:         return "image://theme/icon-camera-automatic"
-    case Settings.Program:      return "image://theme/icon-camera-program"
-    case Settings.Macro:        return "image://theme/icon-camera-macro"
-    case Settings.Sports:       return "image://theme/icon-camera-sports"
-    case Settings.Landscape:    return "image://theme/icon-camera-landscape"
-    case Settings.Portrait:     return "image://theme/icon-camera-portrait"
-    }
+    return "image://theme/icon-camera-" + mode
 }
 
 function exposure(exposure) {

@@ -35,21 +35,21 @@ Compass {
     }
 
     leftAction {
-        smallIcon: SettingsIcons.meteringMode(Camera, settings.meteringMode)
+        smallIcon: SettingsIcons.meteringMode(Camera, modeSettings.meteringMode)
         largeIcon: "image://theme/icon-camera-metering-mode"
-        enabled: !compass._recording && !(settings.shootingModeProperties & Settings.MeteringMode)
+        enabled: !compass._recording && modeSettings.meteringModeConfigurable
         onActivated: compass.openMenu(meteringMenu)
     }
     topAction {
-        smallIcon: SettingsIcons.flash(Camera, settings.flash)
+        smallIcon: SettingsIcons.flash(Camera, modeSettings.flash)
         largeIcon: "image://theme/icon-camera-flash"
-        enabled: !compass._recording && !(settings.shootingModeProperties & Settings.Flash)
+        enabled: !compass._recording && modeSettings.flashConfigurable
         onActivated: compass.openMenu(flashMenu)
     }
     rightAction {
         smallIcon: "image://theme/icon-camera-wb-default"
         largeIcon: "image://theme/icon-camera-whitebalance"
-        enabled: !compass._recording && !(settings.shootingModeProperties & Settings.WhiteBalance)
+        enabled: !compass._recording && modeSettings.whiteBalanceConfigurable
         onActivated: compass.openMenu(whiteBalanceMenu)
     }
     bottomAction {
@@ -82,6 +82,7 @@ Compass {
         id: meteringMenu
 
         CompassMenu {
+            settings: modeSettings
             property: "meteringMode"
             model: [
                 Camera.MeteringMatrix,
@@ -99,6 +100,7 @@ Compass {
         id: flashMenu
 
         CompassMenu {
+            settings: modeSettings
             property: "flash"
             model: [
                 Camera.FlashAuto,
@@ -116,6 +118,7 @@ Compass {
     Component {
         id: whiteBalanceMenu
         CompassMenu {
+            settings: modeSettings
             property: "whiteBalance"
             model: [
                 CameraImageProcessing.WhiteBalanceAuto,

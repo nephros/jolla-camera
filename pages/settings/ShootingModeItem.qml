@@ -4,8 +4,8 @@ import com.jolla.camera.settings 1.0
 MouseArea {
     id: item
 
-    property int mode
-    property bool selected: settings.shootingMode == mode
+    property string mode
+    property bool selected: globalSettings.shootingMode == mode
     property url icon
     property url selectionIcon: icon + "?" + theme.highlightColor
 
@@ -21,7 +21,7 @@ MouseArea {
     }
 
     onClicked: {
-        settings.shootingMode = mode
+        globalSettings.shootingMode = mode
         overlay.open = false
     }
 }

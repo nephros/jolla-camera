@@ -54,7 +54,7 @@ desktop.files = jolla-camera.desktop
 DEPLOYMENT_PATH = /usr/share/$$TARGET
 DEFINES *= DEPLOYMENT_PATH=\"\\\"\"$${DEPLOYMENT_PATH}/\"\\\"\"
 qml.path = $$DEPLOYMENT_PATH
-qml.files = *.qml cover pages
+qml.files = *.qml cover pages gconf
 
 service.files = com.jolla.camera.service
 service.path  = /usr/share/dbus-1/services
