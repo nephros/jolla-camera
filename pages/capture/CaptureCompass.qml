@@ -83,17 +83,14 @@ Compass {
 
         CompassMenu {
             property: "meteringMode"
-            CompassMenuItem {
-                value: Camera.MeteringMatrix
-                icon: SettingsIcons.meteringMode(Camera, Camera.MeteringMatrix)
-            }
-            CompassMenuItem {
-                 value: Camera.MeteringAverage
-                 icon: SettingsIcons.meteringMode(Camera, Camera.MeteringAverage)
-             }
-            CompassMenuItem {
-                value: Camera.MeteringSpot
-                icon: SettingsIcons.meteringMode(Camera, Camera.MeteringSpot)
+            model: [
+                Camera.MeteringMatrix,
+                Camera.MeteringAverage,
+                Camera.MeteringSpot
+            ]
+            delegate:  CompassMenuItem {
+                value: modelData
+                icon: SettingsIcons.meteringMode(Camera, modelData)
             }
         }
     }
@@ -103,21 +100,15 @@ Compass {
 
         CompassMenu {
             property: "flash"
-            CompassMenuItem {
-                value: Camera.FlashAuto
-                icon: SettingsIcons.flash(Camera, Camera.FlashAuto)
-            }
-            CompassMenuItem {
-                value: Camera.FlashOff
-                icon: SettingsIcons.flash(Camera, Camera.FlashOff)
-            }
-            CompassMenuItem {
-                value: Camera.FlashOn
-                icon: SettingsIcons.flash(Camera, Camera.FlashOn)
-            }
-            CompassMenuItem {
-                value: Camera.FlashRedEyeReduction
-                icon: SettingsIcons.flash(Camera, Camera.FlashRedEyeReduction)
+            model: [
+                Camera.FlashAuto,
+                Camera.FlashOff,
+                Camera.FlashOn,
+                Camera.FlashRedEyeReduction
+            ]
+            delegate: CompassMenuItem {
+                value: modelData
+                icon: SettingsIcons.flash(Camera, modelData)
             }
         }
     }
@@ -126,33 +117,18 @@ Compass {
         id: whiteBalanceMenu
         CompassMenu {
             property: "whiteBalance"
-            CompassMenuItem {
-                value: CameraImageProcessing.WhiteBalanceAuto
-                icon: SettingsIcons.whiteBalance(CameraImageProcessing, CameraImageProcessing.WhiteBalanceAuto)
-            }
-            CompassMenuItem {
-                value: CameraImageProcessing.WhiteBalanceSunlight
-                icon: SettingsIcons.whiteBalance(CameraImageProcessing, CameraImageProcessing.WhiteBalanceSunlight)
-            }
-            CompassMenuItem {
-                value: CameraImageProcessing.WhiteBalanceCloudy
-                icon: SettingsIcons.whiteBalance(CameraImageProcessing, CameraImageProcessing.WhiteBalanceCloudy)
-            }
-            CompassMenuItem {
-                value: CameraImageProcessing.WhiteBalanceShade
-                icon: SettingsIcons.whiteBalance(CameraImageProcessing, CameraImageProcessing.WhiteBalanceShade)
-            }
-            CompassMenuItem {
-                value: CameraImageProcessing.WhiteBalanceSunset
-                icon: SettingsIcons.whiteBalance(CameraImageProcessing, CameraImageProcessing.WhiteBalanceSunset)
-            }
-            CompassMenuItem {
-                value: CameraImageProcessing.WhiteBalanceFluorescent
-                icon: SettingsIcons.whiteBalance(CameraImageProcessing, CameraImageProcessing.WhiteBalanceFluorescent)
-            }
-            CompassMenuItem {
-                value: CameraImageProcessing.WhiteBalanceTungsten
-                icon: SettingsIcons.whiteBalance(CameraImageProcessing, CameraImageProcessing.WhiteBalanceTungsten)
+            model: [
+                CameraImageProcessing.WhiteBalanceAuto,
+                CameraImageProcessing.WhiteBalanceSunlight,
+                CameraImageProcessing.WhiteBalanceCloudy,
+                CameraImageProcessing.WhiteBalanceShade,
+                CameraImageProcessing.WhiteBalanceSunset,
+                CameraImageProcessing.WhiteBalanceFluorescent,
+                CameraImageProcessing.WhiteBalanceTungsten
+            ]
+            delegate: CompassMenuItem {
+                value: modelData
+                icon: SettingsIcons.whiteBalance(CameraImageProcessing, modelData)
             }
         }
     }

@@ -12,72 +12,48 @@ Cover {
         color: theme.rgba(theme.highlightBackgroundColor, 0.6)
     }
 
-    Image {
-        id: modeIcon
-        anchors {
-            left: parent.left
-            top: parent.top
-            margins: theme.paddingLarge
+    Grid {
+        columns: 2
+        spacing: theme.paddingLarge
+        anchors.centerIn: parent
+        Image {
+            // Scale down to match the size of the individual settings icons.
+            width: referenceIcon.width; height: referenceIcon.height; fillMode: Image.PreserveAspectFit
+            source: SettingsIcons.shootingMode(Settings, settings.shootingMode) + "?" + theme.highlightDimmerColor
         }
-        source: SettingsIcons.shootingMode(Settings, settings.shootingMode) + "?" + theme.highlightDimmerColor
-    }
 
-    Image {
-        id: isoIcon
-        anchors {
-            top: parent.top
-            right: parent.right
-            margins: theme.paddingLarge
+        Image {
+            width: referenceIcon.width; height: referenceIcon.height; fillMode: Image.PreserveAspectFit
+            source: SettingsIcons.iso(settings.effectiveIso) + "?" + theme.highlightDimmerColor
         }
-        source: SettingsIcons.iso(settings.effectiveIso) + "?" + theme.highlightDimmerColor
-    }
 
-    Image {
-        anchors {
-            top: modeIcon.bottom
-            left: parent.left
-            margins: theme.paddingLarge
+        Image {
+            width: referenceIcon.width; height: referenceIcon.height; fillMode: Image.PreserveAspectFit
+            source: SettingsIcons.timer(settings.effectiveTimer) + "?" + theme.highlightDimmerColor
         }
-        source: SettingsIcons.timer(settings.effectiveTimer) + "?" + theme.highlightDimmerColor
-    }
 
-    Image {
-        anchors {
-            bottom: meteringIcon.top
-            left: parent.left
-            margins: theme.paddingLarge
+        Item { // Placeholder item.
+            width: 1; height: 1
         }
-        source: SettingsIcons.whiteBalance(CameraImageProcessing, settings.effectiveWhiteBalance) + "?" + theme.highlightDimmerColor
-    }
 
-    Image {
-        anchors {
-            bottom: exposureIcon.top
-            right: parent.right
-            margins: theme.paddingLarge
+        Image {
+            id: referenceIcon
+            source: SettingsIcons.whiteBalance(CameraImageProcessing, settings.effectiveWhiteBalance) + "?" + theme.highlightDimmerColor
         }
-        source: SettingsIcons.flash(Camera, settings.effectiveFlash) + "?" + theme.highlightDimmerColor
-    }
 
-    Image {
-        id: meteringIcon
-        anchors {
-            bottom: parent.bottom
-            left: parent.left
-            margins: theme.paddingLarge
+        Image {
+            source: SettingsIcons.flash(Camera, settings.effectiveFlash) + "?" + theme.highlightDimmerColor
         }
-        source: SettingsIcons.meteringMode(Camera, settings.effectiveMeteringMode) + "?" + theme.highlightDimmerColor
-    }
 
-    Image {
-        id: exposureIcon
-        anchors {
-            bottom: parent.bottom
-            right: parent.right
-            margins: theme.paddingLarge
+        Image {
+            source: SettingsIcons.meteringMode(Camera, settings.effectiveMeteringMode) + "?" + theme.highlightDimmerColor
         }
-        source: SettingsIcons.exposure(!(settings.shootingModeProperties & Settings.Exposure)
-                ? settings.exposureCompensation
-                : 0) + "?" + theme.highlightDimmerColor
+
+        Image {
+            width: referenceIcon.width; height: referenceIcon.height; fillMode: Image.PreserveAspectFit
+            source: SettingsIcons.exposure(!(settings.shootingModeProperties & Settings.Exposure)
+                    ? settings.exposureCompensation
+                    : 0) + "?" + theme.highlightDimmerColor
+        }
     }
 }

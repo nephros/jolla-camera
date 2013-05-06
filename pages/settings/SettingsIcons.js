@@ -27,23 +27,15 @@ function exposure(exposure) {
 }
 
 function timer(timer) {
-    switch (timer) {
-    case 0:  return "image://theme/icon-camera-timer"
-    case 3:  return "image://theme/icon-camera-timer-3s"
-    case 15: return "image://theme/icon-camera-timer-15s"
-    case 20: return "image://theme/icon-camera-timer-20s"
-    }
+    return timer > 0
+            ? "image://theme/icon-camera-timer-" + timer + "s"
+            : "image://theme/icon-camera-timer"
 }
 
 function iso(iso) {
-    switch (iso) {
-    case 0:    return "image://theme/icon-camera-iso" // automatic
-    case 100:  return "image://theme/icon-camera-iso-100"
-    case 200:  return "image://theme/icon-camera-iso-200"
-    case 400:  return "image://theme/icon-camera-iso-400"
-    case 800:  return "image://theme/icon-camera-iso-800"
-    case 1600: return "image://theme/icon-camera-iso-1600"
-    }
+    return iso > 0
+            ? "image://theme/icon-camera-iso-" + iso
+            : "image://theme/icon-camera-iso"
 }
 
 function meteringMode(Camera, mode) {

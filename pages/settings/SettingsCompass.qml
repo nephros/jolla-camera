@@ -56,10 +56,8 @@ Compass {
 
         CompassMenu {
             property: "timer"
-            CompassMenuItem { value: 0; icon:  SettingsIcons.timer(0) }
-            CompassMenuItem { value: 3; icon:  SettingsIcons.timer(3) }
-            CompassMenuItem { value: 15; icon: SettingsIcons.timer(15) }
-            CompassMenuItem { value: 20; icon: SettingsIcons.timer(20) }
+            model: [ 0, 3, 15, 20 ]
+            delegate: CompassMenuItem { value: modelData; icon: SettingsIcons.timer(modelData) }
         }
     }
 
@@ -68,15 +66,8 @@ Compass {
 
         CompassMenu {
             property: "exposureCompensation"
-            CompassMenuItem { value: -4; icon: SettingsIcons.exposure(-4) }
-            CompassMenuItem { value: -3; icon: SettingsIcons.exposure(-3) }
-            CompassMenuItem { value: -2; icon: SettingsIcons.exposure(-2) }
-            CompassMenuItem { value: -1; icon: SettingsIcons.exposure(-1) }
-            CompassMenuItem { value: 0;  icon: SettingsIcons.exposure(0) }
-            CompassMenuItem { value: 1;  icon: SettingsIcons.exposure(1) }
-            CompassMenuItem { value: 2;  icon: SettingsIcons.exposure(2) }
-            CompassMenuItem { value: 3;  icon: SettingsIcons.exposure(3) }
-            CompassMenuItem { value: 4;  icon: SettingsIcons.exposure(4) }
+            model: [ -4, -3, -2, -1, 0, 1, 2, 3, 4 ]
+            delegate: CompassMenuItem { value: modelData; icon: SettingsIcons.exposure(modelData) }
         }
     }
 
@@ -85,12 +76,8 @@ Compass {
 
         CompassMenu {
             property: "iso"
-            CompassMenuItem { value: 0;    icon: SettingsIcons.iso(0) }
-            CompassMenuItem { value: 100;  icon: SettingsIcons.iso(100) }
-            CompassMenuItem { value: 200;  icon: SettingsIcons.iso(200) }
-            CompassMenuItem { value: 400;  icon: SettingsIcons.iso(400) }
-            CompassMenuItem { value: 800;  icon: SettingsIcons.iso(800) }
-            CompassMenuItem { value: 1600; icon: SettingsIcons.iso(1600) }
+            model: [ 0, 100, 200, 400, 800, 1600 ]
+            delegate: CompassMenuItem { value: modelData; icon: SettingsIcons.iso(modelData) }
         }
     }
 }

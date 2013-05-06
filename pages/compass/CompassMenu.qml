@@ -8,6 +8,8 @@ SilicaFlickable {
 
     property string property
     property alias contentItem: contentItem
+    property alias model: repeater.model
+    property alias delegate: repeater.delegate
 
     default property alias _data: contentItem.data
     property real _paddedHeight: contentItem.height + (2 * theme.paddingLarge)
@@ -29,5 +31,9 @@ SilicaFlickable {
 
         y: theme.paddingLarge
         width: menu.width
+
+        Repeater {
+            id: repeater
+        }
     }
 }
