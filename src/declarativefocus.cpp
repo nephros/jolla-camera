@@ -93,10 +93,39 @@ DeclarativeFocusZoneModel *DeclarativeFocus::focusZones()
     return m_focusZones;
 }
 
+DeclarativeCamera::FocusPointMode DeclarativeFocus::focusPointMode() const
+{
+    return m_control
+            ? DeclarativeCamera::FocusPointMode(m_control->focusPointMode())
+            : DeclarativeCamera::FocusPointAuto;
+}
+
+void DeclarativeFocus::setFocusPointMode(DeclarativeCamera::FocusPointMode mode)
+{
+    if (m_control) {
+        m_control->setFocusPointMode(QCameraFocus::FocusPointMode(mode));
+        emit focusPointModeChanged();
+    }
+}
+
+QPointF DeclarativeFocus::customFocusPoint() const
+{
+    return m_control ? m_control->customFocusPoint() : QPointF();
+}
+
+void DeclarativeFocus::setCustomFocusPoint(const QPointF &point)
+{
+    if (m_control) {
+        m_control->setCustomFocusPoint(point);
+        emit customFocusPointChanged();
+    }
+}
+
 void DeclarativeFocus::focusOnPoint(qreal x, qreal y)
 {
     if (m_control) {
         m_control->setCustomFocusPoint(QPointF(x, y));
+        emit customFocusPointChanged();
     }
 }
 

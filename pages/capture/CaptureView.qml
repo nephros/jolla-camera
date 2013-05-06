@@ -47,9 +47,14 @@ SplitItem {
             resolution: settings.defaultVideoResolution(settings.aspectRatio)
             frameRate: 15
         }
-        focus.focusMode: captureMode == Camera.CaptureStillImage
+        focus {
+            focusMode: captureMode == Camera.CaptureStillImage
                     ? settings.effectiveFocusDistance
                     : settings.videoFocus
+            focusPointMode: !(settings.shootingModeProperties & Settings.FocusDistance)
+                    ? Camera.FocusPointCustom
+                    : Camera.FocusPointAuto
+        }
         flash.flashMode: settings.effectiveFlash
         imageProcessing.whiteBalanceMode: settings.effectiveWhiteBalance
 
@@ -64,8 +69,6 @@ SplitItem {
         id: cameraLocks
         camera: camera
     }
-
-
 
     VideoOutput {
         x: -parent.x / 2
@@ -94,10 +97,32 @@ SplitItem {
             anchors.fill: parent
 
             onClicked: {
-                captureView.split = false
-                shootingModeOverlay.open = false
-                settingsCompass.closeMenu()
-                captureCompass.closeMenu()
+                if (shootingModeOverlay.interactive || shootingModeOverlay.open) {
+                    if (!(settings.shootingModeProperties & Settings.FocusDistance)) {
+                        var focusX = mouse.x / width
+                        var focusY = mouse.y / height
+
+                        if (captureView.orientation == Orientation.Portrait)  {
+                            var temp = focusX
+                            focusX = focusY
+                            focusY = temp
+                        }
+                        if (settings.aspectRatio == Settings.AspectRatio_4_3) {
+                            // Scale the click point from the screen 16:9 to the 4:3 window.
+                            // (3 * 16) / (4 * 9) == 4/3
+                            // (4/3 - 1) / 2 == 1/6
+                            focusX = (focusX * 4 / 3) - (1 / 6)
+                        }
+                        if (focusX >= 0 && focusX <= 1) {
+                            camera.focus.customFocusPoint = Qt.point(focusX, focusY)
+                        }
+                    }
+                } else {
+                    captureView.split = false
+                    shootingModeOverlay.open = false
+                    settingsCompass.closeMenu()
+                    captureCompass.closeMenu()
+                }
             }
         }
 
