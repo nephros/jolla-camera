@@ -404,9 +404,13 @@ void DeclarativeGConfSettings::notify(GConfClient *, guint cnxn_id, GConfEntry *
     }
 }
 
+#endif
+
 DeclarativeGConf::DeclarativeGConf(QObject *parent)
     : QObject(parent = 0)
+#ifndef GCONF_DISABLED
     , m_client(0)
+#endif
 {
 #ifndef GCONF_DISABLED
     m_client = gconf_client_get_default();
@@ -465,4 +469,3 @@ void DeclarativeGConf::write(const QString &key, const QVariant &variant)
 #endif
 }
 
-#endif
