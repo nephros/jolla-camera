@@ -12,7 +12,7 @@ Item {
     property bool expanded: open || verticalAnimation.running || dragArea.drag.active
     property int orientation
     default property alias _data: container.data
-    property Item _currentItem: row.children[settings.shootingMode]
+    property Item _currentItem: row[globalSettings.shootingMode]
 
     property real _lastPos
     property real _direction
@@ -95,6 +95,14 @@ Item {
         Flow {
             id: row
 
+            // This effectively creates a map through which the mode items can be looked up by name.
+            property alias automatic: automaticMode
+            property alias program: programMode
+            property alias macro: macroMode
+            property alias sports: sportsMode
+            property alias landscape: landscapeMode
+            property alias portrait: portraitMode
+
             y: height * panel.y / panel.height
             width: overlay.orientation == Orientation.Portrait
                     ? theme.itemSizeExtraLarge
@@ -107,28 +115,34 @@ Item {
             spacing: theme.paddingMedium
 
             ShootingModeItem {
-                mode: Settings.Auto
-                icon: SettingsIcons.shootingMode(Settings, Settings.Auto)
+                id: automaticMode
+                mode: "automatic"
+                icon: SettingsIcons.shootingMode(Settings, "automatic")
             }
             ShootingModeItem {
-                mode: Settings.Program
-                icon: SettingsIcons.shootingMode(Settings, Settings.Program)
+                id: programMode
+                mode: "program"
+                icon: SettingsIcons.shootingMode(Settings, "program")
             }
             ShootingModeItem {
-                mode: Settings.Macro
-                icon: SettingsIcons.shootingMode(Settings, Settings.Macro)
+                id: macroMode
+                mode: "macro"
+                icon: SettingsIcons.shootingMode(Settings, "macro")
             }
             ShootingModeItem {
-                mode: Settings.Sports
-                icon: SettingsIcons.shootingMode(Settings, Settings.Sports)
+                id: sportsMode
+                mode: "sports"
+                icon: SettingsIcons.shootingMode(Settings, "sports")
             }
             ShootingModeItem {
-                mode: Settings.Landscape
-                icon: SettingsIcons.shootingMode(Settings, Settings.Landscape)
+                id: landscapeMode
+                mode: "landscape"
+                icon: SettingsIcons.shootingMode(Settings, "landscape")
             }
             ShootingModeItem {
-                mode: Settings.Portrait
-                icon: SettingsIcons.shootingMode(Settings, Settings.Portrait)
+                id: portraitMode
+                mode: "portrait"
+                icon: SettingsIcons.shootingMode(Settings, "portrait")
             }
         }
 

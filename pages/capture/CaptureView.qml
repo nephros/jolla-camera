@@ -11,7 +11,7 @@ SplitItem {
     property bool active
     property bool windowActive
     property int orientation
-    property int effectiveIso: settings.effectiveIso
+    property int effectiveIso: modeSettings.iso
 
     property bool menuOpen: captureView.contracted
             || shootingModeOverlay.expanded
@@ -26,7 +26,7 @@ SplitItem {
         if (effectiveIso == 0) {
             camera.exposure.setAutoIsoSensitivity()
         } else {
-            camera.exposure.manualIso = settings.effectiveIso
+            camera.exposure.manualIso = modeSettings.iso
         }
     }
 
@@ -42,26 +42,26 @@ SplitItem {
                     ? (captureView.active ? Camera.ActiveState : Camera.LoadedState)
                     : Camera.UnloadedState
 
-        imageCapture.resolution: settings.defaultImageResolution(settings.aspectRatio)
+        imageCapture.resolution: settings.defaultImageResolution(globalSettings.aspectRatio)
         videoRecorder{
-            resolution: settings.defaultVideoResolution(settings.aspectRatio)
+            resolution: settings.defaultVideoResolution(globalSettings.aspectRatio)
             frameRate: 15
         }
         focus {
             focusMode: captureMode == Camera.CaptureStillImage
-                    ? settings.effectiveFocusDistance
-                    : settings.videoFocus
-            focusPointMode: !(settings.shootingModeProperties & Settings.FocusDistance)
+                    ? modeSettings.focusDistance
+                    : modeSettings.videoFocus
+            focusPointMode: modeSettings.focusDistanceConfigurable
                     ? Camera.FocusPointCustom
                     : Camera.FocusPointAuto
         }
-        flash.flashMode: settings.effectiveFlash
-        imageProcessing.whiteBalanceMode: settings.effectiveWhiteBalance
+        flash.flashMode: modeSettings.flash
+        imageProcessing.whiteBalanceMode: modeSettings.whiteBalance
 
         exposure {
-            exposureMode: settings.exposureMode
-            exposureCompensation: settings.exposureCompensation / 2.0
-            meteringMode: settings.effectiveMeteringMode
+            exposureMode: modeSettings.exposureMode
+            exposureCompensation: modeSettings.exposureCompensation / 2.0
+            meteringMode: modeSettings.meteringMode
         }
     }
 
@@ -98,7 +98,7 @@ SplitItem {
 
             onClicked: {
                 if (shootingModeOverlay.interactive || shootingModeOverlay.open) {
-                    if (!(settings.shootingModeProperties & Settings.FocusDistance)) {
+                    if (modeSettings.focusDistanceConfigurable) {
                         var focusX = mouse.x / width
                         var focusY = mouse.y / height
 
@@ -107,7 +107,7 @@ SplitItem {
                             focusX = focusY
                             focusY = temp
                         }
-                        if (settings.aspectRatio == Settings.AspectRatio_4_3) {
+                        if (globalSettings.aspectRatio == Settings.AspectRatio_4_3) {
                             // Scale the click point from the screen 16:9 to the 4:3 window.
                             // (3 * 16) / (4 * 9) == 4/3
                             // (4/3 - 1) / 2 == 1/6

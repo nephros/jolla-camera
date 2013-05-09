@@ -3,13 +3,18 @@ import Sailfish.Silica 1.0
 import com.jolla.camera.settings 1.0
 
 ComboBox {
+    property QtObject settings
     property string property
+
+    property bool _updatingIndex
 
     function updateCurrentIndex() {
         for (var i = 0; i < menu.children.length; ++i) {
             var item = menu.children[i]
             if (item.value !== undefined && item.value == value) {
+                _updatingIndex = true
                 currentIndex = i
+                _updatingIndex = false
                 return;
             }
         }
@@ -22,7 +27,7 @@ ComboBox {
     onValueChanged: updateCurrentIndex()
 
     onCurrentItemChanged: {
-        if (currentItem) {
+        if (currentItem && !_updatingIndex) {
             settings[property] = currentItem.value
         }
     }

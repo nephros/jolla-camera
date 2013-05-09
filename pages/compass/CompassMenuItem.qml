@@ -7,13 +7,13 @@ MouseArea {
     property url icon: image.source
     property variant value
 
-    property bool selected: settings[parent._property] == value
+    property bool selected: parent._settings[parent._property] == value
 
     width: parent.width
     height: image.height + theme.paddingLarge
 
     onClicked: {
-        settings[parent._property] = value
+        parent._settings[parent._property] = value
         parent._compass.closeMenu()
     }
 
