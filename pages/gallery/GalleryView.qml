@@ -41,6 +41,16 @@ SplitItem {
         }
     }
 
+    // ListView doesn't handle header alignment as well as it possibly could when the rotation
+    // changes.  Ensure the item that is currently visible remains visible when on rotation.
+    onOrientationChanged: {
+        if (pageView.currentIndex == -1) {
+            pageView.positionViewAtBeginning()
+        } else {
+            pageView.positionViewAtIndex(pageView.currentIndex, ListView.Center)
+        }
+    }
+
     Formatter {
         id: durationFormatter
     }
@@ -75,6 +85,7 @@ SplitItem {
             // ListView.StrictlyEnforceRange prevents snapping to the the header, so we update the
             // currentIndex ourselves.
             currentIndex = indexAt(contentX + width / 2, contentY + height / 2)
+            console.log("current index is", currentIndex)
             if (!moving && galleryView._activeItem != currentItem) {
                 if (galleryView._activeItem) {
                     galleryView._activeItem.active = false
