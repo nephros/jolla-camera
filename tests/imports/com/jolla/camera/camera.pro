@@ -9,11 +9,9 @@ INCLUDEPATH += $$CAMERA_SOURCE_PATH
 
 SOURCES += \
         camera.cpp \
-        $$CAMERA_SOURCE_PATH/declarativecliparea.cpp \
         $$CAMERA_SOURCE_PATH/declarativecompassaction.cpp \
 
 HEADERS += \
-        $$CAMERA_SOURCE_PATH/declarativecliparea.h \
         $$CAMERA_SOURCE_PATH/declarativecompassaction.h \
 
 

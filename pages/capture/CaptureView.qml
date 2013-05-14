@@ -137,7 +137,6 @@ SplitItem {
                 left: parent.left
                 top: parent.top
                 bottom: parent.bottom
-                margins: theme.paddingLarge
             }
 
             onClicked: captureView.split = true
@@ -169,7 +168,6 @@ SplitItem {
                 right: parent.right
                 top: parent.top
                 bottom: parent.bottom
-                margins: theme.paddingLarge
             }
         }
 

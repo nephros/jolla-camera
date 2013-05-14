@@ -10,7 +10,7 @@ MouseArea {
     property bool selected: parent._settings[parent._property] == value
 
     width: parent.width
-    height: image.height + theme.paddingLarge
+    height: theme.itemSizeSmall
 
     onClicked: {
         parent._settings[parent._property] = value

@@ -3,7 +3,6 @@
 #include <QDeclarativeExtensionPlugin>
 
 #include "declarativecompassaction.h"
-#include "declarativecliparea.h"
 
 class Plugin : public QDeclarativeExtensionPlugin
 {
@@ -12,7 +11,6 @@ public:
     void registerTypes(const char *)
     {
         qmlRegisterType<DeclarativeCompassAction>("com.jolla.camera", 1, 0, "CompassAction");
-        qmlRegisterType<DeclarativeClipArea>("com.jolla.camera", 1, 0, "ClipArea");
     }
 };
 

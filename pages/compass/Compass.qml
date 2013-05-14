@@ -73,51 +73,42 @@ Item {
             return
         }
 
-        opacityAnimation.to = 0.0
-        heightAnimation.to = _menu.height
         compass._closingMenu = false
-
-        menuAnimation.running = true
+        opacityAnimation.to = 0
+        clipArea.state = "menuOpen"
     }
 
     function closeMenu() {
         if (_menu && !compass._closingMenu) {
-            opacityAnimation.to = 1.0
-            heightAnimation.to = compass.width
             compass._closingMenu = true
-
-            if (!menuAnimation.running) {
-                menuAnimation.running = true
-            } else {
+            opacityAnimation.to = 1
+            if (menuAnimation.running) {
                 horizontalAnimation.running = true
                 verticalAnimation.running = true
-                menuAnimation.restart()
+            } else {
+                dragArea.x = 0
+                dragArea.y = 0
+                actionArea.visible = false
             }
+
+            clipArea.state = "menuClosed"
         }
     }
 
-    width: theme.itemSizeExtraLarge + theme.paddingMedium
-    height: width
+    width: 180
+    height: 180
 
     CompassAction { id: topAction }
     CompassAction { id: leftAction }
     CompassAction { id: rightAction }
     CompassAction { id: bottomAction }
 
-
-    Item {
-        id: edgePositioner
-        width: clipArea.width
-        height: clipArea.height
-        anchors.bottom: compass.bottom
-    }
-
     MouseArea {
         id: horizontalDrag
 
         width: compass.width
         height: compass.width
-        anchors.centerIn: clipArea.anchors.centerIn
+        anchors.centerIn: clipArea
         enabled: !horizontalAnimation.running
                     && !verticalAnimation.running
                     && !compass._menu
@@ -134,6 +125,7 @@ Item {
                 if (drag.active) {
                     compass._drag = true
                     compass._verticalDrag = false
+                    actionArea.visible = true
                 }
             }
         }
@@ -171,6 +163,7 @@ Item {
                     if (drag.active) {
                         compass._drag = true
                         compass._verticalDrag = true
+                        actionArea.visible = true
                     }
                 }
             }
@@ -187,32 +180,82 @@ Item {
     }
 
     Rectangle {
-        anchors.fill: clipArea
+        anchors {
+            fill: clipArea
+            margins: -4 // radius
+        }
 
-        radius: compass.width / 2
-        color: theme.highlightBackgroundColor
-        opacity: compass.activated || compass.pressed ? 1.0 : 0.3
-        Behavior on opacity {
-            NumberAnimation { duration: 100 }
+        radius: 4
+        color: compass.activated || compass.pressed ? theme.highlightBackgroundColor : theme.highlightDimmerColor
+        opacity: compass.activated || compass.pressed ? 1.0 : 0.6
+        Behavior on color { ColorAnimation { duration: 100 } }
+        Behavior on opacity { NumberAnimation { duration: 100 } }
+    }
+
+    Item {
+        id: positioner
+        height: compass.width
+        anchors {
+            left: compass.left
+            right: compass.right
+            bottom: compass.centerMenu ? compass.verticalCenter : compass.bottom
+            leftMargin: (1 - leftImage.opacity) * compass.width / 4
+            rightMargin: (1 - rightImage.opacity) * compass.width / 4
+            bottomMargin: compass.centerMenu ? -compass.width / 2 : 112
         }
     }
 
-    ClipArea {
+    Item {
         id: clipArea
 
         property alias contentItem: clipArea
 
-        width: compass.width
         height: compass.width
+        clip: true
+        state: "menuClosed"
+        states: [
+            State {
+                name: "menuClosed"
+                AnchorChanges {
+                    target: clipArea
+                    anchors {
+                        left: positioner.left; top: positioner.top
+                        right: positioner.right; bottom: positioner.bottom
+                    }
+                }
+            }, State {
+                name: "menuOpen"
+                AnchorChanges {
+                    target: clipArea
+                    anchors {
+                        left: compass.left; top: compass.top
+                        right: compass.right; bottom: compass.bottom
+                    }
+                }
+            }
+        ]
 
-        anchors.centerIn: compass.centerMenu ? compass : edgePositioner
+        transitions: Transition {
+            SequentialAnimation {
+                id: menuAnimation
+                NumberAnimation { id: opacityAnimation; target: buttons; property: "opacity" }
+                ScriptAction { script:
+                    if (compass._closingMenu) {
+                        compass._menu.destroy()
+                        compass._menu = null
+                    }
+                }
+            }
+            AnchorAnimation { duration: opacityAnimation.duration }
+        }
 
         Item {
             id: buttons
 
             width: compass.width
             height: compass.width
-            anchors.centerIn: parent
+            y: positioner.y - clipArea.y
+            anchors.horizontalCenter: clipArea.horizontalCenter
 
             Item {
                 id: dragArea
@@ -234,7 +277,7 @@ Item {
                 opacity: Math.abs(compass._currentPosition / compass.width)
 
                 Image {
-                    anchors { top: parent.top; horizontalCenter: parent.horizontalCenter; margins: theme.paddingSmall }
+                    anchors { top: parent.top; horizontalCenter: parent.horizontalCenter; margins: theme.paddingLarge }
                     width: 24; height: 24
                     fillMode: Image.PreserveAspectFit
                     source: topAction.smallIcon
@@ -242,23 +285,31 @@ Item {
                 }
 
                 Image {
-                    anchors { left: parent.left; verticalCenter: parent.verticalCenter; margins: theme.paddingSmall }
+                    id: leftImage
+                    anchors { left: parent.left; verticalCenter: parent.verticalCenter; margins: theme.paddingLarge }
                     width: 24; height: 24
                     fillMode: Image.PreserveAspectFit
                     source: leftAction.smallIcon
-                    visible: leftAction.enabled
+                    opacity: leftAction.enabled ? 1 : 0
+                    Behavior on opacity {
+                        NumberAnimation { duration: 100 }
+                    }
                 }
 
                 Image {
-                    anchors { right: parent.right; verticalCenter: parent.verticalCenter; margins: theme.paddingSmall }
+                    id: rightImage
+                    anchors { right: parent.right; verticalCenter: parent.verticalCenter; margins: theme.paddingLarge }
                     width: 24; height: 24
                     fillMode: Image.PreserveAspectFit
                     source: rightAction.smallIcon
-                    visible: rightAction.enabled
+                    opacity: rightAction.enabled ? 1 : 0
+                    Behavior on opacity {
+                        NumberAnimation { duration: 100 }
+                    }
                 }
 
                 Image {
-                    anchors { bottom: parent.bottom; horizontalCenter: parent.horizontalCenter; margins: theme.paddingSmall }
+                    anchors { bottom: parent.bottom; horizontalCenter: parent.horizontalCenter; margins: theme.paddingLarge }
                     width: 24; height: 24
                     fillMode: Image.PreserveAspectFit
                     source: bottomAction.smallIcon
@@ -282,35 +333,6 @@ Item {
                     anchors.centerIn: parent
                     source: compass._currentAction.largeIcon
                 }
-            }
-        }
-    }
-
-    ParallelAnimation {
-        id: menuAnimation
-
-        NumberAnimation {
-            id: opacityAnimation
-
-            target: buttons
-            property: "opacity"
-        }
-        NumberAnimation {
-            id: heightAnimation
-
-            target: clipArea
-            property: "height"
-        }
-
-        onRunningChanged: {
-            if (running) {
-                // else
-            } else if (compass._closingMenu) {
-                compass._menu.destroy()
-                compass._menu = null
-            } else {
-                dragArea.x = 0
-                dragArea.y = 0
             }
         }
     }
