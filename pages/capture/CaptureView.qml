@@ -143,17 +143,31 @@ SplitItem {
         }
 
         Rectangle {
-            id: focus
+            id: focusLock
 
-            width: theme.itemSizeExtraLarge + theme.paddingMedium
-            height: width
+            width: 180
+            height: 180
 
             anchors.centerIn: parent
 
-            radius: width / 2
             border.width: 3
-            border.color: theme.highlightColor
+            border.color: theme.highlightBackgroundColor
             color: "#00000000"
+
+            opacity: cameraLocks.focusStatus == CameraLocks.Locked ? 1 : 0
+            Behavior on opacity { FadeAnimation {} }
+        }
+
+        Rectangle {
+            width: 24
+            height: 24
+
+            radius: 2
+            anchors.centerIn: parent
+            color: theme.highlightBackgroundColor
+
+            opacity: modeSettings.meteringMode == Camera.MeteringSpot ? 1 : 0
+            Behavior on opacity { FadeAnimation {} }
         }
 
         CaptureCompass {
