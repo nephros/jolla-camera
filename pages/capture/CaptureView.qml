@@ -155,8 +155,8 @@ SplitItem {
                 bottom: parent.bottom
             }
 
-            onClicked: captureView.split = true
-            onPressAndHold: positioner.enabled = true
+            onClicked: if (interactive) { captureView.split = true }
+            onPressAndHold: if (interactive) { positioner.enabled = true }
         }
 
         Rectangle {
@@ -208,44 +208,7 @@ SplitItem {
             }
 
 
-            onPressAndHold: positioner.enabled = true
-        }
-
-        Item {
-            anchors {
-                horizontalCenter: captureCompass.horizontalCenter
-                top: captureCompass.bottom
-                margins: theme.paddingLarge + theme.paddingMedium
-            }
-
-            width: durationText.width
-            height: durationText.height
-
-            opacity: camera.videoRecorder.recorderState == CameraRecorder.RecordingState
-                    ? 1.0
-                    : 0.0
-            Behavior on opacity { FadeAnimation {} }
-
-            Rectangle {
-                radius: height / 2
-                color: theme.highlightBackgroundColor
-                opacity: 0.3
-                anchors {
-                    fill: parent
-                    margins: -theme.paddingMedium
-                }
-            }
-
-            Formatter {
-                id: formatter
-            }
-
-            Label {
-                id: durationText
-
-                text: formatter.formatDuration(camera.videoRecorder.duration, Formatter.DurationLong)
-                font.pixelSize: theme.fontSizeExtraSmall
-            }
+            onPressAndHold: if (interactive) { positioner.enabled = true }
         }
     }
 

@@ -12,8 +12,10 @@ Item {
     property alias leftAction: leftAction
     property alias rightAction: rightAction
     property alias bottomAction: bottomAction
-    property alias icon: centerImage.source
-    property alias buttonEnabled: centerImage.visible
+    property bool interactive: true
+
+    property alias contentItem: dragArea
+    default property alias _data: dragArea.data
 
     property real topMargin
     property real bottomMargin
@@ -25,7 +27,7 @@ Item {
     property bool animating: horizontalAnimation.running || verticalAnimation.running
     property bool expanded: _menu != null
 
-    property bool pressed: (horizontalDrag.pressed || verticalDrag.pressed) && !_drag && centerImage.visible
+    property bool pressed: (horizontalDrag.pressed || verticalDrag.pressed) && !_drag
 
     property bool _drag
     property bool _held
@@ -124,8 +126,8 @@ Item {
             filterChildren: true
             target: !compass._held ? dragArea : null
             axis: Drag.XAxis
-            minimumX: rightAction.enabled ? -compass.width / 2 : 0
-            maximumX: leftAction.enabled ? compass.width / 2 : 0
+            minimumX: compass.interactive && rightAction.enabled ? -compass.width / 2 : 0
+            maximumX: compass.interactive && leftAction.enabled ? compass.width / 2 : 0
 
             onActiveChanged: {
                 if (drag.active) {
@@ -149,12 +151,12 @@ Item {
             }
         }
         onClicked: {
-            if (!compass._drag && centerImage.visible) {
+            if (!compass._drag) {
                 compass.clicked()
             }
         }
         onPressAndHold: {
-            if (!compass._drag && centerImage.visible) {
+            if (!compass._drag) {
                 compass._held = true
                 compass.pressAndHold()
             }
@@ -171,8 +173,8 @@ Item {
             drag {
                 target: !compass._held ? dragArea : null
                 axis: Drag.YAxis
-                minimumY: bottomAction.enabled ? -compass.width / 2 : 0
-                maximumY: topAction.enabled ? compass.width / 2 : 0
+                minimumY: compass.interactive && bottomAction.enabled ? -compass.width / 2 : 0
+                maximumY: compass.interactive && topAction.enabled ? compass.width / 2 : 0
 
                 onActiveChanged: {
                     if (drag.active) {
@@ -204,7 +206,7 @@ Item {
         color: compass.activated || compass.pressed ? theme.highlightBackgroundColor : theme.highlightDimmerColor
         opacity: compass.activated || compass.pressed ? 1.0 : 0.6
         Behavior on color { ColorAnimation { duration: 100 } }
-        Behavior on opacity { NumberAnimation { duration: 100 } }
+        Behavior on opacity { FadeAnimation {} }
     }
 
     Item {
@@ -306,7 +308,8 @@ Item {
                     width: 24; height: 24
                     fillMode: Image.PreserveAspectFit
                     source: topAction.smallIcon
-                    visible: topAction.enabled
+                    opacity: compass.interactive && topAction.enabled ? 1 : 0
+                    Behavior on opacity { FadeAnimation {} }
                 }
 
                 Image {
@@ -315,10 +318,8 @@ Item {
                     width: 24; height: 24
                     fillMode: Image.PreserveAspectFit
                     source: leftAction.smallIcon
-                    opacity: leftAction.enabled ? 1 : 0
-                    Behavior on opacity {
-                        NumberAnimation { duration: 100 }
-                    }
+                    opacity: compass.interactive && leftAction.enabled ? 1 : 0
+                    Behavior on opacity { FadeAnimation {} }
                 }
 
                 Image {
@@ -327,10 +328,8 @@ Item {
                     width: 24; height: 24
                     fillMode: Image.PreserveAspectFit
                     source: rightAction.smallIcon
-                    opacity: rightAction.enabled ? 1 : 0
-                    Behavior on opacity {
-                        NumberAnimation { duration: 100 }
-                    }
+                    opacity: compass.interactive && rightAction.enabled ? 1 : 0
+                    Behavior on opacity { FadeAnimation {} }
                 }
 
                 Image {
@@ -338,12 +337,8 @@ Item {
                     width: 24; height: 24
                     fillMode: Image.PreserveAspectFit
                     source: bottomAction.smallIcon
-                    visible: bottomAction.enabled
-                }
-
-                Image {
-                    id: centerImage
-                    anchors.centerIn: parent
+                    opacity: compass.interactive && bottomAction.enabled ? 1 : 0
+                    Behavior on opacity { FadeAnimation {} }
                 }
             }
             Item {

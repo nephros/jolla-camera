@@ -12,20 +12,20 @@ Compass {
 
     property Camera camera
 
-    buttonEnabled: camera.captureMode == Camera.CaptureStillImage
+    interactive: camera.captureMode == Camera.CaptureStillImage
     keepSelection: camera.locks.focusStatus == CameraLocks.Searching
                 || camera.locks.exposureStatus == CameraLocks.Searching
 
     topAction {
         smallIcon: SettingsIcons.exposure(modeSettings.exposureCompensation)
         largeIcon: "image://theme/icon-camera-exposure-compensation"
-        enabled: compass.buttonEnabled && modeSettings.exposureConfigurable
+        enabled: modeSettings.exposureConfigurable
         onActivated: compass.openMenu(exposureMenu)
     }
     bottomAction {
         smallIcon: SettingsIcons.timer(modeSettings.timer)
         largeIcon: "image://theme/icon-camera-timer"
-        enabled: compass.buttonEnabled && modeSettings.timerConfigurable
+        enabled: modeSettings.timerConfigurable
         onActivated: compass.openMenu(timerMenu)
     }
     leftAction {
@@ -33,7 +33,7 @@ Compass {
                 ? "image://theme/icon-camera-zoom-in?" + theme.highlightColor
                 : "image://theme/icon-camera-zoom-in"
         largeIcon: "image://theme/icon-camera-zoom-tele"
-        enabled: compass.buttonEnabled && modeSettings.exposureConfigurable
+        enabled: modeSettings.exposureConfigurable
         onActivated: {
             if (compass.camera.locks.exposureStatus == CameraLocks.Unlocked) {
                 compass.camera.locks.lockExposure()
@@ -45,11 +45,29 @@ Compass {
     rightAction {
         smallIcon: SettingsIcons.iso(modeSettings.iso)
         largeIcon: "image://theme/icon-camera-iso"
-        enabled: compass.buttonEnabled && modeSettings.isoConfigurable
+        enabled: modeSettings.isoConfigurable
         onActivated: compass.openMenu(isoMenu)
     }
 
-    icon: "image://theme/icon-camera-settings?" + theme.highlightColor
+    Image {
+        id: settingsIcon
+        anchors.centerIn: parent
+        source: "image://theme/icon-camera-settings?" + theme.highlightColor
+        opacity: compass.interactive ? 1 : 0
+        Behavior on  opacity { FadeAnimation {} }
+    }
+
+    Label {
+        Formatter {
+            id: formatter
+        }
+
+        anchors.centerIn: parent
+        opacity: 1 - settingsIcon.opacity
+        text: formatter.formatDuration(compass.camera.videoRecorder.duration, Formatter.DurationLong)
+        font.pixelSize: theme.fontSizeExtraSmall
+    }
+
 
     Component {
         id: timerMenu
