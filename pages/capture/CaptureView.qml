@@ -92,6 +92,7 @@ SplitItem {
 
         interactive: !settingsCompass.expanded && !captureCompass.expanded && !captureView.contracted
         orientation: captureView.orientation
+        opacity: 1 - positioner.opacity
 
         MouseArea {
             anchors.fill: parent
@@ -126,20 +127,36 @@ SplitItem {
             }
         }
 
+        Item {
+            id: compassAnchor
+            anchors {
+                fill: parent
+                leftMargin: settingsCompass.width / 2
+                rightMargin: settingsCompass.width / 2
+            }
+        }
+
         SettingsCompass {
             id: settingsCompass
 
             camera: camera
             enabled: !shootingModeOverlay.expanded
             centerMenu: captureView.orientation == Orientation.Landscape
-
+            verticalAlignment: captureView.orientation == Orientation.Landscape
+                        ? globalSettings.settingsVerticalAlignment
+                        : Qt.AlignBottom
+            topMargin: theme.iconSizeLarge + (theme.paddingLarge * 2)
+            bottomMargin: 112
             anchors {
-                left: parent.left
+                horizontalCenter: !globalSettings.reverseButtons
+                            ? compassAnchor.left
+                            : compassAnchor.right
                 top: parent.top
                 bottom: parent.bottom
             }
 
             onClicked: captureView.split = true
+            onPressAndHold: positioner.enabled = true
         }
 
         Rectangle {
@@ -177,12 +194,21 @@ SplitItem {
 
             enabled: !shootingModeOverlay.expanded
             centerMenu: captureView.orientation == Orientation.Landscape
-
+            verticalAlignment: captureView.orientation == Orientation.Landscape
+                        ? globalSettings.captureVerticalAlignment
+                        : Qt.AlignBottom
+            topMargin: settingsCompass.topMargin
+            bottomMargin: settingsCompass.bottomMargin
             anchors {
-                right: parent.right
+                horizontalCenter: !globalSettings.reverseButtons
+                            ? compassAnchor.right
+                            : compassAnchor.left
                 top: parent.top
                 bottom: parent.bottom
             }
+
+
+            onPressAndHold: positioner.enabled = true
         }
 
         Item {
@@ -221,6 +247,22 @@ SplitItem {
                 font.pixelSize: theme.fontSizeExtraSmall
             }
         }
+    }
+
+    CompassPositioner {
+        id: positioner
+
+        width: captureView.width
+        height: captureView.height
+        topMargin: captureView.orientation == Orientation.Portrait
+                    ? captureView.height - settingsCompass.width - settingsCompass.bottomMargin
+                    : settingsCompass.topMargin
+        bottomMargin: settingsCompass.bottomMargin
+
+        enabled: false
+        visible: enabled || animating || positionerOpacity.running
+        opacity: enabled || animating ? 1 : 0
+        Behavior on opacity { FadeAnimation { id: positionerOpacity } }
     }
 
     background: [

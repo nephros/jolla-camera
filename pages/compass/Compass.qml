@@ -6,6 +6,7 @@ Item {
     id: compass
 
     signal clicked
+    signal pressAndHold
 
     property alias topAction: topAction
     property alias leftAction: leftAction
@@ -14,8 +15,12 @@ Item {
     property alias icon: centerImage.source
     property alias buttonEnabled: centerImage.visible
 
-    property bool keepSelection
+    property real topMargin
+    property real bottomMargin
+
     property bool centerMenu
+    property bool keepSelection
+    property int verticalAlignment
 
     property bool animating: horizontalAnimation.running || verticalAnimation.running
     property bool expanded: _menu != null
@@ -23,6 +28,7 @@ Item {
     property bool pressed: (horizontalDrag.pressed || verticalDrag.pressed) && !_drag && centerImage.visible
 
     property bool _drag
+    property bool _held
     property bool _verticalDrag
     property CompassAction _verticalAction: dragArea.y > 0 ? topAction: bottomAction
     property CompassAction _horizontalAction: dragArea.x > 0 ? leftAction : rightAction
@@ -116,7 +122,7 @@ Item {
 
         drag {
             filterChildren: true
-            target: dragArea
+            target: !compass._held ? dragArea : null
             axis: Drag.XAxis
             minimumX: rightAction.enabled ? -compass.width / 2 : 0
             maximumX: leftAction.enabled ? compass.width / 2 : 0
@@ -130,7 +136,10 @@ Item {
             }
         }
 
-        onPressed: compass._drag = false
+        onPressed: {
+            compass._drag = false
+            compass._held = false
+        }
         onReleased: {
             if (compass.activated) {
                 compass._currentAction.activated()
@@ -144,6 +153,12 @@ Item {
                 compass.clicked()
             }
         }
+        onPressAndHold: {
+            if (!compass._drag && centerImage.visible) {
+                compass._held = true
+                compass.pressAndHold()
+            }
+        }
 
         MouseArea {
             id: verticalDrag
@@ -154,7 +169,7 @@ Item {
             enabled: horizontalDrag.enabled
 
             drag {
-                target: dragArea
+                target: !compass._held ? dragArea : null
                 axis: Drag.YAxis
                 minimumY: bottomAction.enabled ? -compass.width / 2 : 0
                 maximumY: topAction.enabled ? compass.width / 2 : 0
@@ -193,15 +208,25 @@ Item {
     }
 
     Item {
+        id: buttonAnchor
+        anchors {
+            fill: compass
+            topMargin: compass.topMargin + compass.width / 2
+            bottomMargin: compass.bottomMargin + compass.width / 2
+        }
+    }
+
+    Item {
         id: positioner
         height: compass.width
         anchors {
             left: compass.left
             right: compass.right
-            bottom: compass.centerMenu ? compass.verticalCenter : compass.bottom
+            verticalCenter: compass.verticalAlignment != Qt.AlignVCenter
+                        ? (compass.verticalAlignment == Qt.AlignTop ? buttonAnchor.top : buttonAnchor.bottom)
+                        : buttonAnchor.verticalCenter
             leftMargin: (1 - leftImage.opacity) * compass.width / 4
             rightMargin: (1 - rightImage.opacity) * compass.width / 4
-            bottomMargin: compass.centerMenu ? -compass.width / 2 : 112
         }
     }
 

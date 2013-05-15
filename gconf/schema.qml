@@ -15,6 +15,21 @@ GConfSchema {
         path: "aspectRatio"
         defaultValue: Settings.AspectRatio_16_9
     }
+    IntegerSchema {
+        path: "settingsVerticalAlignment"
+        defaultValue: Qt.AlignVCenter
+    }
+    GConfSchema {
+        path: "reverseButtons"
+        owner: "jolla"
+        type: GConfSchema.Bool
+        defaultValue: false
+        GConfDescription { locale: "C" }
+    }
+    IntegerSchema {
+        path: "captureVerticalAlignment"
+        defaultValue: Qt.AlignVCenter
+    }
     AutomaticSchema {
         path: "automatic"
         exposureMode: Camera.ExposureAuto
