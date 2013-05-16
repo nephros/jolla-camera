@@ -41,6 +41,7 @@ ApplicationWindow {
             property int exposureMode: 0
             property int meteringMode: Camera.MeteringMatrix
             property int timer: 0
+            property int face: CameraExtensions.Back
 
             property bool isoConfigurable: true
             property bool whiteBalanceConfigurable: true

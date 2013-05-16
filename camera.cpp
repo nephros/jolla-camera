@@ -30,6 +30,7 @@
 #include <MDeclarativeCache>
 #endif
 
+#include "declarativecameraextensions.h"
 #include "declarativecameralocks.h"
 #include "declarativecompassaction.h"
 #include "declarativegconfsettings.h"
@@ -71,6 +72,7 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     translator.load(QLocale(), "jolla-camera", "-", translationPath);
     qApp->installTranslator(&translator);
 
+    qmlRegisterType<DeclarativeCameraExtensions>("com.jolla.camera", 1, 0, "CameraExtensions");
     qmlRegisterType<DeclarativeCameraLocks>("com.jolla.camera", 1, 0, "CameraLocks");
     qmlRegisterType<DeclarativeCompassAction>("com.jolla.camera", 1, 0, "CompassAction");
     qmlRegisterType<DeclarativeGConfSettings>("com.jolla.camera", 1, 0, "GConfSettings");

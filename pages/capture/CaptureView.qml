@@ -18,6 +18,7 @@ Drawer {
             || captureCompass.expanded
 
     property bool _complete
+    property int _unload
 
     dock: orientation == Orientation.Portrait ? Dock.Top : Dock.Left
 
@@ -37,7 +38,7 @@ Drawer {
         property alias locks: cameraLocks
 
         captureMode: Camera.CaptureStillImage
-        cameraState: captureView._complete && captureView.windowActive
+        cameraState: captureView._complete && captureView.windowActive && !captureView._unload
                     ? (captureView.active ? Camera.ActiveState : Camera.LoadedState)
                     : Camera.UnloadedState
 
@@ -67,6 +68,20 @@ Drawer {
     CameraLocks {
         id: cameraLocks
         camera: camera
+    }
+
+    CameraExtensions {
+        id: extensions
+        camera: camera
+        face: modeSettings.face
+
+        onFaceChanged: {
+            if (captureView._complete) {
+                // Force the camera to reload when the selected face changes.
+                captureView._unload = true;
+                captureView._unload = false;
+            }
+        }
     }
 
     VideoOutput {

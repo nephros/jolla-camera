@@ -9,12 +9,14 @@ packagesExist(gconf-2.0) {
 }
 
 SOURCES += \
+        $$PWD/declarativecameraextensions.cpp \
         $$PWD/declarativecameralocks.cpp \
         $$PWD/declarativecompassaction.cpp \
         $$PWD/declarativegconfsettings.cpp \
         $$PWD/declarativesettings.cpp \
 
 HEADERS += \
+        $$PWD/declarativecameraextensions.h \
         $$PWD/declarativecameralocks.h \
         $$PWD/declarativecompassaction.h \
         $$PWD/declarativegconfsettings.h \

@@ -55,4 +55,9 @@ GConfSchema {
         path: "portrait"
         exposureMode: Camera.ExposurePortrait
     }
+    AutomaticSchema {
+        path: "front"
+        face: CameraExtensions.Front
+        flashConfigurable: false
+    }
 }

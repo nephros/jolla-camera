@@ -11,7 +11,9 @@ Item {
     property bool expanded: open || verticalAnimation.running || dragArea.drag.active
     property int orientation
     default property alias _data: container.data
-    property Item _currentItem: row[globalSettings.shootingMode]
+    property Item _currentItem: globalSettings.shootingMode == "front-camera"
+                ? frontMode
+                : row[globalSettings.shootingMode]
 
     property real _lastPos
     property real _direction
@@ -122,12 +124,13 @@ Item {
             }
             opacity: 1 - container.opacity
 
-            spacing: Math.floor((screen.height - 116 - (theme.iconSizeLarge * 6)) / 5)
+            spacing: Math.floor((screen.height - 116 - (theme.iconSizeLarge * 7)) / 6)
 
             ShootingModeItem { id: automaticMode; mode: "automatic" }
             ShootingModeItem { id: programMode; mode: "program" }
             ShootingModeItem { id: macroMode; mode: "macro" }
             ShootingModeItem { id: sportsMode; mode: "sports" }
+            ShootingModeItem { id: frontMode; mode: "front-camera" }
             ShootingModeItem { id: landscapeMode; mode: "landscape" }
             ShootingModeItem { id: portraitMode; mode: "portrait" }
         }

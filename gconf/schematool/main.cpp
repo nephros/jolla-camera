@@ -22,6 +22,7 @@
 
 #include "declarativegconfschema.h"
 #include "declarativesettings.h"
+#include "declarativecameraextensions.h"
 
 int main(int argc, char *argv[])
 {
@@ -51,6 +52,7 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<DeclarativeSettings>("com.jolla.camera", 1, 0, "Settings", QString());
 #endif
 
+    qmlRegisterType<DeclarativeCameraExtensions>("com.jolla.camera", 1, 0, "CameraExtensions");
     qmlRegisterType<DeclarativeGConfSchema>("com.jolla.gconf.schema", 1, 0, "GConfSchema");
     qmlRegisterType<DeclarativeGConfDescription>("com.jolla.gconf.schema", 1, 0, "GConfDescription");
 
