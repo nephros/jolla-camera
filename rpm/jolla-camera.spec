@@ -29,7 +29,7 @@ Requires:  nemo-qml-plugins-accounts
 Requires:  nemo-qml-plugins-gstvideo-thumbnailer
 Requires:  nemo-qml-plugins-thumbnailer
 Requires:  jolla-gallery-facebook
-Requires:  jollacomponents-internal
+Requires:  sailfish-components-accounts
 
 %description
 The Jolla Camera application.
