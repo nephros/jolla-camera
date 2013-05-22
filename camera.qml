@@ -24,6 +24,9 @@ ApplicationWindow {
         path: "/apps/jolla-camera"
         property string shootingMode: "automatic"
         property int aspectRatio: Settings.AspectRatio_16_9
+        property int settingsVerticalAlignment: Qt.AlignVCenter
+        property int captureVerticalAlignment: Qt.AlignVCenter
+        property bool reverseButtons: false
 
         GConfSettings {
             id: modeSettings

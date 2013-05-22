@@ -9,65 +9,61 @@ Compass {
     id: compass
 
     property Camera camera
-
-    property bool _recording: camera.videoRecorder.recorderState == CameraRecorder.RecordingState
-    property bool _showStopIcon: true
-
-    onAnimatingChanged: {
-        if (!animating) {
-            _showStopIcon = _recording
-        }
-    }
+    interactive: camera.captureMode == Camera.CaptureStillImage
 
     function _startRecording() {
         switch (camera.cameraStatus) {
         case Camera.ActiveStatus:
             camera.cameraStatusChanged.disconnect(_startRecording)
             camera.videoRecorder.record()
+            keepSelection = false
             break;
         case Camera.UnavailableStatus:
         case Camera.UnloadedStatus:
         case Camera.StandbyStatus:
             camera.cameraStatusChanged.disconnect(_startRecording)
             camera.captureMode = Camera.CaptureStillImage
+            keepSelection = false
             break;
+        }
+    }
+
+    onInteractiveChanged: {
+        if (interactive) {
+            captureOpacity.restart()
+        } else {
+            captureIcon.opacity = 0
         }
     }
 
     leftAction {
         smallIcon: SettingsIcons.meteringMode(Camera, modeSettings.meteringMode)
         largeIcon: "image://theme/icon-camera-metering-mode"
-        enabled: !compass._recording && modeSettings.meteringModeConfigurable
+        enabled: modeSettings.meteringModeConfigurable
         onActivated: compass.openMenu(meteringMenu)
     }
     topAction {
         smallIcon: SettingsIcons.flash(Camera, modeSettings.flash)
         largeIcon: "image://theme/icon-camera-flash"
-        enabled: !compass._recording && modeSettings.flashConfigurable
+        enabled: modeSettings.flashConfigurable
         onActivated: compass.openMenu(flashMenu)
     }
     rightAction {
         smallIcon: "image://theme/icon-camera-wb-default"
         largeIcon: "image://theme/icon-camera-whitebalance"
-        enabled: !compass._recording && modeSettings.whiteBalanceConfigurable
+        enabled: modeSettings.whiteBalanceConfigurable
         onActivated: compass.openMenu(whiteBalanceMenu)
     }
     bottomAction {
         smallIcon: "image://theme/icon-camera-video"
         largeIcon: "image://theme/icon-camera-record"
-        enabled: !compass._recording
         onActivated: {
             // Don't try and start recording until the camera has switched modes.
+            keepSelection = true
             camera.cameraStatusChanged.connect(compass._startRecording)
             camera.captureMode = Camera.CaptureVideo
         }
     }
-
-    icon: !_recording
-          ? "image://theme/icon-camera-shutter-release?" + theme.highlightColor
-          : "image://theme/icon-camera-stop?" + theme.highlightColor
-
-    keepSelection: camera.captureMode == Camera.CaptureVideo && camera.cameraStatus != Camera.ActiveStatus
 
     onClicked: {
         if (camera.captureMode == Camera.CaptureStillImage) {
@@ -76,6 +72,19 @@ Compass {
             camera.videoRecorder.stop()
             camera.captureMode = Camera.CaptureStillImage
         }
+    }
+
+    Image {
+        id: captureIcon
+        anchors.centerIn: parent
+        source: "image://theme/icon-camera-shutter-release?" + theme.highlightColor
+        FadeAnimation on opacity { id: captureOpacity; to: 1 }
+    }
+
+    Image {
+        anchors.centerIn: parent
+        source: "image://theme/icon-camera-stop?" + theme.highlightColor
+        opacity: 1 - captureIcon.opacity
     }
 
     Component {

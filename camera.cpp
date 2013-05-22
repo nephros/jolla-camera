@@ -18,7 +18,6 @@
 # include <QtDeclarative>
 # include "declarativecamera.h"
 # include "declarativecameraviewport.h"
-# include "declarativecliparea.h"
 # include "declarativeexposure.h"
 # include "declarativeflash.h"
 # include "declarativefocus.h"
@@ -83,7 +82,6 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 #else
     qmlRegisterType<DeclarativeCamera>("com.jolla.camera", 1, 0, "Camera");
     qmlRegisterType<DeclarativeCameraViewport>("com.jolla.camera", 1, 0, "VideoOutput");
-    qmlRegisterType<DeclarativeClipArea>("com.jolla.camera", 1, 0, "ClipArea");
     qmlRegisterUncreatableType<DeclarativeImageCapture>("com.jolla.camera", 1, 0, "ImageCapture", QString());
     qmlRegisterUncreatableType<DeclarativeVideoRecorder>("com.jolla.camera", 1, 0, "CameraRecorder", QString());
     qmlRegisterUncreatableType<DeclarativeExposure>("com.jolla.camera", 1, 0, "Exposure", QString());

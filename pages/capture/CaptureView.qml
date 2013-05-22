@@ -92,6 +92,7 @@ SplitItem {
 
         interactive: !settingsCompass.expanded && !captureCompass.expanded && !captureView.contracted
         orientation: captureView.orientation
+        opacity: 1 - positioner.opacity
 
         MouseArea {
             anchors.fill: parent
@@ -126,35 +127,64 @@ SplitItem {
             }
         }
 
+        Item {
+            id: compassAnchor
+            anchors {
+                fill: parent
+                leftMargin: settingsCompass.width / 2
+                rightMargin: settingsCompass.width / 2
+            }
+        }
+
         SettingsCompass {
             id: settingsCompass
 
             camera: camera
             enabled: !shootingModeOverlay.expanded
             centerMenu: captureView.orientation == Orientation.Landscape
-
+            verticalAlignment: captureView.orientation == Orientation.Landscape
+                        ? globalSettings.settingsVerticalAlignment
+                        : Qt.AlignBottom
+            topMargin: theme.iconSizeLarge + (theme.paddingLarge * 2)
+            bottomMargin: 112
             anchors {
-                left: parent.left
+                horizontalCenter: !globalSettings.reverseButtons
+                            ? compassAnchor.left
+                            : compassAnchor.right
                 top: parent.top
                 bottom: parent.bottom
-                margins: theme.paddingLarge
             }
 
-            onClicked: captureView.split = true
+            onClicked: if (interactive) { captureView.split = true }
+            onPressAndHold: if (interactive) { positioner.enabled = true }
         }
 
         Rectangle {
-            id: focus
+            id: focusLock
 
-            width: theme.itemSizeExtraLarge + theme.paddingMedium
-            height: width
+            width: 180
+            height: 180
 
             anchors.centerIn: parent
 
-            radius: width / 2
             border.width: 3
-            border.color: theme.highlightColor
+            border.color: theme.highlightBackgroundColor
             color: "#00000000"
+
+            opacity: cameraLocks.focusStatus == CameraLocks.Locked ? 1 : 0
+            Behavior on opacity { FadeAnimation {} }
+        }
+
+        Rectangle {
+            width: 24
+            height: 24
+
+            radius: 2
+            anchors.centerIn: parent
+            color: theme.highlightBackgroundColor
+
+            opacity: modeSettings.meteringMode == Camera.MeteringSpot ? 1 : 0
+            Behavior on opacity { FadeAnimation {} }
         }
 
         CaptureCompass {
@@ -164,51 +194,38 @@ SplitItem {
 
             enabled: !shootingModeOverlay.expanded
             centerMenu: captureView.orientation == Orientation.Landscape
-
+            verticalAlignment: captureView.orientation == Orientation.Landscape
+                        ? globalSettings.captureVerticalAlignment
+                        : Qt.AlignBottom
+            topMargin: settingsCompass.topMargin
+            bottomMargin: settingsCompass.bottomMargin
             anchors {
-                right: parent.right
+                horizontalCenter: !globalSettings.reverseButtons
+                            ? compassAnchor.right
+                            : compassAnchor.left
                 top: parent.top
                 bottom: parent.bottom
-                margins: theme.paddingLarge
             }
+
+
+            onPressAndHold: if (interactive) { positioner.enabled = true }
         }
+    }
 
-        Item {
-            anchors {
-                horizontalCenter: captureCompass.horizontalCenter
-                top: captureCompass.bottom
-                margins: theme.paddingLarge + theme.paddingMedium
-            }
+    CompassPositioner {
+        id: positioner
 
-            width: durationText.width
-            height: durationText.height
+        width: captureView.width
+        height: captureView.height
+        topMargin: captureView.orientation == Orientation.Portrait
+                    ? captureView.height - settingsCompass.width - settingsCompass.bottomMargin
+                    : settingsCompass.topMargin
+        bottomMargin: settingsCompass.bottomMargin
 
-            opacity: camera.videoRecorder.recorderState == CameraRecorder.RecordingState
-                    ? 1.0
-                    : 0.0
-            Behavior on opacity { FadeAnimation {} }
-
-            Rectangle {
-                radius: height / 2
-                color: theme.highlightBackgroundColor
-                opacity: 0.3
-                anchors {
-                    fill: parent
-                    margins: -theme.paddingMedium
-                }
-            }
-
-            Formatter {
-                id: formatter
-            }
-
-            Label {
-                id: durationText
-
-                text: formatter.formatDuration(camera.videoRecorder.duration, Formatter.DurationLong)
-                font.pixelSize: theme.fontSizeExtraSmall
-            }
-        }
+        enabled: false
+        visible: enabled || animating || positionerOpacity.running
+        opacity: enabled || animating ? 1 : 0
+        Behavior on opacity { FadeAnimation { id: positionerOpacity } }
     }
 
     background: [

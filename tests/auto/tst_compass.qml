@@ -34,8 +34,8 @@ Item {
         }
 
         function test_dimensions() {
-            compare(compass.width, theme.itemSizeExtraLarge)
-            compare(compass.height, theme.itemSizeExtraLarge)
+            compare(compass.width, 180)
+            compare(compass.height, 180)
         }
 
         // there is weirdness with mouseDrag/mouseMove in that it does enough to make

@@ -13,25 +13,29 @@ SilicaFlickable {
     property alias delegate: repeater.delegate
 
     default property alias _data: contentItem.data
-    property real _paddedHeight: contentItem.height + (2 * theme.paddingLarge)
+    property real _paddedHeight: contentItem.height + 96
 
     width: compass.width
-    height: Math.min(menu._paddedHeight, menu.compass.height)
-    anchors.centerIn: parent
+    height: Math.min(compass.height, _paddedHeight)
+    y: compass.centerMenu
+            ? -parent.y + (compass.height - height) / 2
+            : -parent.y + compass.height - height
+
+    anchors.horizontalCenter: parent.horizontalCenter
     opacity: compass._menuOpacity
 
     contentHeight: _paddedHeight
 
-    Component.onCompleted: contentY = (_paddedHeight - height) / 2
+    Component.onCompleted: contentY = (contentHeight - height) / 2
 
     Column {
         id: contentItem
+        y: 48
 
         property alias _compass: menu.compass
         property alias _property: menu.property
         property alias _settings: menu.settings
 
-        y: theme.paddingLarge
         width: menu.width
 
         Repeater {

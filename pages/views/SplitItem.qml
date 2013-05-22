@@ -49,7 +49,7 @@ Item {
         id: backgroundItem
 
         visible: root.contracted
-        clip: true
+        opacity: _progress
         anchors {
             fill: parent
             leftMargin: root.dock == Dock.Left ? root.width / 2 : 0

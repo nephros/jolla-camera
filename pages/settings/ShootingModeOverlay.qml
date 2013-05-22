@@ -2,7 +2,6 @@ import QtQuick 1.1
 import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
 import com.jolla.camera.settings 1.0
-import "SettingsIcons.js" as SettingsIcons
 
 Item {
     id: overlay
@@ -18,15 +17,6 @@ Item {
     property real _direction
 
     property bool interactive: true
-
-    Rectangle {
-        width: overlay.width
-        height: overlay.height
-
-        visible: overlay.expanded
-        color: theme.highlightBackgroundColor
-        opacity: 0.5 * container.y / panel.height
-    }
 
     MouseArea {
         id: dragArea
@@ -60,6 +50,16 @@ Item {
             overlay._lastPos = panel.y
         }
 
+        onClicked: overlay.open = false
+
+        Item {
+            id: container
+
+            width: overlay.width
+            height: overlay.height
+            opacity: 1 - ((panel.y + panel.height) / panel.height)
+        }
+
         Item {
             id: panel
 
@@ -78,18 +78,20 @@ Item {
             }
 
             width: overlay.width
-            height: overlay.orientation == Orientation.Portrait
-                ? theme.itemSizeExtraLarge * 2
-                : theme.itemSizeExtraLarge
+            height: overlay.height / 3
         }
 
-        Item {
-            id: container
-
-            anchors.top: row.bottom
+        Rectangle {
+            id: highlight
+            y: height * panel.y / panel.height
             width: overlay.width
-            height: overlay.height
-            opacity: 1 - 0.6 * container.y / panel.height
+            height: overlay.orientation == Orientation.Landscape
+                    ? overlay.height / 2
+                    : overlay.height
+
+            visible: overlay.expanded
+            color: theme.highlightDimmerColor
+            opacity: 0.6 * (1 - container.opacity)
         }
 
         Flow {
@@ -103,64 +105,43 @@ Item {
             property alias landscape: landscapeMode
             property alias portrait: portraitMode
 
-            y: height * panel.y / panel.height
             width: overlay.orientation == Orientation.Portrait
-                    ? theme.itemSizeExtraLarge
-                    : overlay.width
+                    ? theme.iconSizeLarge
+                    : overlay.width - 116
             height: overlay.orientation == Orientation.Landscape
-                    ? theme.itemSizeExtraLarge
-                    : overlay.height
-            anchors.horizontalCenter: panel.horizontalCenter
+                    ? theme.iconSizeLarge
+                    : overlay.height - 116
+            anchors {
+                top: overlay.orientation == Orientation.Portrait
+                        ? highlight.top
+                        : highlight.verticalCenter
+                horizontalCenter: panel.horizontalCenter
+                topMargin: overlay.orientation == Orientation.Portrait
+                        ? 58
+                        : 0
+            }
+            opacity: 1 - container.opacity
 
-            spacing: theme.paddingMedium
+            spacing: Math.floor((screen.height - 116 - (theme.iconSizeLarge * 6)) / 5)
 
-            ShootingModeItem {
-                id: automaticMode
-                mode: "automatic"
-                icon: SettingsIcons.shootingMode(Settings, "automatic")
-            }
-            ShootingModeItem {
-                id: programMode
-                mode: "program"
-                icon: SettingsIcons.shootingMode(Settings, "program")
-            }
-            ShootingModeItem {
-                id: macroMode
-                mode: "macro"
-                icon: SettingsIcons.shootingMode(Settings, "macro")
-            }
-            ShootingModeItem {
-                id: sportsMode
-                mode: "sports"
-                icon: SettingsIcons.shootingMode(Settings, "sports")
-            }
-            ShootingModeItem {
-                id: landscapeMode
-                mode: "landscape"
-                icon: SettingsIcons.shootingMode(Settings, "landscape")
-            }
-            ShootingModeItem {
-                id: portraitMode
-                mode: "portrait"
-                icon: SettingsIcons.shootingMode(Settings, "portrait")
-            }
+            ShootingModeItem { id: automaticMode; mode: "automatic" }
+            ShootingModeItem { id: programMode; mode: "program" }
+            ShootingModeItem { id: macroMode; mode: "macro" }
+            ShootingModeItem { id: sportsMode; mode: "sports" }
+            ShootingModeItem { id: landscapeMode; mode: "landscape" }
+            ShootingModeItem { id: portraitMode; mode: "portrait" }
         }
 
         MouseArea {
             enabled: overlay.interactive && !overlay.expanded
-            anchors {
-                left: row.left
-                leftMargin: overlay._currentItem.x
-            }
-            width: theme.itemSizeExtraLarge
-            height: theme.itemSizeExtraLarge
-            onClicked: overlay.open = true
+            x: row.x + overlay._currentItem.x
+            y: Math.max(theme.paddingLarge, row.y + overlay._currentItem.y)
+            width: theme.iconSizeLarge
+            height: theme.iconSizeLarge
+            onClicked: overlay.open = !overlay.open
 
             Image {
                 anchors.centerIn: parent
-
-                opacity: 1 - container.y / panel.height
-
                 source: overlay._currentItem.selectionIcon
 
             }
