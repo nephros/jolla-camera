@@ -3,12 +3,11 @@ import Sailfish.Silica 1.0
 import QtMobility.gallery 1.1
 import QtMultimediaKit 1.1
 import com.jolla.camera.settings 1.0
-import "../views"
 
-SplitItem {
+Drawer {
     id: galleryView
 
-    property bool menuOpen: galleryView.contracted || _playingState
+    property bool menuOpen: galleryView.opened || _playingState
     property bool active
     property bool windowActive
     property int orientation
@@ -23,7 +22,7 @@ SplitItem {
 
     property bool _playingState: video.playing && !video.paused
 
-    dock: orientation == Orientation.Portrait ? Dock.Bottom : Dock.Right
+    dock: orientation == Orientation.Portrait ? Dock.Top : Dock.Left
 
     onActiveChanged: {
         if (!active) {
@@ -127,9 +126,9 @@ SplitItem {
 
                 ZoomableImage {
                     source: url
-                    onClicked: galleryView.split = !galleryView.split
+                    onClicked: galleryView.open = !galleryView.open
                     isPortrait: galleryView.orientation == Orientation.Portrait
-                    menuOpen: galleryView.contracted
+                    menuOpen: galleryView.opened
                 }
             }
 
@@ -147,7 +146,7 @@ SplitItem {
                         if (video.playing && !video.paused) {
                             video.pause()
                         } else {
-                            galleryView.split = !galleryView.split
+                            galleryView.open = !galleryView.open
                         }
                     }
                 }
@@ -167,7 +166,7 @@ SplitItem {
                 width: galleryView.width
                 height: galleryView.height
 
-                onClicked: galleryView.split = !galleryView.split
+                onClicked: galleryView.open = !galleryView.open
             }
         ]
 
