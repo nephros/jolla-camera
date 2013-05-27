@@ -6,7 +6,6 @@ import QtMultimediaKit 1.1
 import "capture"
 import "settings"
 import "gallery"
-import "views"
 
 Page {
     id: page

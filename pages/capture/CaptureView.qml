@@ -3,9 +3,8 @@ import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
 import com.jolla.camera.settings 1.0
 import "../settings"
-import "../views"
 
-SplitItem {
+Drawer {
     id: captureView
 
     property bool active
@@ -13,14 +12,14 @@ SplitItem {
     property int orientation
     property int effectiveIso: modeSettings.iso
 
-    property bool menuOpen: captureView.contracted
+    property bool menuOpen: captureView.open
             || shootingModeOverlay.expanded
             || settingsCompass.expanded
             || captureCompass.expanded
 
     property bool _complete
 
-    dock: orientation == Orientation.Portrait ? Dock.Bottom : Dock.Right
+    dock: orientation == Orientation.Portrait ? Dock.Top : Dock.Left
 
     onEffectiveIsoChanged: {
         if (effectiveIso == 0) {
@@ -90,7 +89,7 @@ SplitItem {
         width: page.width
         height: page.height
 
-        interactive: !settingsCompass.expanded && !captureCompass.expanded && !captureView.contracted
+        interactive: !settingsCompass.expanded && !captureCompass.expanded && !captureView.opened
         orientation: captureView.orientation
         opacity: 1 - positioner.opacity
 
@@ -119,7 +118,7 @@ SplitItem {
                         }
                     }
                 } else {
-                    captureView.split = false
+                    captureView.open = false
                     shootingModeOverlay.open = false
                     settingsCompass.closeMenu()
                     captureCompass.closeMenu()
@@ -155,7 +154,7 @@ SplitItem {
                 bottom: parent.bottom
             }
 
-            onClicked: if (interactive) { captureView.split = true }
+            onClicked: if (interactive) { captureView.open = true }
             onPressAndHold: if (interactive) { positioner.enabled = true }
         }
 
