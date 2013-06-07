@@ -78,6 +78,7 @@ desktop-file-install --delete-original       \
 %{_bindir}/jolla-camera
 %{_datadir}/translations/jolla-camera_eng_en.qm
 %{_datadir}/dbus-1/services/com.jolla.camera.service
+%{_sysconfdir}/gconf/schemas/*.schemas
 
 %files ts-devel
 %defattr(-,root,root,-)
@@ -90,11 +91,7 @@ desktop-file-install --delete-original       \
 # << files tests
 
 %post
-/usr/bin/jolla-camera -install-schema
 export GCONF_CONFIG_SOURCE="$(gconftool-2 --get-default-source)"
-gconftool-2 --makefile-install-rule /etc/gconf/schemas/jolla-camera.schemas &>/dev/null || :
-
-%postun
-rm -f /etc/gconf/schemas/jolla-camera.schemas
+gconftool-2 --direct --makefile-install-rule /etc/gconf/schemas/jolla-camera.schemas &>/dev/null || :
 
 
