@@ -59,7 +59,10 @@ qml.files = *.qml cover pages gconf
 service.files = com.jolla.camera.service
 service.path  = /usr/share/dbus-1/services
 
-INSTALLS += target desktop qml ts_install engineering_english_install service
+schema.files = gconf/jolla-camera.schemas
+schema.path  = /etc/gconf/schemas
+
+INSTALLS += target desktop qml ts_install engineering_english_install service schema
 
 equals(QT_MAJOR_VERSION, 4): packagesExist(qdeclarative-boostable) {
     message("Building with qdeclarative-boostable support")
