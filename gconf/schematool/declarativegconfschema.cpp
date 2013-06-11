@@ -1,7 +1,8 @@
 
 #include "declarativegconfschema.h"
 
-#include <QDeclarativeInfo>
+# include <QQmlInfo>
+
 #include <QFile>
 #include <QStringList>
 #include <QXmlStreamWriter>
@@ -84,12 +85,12 @@ void DeclarativeGConfSchema::setDefaultValue(const QVariant &value)
     }
 }
 
-QDeclarativeListProperty<QObject> DeclarativeGConfSchema::data()
+QQmlListProperty<QObject> DeclarativeGConfSchema::data()
 {
-    return QDeclarativeListProperty<QObject>(this, 0, data_append, data_count, data_at);
+    return QQmlListProperty<QObject>(this, 0, data_append, data_count, data_at, data_clear);
 }
 
-void DeclarativeGConfSchema::data_append(QDeclarativeListProperty<QObject> *property, QObject *value)
+void DeclarativeGConfSchema::data_append(QQmlListProperty<QObject> *property, QObject *value)
 {
     DeclarativeGConfSchema *schema = static_cast<DeclarativeGConfSchema *>(property->object);
     schema->m_data.append(value);
@@ -101,14 +102,18 @@ void DeclarativeGConfSchema::data_append(QDeclarativeListProperty<QObject> *prop
     }
 }
 
-QObject *DeclarativeGConfSchema::data_at(QDeclarativeListProperty<QObject> *property, int index)
+QObject *DeclarativeGConfSchema::data_at(QQmlListProperty<QObject> *property, int index)
 {
     return static_cast<DeclarativeGConfSchema *>(property->object)->m_data.at(index);
 }
 
-int DeclarativeGConfSchema::data_count(QDeclarativeListProperty<QObject> *property)
+int DeclarativeGConfSchema::data_count(QQmlListProperty<QObject> *property)
 {
     return static_cast<DeclarativeGConfSchema *>(property->object)->m_data.count();
+}
+
+void DeclarativeGConfSchema::data_clear(QQmlListProperty<QObject> *)
+{
 }
 
 

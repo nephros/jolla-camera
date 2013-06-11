@@ -2,7 +2,7 @@
 #include "declarativecameraextensions.h"
 
 #include <QMediaService>
-#include <QDeclarativeInfo>
+#include <QQmlInfo>
 
 #include <QtDebug>
 
@@ -42,7 +42,7 @@ void DeclarativeCameraExtensions::setCamera(QObject *camera)
 
     if (m_mediaObject
             && m_mediaObject->service()
-            && (m_deviceControl = m_mediaObject->service()->requestControl<QVideoDeviceControl *>())) {
+            && (m_deviceControl = m_mediaObject->service()->requestControl<QVideoDeviceSelectorControl *>())) {
         updateDevice();
         for (int i = 0; i < m_deviceControl->deviceCount(); ++i) {
             qDebug() << m_deviceControl->deviceName(i) << m_deviceControl->deviceDescription(i);

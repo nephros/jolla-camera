@@ -1,17 +1,7 @@
 TEMPLATE = app
 TARGET = gconf-schema-tool
 
-QT += declarative
-
-equals(QT_MAJOR_VERSION, 5) {
-    QT += dbus qml quick multimedia
-} else {
-    QT += dbus declarative
-
-    CONFIG += link_pkgconfig mobility
-
-    MOBILITY += multimedia
-}
+QT += dbus qml multimedia
 
 DEFINES += DESKTOP
 

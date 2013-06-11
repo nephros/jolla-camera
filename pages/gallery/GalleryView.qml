@@ -1,8 +1,8 @@
-import QtQuick 1.1
+import QtQuick 2.1
 import Sailfish.Silica 1.0
-import QtMobility.gallery 1.1
-import QtMultimediaKit 1.1
-import com.jolla.camera.settings 1.0
+import QtDocGallery 5.0
+import QtMultimedia 5.0
+import com.jolla.camera 1.0
 
 Drawer {
     id: galleryView
@@ -13,6 +13,8 @@ Drawer {
     property int orientation
     property Item _activeItem
 
+    readonly property bool empty: galleryModel.count == 0
+
     property alias contentItem: pageView.contentItem
     property alias header: pageView.header
     property bool interactive: true
@@ -20,14 +22,14 @@ Drawer {
 
     property Item page
 
-    property bool _playingState: video.playing && !video.paused
+    property bool _playingState: mediaPlayer.playbackState == MediaPlayer.PlayingState
 
     dock: orientation == Orientation.Portrait ? Dock.Top : Dock.Left
 
     onActiveChanged: {
         if (!active) {
-            video.stop()
-            video.source = ""
+            mediaPlayer.stop()
+            mediaPlayer.source = ""
         }
         if (_activeItem) {
             _activeItem.active = active
@@ -36,7 +38,7 @@ Drawer {
 
     onWindowActiveChanged: {
         if (!windowActive && _playingState) {
-            video.pause()
+            mediaPlayer.pause()
         }
     }
 
@@ -65,13 +67,13 @@ Drawer {
         pressDelay: 50
         boundsBehavior: Flickable.StopAtBounds
         cacheBuffer: width * 3
-        currentIndex: -1
 
         orientation: ListView.Horizontal
         layoutDirection: Qt.RightToLeft
         snapMode: ListView.SnapOneItem
+        highlightRangeMode: ListView.StrictlyEnforceRange
 
-        interactive: !galleryView._playingState && galleryView.interactive
+        interactive: !galleryView._playingState && galleryView.interactive && galleryModel.count > 0
 
         onCurrentItemChanged: {
             if (!galleryView._activeItem && currentItem) {
@@ -81,16 +83,12 @@ Drawer {
         }
 
         onMovingChanged: {
-            // ListView.StrictlyEnforceRange prevents snapping to the the header, so we update the
-            // currentIndex ourselves.
-            currentIndex = indexAt(contentX + width / 2, contentY + height / 2)
-            console.log("current index is", currentIndex)
             if (!moving && galleryView._activeItem != currentItem) {
                 if (galleryView._activeItem) {
                     galleryView._activeItem.active = false
                 }
-                video.stop()
-                video.source = ""
+                mediaPlayer.stop()
+                mediaPlayer.source = ""
                 video.visible = false
                 galleryView._activeItem = currentItem
                 if (galleryView._activeItem) {
@@ -100,13 +98,14 @@ Drawer {
         }
 
         model: DocumentGalleryModel {
+            id: galleryModel
             rootType: DocumentGallery.File
             properties: [ "url", "mimeType", "title", "dateTaken" ]
             sortProperties: ["-dateTaken"]
             autoUpdate: true
             filter: GalleryFilterUnion {
-                GalleryEqualsFilter { property: "path"; value: settings.photoDirectory }
-                GalleryEqualsFilter { property: "path"; value: settings.videoDirectory }
+                GalleryEqualsFilter { property: "path"; value: Settings.photoDirectory }
+                GalleryEqualsFilter { property: "path"; value: Settings.videoDirectory }
             }
         }
 
@@ -143,8 +142,8 @@ Drawer {
                     formatter: durationFormatter
 
                     onClicked: {
-                        if (video.playing && !video.paused) {
-                            video.pause()
+                        if (mediaPlayer.playbackState == MediaPlayer.PlayingState) {
+                            mediaPlayer.pause()
                         } else {
                             galleryView.open = !galleryView.open
                         }
@@ -166,27 +165,33 @@ Drawer {
                 width: galleryView.width
                 height: galleryView.height
 
+                enabled: galleryModel.count > 0
+
                 onClicked: galleryView.open = !galleryView.open
             }
         ]
 
         contentItem.children: [
-            Video {
+            VideoOutput {
                 id: video
+
+                source: MediaPlayer {
+                    id: mediaPlayer
+                }
 
                 visible: false
                 width: galleryView.width
                 height: galleryView.height
                 anchors.centerIn: galleryView._activeItem
 
-                fillMode: Video.PreserveAspectFit
+                fillMode: VideoOutput.PreserveAspectFit
             }
         ]
     }
 
     background: [
         Loader {
-//            asynchronous: true
+            asynchronous: true
 
             ShareMenu {
                 page: galleryView.page

@@ -2,21 +2,21 @@ TEMPLATE = app
 TARGET = jolla-camera
 TARGETPATH = /usr/bin
 
-equals(QT_MAJOR_VERSION, 5) {
-    QT += dbus qml quick multimedia
-} else {
-    QT += dbus declarative
-
-    CONFIG += link_pkgconfig mobility
-
-    MOBILITY += multimedia
-}
+QT += dbus qml quick multimedia
+CONFIG += link_pkgconfig
+PKGCONFIG += libjollasignonuiservice-qt5
 
 SOURCES += camera.cpp
 
 include (src/src.pri)
 
-OTHER_FILES += camera.qml pages
+OTHER_FILES += \
+        camera.qml \
+        settings.qml \
+        cover \
+        pages \
+        gconf/*.qml \
+        gconf/jolla-camera.schemas
 
 # translations
 TS_FILE = $$OUT_PWD/jolla-camera.ts
@@ -64,17 +64,17 @@ schema.path  = /etc/gconf/schemas
 
 INSTALLS += target desktop qml ts_install engineering_english_install service schema
 
-equals(QT_MAJOR_VERSION, 4): packagesExist(qdeclarative-boostable) {
+packagesExist(qdeclarative5-boostable) {
     message("Building with qdeclarative-boostable support")
     DEFINES += HAS_BOOSTER
-    PKGCONFIG += qdeclarative-boostable
+    PKGCONFIG += qdeclarative5-boostable
 } else {
     warning("qdeclarative-boostable not available; startup times will be slower")
 }
 
 !contains(CONFIG, desktop) {
-    equals(QT_MAJOR_VERSION, 4): PKGCONFIG += mlite libjollasignonuiservice
     equals(QT_MAJOR_VERSION, 5): PKGCONFIG += mlite5
 } else {
     DEFINES += DESKTOP
 }
+

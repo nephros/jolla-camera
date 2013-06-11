@@ -2,7 +2,7 @@
 #ifndef DECLARATIVECAMERAEXTENSIONS_H
 #define DECLARATIVECAMERAEXTENSIONS_H
 
-#include <QVideoDeviceControl>
+#include <QVideoDeviceSelectorControl>
 #include <QMediaObject>
 
 class DeclarativeCameraExtensions : public QObject
@@ -11,10 +11,16 @@ class DeclarativeCameraExtensions : public QObject
     Q_PROPERTY(QObject *camera READ camera WRITE setCamera NOTIFY cameraChanged)
     Q_PROPERTY(Face face READ face WRITE setFace NOTIFY faceChanged)
     Q_ENUMS(Face)
+    Q_ENUMS(AspectRatio)
 public:
     enum Face {
         Back,
         Front
+    };
+
+    enum AspectRatio {
+        AspectRatio_4_3,
+        AspectRatio_16_9
     };
 
     DeclarativeCameraExtensions(QObject *parent = 0);
@@ -35,7 +41,7 @@ private:
 
     QObject *m_camera;
     QMediaObject *m_mediaObject;
-    QVideoDeviceControl *m_deviceControl;
+    QVideoDeviceSelectorControl *m_deviceControl;
     Face m_face;
 };
 

@@ -2,7 +2,9 @@
 #ifndef DECLARATIVEGCONFSCHEMA_H
 #define DECLARATIVEGCONFSCHEMA_H
 
-#include <QDeclarativeListProperty>
+#include <QQmlListProperty>
+#include <qqml.h>
+
 
 QT_BEGIN_NAMESPACE
 class QXmlStreamWriter;
@@ -18,7 +20,7 @@ class DeclarativeGConfSchema : public QObject
     Q_PROPERTY(Type type READ type WRITE setType NOTIFY typeChanged)
     Q_PROPERTY(Type listType READ listType WRITE setListType NOTIFY listTypeChanged)
     Q_PROPERTY(QVariant defaultValue READ defaultValue WRITE setDefaultValue NOTIFY defaultValueChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QObject> data READ data CONSTANT)
+    Q_PROPERTY(QQmlListProperty<QObject> data READ data CONSTANT)
     Q_ENUMS(Type)
     Q_CLASSINFO("DefaultProperty", "data")
 public:
@@ -50,7 +52,7 @@ public:
     QVariant defaultValue() const;
     void setDefaultValue(const QVariant &value);
 
-    QDeclarativeListProperty<QObject> data();
+    QQmlListProperty<QObject> data();
 
     Q_INVOKABLE void writeSchema(const QString &path);
 
@@ -62,9 +64,10 @@ signals:
     void defaultValueChanged();
 
 private:
-    static void data_append(QDeclarativeListProperty<QObject> *property, QObject *value);
-    static QObject *data_at(QDeclarativeListProperty<QObject> *property, int index);
-    static int data_count(QDeclarativeListProperty<QObject> *property);
+    static void data_append(QQmlListProperty<QObject> *property, QObject *value);
+    static QObject *data_at(QQmlListProperty<QObject> *property, int index);
+    static int data_count(QQmlListProperty<QObject> *property);
+    static void data_clear(QQmlListProperty<QObject> *property);
 
     void write(QXmlStreamWriter *writer, const QByteArray &parentPath);
 

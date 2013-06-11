@@ -2,11 +2,11 @@
 #ifndef DECLARATIVEGCONFSETTINGS_H
 #define DECALRATIVEGCONFSETTGINS_H
 
-#include <QDeclarativeParserStatus>
-#include <QDeclarativeListProperty>
-#include <QVector>
+#include <QQmlParserStatus>
+#include <QQmlListProperty>
+#include <qqml.h>
 
-#include <qdeclarative.h>
+#include <QVector>
 
 #ifndef GCONF_DISABLED
 #include <gconf/gconf-value.h>
@@ -28,12 +28,12 @@
     }
 */
 
-class DeclarativeGConfSettings : public QObject, public QDeclarativeParserStatus
+class DeclarativeGConfSettings : public QObject, public QQmlParserStatus
 {
     Q_OBJECT
     Q_PROPERTY(QString path READ path WRITE setPath NOTIFY pathChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QObject> data READ data CONSTANT)
-    Q_INTERFACES(QDeclarativeParserStatus)
+    Q_PROPERTY(QQmlListProperty<QObject> data READ data CONSTANT)
+    Q_INTERFACES(QQmlParserStatus)
     Q_CLASSINFO("DefaultProperty", "data")
 public:
     DeclarativeGConfSettings(QObject *parent = 0);
@@ -45,7 +45,7 @@ public:
     QString path() const;
     void setPath(const QString &path);
 
-    QDeclarativeListProperty<QObject> data();
+    QQmlListProperty<QObject> data();
 
 signals:
     void pathChanged();
@@ -54,9 +54,10 @@ private slots:
     void propertyChanged();
 
 private:
-    static void data_append(QDeclarativeListProperty<QObject> *property, QObject *value);
-    static QObject *data_at(QDeclarativeListProperty<QObject> *property, int index);
-    static int data_count(QDeclarativeListProperty<QObject> *property);
+    static void data_append(QQmlListProperty<QObject> *property, QObject *value);
+    static QObject *data_at(QQmlListProperty<QObject> *property, int index);
+    static int data_count(QQmlListProperty<QObject> *property);
+    static void data_clear(QQmlListProperty<QObject> *property);
 
     void resolveProperties(const QByteArray &parentPath);
 

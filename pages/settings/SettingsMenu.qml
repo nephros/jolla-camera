@@ -1,8 +1,8 @@
-import QtQuick 1.1
+import QtQuick 2.0
+import QtMultimedia 5.0
 import Sailfish.Silica 1.0
-import Sailfish.Silica.private 1.0
+import org.nemomobile.dbus 1.0
 import com.jolla.camera 1.0
-import com.jolla.camera.settings 1.0
 
 SilicaFlickable {
     id: panel
@@ -40,9 +40,9 @@ SilicaFlickable {
             width: parent.width
             //% "ISO"
             label: qsTrId("camera-cb-iso")
-            settings: modeSettings
+            settings: Settings.mode
             property: "iso"
-            visible: !(settings.shootingModeProperties & Settings.Iso)
+            visible: Settings.mode.isoConfigurable
             menu: ContextMenu {
                 SettingsMenuItem {
                     //% "Automatic"
@@ -64,9 +64,9 @@ SilicaFlickable {
             width: parent.width
             //% "White Balance"
             label: qsTrId("camera-cb-white-balance")
-            settings: modeSettings
+            settings: Settings.mode
             property: "whiteBalance"
-            visible: !(settings.shootingModeProperties & Settings.WhiteBalance)
+            visible: Settings.mode.whiteBalanceConfigurable
             menu: ContextMenu {
                 SettingsMenuItem {
                     //% "Auto"
@@ -120,18 +120,18 @@ SilicaFlickable {
             id: aspectRatio
             //% "Aspect Ratio"
             label: qsTrId("camera-cb-aspect-ratio")
-            settings: globalSettings
+            settings: Settings.global
             property: "aspectRatio"
             menu: ContextMenu {
                 SettingsMenuItem {
                     //% "16:9"
                     text: qsTrId("camera-me-16-9")
-                    value: Settings.AspectRatio_16_9
+                    value: CameraExtensions.AspectRatio_16_9
                 }
                 SettingsMenuItem {
                     //% "4:3"
                     text: qsTrId("camera-me-4-3")
-                    value: Settings.AspectRatio_4_3
+                    value: CameraExtensions.AspectRatio_4_3
                 }
             }
         }
@@ -141,9 +141,9 @@ SilicaFlickable {
             width: parent.width
             //% "Focus length"
             label: qsTrId("camera-cb-focus-distance")
-            settings: modeSettings
+            settings: Settings.mode
             property: "focusDistance"
-            visible: !(settings.shootingModeProperties & Settings.FocusDistance)
+            visible: Settings.mode.focusDistanceConfigurable
             menu: ContextMenu {
                 SettingsMenuItem {
                     //% "Automatic"
@@ -179,7 +179,7 @@ SilicaFlickable {
             //: Continuous auto focus
             //% "Continuous AF"
             label: qsTrId("camera-cb-continuous-autofocus")
-            settings: modeSettings
+            settings: Settings.mode
             property: "videoFocus"
             menu: ContextMenu {
                 SettingsMenuItem {

@@ -1,7 +1,7 @@
-import QtQuick 1.1
+import QtQuick 2.0
+import QtMultimedia 5.0
 import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
-import com.jolla.camera.settings 1.0
 import "../pages/settings/SettingsIcons.js" as SettingsIcons
 
 Cover {
@@ -9,27 +9,27 @@ Cover {
 
     Rectangle {
         anchors.fill: parent
-        color: theme.rgba(theme.highlightBackgroundColor, 0.6)
+        color: Theme.rgba(Theme.highlightBackgroundColor, 0.6)
     }
 
     Grid {
         columns: 2
-        spacing: theme.paddingLarge
+        spacing: Theme.paddingLarge
         anchors.centerIn: parent
         Image {
             // Scale down to match the size of the individual settings icons.
             width: referenceIcon.width; height: referenceIcon.height; fillMode: Image.PreserveAspectFit
-            source: SettingsIcons.shootingMode(Settings, globalSettings.shootingMode) + "?" + theme.highlightDimmerColor
+            source: SettingsIcons.shootingMode(Settings.global.shootingMode) + "?" + Theme.highlightDimmerColor
         }
 
         Image {
             width: referenceIcon.width; height: referenceIcon.height; fillMode: Image.PreserveAspectFit
-            source: SettingsIcons.iso(modeSettings.iso) + "?" + theme.highlightDimmerColor
+            source: SettingsIcons.iso(Settings.mode.iso) + "?" + Theme.highlightDimmerColor
         }
 
         Image {
             width: referenceIcon.width; height: referenceIcon.height; fillMode: Image.PreserveAspectFit
-            source: SettingsIcons.timer(modeSettings.timer) + "?" + theme.highlightDimmerColor
+            source: SettingsIcons.timer(Settings.mode.timer) + "?" + Theme.highlightDimmerColor
         }
 
         Item { // Placeholder item.
@@ -38,22 +38,22 @@ Cover {
 
         Image {
             id: referenceIcon
-            source: SettingsIcons.whiteBalance(CameraImageProcessing, modeSettings.whiteBalance) + "?" + theme.highlightDimmerColor
+            source: SettingsIcons.whiteBalance(CameraImageProcessing, Settings.mode.whiteBalance) + "?" + Theme.highlightDimmerColor
         }
 
         Image {
-            source: SettingsIcons.flash(Camera, modeSettings.flash) + "?" + theme.highlightDimmerColor
+            source: SettingsIcons.flash(Camera, Settings.mode.flash) + "?" + Theme.highlightDimmerColor
         }
 
         Image {
-            source: SettingsIcons.meteringMode(Camera, modeSettings.meteringMode) + "?" + theme.highlightDimmerColor
+            source: SettingsIcons.meteringMode(Camera, Settings.mode.meteringMode) + "?" + Theme.highlightDimmerColor
         }
 
         Image {
             width: referenceIcon.width; height: referenceIcon.height; fillMode: Image.PreserveAspectFit
-            source: SettingsIcons.exposure(modeSettings.exposureConfigurable
-                    ? settings.exposureCompensation
-                    : 0) + "?" + theme.highlightDimmerColor
+            source: SettingsIcons.exposure(Settings.mode.exposureConfigurable
+                    ? Settings.mode.exposureCompensation
+                    : 0) + "?" + Theme.highlightDimmerColor
         }
     }
 }

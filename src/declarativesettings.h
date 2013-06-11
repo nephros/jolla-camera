@@ -35,20 +35,14 @@ class DeclarativeSettings : public QObject
     Q_OBJECT
     Q_PROPERTY(QString photoDirectory READ photoDirectory CONSTANT)
     Q_PROPERTY(QString videoDirectory READ videoDirectory CONSTANT)
-    Q_ENUMS(AspectRatioEnum)
 public:
-    enum AspectRatioEnum {
-        AspectRatio_4_3,
-        AspectRatio_16_9
-    };
-
     DeclarativeSettings(QObject *parent = 0);
     ~DeclarativeSettings();
 
     static QObject *factory(QQmlEngine *, QJSEngine *);
 
-    Q_INVOKABLE QSize defaultImageResolution(AspectRatioEnum ratio) const;
-    Q_INVOKABLE QSize defaultVideoResolution(AspectRatioEnum ratio) const;
+    Q_INVOKABLE QSize defaultImageResolution(int ratio) const;
+    Q_INVOKABLE QSize defaultVideoResolution(int ratio) const;
 
     QString photoDirectory() const;
     QString videoDirectory() const;

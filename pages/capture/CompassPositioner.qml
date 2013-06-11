@@ -1,5 +1,6 @@
-import QtQuick 1.1
+import QtQuick 2.0
 import Sailfish.Silica 1.0
+import com.jolla.camera 1.0
 
 Item {
     id: positioner
@@ -10,7 +11,7 @@ Item {
     property bool animating: settingsPlaceholder.animating || capturePlaceholder.animating
 
     Rectangle {
-        color: theme.highlightDimmerColor
+        color: Theme.highlightDimmerColor
         opacity: 0.6
         anchors.fill: parent
     }
@@ -19,9 +20,9 @@ Item {
         width: positioner.width
         height: positioner.height
         onClicked: {
-            globalSettings.reverseButtons = settingsPlaceholder.horizontalAlignment == Qt.AlignRight
-            globalSettings.settingsVerticalAlignment = settingsPlaceholder.verticalAlignment
-            globalSettings.captureVerticalAlignment = capturePlaceholder.verticalAlignment
+            Settings.global.reverseButtons = settingsPlaceholder.horizontalAlignment == Qt.AlignRight
+            Settings.global.settingsVerticalAlignment = settingsPlaceholder.verticalAlignment
+            Settings.global.captureVerticalAlignment = capturePlaceholder.verticalAlignment
             positioner.enabled = false
         }
     }
@@ -39,8 +40,8 @@ Item {
 
             positioner: parent
             opposite: capturePlaceholder
-            horizontalAlignment: !globalSettings.reverseButtons ? Qt.AlignLeft : Qt.AlignRight
-            verticalAlignment: globalSettings.settingsVerticalAlignment
+            horizontalAlignment: !Settings.global.reverseButtons ? Qt.AlignLeft : Qt.AlignRight
+            verticalAlignment: Settings.global.settingsVerticalAlignment
         }
 
 
@@ -50,8 +51,8 @@ Item {
 
             positioner: parent
             opposite: settingsPlaceholder
-            horizontalAlignment: !globalSettings.reverseButtons ? Qt.AlignRight : Qt.AlignLeft
-            verticalAlignment: globalSettings.captureVerticalAlignment
+            horizontalAlignment: !Settings.global.reverseButtons ? Qt.AlignRight : Qt.AlignLeft
+            verticalAlignment: Settings.global.captureVerticalAlignment
         }
     }
 }

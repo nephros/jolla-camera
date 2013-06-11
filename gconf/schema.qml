@@ -1,4 +1,5 @@
-import QtQuick 1.1
+import QtQuick 2.0
+import QtMultimedia 5.0
 import com.jolla.gconf.schema 1.0
 import com.jolla.camera 1.0
 
@@ -13,7 +14,7 @@ GConfSchema {
     }
     IntegerSchema {
         path: "aspectRatio"
-        defaultValue: Settings.AspectRatio_16_9
+        defaultValue: CameraExtensions.AspectRatio_16_9
     }
     IntegerSchema {
         path: "settingsVerticalAlignment"
@@ -56,7 +57,7 @@ GConfSchema {
         exposureMode: Camera.ExposurePortrait
     }
     AutomaticSchema {
-        path: "front"
+        path: "front-camera"
         face: CameraExtensions.Front
         flashConfigurable: false
     }

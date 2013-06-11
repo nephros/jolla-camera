@@ -1,7 +1,7 @@
-import QtQuick 1.1
+import QtQuick 2.0
+import QtMultimedia 5.0
 import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
-import com.jolla.camera.settings 1.0
 
 Item {
     id: overlay
@@ -11,14 +11,16 @@ Item {
     property bool expanded: open || verticalAnimation.running || dragArea.drag.active
     property int orientation
     default property alias _data: container.data
-    property Item _currentItem: globalSettings.shootingMode == "front-camera"
+    property Item _currentItem: Settings.global.shootingMode == "front-camera"
                 ? frontMode
-                : row[globalSettings.shootingMode]
+                : row[Settings.global.shootingMode]
 
     property real _lastPos
     property real _direction
 
     property bool interactive: true
+
+    signal clicked(var mouse)
 
     MouseArea {
         id: dragArea
@@ -26,13 +28,12 @@ Item {
         width: overlay.width
         height: overlay.height
 
-        enabled: overlay.interactive
         drag {
-            target: panel
+            target: overlay.interactive ? panel : undefined
             minimumY: -panel.height
             maximumY: 0
             axis: Drag.YAxis
-            filterChildren: true
+            filterChildren: overlay.expanded
             onActiveChanged: {
                 if (!drag.active && panel.y < -(panel.height / 3) && overlay._direction <= 0) {
                     overlay.open = false
@@ -52,7 +53,13 @@ Item {
             overlay._lastPos = panel.y
         }
 
-        onClicked: overlay.open = false
+        onClicked: {
+            if (overlay.expanded) {
+                overlay.open = false
+            } else {
+                overlay.clicked(mouse)
+            }
+        }
 
         Item {
             id: container
@@ -92,7 +99,7 @@ Item {
                     : overlay.height
 
             visible: overlay.expanded
-            color: theme.highlightDimmerColor
+            color: Theme.highlightDimmerColor
             opacity: 0.6 * (1 - container.opacity)
         }
 
@@ -108,10 +115,10 @@ Item {
             property alias portrait: portraitMode
 
             width: overlay.orientation == Orientation.Portrait
-                    ? theme.iconSizeLarge
+                    ? Theme.iconSizeLarge
                     : overlay.width - 116
             height: overlay.orientation == Orientation.Landscape
-                    ? theme.iconSizeLarge
+                    ? Theme.iconSizeLarge
                     : overlay.height - 116
             anchors {
                 top: overlay.orientation == Orientation.Portrait
@@ -123,8 +130,7 @@ Item {
                         : 0
             }
             opacity: 1 - container.opacity
-
-            spacing: Math.floor((screen.height - 116 - (theme.iconSizeLarge * 7)) / 6)
+            spacing: Math.floor((screen.height - 116 - (Theme.iconSizeLarge * 7)) / 6)
 
             ShootingModeItem { id: automaticMode; mode: "automatic" }
             ShootingModeItem { id: programMode; mode: "program" }
@@ -138,9 +144,9 @@ Item {
         MouseArea {
             enabled: overlay.interactive && !overlay.expanded
             x: row.x + overlay._currentItem.x
-            y: Math.max(theme.paddingLarge, row.y + overlay._currentItem.y)
-            width: theme.iconSizeLarge
-            height: theme.iconSizeLarge
+            y: Math.max(Theme.paddingLarge, row.y + overlay._currentItem.y)
+            width: Theme.iconSizeLarge
+            height: Theme.iconSizeLarge
             onClicked: overlay.open = !overlay.open
 
             Image {
