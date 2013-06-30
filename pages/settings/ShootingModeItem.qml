@@ -10,8 +10,8 @@ MouseArea {
     property url icon: SettingsIcons.shootingMode(Settings, mode)
     property url selectionIcon: icon + "?" + theme.highlightColor
 
-    width: theme.iconSizeLarge
-    height: theme.iconSizeLarge
+    width: theme.iconSizeMedium
+    height: theme.iconSizeMedium
 
     Image {
         source: icon

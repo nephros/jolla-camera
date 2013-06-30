@@ -144,7 +144,7 @@ Drawer {
             verticalAlignment: captureView.orientation == Orientation.Landscape
                         ? globalSettings.settingsVerticalAlignment
                         : Qt.AlignBottom
-            topMargin: theme.iconSizeLarge + (theme.paddingLarge * 2)
+            topMargin: theme.iconSizeMedium + (theme.paddingLarge * 2)
             bottomMargin: 112
             anchors {
                 horizontalCenter: !globalSettings.reverseButtons
