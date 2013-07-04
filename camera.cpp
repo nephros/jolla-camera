@@ -32,7 +32,6 @@
 
 #include "declarativecameralocks.h"
 #include "declarativecompassaction.h"
-#include "declarativegconfschema.h"
 #include "declarativegconfsettings.h"
 #include "declarativesettings.h"
 
@@ -100,26 +99,6 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     DeclarativeSettings settings;
     view->rootContext()->setContextProperty("settings", &settings);
 #endif
-
-    // Ideally this would be done at build time, but it's non-trivial to boot-strap so something
-    // that can run during install will do.
-    if (app->arguments().contains("-install-schema")) {
-        qmlRegisterType<DeclarativeGConfSchema>("com.jolla.camera", 1, 0, "GConfSchema");
-        qmlRegisterType<DeclarativeGConfDescription>("com.jolla.camera", 1, 0, "GConfDescription");
-
-        const QString source = path + QLatin1String("gconf/schema.qml");
-
-        QDeclarativeComponent component(view->engine(), source);
-        QScopedPointer<QObject> object(component.create());
-        if (DeclarativeGConfSchema *schema = qobject_cast<DeclarativeGConfSchema *>(object.data())) {
-            schema->writeSchema(QLatin1String("/etc/gconf/schemas/jolla-camera.schemas"));
-        } else {
-            qWarning() << "Failed to create schema from" << source;
-            qWarning() << component.errorString();
-        }
-
-        return 0;
-    }
 
     // We want to have SignonUI in process, if user wants to create account from Gallery
     SignonUiService *ssoui = new SignonUiService(0, true); // in process

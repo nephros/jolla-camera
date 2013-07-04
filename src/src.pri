@@ -11,14 +11,12 @@ packagesExist(gconf-2.0) {
 SOURCES += \
         $$PWD/declarativecameralocks.cpp \
         $$PWD/declarativecompassaction.cpp \
-        $$PWD/declarativegconfschema.cpp \
         $$PWD/declarativegconfsettings.cpp \
         $$PWD/declarativesettings.cpp \
 
 HEADERS += \
         $$PWD/declarativecameralocks.h \
         $$PWD/declarativecompassaction.h \
-        $$PWD/declarativegconfschema.h \
         $$PWD/declarativegconfsettings.h \
         $$PWD/declarativesettings.h \
 
@@ -35,6 +33,5 @@ equals(QT_MAJOR_VERSION, 4) {
             $$PWD/declarativecameraviewport.h \
             $$PWD/declarativeexposure.h \
             $$PWD/declarativeflash.h \
-            $$PWD/declarativefocus.h \
-            $$PWD/declarativewhitebalance.h
+            $$PWD/declarativefocus.h
 }
