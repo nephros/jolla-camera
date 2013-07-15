@@ -115,10 +115,10 @@ Item {
             property alias portrait: portraitMode
 
             width: overlay.orientation == Orientation.Portrait
-                    ? Theme.iconSizeLarge
+                    ? Theme.iconSizeMedium
                     : overlay.width - 116
             height: overlay.orientation == Orientation.Landscape
-                    ? Theme.iconSizeLarge
+                    ? Theme.iconSizeMedium
                     : overlay.height - 116
             anchors {
                 top: overlay.orientation == Orientation.Portrait
@@ -130,7 +130,7 @@ Item {
                         : 0
             }
             opacity: 1 - container.opacity
-            spacing: Math.floor((screen.height - 116 - (Theme.iconSizeLarge * 7)) / 6)
+            spacing: Math.floor((screen.height - 116 - (Theme.iconSizeMedium * 7)) / 6)
 
             ShootingModeItem { id: automaticMode; mode: "automatic" }
             ShootingModeItem { id: programMode; mode: "program" }
@@ -145,8 +145,9 @@ Item {
             enabled: overlay.interactive && !overlay.expanded
             x: row.x + overlay._currentItem.x
             y: Math.max(Theme.paddingLarge, row.y + overlay._currentItem.y)
-            width: Theme.iconSizeLarge
-            height: Theme.iconSizeLarge
+            width: Theme.iconSizeMedium
+            height: Theme.iconSizeMedium
+
             onClicked: overlay.open = !overlay.open
 
             Image {
