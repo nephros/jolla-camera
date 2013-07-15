@@ -1,4 +1,4 @@
-import QtQuick 1.1
+import QtQuick 2.0
 import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
 
@@ -50,7 +50,7 @@ Item {
 
     Component.onCompleted: {
         buttonBuzz = Qt.createQmlObject(
-                    "import QtQuick 1.1; import QtMobility.feedback 1.1; ThemeEffect { effect: ThemeEffect.BasicButton }",
+                    "import QtQuick 2.0; import QtFeedback 5.0; ThemeEffect { effect: ThemeEffect.BasicButton }",
                     compass,
                     'ThemeEffect')
     }
@@ -150,6 +150,7 @@ Item {
                 horizontalAnimation.start()
             }
         }
+
         onClicked: {
             if (!compass._drag) {
                 compass.clicked()
@@ -203,7 +204,7 @@ Item {
         }
 
         radius: 4
-        color: compass.activated || compass.pressed ? theme.highlightBackgroundColor : theme.highlightDimmerColor
+        color: compass.activated || compass.pressed ? Theme.highlightBackgroundColor : Theme.highlightDimmerColor
         opacity: compass.activated || compass.pressed ? 1.0 : 0.6
         Behavior on color { ColorAnimation { duration: 100 } }
         Behavior on opacity { FadeAnimation {} }
@@ -304,7 +305,7 @@ Item {
                 opacity: Math.abs(compass._currentPosition / compass.width)
 
                 Image {
-                    anchors { top: parent.top; horizontalCenter: parent.horizontalCenter; margins: theme.paddingLarge }
+                    anchors { top: parent.top; horizontalCenter: parent.horizontalCenter; margins: Theme.paddingLarge }
                     width: 24; height: 24
                     fillMode: Image.PreserveAspectFit
                     source: topAction.smallIcon
@@ -314,7 +315,7 @@ Item {
 
                 Image {
                     id: leftImage
-                    anchors { left: parent.left; verticalCenter: parent.verticalCenter; margins: theme.paddingLarge }
+                    anchors { left: parent.left; verticalCenter: parent.verticalCenter; margins: Theme.paddingLarge }
                     width: 24; height: 24
                     fillMode: Image.PreserveAspectFit
                     source: leftAction.smallIcon
@@ -324,7 +325,7 @@ Item {
 
                 Image {
                     id: rightImage
-                    anchors { right: parent.right; verticalCenter: parent.verticalCenter; margins: theme.paddingLarge }
+                    anchors { right: parent.right; verticalCenter: parent.verticalCenter; margins: Theme.paddingLarge }
                     width: 24; height: 24
                     fillMode: Image.PreserveAspectFit
                     source: rightAction.smallIcon
@@ -333,7 +334,7 @@ Item {
                 }
 
                 Image {
-                    anchors { bottom: parent.bottom; horizontalCenter: parent.horizontalCenter; margins: theme.paddingLarge }
+                    anchors { bottom: parent.bottom; horizontalCenter: parent.horizontalCenter; margins: Theme.paddingLarge }
                     width: 24; height: 24
                     fillMode: Image.PreserveAspectFit
                     source: bottomAction.smallIcon

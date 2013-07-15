@@ -1,4 +1,4 @@
-import QtQuick 1.1
+import QtQuick 2.0
 import Sailfish.Silica 1.0
 
 MouseArea {
@@ -70,7 +70,7 @@ MouseArea {
         width: placeholder.width
         height: placeholder.height
         radius: 4
-        color: theme.highlightBackgroundColor
+        color: Theme.highlightBackgroundColor
 
         Binding {
             target: dragItem
@@ -103,7 +103,7 @@ MouseArea {
             width: placeholder.width / 2
             radius: 4
             height: placeholder.height
-            color: theme.highlightColor
+            color: Theme.highlightColor
         }
     }
 }

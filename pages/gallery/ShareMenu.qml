@@ -1,4 +1,4 @@
-import QtQuick 1.1
+import QtQuick 2.0
 import Sailfish.Silica 1.0
 import Sailfish.TransferEngine 1.0
 import com.jolla.settings.accounts 1.0
@@ -39,14 +39,14 @@ ShareMethodList {
 
         x: menuList.width * 0.3
         width: menuList.width * 0.7
-        height: theme.itemSizeLarge
+        height: Theme.itemSizeLarge
         truncationMode: TruncationMode.Fade
-        color: theme.highlightColor
+        color: Theme.highlightColor
         horizontalAlignment: Text.AlignRight
         verticalAlignment: Text.AlignVCenter
         font {
-            pixelSize: theme.fontSizeLarge
-            family: theme.fontFamilyHeading
+            pixelSize: Theme.fontSizeLarge
+            family: Theme.fontFamilyHeading
         }
     }
 
@@ -56,9 +56,9 @@ ShareMethodList {
         Label {
             //% "Add account"
             text: qsTrId("camera-la-add_account")
-            x: theme.paddingLarge
+            x: Theme.paddingLarge
             anchors.verticalCenter: parent.verticalCenter
-            color: highlighted ? theme.highlightColor : theme.primaryColor
+            color: highlighted ? Theme.highlightColor : Theme.primaryColor
         }
 
         onClicked: {

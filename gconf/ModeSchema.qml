@@ -1,4 +1,6 @@
-import QtQuick 1.1
+import QtQuick 2.0
+import QtMultimedia 5.0
+import com.jolla.gconf.schema 1.0
 import com.jolla.camera 1.0
 
 GConfSchema {
@@ -13,6 +15,7 @@ GConfSchema {
     property alias exposureMode: exposureSchema.defaultValue
     property alias meteringMode: meteringSchema.defaultValue
     property alias timer: timerSchema.defaultValue
+    property alias face: faceSchema.defaultValue
 
     property alias isoConfigurable: isoConfig.defaultValue
     property alias whiteBalanceConfigurable: wbConfig.defaultValue
@@ -32,6 +35,7 @@ GConfSchema {
     IntegerSchema { id: exposureSchema; path: "exposureMode";         defaultValue: Camera.ExposureAuto }
     IntegerSchema { id: meteringSchema; path: "meteringMode";         defaultValue: Camera.MeteringMatrix }
     IntegerSchema { id: timerSchema;    path: "timer";                defaultValue: 0 }
+    IntegerSchema { id: faceSchema;     path: "face";                 defaultValue: CameraExtensions.Back }
 
     ConfigSchema { id: isoConfig;      path: "isoConfigurable" }
     ConfigSchema { id: wbConfig;       path: "whiteBalanceConfigurable" }

@@ -1,7 +1,8 @@
 
 #include "declarativegconfsettings.h"
 
-#include <QDeclarativeInfo>
+#include <QQmlInfo>
+
 #include <QMetaProperty>
 #include <QStringList>
 
@@ -117,12 +118,12 @@ void DeclarativeGConfSettings::setPath(const QString &path)
     }
 }
 
-QDeclarativeListProperty<QObject> DeclarativeGConfSettings::data()
+QQmlListProperty<QObject> DeclarativeGConfSettings::data()
 {
-    return QDeclarativeListProperty<QObject>(this, 0, data_append, data_count, data_at);
+    return QQmlListProperty<QObject>(this, 0, data_append, data_count, data_at, data_clear);
 }
 
-void DeclarativeGConfSettings::data_append(QDeclarativeListProperty<QObject> *property, QObject *value)
+void DeclarativeGConfSettings::data_append(QQmlListProperty<QObject> *property, QObject *value)
 {
     DeclarativeGConfSettings *settings = static_cast<DeclarativeGConfSettings *>(property->object);
     settings->m_data.append(value);
@@ -132,14 +133,18 @@ void DeclarativeGConfSettings::data_append(QDeclarativeListProperty<QObject> *pr
     }
 }
 
-QObject *DeclarativeGConfSettings::data_at(QDeclarativeListProperty<QObject> *property, int index)
+QObject *DeclarativeGConfSettings::data_at(QQmlListProperty<QObject> *property, int index)
 {
     return static_cast<DeclarativeGConfSettings *>(property->object)->m_data.at(index);
 }
 
-int DeclarativeGConfSettings::data_count(QDeclarativeListProperty<QObject> *property)
+int DeclarativeGConfSettings::data_count(QQmlListProperty<QObject> *property)
 {
     return static_cast<DeclarativeGConfSettings *>(property->object)->m_data.count();
+}
+
+void DeclarativeGConfSettings::data_clear(QQmlListProperty<QObject> *)
+{
 }
 
 #ifndef GCONF_DISABLED

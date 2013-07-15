@@ -1,6 +1,5 @@
-import QtQuick 1.1
+import QtQuick 2.0
 import Sailfish.Silica 1.0
-import com.jolla.camera.settings 1.0
 
 ComboBox {
     property QtObject settings

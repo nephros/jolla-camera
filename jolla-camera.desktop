@@ -3,6 +3,6 @@ Type=Application
 Name=Camera
 Name[zh_CN]=相机
 Icon=icon-launcher-camera
-Exec=invoker --type=j -s /usr/bin/jolla-camera
+Exec=invoker -s --type=silica-qt5 /usr/bin/jolla-camera
 Comment=Jolla Camera
 

@@ -1,7 +1,7 @@
-import QtQuick 1.1
+import QtQuick 2.0
+import QtMultimedia 5.0
 import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
-import com.jolla.camera.settings 1.0
 import "../compass"
 import "SettingsIcons.js" as SettingsIcons
 
@@ -17,23 +17,23 @@ Compass {
                 || camera.locks.exposureStatus == CameraLocks.Searching
 
     topAction {
-        smallIcon: SettingsIcons.exposure(modeSettings.exposureCompensation)
+        smallIcon: SettingsIcons.exposure(Settings.mode.exposureCompensation)
         largeIcon: "image://theme/icon-camera-exposure-compensation"
-        enabled: modeSettings.exposureConfigurable
+        enabled: Settings.mode.exposureConfigurable
         onActivated: compass.openMenu(exposureMenu)
     }
     bottomAction {
-        smallIcon: SettingsIcons.timer(modeSettings.timer)
+        smallIcon: SettingsIcons.timer(Settings.mode.timer)
         largeIcon: "image://theme/icon-camera-timer"
-        enabled: modeSettings.timerConfigurable
+        enabled: Settings.mode.timerConfigurable
         onActivated: compass.openMenu(timerMenu)
     }
     leftAction {
         smallIcon: compass.camera.locks.exposureStatus == CameraLocks.Locked
-                ? "image://theme/icon-camera-zoom-in?" + theme.highlightColor
+                ? "image://theme/icon-camera-zoom-in?" + Theme.highlightColor
                 : "image://theme/icon-camera-zoom-in"
         largeIcon: "image://theme/icon-camera-zoom-tele"
-        enabled: modeSettings.exposureConfigurable
+        enabled: Settings.mode.exposureConfigurable
         onActivated: {
             if (compass.camera.locks.exposureStatus == CameraLocks.Unlocked) {
                 compass.camera.locks.lockExposure()
@@ -43,16 +43,16 @@ Compass {
         }
     }
     rightAction {
-        smallIcon: SettingsIcons.iso(modeSettings.iso)
+        smallIcon: SettingsIcons.iso(Settings.mode.iso)
         largeIcon: "image://theme/icon-camera-iso"
-        enabled: modeSettings.isoConfigurable
+        enabled: Settings.mode.isoConfigurable
         onActivated: compass.openMenu(isoMenu)
     }
 
     Image {
         id: settingsIcon
         anchors.centerIn: parent
-        source: "image://theme/icon-camera-settings?" + theme.highlightColor
+        source: "image://theme/icon-camera-settings?" + Theme.highlightColor
         opacity: compass.interactive ? 1 : 0
         Behavior on  opacity { FadeAnimation {} }
     }
@@ -65,7 +65,7 @@ Compass {
         anchors.centerIn: parent
         opacity: 1 - settingsIcon.opacity
         text: formatter.formatDuration(compass.camera.videoRecorder.duration, Formatter.DurationLong)
-        font.pixelSize: theme.fontSizeExtraSmall
+        font.pixelSize: Theme.fontSizeExtraSmall
     }
 
 
@@ -73,7 +73,7 @@ Compass {
         id: timerMenu
 
         CompassMenu {
-            settings: modeSettings
+            settings: Settings.mode
             property: "timer"
             model: [ 0, 3, 15, 20 ]
             delegate: CompassMenuItem { value: modelData; icon: SettingsIcons.timer(modelData) }
@@ -84,7 +84,7 @@ Compass {
         id: exposureMenu
 
         CompassMenu {
-            settings: modeSettings
+            settings: Settings.mode
             property: "exposureCompensation"
             model: [ -4, -3, -2, -1, 0, 1, 2, 3, 4 ]
             delegate: CompassMenuItem { value: modelData; icon: SettingsIcons.exposure(modelData) }
@@ -95,7 +95,7 @@ Compass {
         id: isoMenu
 
         CompassMenu {
-            settings: modeSettings
+            settings: Settings.mode
             property: "iso"
             model: [ 0, 100, 200, 400, 800, 1600 ]
             delegate: CompassMenuItem { value: modelData; icon: SettingsIcons.iso(modelData) }

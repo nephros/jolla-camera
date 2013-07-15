@@ -116,6 +116,14 @@
             <locale name="C"/>
         </schema>
         <schema>
+            <key>/schemas/apps/jolla-camera/automatic/face</key>
+            <applyto>/apps/jolla-camera/automatic/face</applyto>
+            <owner>jolla</owner>
+            <type>int</type>
+            <default>0</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
             <key>/schemas/apps/jolla-camera/automatic/isoConfigurable</key>
             <applyto>/apps/jolla-camera/automatic/isoConfigurable</applyto>
             <owner>jolla</owner>
@@ -252,6 +260,14 @@
             <locale name="C"/>
         </schema>
         <schema>
+            <key>/schemas/apps/jolla-camera/program/face</key>
+            <applyto>/apps/jolla-camera/program/face</applyto>
+            <owner>jolla</owner>
+            <type>int</type>
+            <default>0</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
             <key>/schemas/apps/jolla-camera/program/isoConfigurable</key>
             <applyto>/apps/jolla-camera/program/isoConfigurable</applyto>
             <owner>jolla</owner>
@@ -381,6 +397,14 @@
         <schema>
             <key>/schemas/apps/jolla-camera/macro/timer</key>
             <applyto>/apps/jolla-camera/macro/timer</applyto>
+            <owner>jolla</owner>
+            <type>int</type>
+            <default>0</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/macro/face</key>
+            <applyto>/apps/jolla-camera/macro/face</applyto>
             <owner>jolla</owner>
             <type>int</type>
             <default>0</default>
@@ -523,6 +547,14 @@
             <locale name="C"/>
         </schema>
         <schema>
+            <key>/schemas/apps/jolla-camera/sports/face</key>
+            <applyto>/apps/jolla-camera/sports/face</applyto>
+            <owner>jolla</owner>
+            <type>int</type>
+            <default>0</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
             <key>/schemas/apps/jolla-camera/sports/isoConfigurable</key>
             <applyto>/apps/jolla-camera/sports/isoConfigurable</applyto>
             <owner>jolla</owner>
@@ -653,6 +685,14 @@
         <schema>
             <key>/schemas/apps/jolla-camera/landscape/timer</key>
             <applyto>/apps/jolla-camera/landscape/timer</applyto>
+            <owner>jolla</owner>
+            <type>int</type>
+            <default>0</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/landscape/face</key>
+            <applyto>/apps/jolla-camera/landscape/face</applyto>
             <owner>jolla</owner>
             <type>int</type>
             <default>0</default>
@@ -795,6 +835,14 @@
             <locale name="C"/>
         </schema>
         <schema>
+            <key>/schemas/apps/jolla-camera/portrait/face</key>
+            <applyto>/apps/jolla-camera/portrait/face</applyto>
+            <owner>jolla</owner>
+            <type>int</type>
+            <default>0</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
             <key>/schemas/apps/jolla-camera/portrait/isoConfigurable</key>
             <applyto>/apps/jolla-camera/portrait/isoConfigurable</applyto>
             <owner>jolla</owner>
@@ -853,6 +901,150 @@
         <schema>
             <key>/schemas/apps/jolla-camera/portrait/timerConfigurable</key>
             <applyto>/apps/jolla-camera/portrait/timerConfigurable</applyto>
+            <owner>jolla</owner>
+            <type>bool</type>
+            <default>true</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/front-camera/iso</key>
+            <applyto>/apps/jolla-camera/front-camera/iso</applyto>
+            <owner>jolla</owner>
+            <type>int</type>
+            <default>0</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/front-camera/whiteBalance</key>
+            <applyto>/apps/jolla-camera/front-camera/whiteBalance</applyto>
+            <owner>jolla</owner>
+            <type>int</type>
+            <default>0</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/front-camera/focusDistance</key>
+            <applyto>/apps/jolla-camera/front-camera/focusDistance</applyto>
+            <owner>jolla</owner>
+            <type>int</type>
+            <default>8</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/front-camera/videoFocus</key>
+            <applyto>/apps/jolla-camera/front-camera/videoFocus</applyto>
+            <owner>jolla</owner>
+            <type>int</type>
+            <default>8</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/front-camera/flash</key>
+            <applyto>/apps/jolla-camera/front-camera/flash</applyto>
+            <owner>jolla</owner>
+            <type>int</type>
+            <default>1</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/front-camera/exposureCompensation</key>
+            <applyto>/apps/jolla-camera/front-camera/exposureCompensation</applyto>
+            <owner>jolla</owner>
+            <type>int</type>
+            <default>0</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/front-camera/exposureMode</key>
+            <applyto>/apps/jolla-camera/front-camera/exposureMode</applyto>
+            <owner>jolla</owner>
+            <type>int</type>
+            <default>0</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/front-camera/meteringMode</key>
+            <applyto>/apps/jolla-camera/front-camera/meteringMode</applyto>
+            <owner>jolla</owner>
+            <type>int</type>
+            <default>1</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/front-camera/timer</key>
+            <applyto>/apps/jolla-camera/front-camera/timer</applyto>
+            <owner>jolla</owner>
+            <type>int</type>
+            <default>0</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/front-camera/face</key>
+            <applyto>/apps/jolla-camera/front-camera/face</applyto>
+            <owner>jolla</owner>
+            <type>int</type>
+            <default>1</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/front-camera/isoConfigurable</key>
+            <applyto>/apps/jolla-camera/front-camera/isoConfigurable</applyto>
+            <owner>jolla</owner>
+            <type>bool</type>
+            <default>false</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/front-camera/whiteBalanceConfigurable</key>
+            <applyto>/apps/jolla-camera/front-camera/whiteBalanceConfigurable</applyto>
+            <owner>jolla</owner>
+            <type>bool</type>
+            <default>false</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/front-camera/focusDistanceConfigurable</key>
+            <applyto>/apps/jolla-camera/front-camera/focusDistanceConfigurable</applyto>
+            <owner>jolla</owner>
+            <type>bool</type>
+            <default>true</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/front-camera/videoFocusConfigurable</key>
+            <applyto>/apps/jolla-camera/front-camera/videoFocusConfigurable</applyto>
+            <owner>jolla</owner>
+            <type>bool</type>
+            <default>true</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/front-camera/flashConfigurable</key>
+            <applyto>/apps/jolla-camera/front-camera/flashConfigurable</applyto>
+            <owner>jolla</owner>
+            <type>bool</type>
+            <default>false</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/front-camera/exposureConfigurable</key>
+            <applyto>/apps/jolla-camera/front-camera/exposureConfigurable</applyto>
+            <owner>jolla</owner>
+            <type>bool</type>
+            <default>false</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/front-camera/meteringModeConfigurable</key>
+            <applyto>/apps/jolla-camera/front-camera/meteringModeConfigurable</applyto>
+            <owner>jolla</owner>
+            <type>bool</type>
+            <default>false</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/front-camera/timerConfigurable</key>
+            <applyto>/apps/jolla-camera/front-camera/timerConfigurable</applyto>
             <owner>jolla</owner>
             <type>bool</type>
             <default>true</default>

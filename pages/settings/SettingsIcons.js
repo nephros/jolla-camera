@@ -1,6 +1,6 @@
 
 
-function shootingMode(Settings, mode) {
+function shootingMode(mode) {
     return "image://theme/icon-camera-" + mode
 }
 

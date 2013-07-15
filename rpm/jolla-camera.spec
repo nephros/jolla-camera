@@ -6,30 +6,34 @@ Group:      Applications/Multimedia
 License:    TBD
 URL:        https://bitbucket.org/jolla/ui-jolla-camera
 Source0:    %{name}-%{version}.tar.bz2
-BuildRequires:  pkgconfig(QtCore) >= 4.8.0
-BuildRequires:  pkgconfig(QtDeclarative)
-BuildRequires:  pkgconfig(QtGui)
-BuildRequires:  pkgconfig(QtOpenGL)
-BuildRequires:  pkgconfig(QtNetwork)
-BuildRequires:  pkgconfig(QtMultimediaKit)
+BuildRequires:  pkgconfig(Qt5Core)
+BuildRequires:  pkgconfig(Qt5Gui)
+BuildRequires:  pkgconfig(Qt5Qml)
+BuildRequires:  pkgconfig(Qt5Quick)
+BuildRequires:  pkgconfig(Qt5Network)
+BuildRequires:  pkgconfig(Qt5Multimedia)
 BuildRequires:  desktop-file-utils
-BuildRequires:  pkgconfig(qdeclarative-boostable)
-BuildRequires:  pkgconfig(mlite)
+BuildRequires:  pkgconfig(qdeclarative5-boostable)
 BuildRequires:  pkgconfig(gconf-2.0)
-BuildRequires:  pkgconfig(libjollasignonuiservice)
+BuildRequires:  qt5-qttools
+BuildRequires:  qt5-qttools-linguist
+BuildRequires:  pkgconfig(libjollasignonuiservice-qt5)
 
 Requires:  ambient-icons-closed
-Requires:  sailfishsilica >= 0.8.0
-Requires:  mapplauncherd-booster-jolla
-Requires:  libdeclarative-multimedia
-Requires: libdeclarative-feedback
-Requires: qt-mobility-haptics-ffmemless
-Requires:  declarative-transferengine => 0.0.12
-Requires:  nemo-qml-plugins-accounts
-Requires:  nemo-qml-plugins-gstvideo-thumbnailer
-Requires:  nemo-qml-plugins-thumbnailer
-Requires:  jolla-gallery-facebook
+Requires:  sailfishsilica-qt5
+Requires:  mapplauncherd-booster-silica-qt5
+Requires: qt5-qtdeclarative-import-multimedia
+Requires: qt5-qtmultimedia-plugin-mediaservice-gstcamerabin
+Requires: qt5-qtmultimedia-plugin-mediaservice-gstmediaplayer
+Requires:  declarative-transferengine-qt5
+Requires:  nemo-qml-plugin-accounts-qt5
+Requires:  nemo-qml-plugin-thumbnailer-qt5-video
+Requires:  nemo-qml-plugin-thumbnailer-qt5
+Requires:  nemo-qml-plugin-dbus-qt5
 Requires:  sailfish-components-accounts
+Requires:  sailfish-components-accounts-qt5
+Requires:  sailfish-components-media-qt5
+Requires:  sailfish-components-gallery-qt5
 
 %description
 The Jolla Camera application.
@@ -45,10 +49,10 @@ Translation source for Jolla Camera
 %package tests
 Summary:    Unit tests for Jolla Camera
 Group:      Applications/Multimedia
-BuildRequires:  pkgconfig(QtTest)
-BuildRequires:  pkgconfig(QtMultimediaKit)
+BuildRequires:  pkgconfig(Qt5Test)
+BuildRequires:  pkgconfig(Qt5Multimedia)
 Requires:   %{name} = %{version}-%{release}
-Requires:   qtest-qml
+Requires:   qt5-qtdeclarative-import-qttest
 
 %description tests
 This package contains QML unit tests for Jolla Camera application
@@ -58,13 +62,13 @@ This package contains QML unit tests for Jolla Camera application
 
 %build
 
-%qmake %{name}.pro
+%qmake5 %{name}.pro
 
 make %{?jobs:-j%jobs}
 
 %install
 rm -rf %{buildroot}
-%qmake_install
+%qmake5_install
 chmod +x %{buildroot}/opt/tests/jolla-camera/auto/run-tests.sh
 
 desktop-file-install --delete-original       \
@@ -92,6 +96,6 @@ desktop-file-install --delete-original       \
 
 %post
 export GCONF_CONFIG_SOURCE="$(gconftool-2 --get-default-source)"
-gconftool-2 --direct --makefile-install-rule /etc/gconf/schemas/jolla-camera.schemas &>/dev/null || :
+gconftool-2 --makefile-install-rule /etc/gconf/schemas/jolla-camera.schemas &>/dev/null || :
 
 

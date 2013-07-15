@@ -1,4 +1,4 @@
-import QtQuick 1.1
+import QtQuick 2.0
 import Sailfish.Silica 1.0
 
 MouseArea {
@@ -10,7 +10,7 @@ MouseArea {
     property bool selected: parent._settings[parent._property] == value
 
     width: parent.width
-    height: theme.itemSizeSmall
+    height: Theme.itemSizeSmall
 
     onClicked: {
         parent._settings[parent._property] = value
@@ -22,7 +22,7 @@ MouseArea {
 
         anchors.centerIn: parent
         source: menuItem.selected || menuItem.pressed
-                ? menuItem.icon + "?" + theme.highlightColor
+                ? menuItem.icon + "?" + Theme.highlightColor
                 : menuItem.icon
         smooth: true
     }

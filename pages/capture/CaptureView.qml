@@ -1,7 +1,7 @@
-import QtQuick 1.1
+import QtQuick 2.0
+import QtMultimedia 5.0
 import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
-import com.jolla.camera.settings 1.0
 import "../settings"
 
 Drawer {
@@ -10,14 +10,16 @@ Drawer {
     property bool active
     property bool windowActive
     property int orientation
-    property int effectiveIso: modeSettings.iso
+    property int effectiveIso: Settings.mode.iso
 
     property bool menuOpen: captureView.open
             || shootingModeOverlay.expanded
             || settingsCompass.expanded
             || captureCompass.expanded
+            || positioner.enabled
 
     property bool _complete
+    property int _unload
 
     dock: orientation == Orientation.Portrait ? Dock.Top : Dock.Left
 
@@ -25,7 +27,7 @@ Drawer {
         if (effectiveIso == 0) {
             camera.exposure.setAutoIsoSensitivity()
         } else {
-            camera.exposure.manualIso = modeSettings.iso
+            camera.exposure.manualIso = Settings.mode.iso
         }
     }
 
@@ -37,36 +39,50 @@ Drawer {
         property alias locks: cameraLocks
 
         captureMode: Camera.CaptureStillImage
-        cameraState: captureView._complete && captureView.windowActive
+        cameraState: captureView._complete && captureView.windowActive && !captureView._unload
                     ? (captureView.active ? Camera.ActiveState : Camera.LoadedState)
                     : Camera.UnloadedState
 
-        imageCapture.resolution: settings.defaultImageResolution(globalSettings.aspectRatio)
+        imageCapture.resolution: Settings.defaultImageResolution(Settings.global.aspectRatio)
         videoRecorder{
-            resolution: settings.defaultVideoResolution(globalSettings.aspectRatio)
+            resolution: Settings.defaultVideoResolution(Settings.global.aspectRatio)
             frameRate: 15
         }
         focus {
             focusMode: captureMode == Camera.CaptureStillImage
-                    ? modeSettings.focusDistance
-                    : modeSettings.videoFocus
-            focusPointMode: modeSettings.focusDistanceConfigurable
+                    ? Settings.mode.focusDistance
+                    : Settings.mode.videoFocus
+            focusPointMode: Settings.mode.focusDistanceConfigurable
                     ? Camera.FocusPointCustom
                     : Camera.FocusPointAuto
         }
-        flash.flashMode: modeSettings.flash
-        imageProcessing.whiteBalanceMode: modeSettings.whiteBalance
+        flash.mode: Settings.mode.flash
+        imageProcessing.whiteBalanceMode: Settings.mode.whiteBalance
 
         exposure {
-            exposureMode: modeSettings.exposureMode
-            exposureCompensation: modeSettings.exposureCompensation / 2.0
-            meteringMode: modeSettings.meteringMode
+            exposureMode: Settings.mode.exposureMode
+            exposureCompensation: Settings.mode.exposureCompensation / 2.0
+            meteringMode: Settings.mode.meteringMode
         }
     }
 
     CameraLocks {
         id: cameraLocks
         camera: camera
+    }
+
+    CameraExtensions {
+        id: extensions
+        camera: camera
+        face: Settings.mode.face
+
+        onFaceChanged: {
+            if (captureView._complete) {
+                // Force the camera to reload when the selected face changes.
+                captureView._unload = true;
+                captureView._unload = false;
+            }
+        }
     }
 
     VideoOutput {
@@ -93,36 +109,32 @@ Drawer {
         orientation: captureView.orientation
         opacity: 1 - positioner.opacity
 
-        MouseArea {
-            anchors.fill: parent
+        onClicked: {
+            if (shootingModeOverlay.interactive && !shootingModeOverlay.expanded) {
+                if (Settings.mode.focusDistanceConfigurable) {
+                    var focusX = mouse.x / width
+                    var focusY = mouse.y / height
 
-            onClicked: {
-                if (shootingModeOverlay.interactive || shootingModeOverlay.open) {
-                    if (modeSettings.focusDistanceConfigurable) {
-                        var focusX = mouse.x / width
-                        var focusY = mouse.y / height
-
-                        if (captureView.orientation == Orientation.Portrait)  {
-                            var temp = focusX
-                            focusX = focusY
-                            focusY = temp
-                        }
-                        if (globalSettings.aspectRatio == Settings.AspectRatio_4_3) {
-                            // Scale the click point from the screen 16:9 to the 4:3 window.
-                            // (3 * 16) / (4 * 9) == 4/3
-                            // (4/3 - 1) / 2 == 1/6
-                            focusX = (focusX * 4 / 3) - (1 / 6)
-                        }
-                        if (focusX >= 0 && focusX <= 1) {
-                            camera.focus.customFocusPoint = Qt.point(focusX, focusY)
-                        }
+                    if (captureView.orientation == Orientation.Portrait)  {
+                        var temp = focusX
+                        focusX = focusY
+                        focusY = temp
                     }
-                } else {
-                    captureView.open = false
-                    shootingModeOverlay.open = false
-                    settingsCompass.closeMenu()
-                    captureCompass.closeMenu()
+                    if (Settings.global.aspectRatio == Settings.AspectRatio_4_3) {
+                        // Scale the click point from the screen 16:9 to the 4:3 window.
+                        // (3 * 16) / (4 * 9) == 4/3
+                        // (4/3 - 1) / 2 == 1/6
+                        focusX = (focusX * 4 / 3) - (1 / 6)
+                    }
+                    if (focusX >= 0 && focusX <= 1) {
+                        camera.focus.customFocusPoint = Qt.point(focusX, focusY)
+                    }
                 }
+            } else {
+                captureView.open = false
+                shootingModeOverlay.open = false
+                settingsCompass.closeMenu()
+                captureCompass.closeMenu()
             }
         }
 
@@ -139,15 +151,15 @@ Drawer {
             id: settingsCompass
 
             camera: camera
-            enabled: !shootingModeOverlay.expanded
+            enabled: !shootingModeOverlay.expanded && !captureCompass.expanded
             centerMenu: captureView.orientation == Orientation.Landscape
             verticalAlignment: captureView.orientation == Orientation.Landscape
-                        ? globalSettings.settingsVerticalAlignment
+                        ? Settings.global.settingsVerticalAlignment
                         : Qt.AlignBottom
-            topMargin: theme.iconSizeLarge + (theme.paddingLarge * 2)
+            topMargin: Theme.iconSizeLarge + (Theme.paddingLarge * 2)
             bottomMargin: 112
             anchors {
-                horizontalCenter: !globalSettings.reverseButtons
+                horizontalCenter: !Settings.global.reverseButtons
                             ? compassAnchor.left
                             : compassAnchor.right
                 top: parent.top
@@ -167,7 +179,7 @@ Drawer {
             anchors.centerIn: parent
 
             border.width: 3
-            border.color: theme.highlightBackgroundColor
+            border.color: Theme.highlightBackgroundColor
             color: "#00000000"
 
             opacity: cameraLocks.focusStatus == CameraLocks.Locked ? 1 : 0
@@ -180,9 +192,9 @@ Drawer {
 
             radius: 2
             anchors.centerIn: parent
-            color: theme.highlightBackgroundColor
+            color: Theme.highlightBackgroundColor
 
-            opacity: modeSettings.meteringMode == Camera.MeteringSpot ? 1 : 0
+            opacity: Settings.mode.meteringMode == Camera.MeteringSpot ? 1 : 0
             Behavior on opacity { FadeAnimation {} }
         }
 
@@ -191,15 +203,15 @@ Drawer {
 
             camera: camera
 
-            enabled: !shootingModeOverlay.expanded
+            enabled: !shootingModeOverlay.expanded && !settingsCompass.expanded
             centerMenu: captureView.orientation == Orientation.Landscape
             verticalAlignment: captureView.orientation == Orientation.Landscape
-                        ? globalSettings.captureVerticalAlignment
+                        ? Settings.global.captureVerticalAlignment
                         : Qt.AlignBottom
             topMargin: settingsCompass.topMargin
             bottomMargin: settingsCompass.bottomMargin
             anchors {
-                horizontalCenter: !globalSettings.reverseButtons
+                horizontalCenter: !Settings.global.reverseButtons
                             ? compassAnchor.right
                             : compassAnchor.left
                 top: parent.top
@@ -229,7 +241,7 @@ Drawer {
 
     background: [
         Loader {
-//            asynchronous: true
+            asynchronous: true
 
             SettingsMenu {
                 width: captureView.backgroundItem.width

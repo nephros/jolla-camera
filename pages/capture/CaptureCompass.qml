@@ -1,7 +1,7 @@
-import QtQuick 1.1
+import QtQuick 2.0
+import QtMultimedia 5.0
 import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
-import com.jolla.camera.settings 1.0
 import "../compass"
 import "../settings/SettingsIcons.js" as SettingsIcons
 
@@ -37,21 +37,21 @@ Compass {
     }
 
     leftAction {
-        smallIcon: SettingsIcons.meteringMode(Camera, modeSettings.meteringMode)
+        smallIcon: SettingsIcons.meteringMode(Camera, Settings.mode.meteringMode)
         largeIcon: "image://theme/icon-camera-metering-mode"
-        enabled: modeSettings.meteringModeConfigurable
+        enabled: Settings.mode.meteringModeConfigurable
         onActivated: compass.openMenu(meteringMenu)
     }
     topAction {
-        smallIcon: SettingsIcons.flash(Camera, modeSettings.flash)
+        smallIcon: SettingsIcons.flash(Camera, Settings.mode.flash)
         largeIcon: "image://theme/icon-camera-flash"
-        enabled: modeSettings.flashConfigurable
+        enabled: Settings.mode.flashConfigurable
         onActivated: compass.openMenu(flashMenu)
     }
     rightAction {
         smallIcon: "image://theme/icon-camera-wb-default"
         largeIcon: "image://theme/icon-camera-whitebalance"
-        enabled: modeSettings.whiteBalanceConfigurable
+        enabled: Settings.mode.whiteBalanceConfigurable
         onActivated: compass.openMenu(whiteBalanceMenu)
     }
     bottomAction {
@@ -77,13 +77,13 @@ Compass {
     Image {
         id: captureIcon
         anchors.centerIn: parent
-        source: "image://theme/icon-camera-shutter-release?" + theme.highlightColor
+        source: "image://theme/icon-camera-shutter-release?" + Theme.highlightColor
         FadeAnimation on opacity { id: captureOpacity; to: 1 }
     }
 
     Image {
         anchors.centerIn: parent
-        source: "image://theme/icon-camera-stop?" + theme.highlightColor
+        source: "image://theme/icon-camera-stop?" + Theme.highlightColor
         opacity: 1 - captureIcon.opacity
     }
 
@@ -91,7 +91,7 @@ Compass {
         id: meteringMenu
 
         CompassMenu {
-            settings: modeSettings
+            settings: Settings.mode
             property: "meteringMode"
             model: [
                 Camera.MeteringMatrix,
@@ -109,7 +109,7 @@ Compass {
         id: flashMenu
 
         CompassMenu {
-            settings: modeSettings
+            settings: Settings.mode
             property: "flash"
             model: [
                 Camera.FlashAuto,
@@ -127,7 +127,7 @@ Compass {
     Component {
         id: whiteBalanceMenu
         CompassMenu {
-            settings: modeSettings
+            settings: Settings.mode
             property: "whiteBalance"
             model: [
                 CameraImageProcessing.WhiteBalanceAuto,

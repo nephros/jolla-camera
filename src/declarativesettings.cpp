@@ -1,16 +1,14 @@
 
 #include "declarativesettings.h"
+#include "declarativecameraextensions.h"
 
 #include <QCameraFocus>
 #include <QCameraExposure>
 #include <QCameraImageProcessing>
 #include <QDir>
-
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#include <QQmlComponent>
+#include <QQmlEngine>
 #include <QStandardPaths>
-#else
-#include <QDesktopServices>
-#endif
 
 DeclarativeSettings::DeclarativeSettings(QObject *parent)
     : QObject(parent)
@@ -27,31 +25,39 @@ DeclarativeSettings::~DeclarativeSettings()
 {
 }
 
-QObject *DeclarativeSettings::factory(QQmlEngine *, QJSEngine *)
+QObject *DeclarativeSettings::factory(QQmlEngine *engine, QJSEngine *)
 {
-   return new DeclarativeSettings;
+    const QUrl source = engine->baseUrl().resolved(QUrl(QStringLiteral("pages/settings/settings.qml")));
+    QQmlComponent component(engine, source);
+    if (component.isReady()) {
+        return component.create();
+    } else {
+        qWarning() << "Failed to instantiate Settings";
+        qWarning() << component.errors();
+        return 0;
+    }
 }
 
-QSize DeclarativeSettings::defaultImageResolution(AspectRatioEnum ratio) const
+QSize DeclarativeSettings::defaultImageResolution(int ratio) const
 {
     // The default defaults are the typical supported resolutions for a modern
     // webcam and so are reasonably likely to work in most places.
     switch (ratio) {
-    case AspectRatio_4_3:
+    case DeclarativeCameraExtensions::AspectRatio_4_3:
         return m_imageRatio_4_3.value(QSize(640, 480)).value<QSize>();
-    case AspectRatio_16_9:
+    case DeclarativeCameraExtensions::AspectRatio_16_9:
         return m_imageRatio_16_9.value(QSize(1280, 720)).value<QSize>();
     default:
         return QSize();
     }
 }
 
-QSize DeclarativeSettings::defaultVideoResolution(AspectRatioEnum ratio) const
+QSize DeclarativeSettings::defaultVideoResolution(int ratio) const
 {
     switch (ratio) {
-    case AspectRatio_4_3:
+    case DeclarativeCameraExtensions::AspectRatio_4_3:
         return m_imageRatio_4_3.value(QSize(640, 480)).value<QSize>();
-    case AspectRatio_16_9:
+    case DeclarativeCameraExtensions::AspectRatio_16_9:
         return m_imageRatio_16_9.value(QSize(1280, 720)).value<QSize>();
     default:
         return QSize();
@@ -60,19 +66,11 @@ QSize DeclarativeSettings::defaultVideoResolution(AspectRatioEnum ratio) const
 
 QString DeclarativeSettings::photoDirectory() const
 {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     return QStandardPaths::writableLocation(QStandardPaths::PicturesLocation) + QLatin1String("/Camera");
-#else
-    return QDesktopServices::storageLocation(QDesktopServices::PicturesLocation) + QLatin1String("/Camera");
-#endif
 
 }
 
 QString DeclarativeSettings::videoDirectory() const
 {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     return QStandardPaths::writableLocation(QStandardPaths::MoviesLocation) + QLatin1String("/Camera");
-#else
-    return QDesktopServices::storageLocation(QDesktopServices::MoviesLocation) + QLatin1String("/Camera");
-#endif
 }

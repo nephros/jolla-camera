@@ -1,6 +1,6 @@
-import QtQuick 1.1
+import QtQuick 2.0
 import Sailfish.Silica 1.0
-import QtMultimediaKit 1.1
+import QtMultimedia 5.0
 import org.nemomobile.thumbnailer 1.0
 
 MouseArea {
@@ -86,7 +86,7 @@ MouseArea {
 
             anchors { left: parent.left; right: parent.right; bottom: parent.bottom }
 
-            height: theme.itemSizeSmall
+            height: Theme.itemSizeSmall
             handleVisible: false
             minimumValue: 0
             valueText: videoItem.formatter.formatDuration(value, Formatter.DurationShort)
