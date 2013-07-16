@@ -3,6 +3,7 @@ import QtMultimedia 5.0
 import Sailfish.Silica 1.0
 import Sailfish.Media 1.0
 import com.jolla.camera 1.0
+import org.nemomobile.policy 1.0
 import "../settings"
 
 Drawer {
@@ -245,6 +246,32 @@ Drawer {
         visible: enabled || animating || positionerOpacity.running
         opacity: enabled || animating ? 1 : 0
         Behavior on opacity { FadeAnimation { id: positionerOpacity } }
+    }
+
+    MediaKey {
+        enabled: keysResource.acquired
+//        key: Qt.Key_VolumeUp
+        key: 0x1008ff13     // We're getting native scan codes instead of Qt key codes. JB#8044
+        onPressed: camera.imageCapture.capture()
+    }
+    MediaKey {
+        enabled: keysResource.acquired
+//        key: Qt.Key_VolumeDown
+        key: 0x1008ff11
+        onPressed: cameraLocks.lockFocus()
+    }
+
+    Permissions {
+        enabled: camera.captureMode == Camera.CaptureStillImage
+                    && camera.cameraState == Camera.LoadedState
+        autoRelease: true
+        applicationClass: "camera"
+
+        Resource {
+            id: keysResource
+            type: Resource.ScaleButton
+            optional: true
+        }
     }
 
     background: [
