@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtMultimedia 5.0
 import Sailfish.Silica 1.0
+import Sailfish.Media 1.0
 import com.jolla.camera 1.0
 import "../settings"
 
@@ -46,7 +47,9 @@ Drawer {
         imageCapture.resolution: Settings.defaultImageResolution(Settings.global.aspectRatio)
         videoRecorder{
             resolution: Settings.defaultVideoResolution(Settings.global.aspectRatio)
-            frameRate: 15
+            frameRate: 30
+            videoCodec: "video/mpeg, mpegversion=(int)4"
+            mediaContainer: "video/quicktime, variant=(string)iso"
         }
         focus {
             focusMode: captureMode == Camera.CaptureStillImage
@@ -85,14 +88,24 @@ Drawer {
         }
     }
 
-    VideoOutput {
+    Item {
         x: -parent.x / 2
         y: -parent.y / 2
         width: page.width
         height: page.height
 
-        source: camera
-        fillMode: VideoOutput.PreserveAspectFit
+        GStreamerVideoOutput {
+            // Counter rotate the video output to match screen orientation.
+            // TODO: This should be the inverse of page rotation, plus rotation of the camera which
+            // may be different depending on camera.
+            rotation: 90
+
+            anchors.centerIn: parent
+            width: rotation % 180 == 0 ? page.width : page.height
+            height: rotation % 180 == 0 ? page.height : page.width
+
+            source: camera
+        }
     }
 
     ShootingModeOverlay {

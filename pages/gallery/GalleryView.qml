@@ -1,5 +1,6 @@
 import QtQuick 2.1
 import Sailfish.Silica 1.0
+import Sailfish.Media 1.0
 import QtDocGallery 5.0
 import QtMultimedia 5.0
 import com.jolla.camera 1.0
@@ -172,7 +173,7 @@ Drawer {
         ]
 
         contentItem.children: [
-            VideoOutput {
+            GStreamerVideoOutput {
                 id: video
 
                 source: MediaPlayer {
@@ -183,8 +184,6 @@ Drawer {
                 width: galleryView.width
                 height: galleryView.height
                 anchors.centerIn: galleryView._activeItem
-
-                fillMode: VideoOutput.PreserveAspectFit
             }
         ]
     }
