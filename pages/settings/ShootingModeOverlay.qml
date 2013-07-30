@@ -132,13 +132,15 @@ Item {
             opacity: 1 - container.opacity
             spacing: Math.floor((screen.height - 116 - (Theme.iconSizeMedium * 7)) / 6)
 
+            // The hardware integration only supports a limited set of options at the moment,
+            // so only the automatic and front-camera modes are available.
             ShootingModeItem { id: automaticMode; mode: "automatic" }
-            ShootingModeItem { id: programMode; mode: "program" }
-            ShootingModeItem { id: macroMode; mode: "macro" }
-            ShootingModeItem { id: sportsMode; mode: "sports" }
+            ShootingModeItem { id: programMode; mode: "program"; visible: false }
+            ShootingModeItem { id: macroMode; mode: "macro"; visible: false }
+            ShootingModeItem { id: sportsMode; mode: "sports"; visible: false }
             ShootingModeItem { id: frontMode; mode: "front-camera" }
-            ShootingModeItem { id: landscapeMode; mode: "landscape" }
-            ShootingModeItem { id: portraitMode; mode: "portrait" }
+            ShootingModeItem { id: landscapeMode; mode: "landscape"; visible: false }
+            ShootingModeItem { id: portraitMode; mode: "portrait"; visible: false }
         }
 
         MouseArea {
