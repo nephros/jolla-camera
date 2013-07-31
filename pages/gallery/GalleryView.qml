@@ -53,10 +53,6 @@ Drawer {
         }
     }
 
-    Formatter {
-        id: durationFormatter
-    }
-
     SilicaListView {
         id: pageView
 
@@ -140,7 +136,6 @@ Drawer {
                     active: galleryItem.active
                     source: url
                     mimeType: model.mimeType
-                    formatter: durationFormatter
 
                     onClicked: {
                         if (mediaPlayer.playbackState == MediaPlayer.PlayingState) {

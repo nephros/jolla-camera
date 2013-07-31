@@ -58,13 +58,9 @@ Compass {
     }
 
     Label {
-        Formatter {
-            id: formatter
-        }
-
         anchors.centerIn: parent
         opacity: 1 - settingsIcon.opacity
-        text: formatter.formatDuration(compass.camera.videoRecorder.duration, Formatter.DurationLong)
+        text: Format.formatDuration(compass.camera.videoRecorder.duration, Formatter.DurationLong)
         font.pixelSize: Theme.fontSizeExtraSmall
     }
 

@@ -89,7 +89,7 @@ MouseArea {
             height: Theme.itemSizeSmall
             handleVisible: false
             minimumValue: 0
-            valueText: videoItem.formatter.formatDuration(value, Formatter.DurationShort)
+            valueText: Format.formatDuration(value, Formatter.DurationShort)
 
             onReleased: videoItem.player.position = value * 1000
         }
