@@ -25,7 +25,9 @@ Compass {
     bottomAction {
         smallIcon: SettingsIcons.timer(Settings.mode.timer)
         largeIcon: "image://theme/icon-camera-timer"
-        enabled: Settings.mode.timerConfigurable
+        // ### Timer UI is disabled until design is finalized and the feature is implemented.
+        // JB#1222
+        enabled: false && Settings.mode.timerConfigurable
         onActivated: compass.openMenu(timerMenu)
     }
     leftAction {
