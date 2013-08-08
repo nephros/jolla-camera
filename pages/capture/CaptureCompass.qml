@@ -15,7 +15,6 @@ Compass {
         switch (camera.cameraStatus) {
         case Camera.ActiveStatus:
             camera.cameraStatusChanged.disconnect(_startRecording)
-            camera.outputLocation = Settings.videoCapturePath("mp4")
             camera.videoRecorder.record()
             keepSelection = false
             break;
@@ -31,7 +30,7 @@ Compass {
 
     onInteractiveChanged: {
         if (interactive) {
-            captureOpacity.restart()
+            captureOpacity.start()
         } else {
             captureIcon.opacity = 0
         }
@@ -60,9 +59,14 @@ Compass {
         largeIcon: "image://theme/icon-camera-record"
         onActivated: {
             // Don't try and start recording until the camera has switched modes.
-            keepSelection = true
-            camera.cameraStatusChanged.connect(compass._startRecording)
+            camera.videoRecorder.outputLocation = Settings.videoCapturePath("mp4")
             camera.captureMode = Camera.CaptureVideo
+            if (camera.cameraStatus == Camera.ActiveStatus) {
+                camera.videoRecorder.record()
+            } else {
+                keepSelection = true
+                camera.cameraStatusChanged.connect(compass._startRecording)
+            }
         }
     }
 
@@ -79,7 +83,7 @@ Compass {
         id: captureIcon
         anchors.centerIn: parent
         source: "image://theme/icon-camera-shutter-release?" + Theme.highlightColor
-        FadeAnimation on opacity { id: captureOpacity; to: 1 }
+        FadeAnimation { id: captureOpacity;  target: captureIcon; from: 0; to: 1 }
     }
 
     Image {
