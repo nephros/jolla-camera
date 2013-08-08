@@ -15,6 +15,7 @@ Compass {
         switch (camera.cameraStatus) {
         case Camera.ActiveStatus:
             camera.cameraStatusChanged.disconnect(_startRecording)
+            camera.outputLocation = Settings.videoCapturePath("mp4")
             camera.videoRecorder.record()
             keepSelection = false
             break;
@@ -67,7 +68,7 @@ Compass {
 
     onClicked: {
         if (camera.captureMode == Camera.CaptureStillImage) {
-            camera.imageCapture.capture()
+            camera.imageCapture.captureToLocation(Settings.photoCapturePath('jpg'))
         } else {
             camera.videoRecorder.stop()
             camera.captureMode = Camera.CaptureStillImage
