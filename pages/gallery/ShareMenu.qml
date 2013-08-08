@@ -21,11 +21,13 @@ ShareMethodList {
         MenuItem {
             //% "Details"
             text: qsTrId("camera-me-details")
+            visible: false  // JB#7882
         }
 
         MenuItem {
             //% "Delete"
             text: qsTrId("camera-me-delete")
+            visible: false  // JB#7884
         }
 
         MenuItem {
