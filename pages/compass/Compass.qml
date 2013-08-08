@@ -50,7 +50,7 @@ Item {
 
     Component.onCompleted: {
         buttonBuzz = Qt.createQmlObject(
-                    "import QtQuick 2.0; import QtFeedback 5.0; ThemeEffect { effect: ThemeEffect.BasicButton }",
+                    "import QtQuick 2.0; import QtFeedback 5.0; ThemeEffect { effect: ThemeEffect.Press }",
                     compass,
                     'ThemeEffect')
     }

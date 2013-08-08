@@ -33,7 +33,6 @@ Item {
             minimumY: -panel.height
             maximumY: 0
             axis: Drag.YAxis
-            filterChildren: overlay.expanded
             onActiveChanged: {
                 if (!drag.active && panel.y < -(panel.height / 3) && overlay._direction <= 0) {
                     overlay.open = false

@@ -44,9 +44,6 @@ void DeclarativeCameraExtensions::setCamera(QObject *camera)
             && m_mediaObject->service()
             && (m_deviceControl = m_mediaObject->service()->requestControl<QVideoDeviceSelectorControl *>())) {
         updateDevice();
-        for (int i = 0; i < m_deviceControl->deviceCount(); ++i) {
-            qDebug() << m_deviceControl->deviceName(i) << m_deviceControl->deviceDescription(i);
-        }
     }
 }
 

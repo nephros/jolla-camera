@@ -30,7 +30,7 @@ Compass {
 
     onInteractiveChanged: {
         if (interactive) {
-            captureOpacity.restart()
+            captureOpacity.start()
         } else {
             captureIcon.opacity = 0
         }
@@ -59,15 +59,20 @@ Compass {
         largeIcon: "image://theme/icon-camera-record"
         onActivated: {
             // Don't try and start recording until the camera has switched modes.
-            keepSelection = true
-            camera.cameraStatusChanged.connect(compass._startRecording)
+            camera.videoRecorder.outputLocation = Settings.videoCapturePath("mp4")
             camera.captureMode = Camera.CaptureVideo
+            if (camera.cameraStatus == Camera.ActiveStatus) {
+                camera.videoRecorder.record()
+            } else {
+                keepSelection = true
+                camera.cameraStatusChanged.connect(compass._startRecording)
+            }
         }
     }
 
     onClicked: {
         if (camera.captureMode == Camera.CaptureStillImage) {
-            camera.imageCapture.capture()
+            camera.imageCapture.captureToLocation(Settings.photoCapturePath('jpg'))
         } else {
             camera.videoRecorder.stop()
             camera.captureMode = Camera.CaptureStillImage
@@ -78,7 +83,7 @@ Compass {
         id: captureIcon
         anchors.centerIn: parent
         source: "image://theme/icon-camera-shutter-release?" + Theme.highlightColor
-        FadeAnimation on opacity { id: captureOpacity; to: 1 }
+        FadeAnimation { id: captureOpacity;  target: captureIcon; from: 0; to: 1 }
     }
 
     Image {
@@ -114,8 +119,7 @@ Compass {
             model: [
                 Camera.FlashAuto,
                 Camera.FlashOff,
-                Camera.FlashOn,
-                Camera.FlashRedEyeReduction
+                Camera.FlashOn
             ]
             delegate: CompassMenuItem {
                 value: modelData

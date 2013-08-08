@@ -2,6 +2,7 @@
 #define DECLARATIVESETTINGS_H
 
 #include <QObject>
+#include <QDate>
 #include <QSize>
 
 #ifndef DESKTOP
@@ -47,11 +48,20 @@ public:
     QString photoDirectory() const;
     QString videoDirectory() const;
 
+    Q_INVOKABLE QString photoCapturePath(const QString &extension);
+    Q_INVOKABLE QString videoCapturePath(const QString &extension);
+
 private:
+    void verifyCapturePrefix();
+
     MGConfItem m_imageRatio_4_3;
     MGConfItem m_imageRatio_16_9;
     MGConfItem m_videoRatio_4_3;
     MGConfItem m_videoRatio_16_9;
+    QString m_prefix;
+    QDate m_prefixDate;
+    int m_photoCounter;
+    int m_videoCounter;
 };
 
 #endif
