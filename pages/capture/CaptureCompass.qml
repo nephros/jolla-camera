@@ -115,8 +115,7 @@ Compass {
             model: [
                 Camera.FlashAuto,
                 Camera.FlashOff,
-                Camera.FlashOn,
-                Camera.FlashRedEyeReduction
+                Camera.FlashOn
             ]
             delegate: CompassMenuItem {
                 value: modelData
