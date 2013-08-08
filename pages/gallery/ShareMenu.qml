@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import Sailfish.Ambience 1.0
 import Sailfish.TransferEngine 1.0
 import com.jolla.settings.accounts 1.0
 
@@ -8,6 +9,7 @@ ShareMethodList {
 
     property bool isImage
     property string title
+    property url url
 
     property Item page
 
@@ -31,6 +33,7 @@ ShareMethodList {
             text: qsTrId("camera-me-create_ambience")
 
             visible: menuList.isImage
+            onClicked: Ambience.source = menuList.url
         }
     }
 

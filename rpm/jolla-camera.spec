@@ -34,6 +34,7 @@ Requires:  nemo-qml-plugin-dbus-qt5
 Requires:  sailfish-components-accounts-qt5
 Requires:  sailfish-components-media-qt5 >= 0.0.6
 Requires:  sailfish-components-gallery-qt5
+Requires:  ambienced
 
 %description
 The Jolla Camera application.

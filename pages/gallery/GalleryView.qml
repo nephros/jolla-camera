@@ -195,7 +195,8 @@ Drawer {
 
                 title: pageView.currentItem ? pageView.currentItem.modelData.title : ""
                 filter: pageView.currentItem ? pageView.currentItem.modelData.mimeType : ""
-                isImage: pageView.currentItem ? pageView.currentItem.isImage : ""
+                isImage: pageView.currentItem ? pageView.currentItem.isImage : false
+                url: pageView.currentItem ? pageView.currentItem.modelData.url : ""
             }
         }
     ]
