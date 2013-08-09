@@ -95,16 +95,11 @@ Drawer {
         height: page.height
 
         GStreamerVideoOutput {
-            // Counter rotate the video output to match screen orientation.
-            // TODO: This should be the inverse of page rotation, plus rotation of the camera which
-            // may be different depending on camera.
-            rotation: 90
-
-            anchors.centerIn: parent
-            width: rotation % 180 == 0 ? page.width : page.height
-            height: rotation % 180 == 0 ? page.height : page.width
+            anchors.fill: parent
 
             source: camera
+            orientation: captureView.orientation == Orientation.Portrait ? 0 : 90
+            mirror: Settings.mode.face == CameraExtensions.Front
         }
     }
 

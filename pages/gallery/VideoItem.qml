@@ -36,7 +36,7 @@ MouseArea {
                 break;
             }
         }
-        onPlaybackStateChanged:  videoItem._playing = videoItem.player.playbackState == MediaPlayer.PlayingState
+        onPlaybackStateChanged:  videoItem._playing = (videoItem.player.playbackState == MediaPlayer.PlayingState)
     }
 
     // Poster
