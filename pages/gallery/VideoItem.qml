@@ -6,7 +6,7 @@ import org.nemomobile.thumbnailer 1.0
 MouseArea {
     id: videoItem
 
-    property Video player
+    property MediaPlayer player
     property bool active
     property url source
     property string mimeType
@@ -27,17 +27,16 @@ MouseArea {
         onDurationChanged: positionSlider.maximumValue = videoItem.player.duration / 1000
         onStatusChanged: {
             switch (videoItem.player.status) {
-            case Video.NoMedia:
-            case Video.InvalidMedia:
-            case Video.EndOfMedia:
+            case MediaPlayer.NoMedia:
+            case MediaPlayer.InvalidMedia:
+            case MediaPlayer.EndOfMedia:
                 videoItem._playing = false
                 break
             default:
                 break;
             }
         }
-        onPlayingChanged: videoItem._playing = (videoItem.player.playing && !videoItem.player.paused)
-        onPausedChanged: videoItem._playing = (videoItem.player.playing && !videoItem.player.paused)
+        onPlaybackStateChanged:  videoItem._playing = videoItem.player.playbackState == MediaPlayer.PlayingState
     }
 
     // Poster
