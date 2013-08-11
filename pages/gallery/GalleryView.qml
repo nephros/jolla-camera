@@ -132,7 +132,7 @@ Drawer {
                 id: videoComponent
 
                 VideoItem {
-                    player: video
+                    player: mediaPlayer
                     active: galleryItem.active
                     source: url
                     mimeType: model.mimeType
@@ -173,6 +173,7 @@ Drawer {
 
                 source: MediaPlayer {
                     id: mediaPlayer
+                    property alias visible: video.visible
                 }
 
                 visible: false
