@@ -31,6 +31,7 @@ Requires:  nemo-qml-plugin-accounts-qt5
 Requires:  nemo-qml-plugin-thumbnailer-qt5-video
 Requires:  nemo-qml-plugin-thumbnailer-qt5
 Requires:  nemo-qml-plugin-dbus-qt5
+Requires:  nemo-qml-plugin-policy-qt5
 Requires:  sailfish-components-accounts-qt5
 Requires:  sailfish-components-media-qt5 >= 0.0.8
 Requires:  sailfish-components-gallery-qt5
