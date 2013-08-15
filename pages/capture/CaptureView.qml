@@ -22,6 +22,8 @@ Drawer {
 
     property bool _complete
     property int _unload
+    property int _face
+    property int _aspectRatio
 
     dock: orientation == Orientation.Portrait ? Dock.Top : Dock.Left
 
@@ -33,7 +35,35 @@ Drawer {
         }
     }
 
-    Component.onCompleted: _complete = true
+    onOpenedChanged: {
+        if (!opened) {
+            reloadOnSettingsChanged()
+        }
+    }
+
+    Component.onCompleted: {
+        _face = Settings.mode.face
+        _aspectRatio = Settings.global.aspectRatio
+        _complete = true
+    }
+
+
+    function reloadOnSettingsChanged() {
+        if (_face != Settings.mode.face || _aspectRatio != Settings.global.aspectRatio) {
+            _face = Settings.mode.face
+            _aspectRatio = Settings.global.aspectRatio
+            _unload = true
+        }
+    }
+
+    Timer {
+        id: reloadTimer
+        interval: 10
+        running: captureView._unload && camera.cameraStatus == Camera.UnloadedStatus
+        onTriggered: {
+            captureView._unload = false
+        }
+    }
 
     Camera {
         id: camera
@@ -84,7 +114,6 @@ Drawer {
             if (captureView._complete) {
                 // Force the camera to reload when the selected face changes.
                 captureView._unload = true;
-                captureView._unload = false;
             }
         }
     }
@@ -117,6 +146,12 @@ Drawer {
         interactive: !settingsCompass.expanded && !captureCompass.expanded && !captureView.opened
         orientation: captureView.orientation
         opacity: 1 - positioner.opacity
+
+        onExpandedChanged: {
+            if (!expanded) {
+                reloadOnSettingsChanged()
+            }
+        }
 
         onClicked: {
             if (shootingModeOverlay.interactive && !shootingModeOverlay.expanded) {
