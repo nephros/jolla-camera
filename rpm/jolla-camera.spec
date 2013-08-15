@@ -36,6 +36,7 @@ Requires:  sailfish-components-accounts-qt5
 Requires:  sailfish-components-media-qt5 >= 0.0.8
 Requires:  sailfish-components-gallery-qt5
 Requires:  ambienced
+Requires:  gst-plugins-bad
 
 %description
 The Jolla Camera application.
