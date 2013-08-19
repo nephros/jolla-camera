@@ -16,6 +16,10 @@ SettingsBase {
         property int captureVerticalAlignment: Qt.AlignVCenter
         property bool reverseButtons: false
 
+        property string audioCodec
+        property string videoCodec: "video/mpeg, mpegversion=(int)4"
+        property string mediaContainer: "video/quicktime, variant=(string)iso"
+
         GConfSettings {
             id: modeSettings
             path: globalSettings.shootingMode
