@@ -79,8 +79,9 @@ Drawer {
         videoRecorder{
             resolution: Settings.defaultVideoResolution(Settings.global.aspectRatio)
             frameRate: 30
-            videoCodec: "video/mpeg, mpegversion=(int)4"
-            mediaContainer: "video/quicktime, variant=(string)iso"
+            audioCodec: Settings.global.audioCodec
+            videoCodec: Settings.global.videoCodec
+            mediaContainer: Settings.global.mediaContainer
         }
         focus {
             focusMode: captureMode == Camera.CaptureStillImage
