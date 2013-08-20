@@ -97,8 +97,8 @@ Drawer {
         model: DocumentGalleryModel {
             id: galleryModel
             rootType: DocumentGallery.File
-            properties: [ "url", "mimeType", "title", "dateTaken" ]
-            sortProperties: ["-dateTaken"]
+            properties: [ "url", "mimeType", "title" ]
+            sortProperties: ["-fileName"]
             autoUpdate: true
             filter: GalleryFilterUnion {
                 GalleryEqualsFilter { property: "path"; value: Settings.photoDirectory }
