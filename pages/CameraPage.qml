@@ -33,7 +33,7 @@ Page {
                 width: page.width
                 height: page.height
 
-                active: ListView.isCurrentItem
+                active: true
 
                 orientation: page.orientation
                 windowActive: page.windowActive
@@ -46,9 +46,16 @@ Page {
                 height: page.height
 
                 page: page
-                active: ListView.isCurrentItem
+                active: false
                 windowActive: page.windowActive
                 orientation: page.orientation
+            }
+        }
+
+        onMovingChanged: {
+            if (!moving) {
+                galleryView.active = galleryView.ListView.isCurrentItem
+                captureView.active = captureView.ListView.isCurrentItem
             }
         }
     }
