@@ -1,6 +1,7 @@
 import QtQuick 2.1
 import Sailfish.Silica 1.0
 import Sailfish.Media 1.0
+import Sailfish.Gallery 1.0 as Gallery
 import QtDocGallery 5.0
 import QtMultimedia 5.0
 import com.jolla.camera 1.0
@@ -43,16 +44,6 @@ Drawer {
         }
     }
 
-    // ListView doesn't handle header alignment as well as it possibly could when the rotation
-    // changes.  Ensure the item that is currently visible remains visible when on rotation.
-    onOrientationChanged: {
-        if (pageView.currentIndex == -1) {
-            pageView.positionViewAtBeginning()
-        } else {
-            pageView.positionViewAtIndex(pageView.currentIndex, ListView.Center)
-        }
-    }
-
     SilicaListView {
         id: pageView
 
@@ -86,7 +77,6 @@ Drawer {
                 }
                 mediaPlayer.stop()
                 mediaPlayer.source = ""
-                video.visible = false
                 galleryView._activeItem = currentItem
                 if (galleryView._activeItem) {
                     galleryView._activeItem.active = true
@@ -131,7 +121,7 @@ Drawer {
             Component {
                 id: videoComponent
 
-                VideoItem {
+                Gallery.VideoPoster {
                     player: mediaPlayer
                     active: galleryItem.active
                     source: url
@@ -173,10 +163,9 @@ Drawer {
 
                 source: MediaPlayer {
                     id: mediaPlayer
-                    property alias visible: video.visible
                 }
 
-                visible: false
+                visible: mediaPlayer.playbackState != MediaPlayer.StoppedState
                 width: galleryView.width
                 height: galleryView.height
                 anchors.centerIn: galleryView._activeItem
