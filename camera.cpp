@@ -43,6 +43,8 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 
     view->engine()->setBaseUrl(QUrl::fromLocalFile(path));
 
+    //% "Camera"
+    QT_TRID_NOOP("jolla-camera-ap-name");
     QTranslator engineeringEnglish;
     engineeringEnglish.load("jolla-camera_eng_en", translationPath);
     qApp->installTranslator(&engineeringEnglish);
