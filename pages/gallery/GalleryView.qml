@@ -12,7 +12,7 @@ Drawer {
     property bool menuOpen: galleryView.opened || _playingState
     property bool active
     property bool windowActive
-    property int orientation
+    property bool isPortrait
     property Item _activeItem
 
     readonly property bool empty: galleryModel.count == 0
@@ -26,7 +26,7 @@ Drawer {
 
     property bool _playingState: mediaPlayer.playbackState == MediaPlayer.PlayingState
 
-    dock: orientation == Orientation.Portrait ? Dock.Top : Dock.Left
+    dock: isPortrait ? Dock.Top : Dock.Left
 
     onActiveChanged: {
         if (!active) {
@@ -113,7 +113,7 @@ Drawer {
                 ZoomableImage {
                     source: url
                     onClicked: galleryView.open = !galleryView.open
-                    isPortrait: galleryView.orientation == Orientation.Portrait
+                    isPortrait: galleryView.isPortrait
                     menuOpen: galleryView.opened
                 }
             }

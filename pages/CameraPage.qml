@@ -48,7 +48,8 @@ Page {
                 page: page
                 active: false
                 windowActive: page.windowActive
-                orientation: page.orientation
+                isPortrait: page.orientation == Orientation.Portrait
+                            || page.orientation == Orientation.PortraitInverted
             }
         }
 
