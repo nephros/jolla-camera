@@ -9,7 +9,7 @@ Item {
     property Camera camera
     property bool open
     property bool expanded: open || verticalAnimation.running || dragArea.drag.active
-    property int orientation
+    property bool isPortrait: true
     default property alias _data: container.data
     property Item _currentItem: Settings.global.shootingMode == "front-camera"
                 ? frontMode
@@ -93,7 +93,7 @@ Item {
             id: highlight
             y: height * panel.y / panel.height
             width: overlay.width
-            height: overlay.orientation == Orientation.Landscape
+            height: !overlay.isPortrait
                     ? overlay.height / 2
                     : overlay.height
 
@@ -113,18 +113,18 @@ Item {
             property alias landscape: landscapeMode
             property alias portrait: portraitMode
 
-            width: overlay.orientation == Orientation.Portrait
+            width: overlay.isPortrait
                     ? Theme.iconSizeMedium
                     : overlay.width - 116
-            height: overlay.orientation == Orientation.Landscape
+            height: !overlay.isPortrait
                     ? Theme.iconSizeMedium
                     : overlay.height - 116
             anchors {
-                top: overlay.orientation == Orientation.Portrait
+                top: overlay.isPortrait
                         ? highlight.top
                         : highlight.verticalCenter
                 horizontalCenter: panel.horizontalCenter
-                topMargin: overlay.orientation == Orientation.Portrait
+                topMargin: overlay.isPortrait
                         ? 58
                         : 0
             }

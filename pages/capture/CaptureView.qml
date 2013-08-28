@@ -25,7 +25,10 @@ Drawer {
     property int _face
     property int _aspectRatio
 
-    dock: orientation == Orientation.Portrait ? Dock.Top : Dock.Left
+    readonly property bool isPortrait: orientation == Orientation.Portrait
+                || orientation == Orientation.PortraitInverted
+
+    dock: isPortrait ? Dock.Top : Dock.Left
 
     onEffectiveIsoChanged: {
         if (effectiveIso == 0) {
@@ -71,8 +74,8 @@ Drawer {
         property alias locks: cameraLocks
 
         captureMode: Camera.CaptureStillImage
-        cameraState: captureView._complete && captureView.windowActive && !captureView._unload
-                    ? (captureView.active ? Camera.ActiveState : Camera.LoadedState)
+        cameraState: captureView._complete && captureView.windowActive && !captureView._unload && captureView.active
+                    ? Camera.ActiveState
                     : Camera.UnloadedState
 
         imageCapture.resolution: Settings.defaultImageResolution(Settings.global.aspectRatio)
@@ -111,6 +114,19 @@ Drawer {
         camera: camera
         face: Settings.mode.face
 
+        rotation: {
+            switch (captureView.orientation) {
+            case Orientation.Portrait:
+                return 0
+            case Orientation.Landscape:
+                return 90
+            case Orientation.PortraitInverted:
+                return 180
+            case Orientation.LandscapeInverted:
+                return 270
+            }
+        }
+
         onFaceChanged: {
             if (captureView._complete) {
                 // Force the camera to reload when the selected face changes.
@@ -129,7 +145,7 @@ Drawer {
             anchors.fill: parent
 
             source: camera
-            orientation: captureView.orientation == Orientation.Portrait ? 0 : 90
+            orientation: extensions.rotation
             mirror: Settings.mode.face == CameraExtensions.Front
         }
     }
@@ -145,7 +161,7 @@ Drawer {
         height: page.height
 
         interactive: !settingsCompass.expanded && !captureCompass.expanded && !captureView.opened
-        orientation: captureView.orientation
+        isPortrait: captureView.isPortrait
         opacity: 1 - positioner.opacity
 
         onExpandedChanged: {
@@ -160,7 +176,7 @@ Drawer {
                     var focusX = mouse.x / width
                     var focusY = mouse.y / height
 
-                    if (captureView.orientation == Orientation.Portrait)  {
+                    if (captureView.isPortrait)  {
                         var temp = focusX
                         focusX = focusY
                         focusY = temp
@@ -197,8 +213,8 @@ Drawer {
 
             camera: camera
             enabled: !shootingModeOverlay.expanded && !captureCompass.expanded
-            centerMenu: captureView.orientation == Orientation.Landscape
-            verticalAlignment: captureView.orientation == Orientation.Landscape
+            centerMenu: !captureView.isPortrait
+            verticalAlignment: !captureView.isPortrait
                         ? Settings.global.settingsVerticalAlignment
                         : Qt.AlignBottom
             topMargin: Theme.iconSizeMedium + (Theme.paddingLarge * 2)
@@ -249,8 +265,8 @@ Drawer {
             camera: camera
 
             enabled: !shootingModeOverlay.expanded && !settingsCompass.expanded
-            centerMenu: captureView.orientation == Orientation.Landscape
-            verticalAlignment: captureView.orientation == Orientation.Landscape
+            centerMenu: !captureView.isPortrait
+            verticalAlignment: !captureView.isPortrait
                         ? Settings.global.captureVerticalAlignment
                         : Qt.AlignBottom
             topMargin: settingsCompass.topMargin
@@ -273,7 +289,7 @@ Drawer {
 
         width: captureView.width
         height: captureView.height
-        topMargin: captureView.orientation == Orientation.Portrait
+        topMargin: captureView.isPortrait
                     ? captureView.height - settingsCompass.width - settingsCompass.bottomMargin
                     : settingsCompass.topMargin
         bottomMargin: settingsCompass.bottomMargin
