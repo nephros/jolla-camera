@@ -25,6 +25,8 @@ Drawer {
     property int _face
     property int _aspectRatio
 
+    property bool _capturing
+
     readonly property bool isPortrait: orientation == Orientation.Portrait
                 || orientation == Orientation.PortraitInverted
 
@@ -59,6 +61,7 @@ Drawer {
         }
     }
 
+
     Timer {
         id: reloadTimer
         interval: 10
@@ -73,12 +76,35 @@ Drawer {
 
         property alias locks: cameraLocks
 
+        function captureImage() {
+            if (cameraLocks.focusStatus == Camera.Unlocked && camera.focus.focusMode == Camera.FocusAuto) {
+                captureView._capturing = true
+                cameraLocks.lockFocus()
+            } else {
+                camera.imageCapture.captureToLocation(Settings.photoCapturePath('jpg'))
+            }
+        }
+
         captureMode: Camera.CaptureStillImage
         cameraState: captureView._complete && captureView.windowActive && !captureView._unload && captureView.active
                     ? Camera.ActiveState
                     : Camera.UnloadedState
 
-        imageCapture.resolution: Settings.defaultImageResolution(Settings.global.aspectRatio)
+        onCaptureModeChanged: captureView._capturing = false
+        onCameraStateChanged: captureView._capturing = false
+
+        imageCapture {
+            resolution: Settings.defaultImageResolution(Settings.global.aspectRatio)
+
+            onImageSaved: {
+                cameraLocks.unlockFocus()
+                captureView._capturing = false
+            }
+            onCaptureFailed: {
+                cameraLocks.unlockFocus()
+                captureView._capturing = false
+            }
+        }
         videoRecorder{
             resolution: Settings.defaultVideoResolution(Settings.global.aspectRatio)
             frameRate: 30
@@ -102,12 +128,18 @@ Drawer {
             exposureCompensation: Settings.mode.exposureCompensation / 2.0
             meteringMode: Settings.mode.meteringMode
         }
+
     }
 
     CameraLocks {
         id: cameraLocks
         camera: camera
-    }
+        onFocusStatusChanged: {
+            if (focusStatus == Camera.Locked && captureView._capturing) {
+                camera.captureImage()
+            }
+        }
+     }
 
     CameraExtensions {
         id: extensions
@@ -243,7 +275,7 @@ Drawer {
             border.color: Theme.highlightBackgroundColor
             color: "#00000000"
 
-            opacity: cameraLocks.focusStatus == CameraLocks.Locked ? 1 : 0
+            opacity: cameraLocks.focusStatus == Camera.Locked && !captureView._capturing ? 1 : 0
             Behavior on opacity { FadeAnimation {} }
         }
 
@@ -301,16 +333,22 @@ Drawer {
     }
 
     MediaKey {
-        enabled: keysResource.acquired
+        enabled: keysResource.acquired && camera.captureMode == Camera.CaptureStillImage
 //        key: Qt.Key_VolumeUp
         key: 0x1008ff13     // We're getting native scan codes instead of Qt key codes. JB#8044
-        onPressed: camera.imageCapture.capture()
+        onPressed: camera.captureImage()
     }
     MediaKey {
-        enabled: keysResource.acquired
+        enabled: keysResource.acquired && camera.captureMode == Camera.CaptureStillImage
 //        key: Qt.Key_VolumeDown
         key: 0x1008ff11
-        onPressed: cameraLocks.lockFocus()
+        onPressed: {
+            if (cameraLocks.focusStatus == Camera.Unlocked) {
+                cameraLocks.lockFocus()
+            } else if (!captureView._capturing) {
+                cameraLocks.unlockFocus()
+            }
+        }
     }
 
     Permissions {

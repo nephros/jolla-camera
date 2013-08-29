@@ -9,6 +9,7 @@ Compass {
     id: compass
 
     property Camera camera
+
     interactive: camera.captureMode == Camera.CaptureStillImage
 
     function _startRecording() {
@@ -72,7 +73,7 @@ Compass {
 
     onClicked: {
         if (camera.captureMode == Camera.CaptureStillImage) {
-            camera.imageCapture.captureToLocation(Settings.photoCapturePath('jpg'))
+            camera.captureImage()
         } else {
             camera.videoRecorder.stop()
             camera.captureMode = Camera.CaptureStillImage
