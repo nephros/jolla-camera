@@ -94,7 +94,7 @@ Drawer {
         onCameraStateChanged: captureView._capturing = false
 
         imageCapture {
-            resolution: Settings.defaultImageResolution(Settings.global.aspectRatio)
+            resolution: Settings.defaultImageResolution(Settings.global.aspectRatio, Settings.mode.face)
 
             onImageSaved: {
                 cameraLocks.unlockFocus()
@@ -106,7 +106,7 @@ Drawer {
             }
         }
         videoRecorder{
-            resolution: Settings.defaultVideoResolution(Settings.global.aspectRatio)
+            resolution: Settings.defaultVideoResolution(Settings.global.aspectRatio, Settings.mode.face)
             frameRate: 30
             audioCodec: Settings.global.audioCodec
             videoCodec: Settings.global.videoCodec

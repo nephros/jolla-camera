@@ -42,8 +42,8 @@ public:
 
     static QObject *factory(QQmlEngine *, QJSEngine *);
 
-    Q_INVOKABLE QSize defaultImageResolution(int ratio) const;
-    Q_INVOKABLE QSize defaultVideoResolution(int ratio) const;
+    Q_INVOKABLE QSize defaultImageResolution(int ratio, int face) const;
+    Q_INVOKABLE QSize defaultVideoResolution(int ratio, int face) const;
 
     QString photoDirectory() const;
     QString videoDirectory() const;
@@ -54,10 +54,14 @@ public:
 private:
     void verifyCapturePrefix();
 
-    MGConfItem m_imageRatio_4_3;
-    MGConfItem m_imageRatio_16_9;
-    MGConfItem m_videoRatio_4_3;
-    MGConfItem m_videoRatio_16_9;
+    MGConfItem m_imageRatioBack_4_3;
+    MGConfItem m_imageRatioBack_16_9;
+    MGConfItem m_imageRatioFront_4_3;
+    MGConfItem m_imageRatioFront_16_9;
+    MGConfItem m_videoRatioBack_4_3;
+    MGConfItem m_videoRatioBack_16_9;
+    MGConfItem m_videoRatioFront_4_3;
+    MGConfItem m_videoRatioFront_16_9;
     QString m_prefix;
     QDate m_prefixDate;
     int m_photoCounter;

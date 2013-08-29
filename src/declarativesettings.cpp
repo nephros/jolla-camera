@@ -13,10 +13,14 @@
 
 DeclarativeSettings::DeclarativeSettings(QObject *parent)
     : QObject(parent)
-    , m_imageRatio_4_3("/desktop/jolla/camera/imageRatio_4_3")
-    , m_imageRatio_16_9("/desktop/jolla/camera/imageRatio_16_9")
-    , m_videoRatio_4_3("/desktop/jolla/camera/videoRatio_4_3")
-    , m_videoRatio_16_9("/desktop/jolla/camera/videoRatio_16_9")
+    , m_imageRatioBack_4_3("/desktop/jolla/camera/back/imageRatio_4_3")
+    , m_imageRatioBack_16_9("/desktop/jolla/camera/back/imageRatio_16_9")
+    , m_imageRatioFront_4_3("/desktop/jolla/camera/front/imageRatio_4_3")
+    , m_imageRatioFront_16_9("/desktop/jolla/camera/front/imageRatio_16_9")
+    , m_videoRatioBack_4_3("/desktop/jolla/camera/back/videoRatio_4_3")
+    , m_videoRatioBack_16_9("/desktop/jolla/camera/back/videoRatio_16_9")
+    , m_videoRatioFront_4_3("/desktop/jolla/camera/front/videoRatio_4_3")
+    , m_videoRatioFront_16_9("/desktop/jolla/camera/front/videoRatio_16_9")
     , m_photoCounter(0)
     , m_videoCounter(0)
 {
@@ -41,27 +45,35 @@ QObject *DeclarativeSettings::factory(QQmlEngine *engine, QJSEngine *)
     }
 }
 
-QSize DeclarativeSettings::defaultImageResolution(int ratio) const
+QSize DeclarativeSettings::defaultImageResolution(int ratio, int face) const
 {
     // The default defaults are the typical supported resolutions for a modern
     // webcam and so are reasonably likely to work in most places.
     switch (ratio) {
     case DeclarativeCameraExtensions::AspectRatio_4_3:
-        return m_imageRatio_4_3.value(QSize(640, 480)).value<QSize>();
+        return face == DeclarativeCameraExtensions::Back
+                ? m_imageRatioBack_4_3.value(QSize(3264, 2448)).value<QSize>()
+                : m_imageRatioFront_4_3.value(QSize(1280, 960)).value<QSize>();
     case DeclarativeCameraExtensions::AspectRatio_16_9:
-        return m_imageRatio_16_9.value(QSize(1280, 720)).value<QSize>();
+        return face == DeclarativeCameraExtensions::Back
+                ? m_imageRatioBack_16_9.value(QSize(3264, 1840)).value<QSize>()
+                : m_imageRatioFront_16_9.value(QSize(1280, 720)).value<QSize>();
     default:
         return QSize();
     }
 }
 
-QSize DeclarativeSettings::defaultVideoResolution(int ratio) const
+QSize DeclarativeSettings::defaultVideoResolution(int ratio, int face) const
 {
     switch (ratio) {
     case DeclarativeCameraExtensions::AspectRatio_4_3:
-        return m_imageRatio_4_3.value(QSize(640, 480)).value<QSize>();
+        return face == DeclarativeCameraExtensions::Back
+                ? m_videoRatioBack_4_3.value(QSize(640, 480)).value<QSize>()
+                : m_videoRatioFront_4_3.value(QSize(640, 480)).value<QSize>();
     case DeclarativeCameraExtensions::AspectRatio_16_9:
-        return m_imageRatio_16_9.value(QSize(1280, 720)).value<QSize>();
+        return face == DeclarativeCameraExtensions::Back
+                ? m_videoRatioBack_16_9.value(QSize(1280, 720)).value<QSize>()
+                : m_videoRatioFront_16_9.value(QSize(1280, 720)).value<QSize>();
     default:
         return QSize();
     }
