@@ -352,6 +352,7 @@
             <applyto>/apps/jolla-camera/macro/focusDistance</applyto>
             <owner>jolla</owner>
             <type>int</type>
+            <default>32</default>
             <locale name="C"/>
         </schema>
         <schema>
@@ -431,7 +432,7 @@
             <applyto>/apps/jolla-camera/macro/focusDistanceConfigurable</applyto>
             <owner>jolla</owner>
             <type>bool</type>
-            <default>true</default>
+            <default>false</default>
             <locale name="C"/>
         </schema>
         <schema>
@@ -927,7 +928,7 @@
             <applyto>/apps/jolla-camera/front-camera/focusDistance</applyto>
             <owner>jolla</owner>
             <type>int</type>
-            <default>8</default>
+            <default>4</default>
             <locale name="C"/>
         </schema>
         <schema>
@@ -1007,7 +1008,7 @@
             <applyto>/apps/jolla-camera/front-camera/focusDistanceConfigurable</applyto>
             <owner>jolla</owner>
             <type>bool</type>
-            <default>true</default>
+            <default>false</default>
             <locale name="C"/>
         </schema>
         <schema>

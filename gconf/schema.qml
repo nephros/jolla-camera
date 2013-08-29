@@ -42,7 +42,8 @@ GConfSchema {
     AutomaticSchema {
         path: "macro"
         exposureMode: Camera.ExposureSmallAperture
-        focusDistance: Camera.MacroFocus
+        focusDistance: Camera.FocusMacro
+        focusDistanceConfigurable: false
     }
     AutomaticSchema {
         path: "sports"
@@ -59,6 +60,8 @@ GConfSchema {
     AutomaticSchema {
         path: "front-camera"
         face: CameraExtensions.Front
+        focusDistance: Camera.FocusInfinity
         flashConfigurable: false
+        focusDistanceConfigurable: false
     }
 }
