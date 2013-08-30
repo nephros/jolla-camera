@@ -31,8 +31,7 @@ private:
 
     QString m_prefix;
     QDate m_prefixDate;
-    int m_photoCounter;
-    int m_videoCounter;
+    int m_counter;
 };
 
 #endif
