@@ -9,6 +9,7 @@ packagesExist(gconf-2.0) {
 }
 
 SOURCES += \
+        $$PWD/capturemodel.cpp \
         $$PWD/declarativecameraextensions.cpp \
         $$PWD/declarativecameralocks.cpp \
         $$PWD/declarativecompassaction.cpp \
@@ -16,6 +17,7 @@ SOURCES += \
         $$PWD/declarativesettings.cpp \
 
 HEADERS += \
+        $$PWD/capturemodel.h \
         $$PWD/declarativecameraextensions.h \
         $$PWD/declarativecameralocks.h \
         $$PWD/declarativecompassaction.h \

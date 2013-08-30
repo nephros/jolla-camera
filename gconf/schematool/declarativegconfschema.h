@@ -19,6 +19,8 @@ class DeclarativeGConfSchema : public QObject
     Q_PROPERTY(QString owner READ owner WRITE setOwner NOTIFY ownerChanged)
     Q_PROPERTY(Type type READ type WRITE setType NOTIFY typeChanged)
     Q_PROPERTY(Type listType READ listType WRITE setListType NOTIFY listTypeChanged)
+    Q_PROPERTY(Type cdrType READ cdrType WRITE setCdrType NOTIFY cdrTypeChanged)
+    Q_PROPERTY(Type carType READ carType WRITE setCarType NOTIFY carTypeChanged)
     Q_PROPERTY(QVariant defaultValue READ defaultValue WRITE setDefaultValue NOTIFY defaultValueChanged)
     Q_PROPERTY(QQmlListProperty<QObject> data READ data CONSTANT)
     Q_ENUMS(Type)
@@ -49,6 +51,12 @@ public:
     Type listType() const;
     void setListType(Type type);
 
+    Type cdrType() const;
+    void setCdrType(Type type);
+
+    Type carType() const;
+    void setCarType(Type type);
+
     QVariant defaultValue() const;
     void setDefaultValue(const QVariant &value);
 
@@ -61,6 +69,8 @@ signals:
     void ownerChanged();
     void typeChanged();
     void listTypeChanged();
+    void cdrTypeChanged();
+    void carTypeChanged();
     void defaultValueChanged();
 
 private:
@@ -80,6 +90,8 @@ private:
     DeclarativeGConfSchema *m_parent;
     Type m_type;
     Type m_listType;
+    Type m_cdrType;
+    Type m_carType;
 };
 
 class DeclarativeGConfDescription : public QObject

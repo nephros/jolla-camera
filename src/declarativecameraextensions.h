@@ -3,6 +3,7 @@
 #define DECLARATIVECAMERAEXTENSIONS_H
 
 #include <QImageEncoderControl>
+#include <QMetaDataWriterControl>
 #include <QVideoDeviceSelectorControl>
 #include <QVideoEncoderSettingsControl>
 #include <QMediaObject>
@@ -51,6 +52,7 @@ private:
     QVideoDeviceSelectorControl *m_deviceControl;
     QImageEncoderControl *m_imageEncoderControl;
     QVideoEncoderSettingsControl *m_videoEncoderControl;
+    QMetaDataWriterControl *m_metaDataControl;
     Face m_face;
     int m_rotation;
 };

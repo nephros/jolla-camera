@@ -5,6 +5,7 @@
 #include <QQmlInfo>
 
 #include <QtDebug>
+#include <QMediaMetaData>
 
 DeclarativeCameraExtensions::DeclarativeCameraExtensions(QObject *parent)
     : QObject(parent)
@@ -13,6 +14,7 @@ DeclarativeCameraExtensions::DeclarativeCameraExtensions(QObject *parent)
     , m_deviceControl(0)
     , m_imageEncoderControl(0)
     , m_videoEncoderControl(0)
+    , m_metaDataControl(0)
     , m_rotation(-1)
 {
 }
@@ -27,6 +29,9 @@ DeclarativeCameraExtensions::~DeclarativeCameraExtensions()
     }
     if (m_videoEncoderControl) {
         m_mediaObject->service()->releaseControl(m_videoEncoderControl);
+    }
+    if (m_metaDataControl) {
+        m_mediaObject->service()->releaseControl(m_metaDataControl);
     }
 }
 
@@ -52,6 +57,10 @@ void DeclarativeCameraExtensions::setCamera(QObject *camera)
         m_mediaObject->service()->releaseControl(m_videoEncoderControl);
         m_videoEncoderControl = 0;
     }
+    if (m_metaDataControl) {
+        m_mediaObject->service()->releaseControl(m_metaDataControl);
+        m_metaDataControl = 0;
+    }
 
     m_camera = camera;
     m_mediaObject = m_camera
@@ -64,6 +73,7 @@ void DeclarativeCameraExtensions::setCamera(QObject *camera)
         }
         m_imageEncoderControl = m_mediaObject->service()->requestControl<QImageEncoderControl *>();
         m_videoEncoderControl = m_mediaObject->service()->requestControl<QVideoEncoderSettingsControl *>();
+        m_metaDataControl = m_mediaObject->service()->requestControl<QMetaDataWriterControl *>();
 
         if (m_rotation != -1) {
             setRotation(m_rotation);
@@ -80,6 +90,8 @@ void DeclarativeCameraExtensions::setFace(Face face)
 {
     if (face != m_face) {
         m_face = face;
+
+        setRotation(m_rotation);
         if (m_deviceControl) {
             updateDevice();
         }
@@ -104,6 +116,16 @@ void DeclarativeCameraExtensions::setRotation(int rotation)
         QVideoEncoderSettings videoSettings = m_videoEncoderControl->videoSettings();
         videoSettings.setEncodingOption(QLatin1String("rotation"), rotation);
         m_videoEncoderControl->setVideoSettings(videoSettings);
+    }
+
+    if (m_metaDataControl) {
+        int orientation = (m_face == Back ? 90 - rotation : 270 + rotation) % 360;
+        if (orientation < 0) {
+            orientation += 360;
+        }
+        m_metaDataControl->setMetaData(
+                    QMediaMetaData::Orientation,
+                    QString(QStringLiteral("rotate-%1")).arg(orientation));
     }
 
     if (m_rotation != rotation) {

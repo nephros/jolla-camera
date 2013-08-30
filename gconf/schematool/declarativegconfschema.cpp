@@ -4,6 +4,7 @@
 # include <QQmlInfo>
 
 #include <QFile>
+#include <QSize>
 #include <QStringList>
 #include <QXmlStreamWriter>
 
@@ -13,6 +14,8 @@ DeclarativeGConfSchema::DeclarativeGConfSchema(QObject *parent)
     , m_parent(0)
     , m_type(Invalid)
     , m_listType(Invalid)
+    , m_cdrType(Invalid)
+    , m_carType(Invalid)
 {
 }
 
@@ -68,6 +71,32 @@ void DeclarativeGConfSchema::setListType(Type type)
 {
     if (m_listType != type) {
         m_listType = type;
+        emit typeChanged();
+    }
+}
+
+DeclarativeGConfSchema::Type DeclarativeGConfSchema::cdrType() const
+{
+    return m_cdrType;
+}
+
+void DeclarativeGConfSchema::setCdrType(Type type)
+{
+    if (m_cdrType != type) {
+        m_cdrType = type;
+        emit typeChanged();
+    }
+}
+
+DeclarativeGConfSchema::Type DeclarativeGConfSchema::carType() const
+{
+    return m_carType;
+}
+
+void DeclarativeGConfSchema::setCarType(Type type)
+{
+    if (m_carType != type) {
+        m_carType = type;
         emit typeChanged();
     }
 }
@@ -191,6 +220,12 @@ static QString toString(const QVariant &variant)
         for (int i = 0; i < list.count(); ++i) {
             stringList.append(list.at(i).toString());
         }
+    } else if (variant.type() == QVariant::Size) {
+        QSize size = variant.toSize();
+        return QString(QStringLiteral("(%1,%2)")).arg(size.width()).arg(size.height());
+    } else if (variant.type() == QVariant::SizeF) {
+        QSizeF size = variant.toSizeF();
+        return QString(QStringLiteral("(%1,%2)")).arg(size.width()).arg(size.height());
     } else {
         return variant.toString();
     }
@@ -221,6 +256,9 @@ void DeclarativeGConfSchema::write(QXmlStreamWriter *writer, const QByteArray &p
         writeTypeElement(writer, "type", m_type);
         if (m_type == List) {
             writeTypeElement(writer, "list_type", m_listType);
+        } else if (m_type == Pair) {
+            writeTypeElement(writer, "car_type", m_carType);
+            writeTypeElement(writer, "cdr_type", m_cdrType);
         }
         if (m_defaultValue.isValid()) {
             writer->writeTextElement(QLatin1String("default"), toString(m_defaultValue));
@@ -244,3 +282,4 @@ void DeclarativeGConfSchema::write(QXmlStreamWriter *writer, const QByteArray &p
         m_children.at(i)->write(writer, key);
     }
 }
+

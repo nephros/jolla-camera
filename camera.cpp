@@ -17,6 +17,7 @@
 #include <MDeclarativeCache>
 #endif
 
+#include "capturemodel.h"
 #include "declarativecameraextensions.h"
 #include "declarativecameralocks.h"
 #include "declarativecompassaction.h"
@@ -56,6 +57,7 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     qmlRegisterType<DeclarativeCompassAction>("com.jolla.camera", 1, 0, "CompassAction");
     qmlRegisterType<DeclarativeGConfSettings>("com.jolla.camera", 1, 0, "GConfSettings");
     qmlRegisterType<DeclarativeSettings>("com.jolla.camera", 1, 0, "SettingsBase");
+    qmlRegisterType<CaptureModel>("com.jolla.camera", 1, 0, "CaptureModel");
     qmlRegisterUncreatableType<DeclarativeGConf>("com.jolla.camera", 1, 0, "GConf", QString());
 
     qmlRegisterSingletonType<DeclarativeSettings>("com.jolla.camera", 1, 0, "Settings", DeclarativeSettings::factory);

@@ -4,6 +4,8 @@
 #include <QQmlInfo>
 
 #include <QMetaProperty>
+#include <QPoint>
+#include <QSize>
 #include <QStringList>
 
 DeclarativeGConfSettings::DeclarativeGConfSettings(QObject *parent)
@@ -11,6 +13,7 @@ DeclarativeGConfSettings::DeclarativeGConfSettings(QObject *parent)
     , m_parent(0)
 #ifndef GCONF_DISABLED
     , m_client(0)
+    , m_notifyId(0)
 #endif
     , m_readPropertyIndex(-1)
 {
@@ -21,6 +24,7 @@ DeclarativeGConfSettings::~DeclarativeGConfSettings()
 #ifndef GCONF_DISABLED
     if (m_client) {
         if (!m_parent && !m_absolutePath.isEmpty()) {
+            m_absolutePath.chop(1);
             gconf_client_remove_dir(m_client, m_absolutePath.constData(), 0);
         }
 
@@ -54,7 +58,7 @@ void DeclarativeGConfSettings::componentComplete()
 #ifndef GCONF_DISABLED
     m_client = gconf_client_get_default();
 
-    if (!m_path.isEmpty() && m_path.startsWith(QLatin1Char('/'))) {
+    if (m_path.startsWith(QLatin1Char('/'))) {
         if (!m_parent) {
             GError *error = 0;
             gconf_client_add_dir(
@@ -89,6 +93,7 @@ void DeclarativeGConfSettings::setPath(const QString &path)
 #ifndef GCONF_DISABLED
         if (m_client && !m_absolutePath.isEmpty()) {
             if (!m_parent) {
+                m_absolutePath.chop(1);
                 gconf_client_remove_dir(m_client, m_absolutePath.constData(), 0);
             }
 
@@ -149,6 +154,7 @@ void DeclarativeGConfSettings::data_clear(QQmlListProperty<QObject> *)
 
 #ifndef GCONF_DISABLED
 
+
 template <typename T> GConfValue *toGConfValue(const QVariant &) { return 0; }
 
 template <> GConfValue *toGConfValue<QString>(const QVariant &variant)
@@ -176,6 +182,42 @@ template <> GConfValue *toGConfValue<bool>(const QVariant &variant)
 {
     GConfValue *value = gconf_value_new(GCONF_VALUE_BOOL);
     gconf_value_set_bool(value, variant.toBool());
+    return value;
+}
+
+template <> GConfValue *toGConfValue<QSize>(const QVariant &variant)
+{
+    const QSize size = variant.toSize();
+    GConfValue *value = gconf_value_new(GCONF_VALUE_PAIR);
+    gconf_value_set_car_nocopy(value, toGConfValue<int>(size.width()));
+    gconf_value_set_cdr_nocopy(value, toGConfValue<int>(size.height()));
+    return value;
+}
+
+template <> GConfValue *toGConfValue<QSizeF>(const QVariant &variant)
+{
+    const QSizeF size = variant.toSizeF();
+    GConfValue *value = gconf_value_new(GCONF_VALUE_PAIR);
+    gconf_value_set_car_nocopy(value, toGConfValue<double>(size.width()));
+    gconf_value_set_cdr_nocopy(value, toGConfValue<double>(size.height()));
+    return value;
+}
+
+template <> GConfValue *toGConfValue<QPoint>(const QVariant &variant)
+{
+    const QPoint size = variant.toPoint();
+    GConfValue *value = gconf_value_new(GCONF_VALUE_PAIR);
+    gconf_value_set_car_nocopy(value, toGConfValue<int>(size.x()));
+    gconf_value_set_cdr_nocopy(value, toGConfValue<int>(size.y()));
+    return value;
+}
+
+template <> GConfValue *toGConfValue<QPointF>(const QVariant &variant)
+{
+    const QPointF size = variant.toPointF();
+    GConfValue *value = gconf_value_new(GCONF_VALUE_PAIR);
+    gconf_value_set_car_nocopy(value, toGConfValue<double>(size.x()));
+    gconf_value_set_cdr_nocopy(value, toGConfValue<double>(size.y()));
     return value;
 }
 
@@ -211,7 +253,7 @@ template <typename T> GConfValue *toGConfList(const QVariantList &variantList, G
     return value;
 }
 
-template <> GConfValue *toGConfValue<QVariant>(const QVariant &variant)
+static GConfValue *fromVariant(const QVariant &variant)
 {
     switch (variant.type()) {
     case QVariant::Invalid:    return 0;
@@ -221,15 +263,15 @@ template <> GConfValue *toGConfValue<QVariant>(const QVariant &variant)
     case QVariant::Double:     return toGConfValue<double>(variant);
     case QVariant::Bool:       return toGConfValue<bool>(variant);
     case QVariant::StringList: return toGConfValue<QStringList>(variant);
+    case QVariant::Point:      return toGConfValue<QPoint>(variant);
+    case QVariant::PointF:     return toGConfValue<QPointF>(variant);
+    case QVariant::Size:       return toGConfValue<QSize>(variant);
+    case QVariant::SizeF:      return toGConfValue<QSizeF>(variant);
     default:
         if (variant.userType() == qMetaTypeId<QVariantList>()) {
             QVariantList list = variant.value<QVariantList>();
             if (list.isEmpty()) {
-                // ### The magic kind of fails here, how do you deduce the type of an empty
-                // list?
-                GConfValue *value = gconf_value_new(GCONF_VALUE_LIST);
-                gconf_value_set_list_type(value, GCONF_VALUE_INT);
-                return value;
+                return 0;
             } else {
                 switch (list.first().type()) {
                 case QVariant::Invalid:    return 0;
@@ -273,7 +315,7 @@ void DeclarativeGConfSettings::propertyChanged()
             const QVariant variant = property.read(this);
 
             GError *error = 0;
-            if (GConfValue *value = toGConfValue<QVariant>(variant)) {
+            if (GConfValue *value = fromVariant(variant)) {
                 gconf_client_set(m_client, key.constData(), value, &error);
                 gconf_value_free(value);
             } else if (variant.type() == QVariant::Invalid) {
@@ -295,34 +337,36 @@ void DeclarativeGConfSettings::resolveProperties(const QByteArray &parentPath)
 #ifndef GCONF_DISABLED
     cancelNotifications();
 
-    m_absolutePath = parentPath + m_path.toUtf8() + '/';
+    GError *error = 0;
+
+    m_absolutePath = parentPath + m_path.toUtf8();
+    m_notifyId = gconf_client_notify_add(m_client, m_absolutePath.constData(), notify, this, 0, &error);
+    if (error) {
+        qmlInfo(this) << "Failed to register notifications for " << m_absolutePath;
+        qmlInfo(this) << error->message;
+        g_error_free(error);
+        error = 0;
+    }
+    m_absolutePath += '/';
 
     const QMetaObject * const metaObject = this->metaObject();
-    if (metaObject == &staticMetaObject)
-        return;
+    if (metaObject != &staticMetaObject) {
+        for (int i = metaObject->propertyOffset(); i < metaObject->propertyCount(); ++i) {
+            const QMetaProperty property = metaObject->property(i);
+            const QByteArray key = m_absolutePath + property.name();
 
-    for (int i = metaObject->propertyOffset(); i < metaObject->propertyCount(); ++i) {
-        GError *error = 0;
-        const QMetaProperty property = metaObject->property(i);
-        const QByteArray key = m_absolutePath + property.name();
-
-        GConfValue *value = gconf_client_get(m_client, key.constData(), &error);
-        if (error) {
-            qmlInfo(this) << "Failed to get value for " << key;
-            qmlInfo(this) << error->message;
-            g_error_free(error);
-            error = 0;
-        } else if (value) {
-            m_readPropertyIndex = i;
-            readValue(property, value);
-            m_readPropertyIndex = -1;
-            gconf_value_free(value);
-        }
-
-        Property p = { i, gconf_client_notify_add(m_client, key.constData(), notify, this, 0, &error) };
-        if (error) {
-        } else {
-            m_properties.append(p);
+            GConfValue *value = gconf_client_get(m_client, key.constData(), &error);
+            if (error) {
+                qmlInfo(this) << "Failed to get value for " << key;
+                qmlInfo(this) << error->message;
+                g_error_free(error);
+                error = 0;
+            } else if (value) {
+                m_readPropertyIndex = i;
+                readValue(property, value);
+                m_readPropertyIndex = -1;
+                gconf_value_free(value);
+            }
         }
     }
 
@@ -352,7 +396,7 @@ template <typename List, typename T> List fromGConfList(GConfValue *value)
     return list;
 }
 
-template <> QVariant fromGConfValue<QVariant>(GConfValue *value)
+static QVariant toVariant(GConfValue *value, int typeHint = 0)
 {
     switch (value->type) {
     case GCONF_VALUE_STRING: return fromGConfValue<QString>(value);
@@ -368,8 +412,34 @@ template <> QVariant fromGConfValue<QVariant>(GConfValue *value)
         default: return QVariant();
         }
         break;
-    case GCONF_VALUE_PAIR:
+    case GCONF_VALUE_PAIR: {
+        GConfValue *first = gconf_value_get_car(value);
+        GConfValue *second = gconf_value_get_cdr(value);
+        if (!first || !second) {
+            return QVariant();
+        } else if (first->type == GCONF_VALUE_INT && second->type == GCONF_VALUE_INT) {
+            switch (typeHint) {
+            case QVariant::Point:
+            case QVariant::PointF:
+                return QVariant(QPoint(gconf_value_get_int(first), gconf_value_get_int(second)));
+            case QVariant::Size:
+            case QVariant::SizeF:
+            default:    //
+                return QVariant(QSize(gconf_value_get_int(first), gconf_value_get_int(second)));
+            }
+        } else if (first->type == GCONF_VALUE_FLOAT && second->type == GCONF_VALUE_FLOAT) {
+            switch (typeHint) {
+            case QVariant::Point:
+            case QVariant::PointF:
+                return QVariant(QPointF(gconf_value_get_float(first), gconf_value_get_float(second)));
+            case QVariant::Size:
+            case QVariant::SizeF:
+            default:
+                return QVariant(QSizeF(gconf_value_get_float(first), gconf_value_get_float(second)));
+            }
+        }
         return QVariant();
+    }
     case GCONF_VALUE_INVALID:
         return QVariant();
     default:
@@ -379,7 +449,10 @@ template <> QVariant fromGConfValue<QVariant>(GConfValue *value)
 
 void DeclarativeGConfSettings::readValue(const QMetaProperty &property, GConfValue *value)
 {
-    QVariant variant = fromGConfValue<QVariant>(value);
+    int typeHint = 0;
+    if (value->type == GCONF_VALUE_PAIR)
+        typeHint = property.read(this).type();
+    QVariant variant = toVariant(value, typeHint);
     if (variant.isValid()) {
         property.write(this, variant);
     }
@@ -387,25 +460,30 @@ void DeclarativeGConfSettings::readValue(const QMetaProperty &property, GConfVal
 
 void DeclarativeGConfSettings::cancelNotifications()
 {
-    for (int i = 0; i < m_properties.count(); ++i) {
-        gconf_client_notify_remove(m_client, m_properties.at(i).notifyId);
+    if (m_notifyId) {
+        gconf_client_notify_remove(m_client, m_notifyId);
+        m_notifyId = 0;
     }
-    m_properties.clear();
 }
 
 void DeclarativeGConfSettings::notify(GConfClient *, guint cnxn_id, GConfEntry *entry, gpointer user_data)
 {
     DeclarativeGConfSettings * const settings = static_cast<DeclarativeGConfSettings *>(user_data);
-    for (int i = 0; i < settings->m_properties.count(); ++i) {
-        const Property &property = settings->m_properties.at(i);
-        if (property.notifyId == cnxn_id) {
-            settings->m_readPropertyIndex = i;
+    if (cnxn_id != settings->m_notifyId)
+        return;
+
+    const QByteArray key = gconf_entry_get_key(entry);
+    const int pathLength = key.lastIndexOf('/');
+    if (pathLength + 1 == settings->m_absolutePath.count()
+            && key.startsWith(settings->m_absolutePath)) {
+        const QMetaObject *const metaObject = settings->metaObject();
+        settings->m_readPropertyIndex = metaObject->indexOfProperty(key.mid(pathLength + 1));
+        if (settings->m_readPropertyIndex >= metaObject->propertyOffset()) {
             settings->readValue(
-                        settings->metaObject()->property(property.propertyIndex),
+                        metaObject->property(settings->m_readPropertyIndex),
                         gconf_entry_get_value(entry));
-            settings->m_readPropertyIndex = -1;
-            break;
         }
+        settings->m_readPropertyIndex = -1;
     }
 }
 
@@ -439,7 +517,7 @@ QVariant DeclarativeGConf::read(const QString &key)
 #ifndef GCONF_DISABLED
     GError *error = 0;
     if (GConfValue *value = gconf_client_get(m_client, key.toUtf8().constData(), &error)) {
-        QVariant variant = fromGConfValue<QVariant>(value);
+        QVariant variant = toVariant(value);
         gconf_value_free(value);
         return variant;
     } else if (error) {
@@ -456,7 +534,7 @@ void DeclarativeGConf::write(const QString &key, const QVariant &variant)
 {
 #ifndef GCONF_DISABLED
     GError *error = 0;
-    if (GConfValue *value = toGConfValue<QVariant>(variant)) {
+    if (GConfValue *value = fromVariant(variant)) {
         gconf_client_set(m_client, key.toUtf8().constData(), value, &error);
         gconf_value_free(value);
     } else if (variant.isValid()) {

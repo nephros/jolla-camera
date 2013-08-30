@@ -5,6 +5,7 @@ import com.jolla.camera 1.0
 SettingsBase {
     property alias mode: modeSettings
     property alias global: globalSettings
+    property alias resolutions: resolutionSettings
 
     property GConfSettings _global: GConfSettings {
         id: globalSettings
@@ -43,6 +44,21 @@ SettingsBase {
             property bool exposureConfigurable: true
             property bool meteringModeConfigurable: true
             property bool timerConfigurable: true
+        }
+
+        GConfSettings {
+            path: modeSettings.face == CameraExtensions.Back
+                        ? "resolutions/back"
+                        : "resolutions/front"
+
+            GConfSettings {
+                id: resolutionSettings
+                path: globalSettings.aspectRatio == CameraExtensions.AspectRatio_16_9
+                        ? "16_9"
+                        : "4_3"
+                property size image: "1280x720"     // Last gasp defaults, the real value comes
+                property size video: "1280x720"     // from the schema or an explicity overridden value.
+            }
         }
     }
 }

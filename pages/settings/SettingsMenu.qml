@@ -151,11 +151,6 @@ SilicaFlickable {
                     value: Camera.FocusAuto
                 }
                 SettingsMenuItem {
-                    //% "Hyperfocal"
-                    text: qsTrId("camera-me-focus-hyperfocal")
-                    value: Camera.FocusHyperfocal
-                }
-                SettingsMenuItem {
                     //% "Infinite"
                     text: qsTrId("camera-me-focus-infinite")
                     value: Camera.FocusInfinity

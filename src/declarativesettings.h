@@ -3,28 +3,6 @@
 
 #include <QObject>
 #include <QDate>
-#include <QSize>
-
-#ifndef DESKTOP
-#include <MGConfItem>
-#else
-#include <QVariant>
-class MGConfItem : public QObject
-{
-    Q_OBJECT
-public:
-    MGConfItem(const QString &) {}
-
-    QVariant value(const QVariant &defaultValue) const { return m_value.isValid() ? m_value : defaultValue; }
-    void set(const QVariant &value) { if (m_value != value) { m_value = value; emit valueChanged(); } }
-
-signals:
-    void valueChanged();
-
-private:
-    QVariant m_value;
-};
-#endif
 
 QT_BEGIN_NAMESPACE
 class QQmlEngine;
@@ -42,9 +20,6 @@ public:
 
     static QObject *factory(QQmlEngine *, QJSEngine *);
 
-    Q_INVOKABLE QSize defaultImageResolution(int ratio) const;
-    Q_INVOKABLE QSize defaultVideoResolution(int ratio) const;
-
     QString photoDirectory() const;
     QString videoDirectory() const;
 
@@ -54,14 +29,9 @@ public:
 private:
     void verifyCapturePrefix();
 
-    MGConfItem m_imageRatio_4_3;
-    MGConfItem m_imageRatio_16_9;
-    MGConfItem m_videoRatio_4_3;
-    MGConfItem m_videoRatio_16_9;
     QString m_prefix;
     QDate m_prefixDate;
-    int m_photoCounter;
-    int m_videoCounter;
+    int m_counter;
 };
 
 #endif

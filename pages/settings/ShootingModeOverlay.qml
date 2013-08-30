@@ -18,6 +18,8 @@ Item {
     property real _lastPos
     property real _direction
 
+    property real _progress: (panel.y + panel.height) / panel.height
+
     property bool interactive: true
 
     signal clicked(var mouse)
@@ -65,7 +67,7 @@ Item {
 
             width: overlay.width
             height: overlay.height
-            opacity: 1 - ((panel.y + panel.height) / panel.height)
+            opacity: 1 - overlay._progress
         }
 
         Item {
@@ -91,7 +93,6 @@ Item {
 
         Rectangle {
             id: highlight
-            y: height * panel.y / panel.height
             width: overlay.width
             height: !overlay.isPortrait
                     ? overlay.height / 2
@@ -113,21 +114,19 @@ Item {
             property alias landscape: landscapeMode
             property alias portrait: portraitMode
 
+
+            y: overlay.isPortrait
+                    ? 58 + height * panel.y / panel.height
+                    : (highlight.height - height) * overlay._progress / 2
+
             width: overlay.isPortrait
                     ? Theme.iconSizeMedium
-                    : overlay.width - 116
+                    : undefined
             height: !overlay.isPortrait
                     ? Theme.iconSizeMedium
-                    : overlay.height - 116
-            anchors {
-                top: overlay.isPortrait
-                        ? highlight.top
-                        : highlight.verticalCenter
-                horizontalCenter: panel.horizontalCenter
-                topMargin: overlay.isPortrait
-                        ? 58
-                        : 0
-            }
+                    : undefined
+            anchors.horizontalCenter: panel.horizontalCenter
+
             opacity: 1 - container.opacity
             spacing: Math.floor((screen.height - 116 - (Theme.iconSizeMedium * 7)) / 6)
 

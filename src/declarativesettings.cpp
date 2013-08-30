@@ -13,12 +13,7 @@
 
 DeclarativeSettings::DeclarativeSettings(QObject *parent)
     : QObject(parent)
-    , m_imageRatio_4_3("/desktop/jolla/camera/imageRatio_4_3")
-    , m_imageRatio_16_9("/desktop/jolla/camera/imageRatio_16_9")
-    , m_videoRatio_4_3("/desktop/jolla/camera/videoRatio_4_3")
-    , m_videoRatio_16_9("/desktop/jolla/camera/videoRatio_16_9")
-    , m_photoCounter(0)
-    , m_videoCounter(0)
+    , m_counter(0)
 {
     QDir(photoDirectory()).mkpath(QLatin1String("."));
     QDir(videoDirectory()).mkpath(QLatin1String("."));
@@ -41,32 +36,6 @@ QObject *DeclarativeSettings::factory(QQmlEngine *engine, QJSEngine *)
     }
 }
 
-QSize DeclarativeSettings::defaultImageResolution(int ratio) const
-{
-    // The default defaults are the typical supported resolutions for a modern
-    // webcam and so are reasonably likely to work in most places.
-    switch (ratio) {
-    case DeclarativeCameraExtensions::AspectRatio_4_3:
-        return m_imageRatio_4_3.value(QSize(640, 480)).value<QSize>();
-    case DeclarativeCameraExtensions::AspectRatio_16_9:
-        return m_imageRatio_16_9.value(QSize(1280, 720)).value<QSize>();
-    default:
-        return QSize();
-    }
-}
-
-QSize DeclarativeSettings::defaultVideoResolution(int ratio) const
-{
-    switch (ratio) {
-    case DeclarativeCameraExtensions::AspectRatio_4_3:
-        return m_imageRatio_4_3.value(QSize(640, 480)).value<QSize>();
-    case DeclarativeCameraExtensions::AspectRatio_16_9:
-        return m_imageRatio_16_9.value(QSize(1280, 720)).value<QSize>();
-    default:
-        return QSize();
-    }
-}
-
 QString DeclarativeSettings::photoDirectory() const
 {
     return QStandardPaths::writableLocation(QStandardPaths::PicturesLocation) + QLatin1String("/Camera");
@@ -84,7 +53,7 @@ QString DeclarativeSettings::photoCapturePath(const QString &extension)
     return photoDirectory()
                 + QLatin1Char('/')
                 + m_prefix
-                + QString(QStringLiteral("%1.")).arg(++m_photoCounter, 3, 10, QLatin1Char('0'))
+                + QString(QStringLiteral("%1.")).arg(++m_counter, 3, 10, QLatin1Char('0'))
                 + extension;
 }
 
@@ -94,13 +63,12 @@ QString DeclarativeSettings::videoCapturePath(const QString &extension)
     return videoDirectory()
                 + QLatin1Char('/')
                 + m_prefix
-                + QString(QStringLiteral("%1.")).arg(++m_videoCounter, 3, 10, QLatin1Char('0'))
+                + QString(QStringLiteral("%1.")).arg(++m_counter, 3, 10, QLatin1Char('0'))
                 + extension;
 }
 
-static int counterStartValue(const QString &directory, const QString &prefix)
+static int counterStartValue(const QString &directory, const QString &prefix, int maximum = 0)
 {
-    int maximum = 0;
     QDirIterator iterator(directory, QStringList() << prefix + QLatin1Char('*'), QDir::Files);
     while (iterator.hasNext()) {
         iterator.next();
@@ -117,8 +85,8 @@ void DeclarativeSettings::verifyCapturePrefix()
     if (m_prefixDate != currentDate) {
         m_prefixDate = currentDate;
         m_prefix = currentDate.toString(QLatin1String("yyyyMMdd_"));
-        m_photoCounter = counterStartValue(photoDirectory(), m_prefix);
-        m_videoCounter = counterStartValue(videoDirectory(), m_prefix);
+        m_counter = counterStartValue(photoDirectory(), m_prefix);
+        m_counter = counterStartValue(videoDirectory(), m_prefix, m_counter);
     }
 }
 
