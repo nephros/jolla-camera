@@ -2,7 +2,6 @@ import QtQuick 2.1
 import Sailfish.Silica 1.0
 import Sailfish.Media 1.0
 import Sailfish.Gallery 1.0 as Gallery
-import QtDocGallery 5.0
 import QtMultimedia 5.0
 import com.jolla.camera 1.0
 
@@ -15,12 +14,12 @@ Drawer {
     property bool isPortrait
     property Item _activeItem
 
-    readonly property bool empty: galleryModel.count == 0
-
     property alias contentItem: pageView.contentItem
     property alias header: pageView.header
     property bool interactive: true
     property alias currentIndex: pageView.currentIndex
+
+    property alias model: pageView.model
 
     property Item page
 
@@ -61,7 +60,7 @@ Drawer {
         snapMode: ListView.SnapOneItem
         highlightRangeMode: ListView.StrictlyEnforceRange
 
-        interactive: !galleryView._playingState && galleryView.interactive && galleryModel.count > 0
+        interactive: !galleryView._playingState && galleryView.interactive && pageView.count > 0
 
         onCurrentItemChanged: {
             if (!galleryView._activeItem && currentItem) {
@@ -81,18 +80,6 @@ Drawer {
                 if (galleryView._activeItem) {
                     galleryView._activeItem.active = true
                 }
-            }
-        }
-
-        model: DocumentGalleryModel {
-            id: galleryModel
-            rootType: DocumentGallery.File
-            properties: [ "url", "mimeType", "title" ]
-            sortProperties: ["-fileName"]
-            autoUpdate: true
-            filter: GalleryFilterUnion {
-                GalleryEqualsFilter { property: "path"; value: Settings.photoDirectory }
-                GalleryEqualsFilter { property: "path"; value: Settings.videoDirectory }
             }
         }
 

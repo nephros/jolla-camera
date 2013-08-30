@@ -14,6 +14,8 @@ Drawer {
     property int orientation
     property int effectiveIso: Settings.mode.iso
 
+    property alias camera: camera
+
     property bool menuOpen: captureView.open
             || shootingModeOverlay.expanded
             || settingsCompass.expanded
@@ -29,6 +31,8 @@ Drawer {
 
     readonly property bool isPortrait: orientation == Orientation.Portrait
                 || orientation == Orientation.PortraitInverted
+
+    signal recordingStopped(url url, string mimeType)
 
     dock: isPortrait ? Dock.Top : Dock.Left
 
@@ -310,7 +314,7 @@ Drawer {
                 top: parent.top
                 bottom: parent.bottom
             }
-
+            onRecordingStopped: captureView.recordingStopped(url, mimeType)
 
             onPressAndHold: if (interactive) { positioner.enabled = true }
         }

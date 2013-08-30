@@ -10,6 +10,8 @@ Compass {
 
     property Camera camera
 
+    signal recordingStopped(url url, string mimeType)
+
     interactive: camera.captureMode == Camera.CaptureStillImage
 
     function _startRecording() {
@@ -77,6 +79,9 @@ Compass {
         } else {
             camera.videoRecorder.stop()
             camera.captureMode = Camera.CaptureStillImage
+            compass.recordingStopped(
+                        camera.videoRecorder.outputLocation,
+                        camera.videoRecorder.mediaContainer)
         }
     }
 

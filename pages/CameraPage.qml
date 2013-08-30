@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
+import QtDocGallery 5.0
 import QtMultimedia 5.0
 import "capture"
 import "settings"
@@ -18,14 +19,12 @@ Page {
         width: page.width
         height: page.height
 
-        objectName: "parent view"
-
         orientation: ListView.Horizontal
         layoutDirection: Qt.RightToLeft
         snapMode: ListView.SnapOneItem
         boundsBehavior: Flickable.StopAtBounds
         highlightRangeMode: ListView.StrictlyEnforceRange
-        interactive: !captureView.menuOpen && !galleryView.menuOpen && !galleryView.empty
+        interactive: !captureView.menuOpen && !galleryView.menuOpen && galleryModel.count > 0
         model: VisualItemModel {
             CaptureView {
                 id: captureView
@@ -37,6 +36,14 @@ Page {
 
                 orientation: page.orientation
                 windowActive: page.windowActive
+
+                camera.imageCapture.onImageSaved: {
+                    captureModel.prependCapture(path, "image/jpeg", 0)
+                }
+
+                onRecordingStopped: {
+                    captureModel.prependCapture(url, mimeType, 0)
+                }
             }
 
             GalleryView {
@@ -46,6 +53,7 @@ Page {
                 height: page.height
 
                 page: page
+                model: captureModel
                 active: false
                 windowActive: page.windowActive
                 isPortrait: page.orientation == Orientation.Portrait
@@ -57,6 +65,22 @@ Page {
             if (!moving) {
                 galleryView.active = galleryView.ListView.isCurrentItem
                 captureView.active = captureView.ListView.isCurrentItem
+            }
+        }
+    }
+
+    CaptureModel {
+        id: captureModel
+
+        source: DocumentGalleryModel {
+            id: galleryModel
+            rootType: DocumentGallery.File
+            properties: [ "url", "title", "mimeType", "orientation" ]
+            sortProperties: ["-fileName"]
+            autoUpdate: true
+            filter: GalleryFilterUnion {
+                GalleryEqualsFilter { property: "path"; value: Settings.photoDirectory }
+                GalleryEqualsFilter { property: "path"; value: Settings.videoDirectory }
             }
         }
     }
