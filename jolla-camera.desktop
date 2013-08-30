@@ -1,7 +1,8 @@
 [Desktop Entry]
 Type=Application
 Name=Camera
-Name[zh_CN]=相机
+X-MeeGo-Logical-Id=jolla-camera-ap-name
+X-MeeGo-Translation-Catalog=jolla-camera
 Icon=icon-launcher-camera
 Exec=invoker -s --type=silica-qt5 /usr/bin/jolla-camera
 Comment=Jolla Camera
