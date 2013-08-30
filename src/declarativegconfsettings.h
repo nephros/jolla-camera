@@ -73,9 +73,8 @@ private:
 
     static void notify(GConfClient *client, guint cnxn_id, GConfEntry *entry, gpointer user_data);
 
-    struct Property { int propertyIndex; guint notifyId; };
-    QVector<Property> m_properties;
     GConfClient *m_client;
+    guint m_notifyId;
 #endif
 
     int m_readPropertyIndex;

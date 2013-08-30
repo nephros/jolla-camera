@@ -64,4 +64,25 @@ GConfSchema {
         flashConfigurable: false
         focusDistanceConfigurable: false
     }
+    ResolutionSchema {
+        path: "resolutions/back/16_9"
+        image: "3264x1840"
+        video: "1280x720"
+    }
+    ResolutionSchema {
+        path: "resolutions/back/4_3"
+        image: "3264x2448"
+        video: "640x480"
+    }
+    ResolutionSchema {
+        path: "resolutions/front/16_9"
+        image: "1280x720"
+        video: "1280x720"
+    }
+
+    ResolutionSchema {
+        path: "resolutions/front/4_3"
+        image: "1280x960"
+        video: "640x480"
+    }
 }

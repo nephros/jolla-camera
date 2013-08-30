@@ -1051,5 +1051,85 @@
             <default>true</default>
             <locale name="C"/>
         </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/resolutions/back/16_9/image</key>
+            <applyto>/apps/jolla-camera/resolutions/back/16_9/image</applyto>
+            <owner>jolla</owner>
+            <type>pair</type>
+            <car_type>float</car_type>
+            <cdr_type>float</cdr_type>
+            <default>(3264,1840)</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/resolutions/back/16_9/video</key>
+            <applyto>/apps/jolla-camera/resolutions/back/16_9/video</applyto>
+            <owner>jolla</owner>
+            <type>pair</type>
+            <car_type>float</car_type>
+            <cdr_type>float</cdr_type>
+            <default>(1280,720)</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/resolutions/back/4_3/image</key>
+            <applyto>/apps/jolla-camera/resolutions/back/4_3/image</applyto>
+            <owner>jolla</owner>
+            <type>pair</type>
+            <car_type>float</car_type>
+            <cdr_type>float</cdr_type>
+            <default>(3264,2448)</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/resolutions/back/4_3/video</key>
+            <applyto>/apps/jolla-camera/resolutions/back/4_3/video</applyto>
+            <owner>jolla</owner>
+            <type>pair</type>
+            <car_type>float</car_type>
+            <cdr_type>float</cdr_type>
+            <default>(640,480)</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/resolutions/front/16_9/image</key>
+            <applyto>/apps/jolla-camera/resolutions/front/16_9/image</applyto>
+            <owner>jolla</owner>
+            <type>pair</type>
+            <car_type>float</car_type>
+            <cdr_type>float</cdr_type>
+            <default>(1280,720)</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/resolutions/front/16_9/video</key>
+            <applyto>/apps/jolla-camera/resolutions/front/16_9/video</applyto>
+            <owner>jolla</owner>
+            <type>pair</type>
+            <car_type>float</car_type>
+            <cdr_type>float</cdr_type>
+            <default>(1280,720)</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/resolutions/front/4_3/image</key>
+            <applyto>/apps/jolla-camera/resolutions/front/4_3/image</applyto>
+            <owner>jolla</owner>
+            <type>pair</type>
+            <car_type>float</car_type>
+            <cdr_type>float</cdr_type>
+            <default>(1280,960)</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/resolutions/front/4_3/video</key>
+            <applyto>/apps/jolla-camera/resolutions/front/4_3/video</applyto>
+            <owner>jolla</owner>
+            <type>pair</type>
+            <car_type>float</car_type>
+            <cdr_type>float</cdr_type>
+            <default>(640,480)</default>
+            <locale name="C"/>
+        </schema>
     </schemalist>
 </gconfschemafile>
