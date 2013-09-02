@@ -6,6 +6,7 @@
 
 CaptureModel::CaptureModel(QObject *parent)
     : QAbstractListModel(parent)
+    , m_fileUrl(QUrl::fromLocalFile(QLatin1String("/")))
     , m_urlRole(-1)
     , m_titleRole(-1)
     , m_mimeTypeRole(-1)
@@ -190,16 +191,18 @@ void CaptureModel::_q_dataChanged(
 
 void CaptureModel::prependCapture(const QUrl &url, const QString &mimeType, int orientation)
 {
+    QUrl resolvedUrl = m_fileUrl.resolved(url);
+
     // This is almost guaranteed to never happen but it possible an item could be indexed before
     // we prepend, so perform a quick check of the most recent items for duplicates.
     int existingCount = qMin(10, m_model ? m_model->rowCount() : 0);
     for (int i = 0; i < existingCount; ++i) {
-        if (m_model->index(i, 0).data(m_urlRole).toUrl() == url) {
+        if (m_model->index(i, 0).data(m_urlRole).toUrl() == resolvedUrl) {
             return;
         }
     }
     beginInsertRows(QModelIndex(), 0, 0);
-    Capture capture = { url, mimeType, orientation };
+    Capture capture = { resolvedUrl, mimeType, orientation };
     m_captures.prepend(capture);
     endInsertRows();
 }

@@ -40,6 +40,7 @@ private:
     };
     QVector<Capture> m_captures;
     QPointer<QAbstractItemModel> m_model;
+    const QUrl m_fileUrl;
     int m_urlRole;
     int m_titleRole;
     int m_mimeTypeRole;
