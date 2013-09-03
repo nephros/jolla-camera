@@ -78,6 +78,12 @@ void DeclarativeCameraExtensions::setCamera(QObject *camera)
         if (m_rotation != -1) {
             setRotation(m_rotation);
         }
+
+        if (m_videoEncoderControl) {
+            QVideoEncoderSettings settings = m_videoEncoderControl->videoSettings();
+            settings.setEncodingOption(QLatin1String("preset"), QLatin1String("high"));
+            m_videoEncoderControl->setVideoSettings(settings);
+        }
     }
 }
 

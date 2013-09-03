@@ -17,7 +17,7 @@ SettingsBase {
         property int captureVerticalAlignment: Qt.AlignVCenter
         property bool reverseButtons: false
 
-        property string audioCodec
+        property string audioCodec: "audio/mpeg, mpegversion=(int)4"
         property string videoCodec: "video/mpeg, mpegversion=(int)4"
         property string mediaContainer: "video/quicktime, variant=(string)iso"
 

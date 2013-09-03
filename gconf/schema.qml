@@ -67,7 +67,7 @@ GConfSchema {
     ResolutionSchema {
         path: "resolutions/back/16_9"
         image: "3264x1840"
-        video: "1280x720"
+        video: "1920x1088"
     }
     ResolutionSchema {
         path: "resolutions/back/4_3"

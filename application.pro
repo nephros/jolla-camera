@@ -62,7 +62,14 @@ service.path  = /usr/share/dbus-1/services
 schema.files = gconf/jolla-camera.schemas
 schema.path  = /etc/gconf/schemas
 
-INSTALLS += target desktop qml ts_install engineering_english_install service schema
+presets.files = presets/*.prs
+presets.path = /usr/share/jolla-camera/presets
+
+DEFINES *= JOLLA_CAMERA_GSTREAMER_PRESET_DIRECTORY=\"\\\"\"$${presets.path}/\"\\\"\"
+
+INSTALLS += target desktop qml ts_install engineering_english_install service schema presets
+
+PKGCONFIG += gstreamer-0.10
 
 packagesExist(qdeclarative5-boostable) {
     message("Building with qdeclarative-boostable support")

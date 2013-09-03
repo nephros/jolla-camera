@@ -1068,7 +1068,7 @@
             <type>pair</type>
             <car_type>float</car_type>
             <cdr_type>float</cdr_type>
-            <default>(1280,720)</default>
+            <default>(1920,1088)</default>
             <locale name="C"/>
         </schema>
         <schema>

@@ -19,6 +19,7 @@ BuildRequires:  pkgconfig(mlite5)
 BuildRequires:  qt5-qttools
 BuildRequires:  qt5-qttools-linguist
 BuildRequires:  pkgconfig(libjollasignonuiservice-qt5)
+BuildRequires:  pkgconfig(gstreamer-0.10)
 
 Requires:  ambient-icons-closed
 Requires:  sailfishsilica-qt5
