@@ -7,6 +7,7 @@
 #include <QVideoDeviceSelectorControl>
 #include <QVideoEncoderSettingsControl>
 #include <QMediaObject>
+#include <QPointer>
 
 class DeclarativeCameraExtensions : public QObject
 {
@@ -48,7 +49,7 @@ private:
     void updateDevice();
 
     QObject *m_camera;
-    QMediaObject *m_mediaObject;
+    QPointer<QMediaObject> m_mediaObject;
     QVideoDeviceSelectorControl *m_deviceControl;
     QImageEncoderControl *m_imageEncoderControl;
     QVideoEncoderSettingsControl *m_videoEncoderControl;

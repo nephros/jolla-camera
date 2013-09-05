@@ -1,14 +1,14 @@
 import QtQuick 2.1
 import Sailfish.Silica 1.0
 import Sailfish.Media 1.0
-import Sailfish.Gallery 1.0 as Gallery
+import Sailfish.Gallery 1.0
 import QtMultimedia 5.0
 import com.jolla.camera 1.0
 
 Drawer {
     id: galleryView
 
-    property bool menuOpen: galleryView.opened || _playingState
+    property bool menuOpen: active && (galleryView.opened || _playingState || (_activeItem && _activeItem.scaled))
     property bool active
     property bool windowActive
     property bool isPortrait
@@ -16,14 +16,14 @@ Drawer {
 
     property alias contentItem: pageView.contentItem
     property alias header: pageView.header
-    property bool interactive: true
+    property alias interactive: pageView.interactive
     property alias currentIndex: pageView.currentIndex
 
     property alias model: pageView.model
 
     property Item page
 
-    property bool _playingState: mediaPlayer.playbackState == MediaPlayer.PlayingState
+    readonly property bool _playingState: mediaPlayer.playbackState == MediaPlayer.PlayingState
 
     dock: isPortrait ? Dock.Top : Dock.Left
 
@@ -60,7 +60,7 @@ Drawer {
         snapMode: ListView.SnapOneItem
         highlightRangeMode: ListView.StrictlyEnforceRange
 
-        interactive: !galleryView._playingState && galleryView.interactive && pageView.count > 0
+        interactive: !galleryView.menuOpen
 
         onCurrentItemChanged: {
             if (!galleryView._activeItem && currentItem) {
@@ -86,9 +86,10 @@ Drawer {
         delegate: Item {
             id: galleryItem
 
-            property QtObject modelData: model
-            property bool isImage: mimeType.indexOf("image/") == 0
             property bool active
+            readonly property QtObject modelData: model
+            readonly property bool isImage: mimeType.indexOf("image/") == 0
+            readonly property bool scaled: loader.item.scaled != undefined && loader.item.scaled
 
             width: galleryView.width
             height: galleryView.height
@@ -97,18 +98,20 @@ Drawer {
             Component {
                 id: imageComponent
 
-                ZoomableImage {
+                ImageViewer {
                     source: url
                     onClicked: galleryView.open = !galleryView.open
-                    isPortrait: galleryView.isPortrait
+                    fit: galleryView.isPortrait ? Fit.Width : Fit.Height
                     menuOpen: galleryView.opened
+
+                    orientation: model.orientation
                 }
             }
 
             Component {
                 id: videoComponent
 
-                Gallery.VideoPoster {
+                VideoPoster {
                     player: mediaPlayer
                     active: galleryItem.active
                     source: url
@@ -125,6 +128,7 @@ Drawer {
             }
 
             Loader {
+                id: loader
                 width: galleryItem.width
                 height: galleryItem.height
 
@@ -138,7 +142,7 @@ Drawer {
                 width: galleryView.width
                 height: galleryView.height
 
-                enabled: galleryModel.count > 0
+                enabled: galleryView.count > 0
 
                 onClicked: galleryView.open = !galleryView.open
             }

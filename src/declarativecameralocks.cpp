@@ -11,7 +11,7 @@ DeclarativeCameraLocks::DeclarativeCameraLocks(QObject *parent)
 
 DeclarativeCameraLocks::~DeclarativeCameraLocks()
 {
-    if (m_locksControl) {
+    if (m_mediaObject && m_locksControl) {
         m_mediaObject->service()->releaseControl(m_locksControl);
     }
 }

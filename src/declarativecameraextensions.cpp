@@ -21,17 +21,19 @@ DeclarativeCameraExtensions::DeclarativeCameraExtensions(QObject *parent)
 
 DeclarativeCameraExtensions::~DeclarativeCameraExtensions()
 {
-    if (m_deviceControl) {
-        m_mediaObject->service()->releaseControl(m_deviceControl);
-    }
-    if (m_imageEncoderControl) {
-        m_mediaObject->service()->releaseControl(m_imageEncoderControl);
-    }
-    if (m_videoEncoderControl) {
-        m_mediaObject->service()->releaseControl(m_videoEncoderControl);
-    }
-    if (m_metaDataControl) {
-        m_mediaObject->service()->releaseControl(m_metaDataControl);
+    if (m_mediaObject) {
+        if (m_deviceControl) {
+            m_mediaObject->service()->releaseControl(m_deviceControl);
+        }
+        if (m_imageEncoderControl) {
+            m_mediaObject->service()->releaseControl(m_imageEncoderControl);
+        }
+        if (m_videoEncoderControl) {
+            m_mediaObject->service()->releaseControl(m_videoEncoderControl);
+        }
+        if (m_metaDataControl) {
+            m_mediaObject->service()->releaseControl(m_metaDataControl);
+        }
     }
 }
 

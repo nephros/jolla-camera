@@ -3,6 +3,7 @@
 #define DECLARATIVECAMERALOCKS_H
 
 #include <QCameraLocksControl>
+#include <QPointer>
 
 class DeclarativeCameraLocks : public QObject
 {
@@ -48,7 +49,7 @@ private slots:
 
 private:
     QObject *m_camera;
-    QMediaObject *m_mediaObject;
+    QPointer<QMediaObject> m_mediaObject;
     QCameraLocksControl *m_locksControl;
 };
 
