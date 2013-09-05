@@ -14,11 +14,20 @@ Compass {
 
     interactive: camera.captureMode == Camera.CaptureStillImage
 
+    function _record() {
+        camera.videoRecorder.record()
+        if (camera.videoRecorder.recorderState == CameraRecorder.RecordingState) {
+            camera.videoRecorder.recorderStateChanged.connect(_finishRecording)
+        } else {
+            camera.captureMode = Camera.CaptureStillImage
+        }
+    }
+
     function _startRecording() {
         switch (camera.cameraStatus) {
         case Camera.ActiveStatus:
             camera.cameraStatusChanged.disconnect(_startRecording)
-            camera.videoRecorder.record()
+            _record()
             keepSelection = false
             break;
         case Camera.UnavailableStatus:
@@ -28,6 +37,16 @@ Compass {
             camera.captureMode = Camera.CaptureStillImage
             keepSelection = false
             break;
+        }
+    }
+
+    function _finishRecording() {
+        if (camera.videoRecorder.recorderState == CameraRecorder.StoppedState) {
+            camera.videoRecorder.recorderStateChanged.disconnect(_finishRecording)
+            camera.captureMode = Camera.CaptureStillImage
+            compass.recordingStopped(
+                        camera.videoRecorder.outputLocation,
+                        camera.videoRecorder.mediaContainer)
         }
     }
 
@@ -65,7 +84,7 @@ Compass {
             camera.videoRecorder.outputLocation = Settings.videoCapturePath("mp4")
             camera.captureMode = Camera.CaptureVideo
             if (camera.cameraStatus == Camera.ActiveStatus) {
-                camera.videoRecorder.record()
+                compass._record()
             } else {
                 keepSelection = true
                 camera.cameraStatusChanged.connect(compass._startRecording)
@@ -78,10 +97,6 @@ Compass {
             camera.captureImage()
         } else {
             camera.videoRecorder.stop()
-            camera.captureMode = Camera.CaptureStillImage
-            compass.recordingStopped(
-                        camera.videoRecorder.outputLocation,
-                        camera.videoRecorder.mediaContainer)
         }
     }
 
