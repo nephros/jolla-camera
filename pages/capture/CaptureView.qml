@@ -338,14 +338,14 @@ Drawer {
 
     MediaKey {
         enabled: keysResource.acquired && camera.captureMode == Camera.CaptureStillImage
-//        key: Qt.Key_VolumeUp
-        key: 0x1008ff13     // We're getting native scan codes instead of Qt key codes. JB#8044
-        onPressed: camera.captureImage()
+        key: Qt.Key_VolumeUp
+        onPressed: {
+            camera.captureImage()
+        }
     }
     MediaKey {
         enabled: keysResource.acquired && camera.captureMode == Camera.CaptureStillImage
-//        key: Qt.Key_VolumeDown
-        key: 0x1008ff11
+        key: Qt.Key_VolumeDown
         onPressed: {
             if (cameraLocks.focusStatus == Camera.Unlocked) {
                 cameraLocks.lockFocus()
@@ -357,7 +357,7 @@ Drawer {
 
     Permissions {
         enabled: camera.captureMode == Camera.CaptureStillImage
-                    && camera.cameraState == Camera.LoadedState
+                    && camera.cameraState == Camera.ActiveState
         autoRelease: true
         applicationClass: "camera"
 
