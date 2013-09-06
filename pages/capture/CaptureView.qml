@@ -79,6 +79,7 @@ Drawer {
         id: camera
 
         property alias locks: cameraLocks
+        property alias extensions: extensions
 
         function captureImage() {
             if (cameraLocks.focusStatus == Camera.Unlocked && camera.focus.focusMode == Camera.FocusAuto) {

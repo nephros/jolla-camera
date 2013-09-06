@@ -38,11 +38,11 @@ Page {
                 windowActive: page.windowActive
 
                 camera.imageCapture.onImageSaved: {
-                    captureModel.prependCapture(path, "image/jpeg", 0)
+                    captureModel.prependCapture(path, "image/jpeg", camera.extensions.orientation)
                 }
 
                 onRecordingStopped: {
-                    captureModel.prependCapture(url, mimeType, 0)
+                    captureModel.prependCapture(url, mimeType, camera.extensions.orientation)
                 }
             }
 
