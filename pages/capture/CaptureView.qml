@@ -24,7 +24,6 @@ Drawer {
 
     property bool _complete
     property int _unload
-    property int _face
     property int _aspectRatio
 
     property bool _capturing
@@ -51,15 +50,14 @@ Drawer {
     }
 
     Component.onCompleted: {
-        _face = Settings.mode.face
+        extensions.face = Settings.mode.face
         _aspectRatio = Settings.global.aspectRatio
         _complete = true
     }
 
 
     function reloadOnSettingsChanged() {
-        if (_face != Settings.mode.face || _aspectRatio != Settings.global.aspectRatio) {
-            _face = Settings.mode.face
+        if (_aspectRatio != Settings.global.aspectRatio) {
             _aspectRatio = Settings.global.aspectRatio
             _unload = true
         }
@@ -150,7 +148,6 @@ Drawer {
     CameraExtensions {
         id: extensions
         camera: camera
-        face: Settings.mode.face
 
         rotation: {
             switch (captureView.orientation) {
@@ -184,7 +181,7 @@ Drawer {
 
             source: camera
             orientation: extensions.rotation
-            mirror: Settings.mode.face == CameraExtensions.Front
+            mirror: extensions.face == CameraExtensions.Front
         }
     }
 
@@ -204,7 +201,7 @@ Drawer {
 
         onExpandedChanged: {
             if (!expanded) {
-                reloadOnSettingsChanged()
+                extensions.face = Settings.mode.face
             }
         }
 

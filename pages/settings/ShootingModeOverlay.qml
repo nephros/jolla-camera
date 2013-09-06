@@ -8,7 +8,7 @@ Item {
 
     property Camera camera
     property bool open
-    property bool expanded: open || verticalAnimation.running || dragArea.drag.active
+    property bool expanded: open || _closing || verticalAnimation.running || dragArea.drag.active
     property bool isPortrait: true
     default property alias _data: container.data
     property Item _currentItem: Settings.global.shootingMode == "front-camera"
@@ -19,10 +19,17 @@ Item {
     property real _direction
 
     property real _progress: (panel.y + panel.height) / panel.height
+    property bool _closing
 
     property bool interactive: true
 
     signal clicked(var mouse)
+
+    function _close() {
+        _closing = true
+        open = false
+        _closing = false
+    }
 
     MouseArea {
         id: dragArea
