@@ -102,12 +102,12 @@ Drawer {
             resolution: Settings.resolutions.image
 
             onImageSaved: {
-                cameraLocks.unlockFocus()
                 captureView._capturing = false
+                cameraLocks.unlockFocus()
             }
             onCaptureFailed: {
-                cameraLocks.unlockFocus()
                 captureView._capturing = false
+                cameraLocks.unlockFocus()
             }
         }
         videoRecorder{
@@ -140,7 +140,8 @@ Drawer {
         id: cameraLocks
         camera: camera
         onFocusStatusChanged: {
-            if (focusStatus == Camera.Locked && captureView._capturing) {
+            if (focusStatus != Camera.Searching && captureView._capturing) {
+                console.log("capturing image\n")
                 camera.captureImage()
             }
         }
@@ -280,7 +281,9 @@ Drawer {
             border.color: Theme.highlightBackgroundColor
             color: "#00000000"
 
-            opacity: cameraLocks.focusStatus == Camera.Locked && !captureView._capturing ? 1 : 0
+            opacity: cameraLocks.focusStatus != Camera.Unlocked
+                     ? (cameraLocks.focusStatus == Camera.Locked && !captureView._capturing ? 1.0 : 0.3)
+                     : 0
             Behavior on opacity { FadeAnimation {} }
         }
 
