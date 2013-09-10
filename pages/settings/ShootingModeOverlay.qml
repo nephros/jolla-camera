@@ -123,7 +123,7 @@ Item {
 
 
             y: overlay.isPortrait
-                    ? 58 + height * panel.y / panel.height
+                    ? Theme.paddingLarge + height * panel.y / panel.height
                     : (highlight.height - height) * overlay._progress / 2
 
             width: overlay.isPortrait
