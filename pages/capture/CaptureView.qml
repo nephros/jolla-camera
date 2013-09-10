@@ -139,7 +139,6 @@ Drawer {
         camera: camera
         onFocusStatusChanged: {
             if (focusStatus != Camera.Searching && captureView._capturing) {
-                console.log("capturing image\n")
                 camera.captureImage()
             }
         }
