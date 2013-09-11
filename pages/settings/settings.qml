@@ -16,6 +16,7 @@ SettingsBase {
         property int settingsVerticalAlignment: Qt.AlignVCenter
         property int captureVerticalAlignment: Qt.AlignVCenter
         property bool reverseButtons: false
+        property bool enableExtendedModes: false
 
         property string audioCodec: "audio/mpeg, mpegversion=(int)4"
         property string videoCodec: "video/mpeg, mpegversion=(int)4"

@@ -24,7 +24,6 @@ Drawer {
 
     property bool _complete
     property int _unload
-    property int _face
     property int _aspectRatio
 
     property bool _capturing
@@ -51,15 +50,14 @@ Drawer {
     }
 
     Component.onCompleted: {
-        _face = Settings.mode.face
+        extensions.face = Settings.mode.face
         _aspectRatio = Settings.global.aspectRatio
         _complete = true
     }
 
 
     function reloadOnSettingsChanged() {
-        if (_face != Settings.mode.face || _aspectRatio != Settings.global.aspectRatio) {
-            _face = Settings.mode.face
+        if (_aspectRatio != Settings.global.aspectRatio) {
             _aspectRatio = Settings.global.aspectRatio
             _unload = true
         }
@@ -79,6 +77,7 @@ Drawer {
         id: camera
 
         property alias locks: cameraLocks
+        property alias extensions: extensions
 
         function captureImage() {
             if (cameraLocks.focusStatus == Camera.Unlocked && camera.focus.focusMode == Camera.FocusAuto) {
@@ -101,12 +100,12 @@ Drawer {
             resolution: Settings.resolutions.image
 
             onImageSaved: {
-                cameraLocks.unlockFocus()
                 captureView._capturing = false
+                cameraLocks.unlockFocus()
             }
             onCaptureFailed: {
-                cameraLocks.unlockFocus()
                 captureView._capturing = false
+                cameraLocks.unlockFocus()
             }
         }
         videoRecorder{
@@ -139,7 +138,7 @@ Drawer {
         id: cameraLocks
         camera: camera
         onFocusStatusChanged: {
-            if (focusStatus == Camera.Locked && captureView._capturing) {
+            if (focusStatus != Camera.Searching && captureView._capturing) {
                 camera.captureImage()
             }
         }
@@ -148,7 +147,6 @@ Drawer {
     CameraExtensions {
         id: extensions
         camera: camera
-        face: Settings.mode.face
 
         rotation: {
             switch (captureView.orientation) {
@@ -182,7 +180,7 @@ Drawer {
 
             source: camera
             orientation: extensions.rotation
-            mirror: Settings.mode.face == CameraExtensions.Front
+            mirror: extensions.face == CameraExtensions.Front
         }
     }
 
@@ -202,7 +200,7 @@ Drawer {
 
         onExpandedChanged: {
             if (!expanded) {
-                reloadOnSettingsChanged()
+                extensions.face = Settings.mode.face
             }
         }
 
@@ -279,7 +277,9 @@ Drawer {
             border.color: Theme.highlightBackgroundColor
             color: "#00000000"
 
-            opacity: cameraLocks.focusStatus == Camera.Locked && !captureView._capturing ? 1 : 0
+            opacity: cameraLocks.focusStatus != Camera.Unlocked
+                     ? (cameraLocks.focusStatus == Camera.Locked && !captureView._capturing ? 1.0 : 0.3)
+                     : 0
             Behavior on opacity { FadeAnimation {} }
         }
 
@@ -338,14 +338,14 @@ Drawer {
 
     MediaKey {
         enabled: keysResource.acquired && camera.captureMode == Camera.CaptureStillImage
-//        key: Qt.Key_VolumeUp
-        key: 0x1008ff13     // We're getting native scan codes instead of Qt key codes. JB#8044
-        onPressed: camera.captureImage()
+        key: Qt.Key_VolumeUp
+        onPressed: {
+            camera.captureImage()
+        }
     }
     MediaKey {
         enabled: keysResource.acquired && camera.captureMode == Camera.CaptureStillImage
-//        key: Qt.Key_VolumeDown
-        key: 0x1008ff11
+        key: Qt.Key_VolumeDown
         onPressed: {
             if (cameraLocks.focusStatus == Camera.Unlocked) {
                 cameraLocks.lockFocus()
@@ -357,7 +357,7 @@ Drawer {
 
     Permissions {
         enabled: camera.captureMode == Camera.CaptureStillImage
-                    && camera.cameraState == Camera.LoadedState
+                    && camera.cameraState == Camera.ActiveState
         autoRelease: true
         applicationClass: "camera"
 

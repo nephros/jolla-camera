@@ -2,6 +2,7 @@
 #include <qqml.h>
 #include <QQmlExtensionPlugin>
 
+#include "capturemodel.h"
 #include "declarativecompassaction.h"
 
 class Plugin : public QQmlExtensionPlugin
@@ -12,6 +13,7 @@ public:
     void registerTypes(const char *)
     {
         qmlRegisterType<DeclarativeCompassAction>("com.jolla.camera", 1, 0, "CompassAction");
+        qmlRegisterType<CaptureModel>("com.jolla.camera", 1, 0, "CaptureModel");
     }
 };
 

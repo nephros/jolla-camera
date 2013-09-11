@@ -1,7 +1,6 @@
 #include "capturemodel.h"
 
 #include <QDebug>
-#include <QDBusConnection>
 #include <QUrl>
 
 CaptureModel::CaptureModel(QObject *parent)
@@ -143,29 +142,27 @@ void CaptureModel::_q_rowsInserted(const QModelIndex &parent, int begin, int end
         m_orientationRole = roleNames.key("orientation");
     }
 
-    for (int to = begin; to <= end; ++to) {
-        const QUrl url = m_model->index(to, 0).data(m_urlRole).toUrl();
-        for (int i = 0; i < m_captures.count(); ++i) {
-            if (m_captures.at(i).url != url) {
+    for (int i = begin; i <= end; ++i) {
+        const QUrl url = m_model->index(i, 0).data(m_urlRole).toUrl();
+        for (int from = 0; from < m_captures.count(); ++from) {
+            if (m_captures.at(from).url != url) {
                 continue;
             }
 
-            if (begin < to) {
-                beginInsertRows(QModelIndex(), m_captures.count() + begin, m_captures.count() + to - 1);
-                m_count += to - begin;
+            const int to = m_captures.count() + i;
+            if (begin < i) {
+                beginInsertRows(QModelIndex(), m_captures.count() + begin, to - 1);
+                m_count += i - begin;
                 endInsertRows();
             }
 
-            begin = to + 1;
+            begin = i + 1;
 
-            const int from = i;
-            if (from != to) {
-                beginMoveRows(QModelIndex(), from, from, QModelIndex(), to);
-            }
+            const bool moved = beginMoveRows(QModelIndex(), from, from, QModelIndex(), to);
 
-            m_captures.remove(i--);
+            m_captures.remove(from--);
             m_count += 1;
-            if (from != to) {
+            if (moved) {
                 endMoveRows();
             }
             emit dataChanged(createIndex(to, to), createIndex(to, to));

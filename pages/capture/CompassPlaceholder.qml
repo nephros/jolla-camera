@@ -9,8 +9,9 @@ MouseArea {
     property bool animating: horizontalAnimation.running || verticalAnimation.running
     property int verticalAlignment: Qt.AlignVCenter
     property int horizontalAlignment
+    property int effectiveHorizontalAlignment
 
-    property bool _swapping: horizontalDrag.pressed
+    readonly property bool swapping: horizontalDrag.pressed || horizontalAnimation.running
 
     property real _xOffset: horizontalAlignment == Qt.AlignLeft
                 ? dragItem.x
@@ -38,6 +39,7 @@ MouseArea {
         minimumY: 0
         maximumY: positioner.height - height
     }
+
     onReleased: {
         var region = dragItem.y / drag.maximumY
         if (region < 1 / 3) {
@@ -71,6 +73,7 @@ MouseArea {
         height: placeholder.height
         radius: 4
         color: Theme.highlightBackgroundColor
+        opacity: 0.6
 
         Binding {
             target: dragItem
@@ -103,7 +106,15 @@ MouseArea {
             width: placeholder.width / 2
             radius: 4
             height: placeholder.height
-            color: Theme.highlightColor
+            color: Theme.highlightBackgroundColor
+            opacity: 0.8
+        }
+
+        Image {
+            anchors.centerIn: parent
+            source: placeholder.effectiveHorizontalAlignment == Qt.AlignLeft
+                        ? "image://theme/icon-m-forward?" + Theme.highlightDimmerColor
+                        : "image://theme/icon-m-back?" + Theme.highlightDimmerColor
         }
     }
 }

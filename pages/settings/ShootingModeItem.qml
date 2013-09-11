@@ -23,6 +23,6 @@ MouseArea {
 
     onClicked: {
         Settings.global.shootingMode = mode
-        overlay.open = false
+        overlay._close()
     }
 }

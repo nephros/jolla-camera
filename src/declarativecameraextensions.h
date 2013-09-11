@@ -15,6 +15,7 @@ class DeclarativeCameraExtensions : public QObject
     Q_PROPERTY(QObject *camera READ camera WRITE setCamera NOTIFY cameraChanged)
     Q_PROPERTY(Face face READ face WRITE setFace NOTIFY faceChanged)
     Q_PROPERTY(int rotation READ rotation WRITE setRotation NOTIFY rotationChanged)
+    Q_PROPERTY(int orientation READ orientation NOTIFY orientationChanged)
     Q_ENUMS(Face)
     Q_ENUMS(AspectRatio)
 public:
@@ -40,10 +41,13 @@ public:
     int rotation() const;
     void setRotation(int rotation);
 
+    int orientation() const;
+
 signals:
     void cameraChanged();
     void faceChanged();
     void rotationChanged();
+    void orientationChanged();
 
 private:
     void updateDevice();
@@ -56,6 +60,7 @@ private:
     QMetaDataWriterControl *m_metaDataControl;
     Face m_face;
     int m_rotation;
+    int m_orientation;
 };
 
 #endif

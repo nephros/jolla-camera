@@ -200,7 +200,6 @@ Item {
     Rectangle {
         anchors {
             fill: clipArea
-            margins: -4 // radius
         }
 
         radius: 4

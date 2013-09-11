@@ -9,6 +9,28 @@ Item {
     property real bottomMargin
 
     property bool animating: settingsPlaceholder.animating || capturePlaceholder.animating
+    readonly property bool swapping: settingsPlaceholder.swapping || capturePlaceholder.swapping
+
+    onSwappingChanged: {
+        if (!swapping) {
+            _finish()
+        }
+    }
+
+    function _finish() {
+        Settings.global.reverseButtons = settingsPlaceholder.horizontalAlignment == Qt.AlignRight
+        Settings.global.settingsVerticalAlignment = settingsPlaceholder.verticalAlignment
+        Settings.global.captureVerticalAlignment = capturePlaceholder.verticalAlignment
+        positioner.enabled = false
+    }
+
+    onEnabledChanged: {
+        if (enabled) {
+            settingsPlaceholder.effectiveHorizontalAlignment = settingsPlaceholder.horizontalAlignment
+            capturePlaceholder.effectiveHorizontalAlignment = capturePlaceholder.horizontalAlignment
+        }
+    }
+
 
     Rectangle {
         color: Theme.highlightDimmerColor
@@ -19,12 +41,7 @@ Item {
     MouseArea {
         width: positioner.width
         height: positioner.height
-        onClicked: {
-            Settings.global.reverseButtons = settingsPlaceholder.horizontalAlignment == Qt.AlignRight
-            Settings.global.settingsVerticalAlignment = settingsPlaceholder.verticalAlignment
-            Settings.global.captureVerticalAlignment = capturePlaceholder.verticalAlignment
-            positioner.enabled = false
-        }
+        onClicked: positioner._finish()
     }
 
     Item {

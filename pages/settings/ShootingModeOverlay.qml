@@ -8,7 +8,7 @@ Item {
 
     property Camera camera
     property bool open
-    property bool expanded: open || verticalAnimation.running || dragArea.drag.active
+    property bool expanded: open || _closing || verticalAnimation.running || dragArea.drag.active
     property bool isPortrait: true
     default property alias _data: container.data
     property Item _currentItem: Settings.global.shootingMode == "front-camera"
@@ -19,10 +19,17 @@ Item {
     property real _direction
 
     property real _progress: (panel.y + panel.height) / panel.height
+    property bool _closing
 
     property bool interactive: true
 
     signal clicked(var mouse)
+
+    function _close() {
+        _closing = true
+        open = false
+        _closing = false
+    }
 
     MouseArea {
         id: dragArea
@@ -116,7 +123,7 @@ Item {
 
 
             y: overlay.isPortrait
-                    ? 58 + height * panel.y / panel.height
+                    ? Theme.paddingLarge + height * panel.y / panel.height
                     : (highlight.height - height) * overlay._progress / 2
 
             width: overlay.isPortrait
@@ -133,12 +140,12 @@ Item {
             // The hardware integration only supports a limited set of options at the moment,
             // so only the automatic and front-camera modes are available.
             ShootingModeItem { id: automaticMode; mode: "automatic" }
-            ShootingModeItem { id: programMode; mode: "program"; visible: false }
-            ShootingModeItem { id: macroMode; mode: "macro"; visible: false }
-            ShootingModeItem { id: sportsMode; mode: "sports"; visible: false }
+            ShootingModeItem { id: programMode; mode: "program"; visible: Settings.global.enableExtendedModes }
+            ShootingModeItem { id: macroMode; mode: "macro"; visible: Settings.global.enableExtendedModes }
+            ShootingModeItem { id: sportsMode; mode: "sports"; visible: Settings.global.enableExtendedModes }
             ShootingModeItem { id: frontMode; mode: "front-camera" }
-            ShootingModeItem { id: landscapeMode; mode: "landscape"; visible: false }
-            ShootingModeItem { id: portraitMode; mode: "portrait"; visible: false }
+            ShootingModeItem { id: landscapeMode; mode: "landscape"; visible: Settings.global.enableExtendedModes }
+            ShootingModeItem { id: portraitMode; mode: "portrait"; visible: Settings.global.enableExtendedModes }
         }
 
         MouseArea {

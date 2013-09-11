@@ -16,6 +16,7 @@ DeclarativeCameraExtensions::DeclarativeCameraExtensions(QObject *parent)
     , m_videoEncoderControl(0)
     , m_metaDataControl(0)
     , m_rotation(-1)
+    , m_orientation(0)
 {
 }
 
@@ -126,20 +127,31 @@ void DeclarativeCameraExtensions::setRotation(int rotation)
         m_videoEncoderControl->setVideoSettings(videoSettings);
     }
 
+    int orientation = (m_face == Back ? 90 - rotation : 270 + rotation) % 360;
+    if (orientation < 0) {
+        orientation += 360;
+    }
+
     if (m_metaDataControl) {
-        int orientation = (m_face == Back ? 90 - rotation : 270 + rotation) % 360;
-        if (orientation < 0) {
-            orientation += 360;
-        }
         m_metaDataControl->setMetaData(
                     QMediaMetaData::Orientation,
                     QString(QStringLiteral("rotate-%1")).arg(orientation));
+    }
+
+    if (m_orientation != -orientation) {
+        m_orientation = -orientation;
+        emit orientationChanged();
     }
 
     if (m_rotation != rotation) {
         m_rotation = rotation;
         emit rotationChanged();
     }
+}
+
+int DeclarativeCameraExtensions::orientation() const
+{
+    return m_orientation;
 }
 
 void DeclarativeCameraExtensions::updateDevice()
