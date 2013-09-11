@@ -63,6 +63,16 @@ Drawer {
         }
     }
 
+    function _autoFocus() {
+        if (Settings.mode.focusDistanceConfigurable) {
+            if (cameraLocks.focusStatus == Camera.Unlocked) {
+                cameraLocks.lockFocus()
+            } else if (!captureView._capturing) {
+                cameraLocks.unlockFocus()
+            }
+        }
+    }
+
 
     Timer {
         id: reloadTimer
@@ -80,7 +90,9 @@ Drawer {
         property alias extensions: extensions
 
         function captureImage() {
-            if (cameraLocks.focusStatus == Camera.Unlocked && camera.focus.focusMode == Camera.FocusAuto) {
+            if (!captureView._capturing
+                    && cameraLocks.focusStatus == Camera.Unlocked
+                    && camera.focus.focusMode == Camera.FocusAuto) {
                 captureView._capturing = true
                 cameraLocks.lockFocus()
             } else {
@@ -206,25 +218,7 @@ Drawer {
 
         onClicked: {
             if (shootingModeOverlay.interactive && !shootingModeOverlay.expanded) {
-                if (Settings.mode.focusDistanceConfigurable) {
-                    var focusX = mouse.x / width
-                    var focusY = mouse.y / height
-
-                    if (captureView.isPortrait)  {
-                        var temp = focusX
-                        focusX = focusY
-                        focusY = temp
-                    }
-                    if (Settings.global.aspectRatio == Settings.AspectRatio_4_3) {
-                        // Scale the click point from the screen 16:9 to the 4:3 window.
-                        // (3 * 16) / (4 * 9) == 4/3
-                        // (4/3 - 1) / 2 == 1/6
-                        focusX = (focusX * 4 / 3) - (1 / 6)
-                    }
-                    if (focusX >= 0 && focusX <= 1) {
-                        camera.focus.customFocusPoint = Qt.point(focusX, focusY)
-                    }
-                }
+                captureView._autoFocus()
             } else {
                 captureView.open = false
                 shootingModeOverlay.open = false
@@ -346,13 +340,7 @@ Drawer {
     MediaKey {
         enabled: keysResource.acquired && camera.captureMode == Camera.CaptureStillImage
         key: Qt.Key_VolumeDown
-        onPressed: {
-            if (cameraLocks.focusStatus == Camera.Unlocked) {
-                cameraLocks.lockFocus()
-            } else if (!captureView._capturing) {
-                cameraLocks.unlockFocus()
-            }
-        }
+        onPressed: captureView._autoFocus()
     }
 
     Permissions {
