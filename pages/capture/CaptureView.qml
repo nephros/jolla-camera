@@ -90,7 +90,9 @@ Drawer {
         property alias extensions: extensions
 
         function captureImage() {
-            if (cameraLocks.focusStatus == Camera.Unlocked && camera.focus.focusMode == Camera.FocusAuto) {
+            if (!captureView._capturing
+                    && cameraLocks.focusStatus == Camera.Unlocked
+                    && camera.focus.focusMode == Camera.FocusAuto) {
                 captureView._capturing = true
                 cameraLocks.lockFocus()
             } else {
