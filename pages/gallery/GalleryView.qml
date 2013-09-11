@@ -31,6 +31,9 @@ Drawer {
         if (!active) {
             mediaPlayer.stop()
             mediaPlayer.source = ""
+            pageView.currentIndex = -1
+        } else {
+            pageView.currentIndex = 0
         }
         if (_activeItem) {
             _activeItem.active = active
@@ -54,6 +57,7 @@ Drawer {
         pressDelay: 50
         boundsBehavior: Flickable.StopAtBounds
         cacheBuffer: width * 3
+        currentIndex: -1
 
         orientation: ListView.Horizontal
         layoutDirection: Qt.RightToLeft
@@ -63,7 +67,11 @@ Drawer {
         interactive: !galleryView.menuOpen
 
         onCurrentItemChanged: {
-            if (!galleryView._activeItem && currentItem) {
+            if (!moving && currentItem) {
+                if (galleryView._activeItem) {
+                    galleryView._activeItem.active = false
+                }
+
                 galleryView._activeItem = currentItem
                 galleryView._activeItem.active = true
             }
