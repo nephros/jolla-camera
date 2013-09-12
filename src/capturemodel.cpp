@@ -6,10 +6,6 @@
 CaptureModel::CaptureModel(QObject *parent)
     : QAbstractListModel(parent)
     , m_fileUrl(QUrl::fromLocalFile(QLatin1String("/")))
-    , m_urlRole(-1)
-    , m_titleRole(-1)
-    , m_mimeTypeRole(-1)
-    , m_orientationRole(-1)
     , m_count(0)
 {
 
@@ -27,6 +23,8 @@ QObject *CaptureModel::source() const
 void CaptureModel::setSource(QObject *source)
 {
     if (m_model.data() != source) {
+        const int count = m_count + m_captures.count();
+
         if (m_count > 0) {
             beginRemoveRows(QModelIndex(), m_captures.count(), m_captures.count() + m_count - 1);
         }
@@ -52,10 +50,10 @@ void CaptureModel::setSource(QObject *source)
                 beginInsertRows(QModelIndex(), m_captures.count(), m_captures.count() + count - 1);
 
                 const QHash<int, QByteArray> roleNames = model->roleNames();
-                m_urlRole = roleNames.key("url");
-                m_titleRole = roleNames.key("title");
-                m_mimeTypeRole = roleNames.key("mimeType");
-                m_orientationRole = roleNames.key("orientation");
+                m_roles[Url] = roleNames.key("url");
+                m_roles[Title] = roleNames.key("title");
+                m_roles[MimeType] = roleNames.key("mimeType");
+                m_roles[Orientation] = roleNames.key("orientation");
             }
 
             m_model = model;
@@ -72,15 +70,20 @@ void CaptureModel::setSource(QObject *source)
                 endInsertRows();
             }
         }
+
+        if (count != m_count + m_captures.count()) {
+            emit countChanged();
+        }
     }
 }
 
 QHash<int, QByteArray> CaptureModel::roleNames() const
 {
     QHash<int, QByteArray> roleNames;
-    if (m_model) {
-        roleNames = m_model->roleNames();
-    }
+    roleNames.insert(Url, "url");
+    roleNames.insert(Title, "title");
+    roleNames.insert(MimeType, "mimeType");
+    roleNames.insert(Orientation, "orientation");
     return roleNames;
 }
 
@@ -102,20 +105,21 @@ QVariant CaptureModel::data(const QModelIndex &index, int role) const
         return QVariant();
     } else if (index.row() < m_captures.count()) {
         const Capture &capture = m_captures.at(index.row());
-        if (role == m_urlRole) {
+        if (role == Url) {
             return capture.url;
-        } else if (role == m_titleRole) {
+        } else if (role == Title) {
             return QString();
-        } else if (role == m_mimeTypeRole) {
+        } else if (role == MimeType) {
             return capture.mimeType;
-        } else if (role == m_orientationRole){
+        } else if (role == Orientation){
             return capture.orientation;
         } else {
             return QVariant();
         }
+    } else if (role >= 0 && role < RoleCount) {
+        return m_model ? m_model->index(index.row() - m_captures.count(), 0).data(m_roles[role]) : QVariant();
     } else {
-        return m_model ? m_model->index(index.row() - m_captures.count(), 0).data(role) : QVariant();
-
+        return QVariant();
     }
 }
 
@@ -125,6 +129,8 @@ void CaptureModel::_q_rowsRemoved(const QModelIndex &parent, int begin, int end)
         beginRemoveRows(QModelIndex(), begin, end);
         m_count -= end - begin + 1;
         endRemoveRows();
+
+        emit countChanged();
     }
 }
 
@@ -136,14 +142,16 @@ void CaptureModel::_q_rowsInserted(const QModelIndex &parent, int begin, int end
 
     if (m_count == 0) {
         const QHash<int, QByteArray> roleNames = m_model->roleNames();
-        m_urlRole = roleNames.key("url");
-        m_titleRole = roleNames.key("title");
-        m_mimeTypeRole = roleNames.key("mimeType");
-        m_orientationRole = roleNames.key("orientation");
+        m_roles[Url] = roleNames.key("url");
+        m_roles[Title] = roleNames.key("title");
+        m_roles[MimeType] = roleNames.key("mimeType");
+        m_roles[Orientation] = roleNames.key("orientation");
     }
 
+    const int count = m_count + m_captures.count();
+
     for (int i = begin; i <= end; ++i) {
-        const QUrl url = m_model->index(i, 0).data(m_urlRole).toUrl();
+        const QUrl url = m_model->index(i, 0).data(m_roles[Url]).toUrl();
         for (int from = 0; from < m_captures.count(); ++from) {
             if (m_captures.at(from).url != url) {
                 continue;
@@ -174,6 +182,10 @@ void CaptureModel::_q_rowsInserted(const QModelIndex &parent, int begin, int end
         m_count += end - begin + 1;
         endInsertRows();
     }
+
+    if (count != m_count + m_captures.count()) {
+        emit countChanged();
+    }
 }
 
 void CaptureModel::_q_dataChanged(
@@ -194,7 +206,7 @@ void CaptureModel::prependCapture(const QUrl &url, const QString &mimeType, int 
     // we prepend, so perform a quick check of the most recent items for duplicates.
     int existingCount = qMin(10, m_model ? m_model->rowCount() : 0);
     for (int i = 0; i < existingCount; ++i) {
-        if (m_model->index(i, 0).data(m_urlRole).toUrl() == resolvedUrl) {
+        if (m_model->index(i, 0).data(m_roles[Url]).toUrl() == resolvedUrl) {
             return;
         }
     }
@@ -202,4 +214,6 @@ void CaptureModel::prependCapture(const QUrl &url, const QString &mimeType, int 
     Capture capture = { resolvedUrl, mimeType, orientation };
     m_captures.prepend(capture);
     endInsertRows();
+
+    emit countChanged();
 }

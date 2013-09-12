@@ -17,6 +17,8 @@ Page {
     allowedOrientations: Orientation.Portrait | Orientation.Landscape
 
     ListView {
+        id: switcherView
+
         width: page.width
         height: page.height
 
@@ -25,7 +27,8 @@ Page {
         snapMode: ListView.SnapOneItem
         boundsBehavior: Flickable.StopAtBounds
         highlightRangeMode: ListView.StrictlyEnforceRange
-        interactive: !captureView.menuOpen && !galleryView.menuOpen && galleryModel.count > 0
+        interactive: !captureView.menuOpen && !galleryView.interactive && captureModel.count > 0
+
         model: VisualItemModel {
             CaptureView {
                 id: captureView
@@ -62,6 +65,13 @@ Page {
             }
         }
 
+        onCurrentItemChanged: {
+            if (!moving) {
+                galleryView.active = galleryView.ListView.isCurrentItem
+                captureView.active = captureView.ListView.isCurrentItem
+            }
+        }
+
         onMovingChanged: {
             if (!moving) {
                 galleryView.active = galleryView.ListView.isCurrentItem
@@ -74,7 +84,6 @@ Page {
         id: captureModel
 
         source: DocumentGalleryModel {
-            id: galleryModel
             rootType: DocumentGallery.File
             properties: [ "url", "title", "mimeType", "orientation" ]
             sortProperties: ["-fileName"]
@@ -82,6 +91,12 @@ Page {
             filter: GalleryFilterUnion {
                 GalleryEqualsFilter { property: "path"; value: Settings.photoDirectory }
                 GalleryEqualsFilter { property: "path"; value: Settings.videoDirectory }
+            }
+        }
+
+        onCountChanged: {
+            if (count == 0) {
+                switcherView.currentIndex = 0
             }
         }
     }

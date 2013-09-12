@@ -8,7 +8,7 @@ import com.jolla.camera 1.0
 Drawer {
     id: galleryView
 
-    property bool menuOpen: active && (galleryView.opened || playing || (_activeItem && _activeItem.scaled))
+    readonly property bool interactive: active && (playing || (_activeItem && _activeItem.scaled))
     property bool active
     property bool windowActive
     property bool isPortrait
@@ -16,7 +16,6 @@ Drawer {
 
     property alias contentItem: pageView.contentItem
     property alias header: pageView.header
-    property alias interactive: pageView.interactive
     property alias currentIndex: pageView.currentIndex
 
     property alias model: pageView.model
@@ -32,6 +31,7 @@ Drawer {
             mediaPlayer.stop()
             mediaPlayer.source = ""
             pageView.currentIndex = -1
+            open = false
         } else {
             pageView.currentIndex = 0
         }
@@ -46,7 +46,7 @@ Drawer {
         }
     }
 
-    SilicaListView {
+    ListView {
         id: pageView
 
         x: -parent.x / 2
@@ -64,7 +64,7 @@ Drawer {
         snapMode: ListView.SnapOneItem
         highlightRangeMode: ListView.StrictlyEnforceRange
 
-        interactive: !galleryView.menuOpen
+        interactive: !galleryView.menuOpen && pageView.count > 1
 
         onCurrentItemChanged: {
             if (!moving && currentItem) {
@@ -96,7 +96,7 @@ Drawer {
 
             property bool active
             readonly property QtObject modelData: model
-            readonly property bool isImage: mimeType.indexOf("image/") == 0
+            readonly property bool isImage: model.mimeType.indexOf("image/") == 0
             readonly property bool scaled: loader.item.scaled != undefined && loader.item.scaled
 
             width: galleryView.width
