@@ -8,7 +8,7 @@ import com.jolla.camera 1.0
 Drawer {
     id: galleryView
 
-    property bool menuOpen: active && (galleryView.opened || _playingState || (_activeItem && _activeItem.scaled))
+    property bool menuOpen: active && (galleryView.opened || playing || (_activeItem && _activeItem.scaled))
     property bool active
     property bool windowActive
     property bool isPortrait
@@ -23,7 +23,7 @@ Drawer {
 
     property Item page
 
-    readonly property bool _playingState: mediaPlayer.playbackState == MediaPlayer.PlayingState
+    readonly property bool playing: mediaPlayer.playbackState == MediaPlayer.PlayingState
 
     dock: isPortrait ? Dock.Top : Dock.Left
 
@@ -41,7 +41,7 @@ Drawer {
     }
 
     onWindowActiveChanged: {
-        if (!windowActive && _playingState) {
+        if (!windowActive && playing) {
             mediaPlayer.pause()
         }
     }
