@@ -41,12 +41,14 @@ Page {
                 orientation: page.orientation
                 windowActive: page.windowActive
 
+                visible: switcherView.moving || captureView.active
+
                 camera.imageCapture.onImageSaved: {
-                    captureModel.prependCapture(path, "image/jpeg", camera.extensions.orientation)
+                    captureModel.prependCapture(path, "image/jpeg", camera.extensions.orientation, 0)
                 }
 
                 onRecordingStopped: {
-                    captureModel.prependCapture(url, mimeType, camera.extensions.orientation)
+                    captureModel.prependCapture(url, mimeType, camera.extensions.orientation, camera.videoRecorder.duration / 1000)
                 }
             }
 
@@ -62,6 +64,8 @@ Page {
                 windowActive: page.windowActive
                 isPortrait: page.orientation == Orientation.Portrait
                             || page.orientation == Orientation.PortraitInverted
+
+                visible: switcherView.moving || galleryView.active
             }
         }
 
@@ -85,7 +89,7 @@ Page {
 
         source: DocumentGalleryModel {
             rootType: DocumentGallery.File
-            properties: [ "url", "title", "mimeType", "orientation" ]
+            properties: [ "url", "title", "mimeType", "orientation", "duration" ]
             sortProperties: ["-fileName"]
             autoUpdate: true
             filter: GalleryFilterUnion {

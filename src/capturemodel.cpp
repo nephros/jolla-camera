@@ -54,6 +54,7 @@ void CaptureModel::setSource(QObject *source)
                 m_roles[Title] = roleNames.key("title");
                 m_roles[MimeType] = roleNames.key("mimeType");
                 m_roles[Orientation] = roleNames.key("orientation");
+                m_roles[Duration] = roleNames.key("duration");
             }
 
             m_model = model;
@@ -84,6 +85,7 @@ QHash<int, QByteArray> CaptureModel::roleNames() const
     roleNames.insert(Title, "title");
     roleNames.insert(MimeType, "mimeType");
     roleNames.insert(Orientation, "orientation");
+    roleNames.insert(Duration, "duration");
     return roleNames;
 }
 
@@ -113,6 +115,8 @@ QVariant CaptureModel::data(const QModelIndex &index, int role) const
             return capture.mimeType;
         } else if (role == Orientation){
             return capture.orientation;
+        } else if (role == Duration) {
+            return capture.duration;
         } else {
             return QVariant();
         }
@@ -146,6 +150,7 @@ void CaptureModel::_q_rowsInserted(const QModelIndex &parent, int begin, int end
         m_roles[Title] = roleNames.key("title");
         m_roles[MimeType] = roleNames.key("mimeType");
         m_roles[Orientation] = roleNames.key("orientation");
+        m_roles[Duration] = roleNames.key("duration");
     }
 
     const int count = m_count + m_captures.count();
@@ -198,7 +203,8 @@ void CaptureModel::_q_dataChanged(
     }
 }
 
-void CaptureModel::prependCapture(const QUrl &url, const QString &mimeType, int orientation)
+void CaptureModel::prependCapture(
+        const QUrl &url, const QString &mimeType, int orientation, qint64 duration)
 {
     QUrl resolvedUrl = m_fileUrl.resolved(url);
 
@@ -211,7 +217,7 @@ void CaptureModel::prependCapture(const QUrl &url, const QString &mimeType, int 
         }
     }
     beginInsertRows(QModelIndex(), 0, 0);
-    Capture capture = { resolvedUrl, mimeType, orientation };
+    Capture capture = { resolvedUrl, mimeType, orientation, duration };
     m_captures.prepend(capture);
     endInsertRows();
 

@@ -16,6 +16,7 @@ public:
         Title,
         MimeType,
         Orientation,
+        Duration,
         RoleCount
     };
 
@@ -31,7 +32,7 @@ public:
     QVariant data(const QModelIndex &index, int role) const;
 
 public slots:
-    void prependCapture(const QUrl &url, const QString &mimeType, int orientation);
+    void prependCapture(const QUrl &url, const QString &mimeType, int orientation, qint64 duration);
 
 signals:
     void sourceChanged();
@@ -47,6 +48,7 @@ private:
         QUrl url;
         QString mimeType;
         int orientation;
+        qint64 duration;
     };
     QVector<Capture> m_captures;
     QPointer<QAbstractItemModel> m_model;

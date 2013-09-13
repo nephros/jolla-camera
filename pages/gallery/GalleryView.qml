@@ -124,6 +124,7 @@ Drawer {
                     active: galleryItem.active
                     source: url
                     mimeType: model.mimeType
+                    duration: model.duration
 
                     onClicked: {
                         if (mediaPlayer.playbackState == MediaPlayer.PlayingState) {
