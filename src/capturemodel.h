@@ -9,7 +9,17 @@ class CaptureModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(QObject *source READ source WRITE setSource NOTIFY sourceChanged)
+    Q_PROPERTY(int count READ rowCount NOTIFY countChanged)
 public:
+    enum {
+        Url,
+        Title,
+        MimeType,
+        Orientation,
+        Duration,
+        RoleCount
+    };
+
     CaptureModel(QObject *parent = 0);
     ~CaptureModel();
 
@@ -18,14 +28,15 @@ public:
 
     QHash<int, QByteArray> roleNames() const;
     QModelIndex index(int row, int column, const QModelIndex &parent) const;
-    int rowCount(const QModelIndex &parent) const;
+    int rowCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role) const;
 
 public slots:
-    void prependCapture(const QUrl &url, const QString &mimeType, int orientation);
+    void prependCapture(const QUrl &url, const QString &mimeType, int orientation, qint64 duration);
 
 signals:
     void sourceChanged();
+    void countChanged();
 
 private slots:
     void _q_rowsRemoved(const QModelIndex &parent, int begin, int end);
@@ -37,15 +48,13 @@ private:
         QUrl url;
         QString mimeType;
         int orientation;
+        qint64 duration;
     };
     QVector<Capture> m_captures;
     QPointer<QAbstractItemModel> m_model;
     const QUrl m_fileUrl;
-    int m_urlRole;
-    int m_titleRole;
-    int m_mimeTypeRole;
-    int m_orientationRole;
     int m_count;
+    int m_roles[RoleCount];
 };
 
 #endif

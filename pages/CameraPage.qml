@@ -17,6 +17,8 @@ Page {
     allowedOrientations: Orientation.Portrait | Orientation.Landscape
 
     ListView {
+        id: switcherView
+
         width: page.width
         height: page.height
 
@@ -25,7 +27,8 @@ Page {
         snapMode: ListView.SnapOneItem
         boundsBehavior: Flickable.StopAtBounds
         highlightRangeMode: ListView.StrictlyEnforceRange
-        interactive: !captureView.menuOpen && !galleryView.menuOpen && galleryModel.count > 0
+        interactive: !captureView.menuOpen && !galleryView.interactive && captureModel.count > 0
+
         model: VisualItemModel {
             CaptureView {
                 id: captureView
@@ -38,12 +41,14 @@ Page {
                 orientation: page.orientation
                 windowActive: page.windowActive
 
+                visible: switcherView.moving || captureView.active
+
                 camera.imageCapture.onImageSaved: {
-                    captureModel.prependCapture(path, "image/jpeg", camera.extensions.orientation)
+                    captureModel.prependCapture(path, "image/jpeg", camera.extensions.orientation, 0)
                 }
 
                 onRecordingStopped: {
-                    captureModel.prependCapture(url, mimeType, camera.extensions.orientation)
+                    captureModel.prependCapture(url, mimeType, camera.extensions.orientation, camera.videoRecorder.duration / 1000)
                 }
             }
 
@@ -59,6 +64,15 @@ Page {
                 windowActive: page.windowActive
                 isPortrait: page.orientation == Orientation.Portrait
                             || page.orientation == Orientation.PortraitInverted
+
+                visible: switcherView.moving || galleryView.active
+            }
+        }
+
+        onCurrentItemChanged: {
+            if (!moving) {
+                galleryView.active = galleryView.ListView.isCurrentItem
+                captureView.active = captureView.ListView.isCurrentItem
             }
         }
 
@@ -74,14 +88,19 @@ Page {
         id: captureModel
 
         source: DocumentGalleryModel {
-            id: galleryModel
             rootType: DocumentGallery.File
-            properties: [ "url", "title", "mimeType", "orientation" ]
+            properties: [ "url", "title", "mimeType", "orientation", "duration" ]
             sortProperties: ["-fileName"]
             autoUpdate: true
             filter: GalleryFilterUnion {
                 GalleryEqualsFilter { property: "path"; value: Settings.photoDirectory }
                 GalleryEqualsFilter { property: "path"; value: Settings.videoDirectory }
+            }
+        }
+
+        onCountChanged: {
+            if (count == 0) {
+                switcherView.currentIndex = 0
             }
         }
     }
