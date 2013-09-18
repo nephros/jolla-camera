@@ -105,6 +105,8 @@ Item {
             onImageSaved: {
                 captureView._capturing = false
                 cameraLocks.unlockFocus()
+
+                captureAnimation.start()
             }
             onCaptureFailed: {
                 captureView._capturing = false
@@ -173,11 +175,44 @@ Item {
     }
 
     GStreamerVideoOutput {
-        anchors.fill: parent
+        id: viewfinder
+
+        width: captureView.width
+        height: captureView.height
 
         source: camera
         orientation: extensions.rotation
         mirror: extensions.face == CameraExtensions.Front
+    }
+
+
+    SequentialAnimation {
+        id: captureAnimation
+
+        NumberAnimation {
+            target: viewfinder
+            property: "x"
+            from: 0
+            to: -captureView.width
+            duration: 200
+        }
+
+        PropertyAction {
+            target: viewfinder
+            property: "opacity"
+            value: 0
+        }
+
+        PropertyAction {
+            target: viewfinder
+            property: "x"
+            value: 0
+        }
+        FadeAnimation {
+            target: viewfinder
+            from: 0
+            to: 1
+        }
     }
 
     ShootingModeOverlay {
