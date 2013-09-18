@@ -3,10 +3,11 @@ import QtMultimedia 5.0
 import Sailfish.Silica 1.0
 import Sailfish.Media 1.0
 import com.jolla.camera 1.0
+import com.jolla.camera.settings 1.0
 import org.nemomobile.policy 1.0
 import "../settings"
 
-Drawer {
+Item {
     id: captureView
 
     property bool active
@@ -16,8 +17,7 @@ Drawer {
 
     property alias camera: camera
 
-    property bool menuOpen: captureView.open
-            || shootingModeOverlay.expanded
+    property bool menuOpen: shootingModeOverlay.expanded
             || settingsCompass.expanded
             || captureCompass.expanded
             || positioner.enabled
@@ -33,19 +33,11 @@ Drawer {
 
     signal recordingStopped(url url, string mimeType)
 
-    dock: isPortrait ? Dock.Top : Dock.Left
-
     onEffectiveIsoChanged: {
         if (effectiveIso == 0) {
             camera.exposure.setAutoIsoSensitivity()
         } else {
             camera.exposure.manualIso = Settings.mode.iso
-        }
-    }
-
-    onOpenedChanged: {
-        if (!opened) {
-            reloadOnSettingsChanged()
         }
     }
 
@@ -72,7 +64,6 @@ Drawer {
             }
         }
     }
-
 
     Timer {
         id: reloadTimer
@@ -130,7 +121,7 @@ Drawer {
         focus {
             focusMode: captureMode == Camera.CaptureStillImage
                     ? Settings.mode.focusDistance
-                    : Settings.mode.videoFocus
+                    : Settings.global.videoFocus
             focusPointMode: Settings.mode.focusDistanceConfigurable
                     ? Camera.FocusPointCustom
                     : Camera.FocusPointAuto
@@ -181,19 +172,12 @@ Drawer {
         }
     }
 
-    Item {
-        x: -parent.x / 2
-        y: -parent.y / 2
-        width: page.width
-        height: page.height
+    GStreamerVideoOutput {
+        anchors.fill: parent
 
-        GStreamerVideoOutput {
-            anchors.fill: parent
-
-            source: camera
-            orientation: extensions.rotation
-            mirror: extensions.face == CameraExtensions.Front
-        }
+        source: camera
+        orientation: extensions.rotation
+        mirror: extensions.face == CameraExtensions.Front
     }
 
     ShootingModeOverlay {
@@ -201,12 +185,10 @@ Drawer {
 
         camera: camera
 
-        x: -parent.x / 2
-        y: -parent.y / 2
-        width: page.width
-        height: page.height
+        width: captureView.width
+        height: captureView.height
 
-        interactive: !settingsCompass.expanded && !captureCompass.expanded && !captureView.opened
+        interactive: !settingsCompass.expanded && !captureCompass.expanded
         isPortrait: captureView.isPortrait
         opacity: 1 - positioner.opacity
 
@@ -220,7 +202,6 @@ Drawer {
             if (shootingModeOverlay.interactive && !shootingModeOverlay.expanded) {
                 captureView._autoFocus()
             } else {
-                captureView.open = false
                 shootingModeOverlay.open = false
                 settingsCompass.closeMenu()
                 captureCompass.closeMenu()
@@ -255,7 +236,6 @@ Drawer {
                 bottom: parent.bottom
             }
 
-            onClicked: if (interactive) { captureView.open = true }
             onPressAndHold: if (interactive) { positioner.enabled = true }
         }
 
@@ -355,18 +335,4 @@ Drawer {
             optional: true
         }
     }
-
-    background: [
-        Loader {
-            asynchronous: true
-
-            SettingsMenu {
-                width: captureView.backgroundItem.width
-                height: captureView.backgroundItem.height
-
-                camera: camera
-            }
-        }
-
-    ]
 }

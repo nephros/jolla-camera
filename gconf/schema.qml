@@ -1,7 +1,7 @@
 import QtQuick 2.0
 import QtMultimedia 5.0
 import com.jolla.gconf.schema 1.0
-import com.jolla.camera 1.0
+import com.jolla.camera.settings 1.0
 
 GConfSchema {
     path: "/apps/jolla-camera"
@@ -14,7 +14,11 @@ GConfSchema {
     }
     IntegerSchema {
         path: "aspectRatio"
-        defaultValue: CameraExtensions.AspectRatio_16_9
+        defaultValue: Settings.AspectRatio_16_9
+    }
+    IntegerSchema {
+        path: "videoFocus"
+        defaultValue: Camera.FocusAuto
     }
     IntegerSchema {
         path: "settingsVerticalAlignment"
@@ -59,7 +63,7 @@ GConfSchema {
     }
     AutomaticSchema {
         path: "front-camera"
-        face: CameraExtensions.Front
+        face: Settings.Front
         focusDistance: Camera.FocusInfinity
         flashConfigurable: false
         focusDistanceConfigurable: false

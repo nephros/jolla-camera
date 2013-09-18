@@ -12,11 +12,13 @@ SettingsBase {
 
         path: "/apps/jolla-camera"
         property string shootingMode: "automatic"
-        property int aspectRatio: CameraExtensions.AspectRatio_16_9
+        property int aspectRatio: SettingsBase.AspectRatio_16_9
         property int settingsVerticalAlignment: Qt.AlignVCenter
         property int captureVerticalAlignment: Qt.AlignVCenter
         property bool reverseButtons: false
         property bool enableExtendedModes: false
+
+        property int videoFocus: Camera.FocusAuto
 
         property string audioCodec: "audio/mpeg, mpegversion=(int)4"
         property string videoCodec: "video/mpeg, mpegversion=(int)4"
@@ -29,13 +31,12 @@ SettingsBase {
             property int iso: 0
             property int whiteBalance: CameraImageProcessing.WhiteBalanceAuto
             property int focusDistance: Camera.FocusAuto
-            property int videoFocus: Camera.FocusAuto
             property int flash: Camera.FlashAuto
             property int exposureCompensation: 0
             property int exposureMode: 0
             property int meteringMode: Camera.MeteringMatrix
             property int timer: 0
-            property int face: CameraExtensions.Back
+            property int face: SettingsBase.Back
 
             property bool isoConfigurable: true
             property bool whiteBalanceConfigurable: true
@@ -48,13 +49,13 @@ SettingsBase {
         }
 
         GConfSettings {
-            path: modeSettings.face == CameraExtensions.Back
+            path: modeSettings.face == SettingsBase.Back
                         ? "resolutions/back"
                         : "resolutions/front"
 
             GConfSettings {
                 id: resolutionSettings
-                path: globalSettings.aspectRatio == CameraExtensions.AspectRatio_16_9
+                path: globalSettings.aspectRatio == SettingsBase.AspectRatio_16_9
                         ? "16_9"
                         : "4_3"
                 property size image: "1280x720"     // Last gasp defaults, the real value comes

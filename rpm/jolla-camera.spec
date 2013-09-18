@@ -38,6 +38,7 @@ Requires:  sailfish-components-media-qt5 >= 0.0.10
 Requires:  sailfish-components-gallery-qt5 >= 0.0.15
 Requires:  ambienced
 Requires:  gst-plugins-bad
+Requires:  %{name}-settings = %{version}
 
 %description
 The Jolla Camera application.
@@ -50,6 +51,14 @@ Group:     Applications/Multimedia
 %description ts-devel
 Translation source for Jolla Camera
 
+%package settings
+Summary:   Setting page for jolla-camera
+License:   TBD
+Group:     System/Applications
+Requires:  jolla-settings
+
+%description settings
+Settings page for jolla-contacts
 %package tests
 Summary:    Unit tests for Jolla Camera
 Group:      Applications/Multimedia
@@ -92,6 +101,12 @@ desktop-file-install --delete-original       \
 %files ts-devel
 %defattr(-,root,root,-)
 %{_datadir}/translations/source/jolla-camera.ts
+%{_datadir}/translations/source/jolla-camera_settings.ts
+
+%files settings
+%{_libdir}/qt5/qml/com/jolla/camera/settings/*
+%{_datadir}/jolla-settings/*
+%{_datadir}/translations/jolla-camera_settings_eng_en.qm
 
 %files tests
 %defattr(-,root,root,-)

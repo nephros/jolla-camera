@@ -1,7 +1,7 @@
 import QtQuick 2.0
 import QtMultimedia 5.0
 import com.jolla.gconf.schema 1.0
-import com.jolla.camera 1.0
+import com.jolla.camera.settings 1.0
 
 GConfSchema {
     owner: "jolla"
@@ -9,7 +9,6 @@ GConfSchema {
     property alias iso: isoSchema.defaultValue
     property alias whiteBalance: wbSchema.defaultValue
     property alias focusDistance: fdSchema.defaultValue
-    property alias videoFocus: vfSchema.defaultValue
     property alias flash: flashSchema.defaultValue
     property alias exposureCompensation: ecSchema.defaultValue
     property alias exposureMode: exposureSchema.defaultValue
@@ -20,7 +19,6 @@ GConfSchema {
     property alias isoConfigurable: isoConfig.defaultValue
     property alias whiteBalanceConfigurable: wbConfig.defaultValue
     property alias focusDistanceConfigurable: fdConfig.defaultValue
-    property alias videoFocusConfigurable: vfConfig.defaultValue
     property alias flashConfigurable: flashConfig.defaultValue
     property alias exposureConfigurable: exposureConfig.defaultValue
     property alias meteringModeConfigurable: meteringConfig.defaultValue
@@ -29,18 +27,16 @@ GConfSchema {
     IntegerSchema { id: isoSchema;      path: "iso";                  defaultValue: 0 }
     IntegerSchema { id: wbSchema;       path: "whiteBalance";         defaultValue: CameraImageProcessing.WhiteBalanceAuto }
     IntegerSchema { id: fdSchema;       path: "focusDistance";        defaultValue: Camera.FocusAuto }
-    IntegerSchema { id: vfSchema;       path: "videoFocus";           defaultValue: Camera.FocusAuto }
     IntegerSchema { id: flashSchema;    path: "flash";                defaultValue: Camera.FlashAuto }
     IntegerSchema { id: ecSchema;       path: "exposureCompensation"; defaultValue: 0 }
     IntegerSchema { id: exposureSchema; path: "exposureMode";         defaultValue: Camera.ExposureAuto }
     IntegerSchema { id: meteringSchema; path: "meteringMode";         defaultValue: Camera.MeteringMatrix }
     IntegerSchema { id: timerSchema;    path: "timer";                defaultValue: 0 }
-    IntegerSchema { id: faceSchema;     path: "face";                 defaultValue: CameraExtensions.Back }
+    IntegerSchema { id: faceSchema;     path: "face";                 defaultValue: Settings.Back }
 
     ConfigSchema { id: isoConfig;      path: "isoConfigurable" }
     ConfigSchema { id: wbConfig;       path: "whiteBalanceConfigurable" }
     ConfigSchema { id: fdConfig;       path: "focusDistanceConfigurable" }
-    ConfigSchema { id: vfConfig;       path: "videoFocusConfigurable" }
     ConfigSchema { id: flashConfig;    path: "flashConfigurable" }
     ConfigSchema { id: exposureConfig; path: "exposureConfigurable" }
     ConfigSchema { id: meteringConfig; path: "meteringModeConfigurable" }

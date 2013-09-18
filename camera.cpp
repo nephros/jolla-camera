@@ -21,8 +21,6 @@
 #include "declarativecameraextensions.h"
 #include "declarativecameralocks.h"
 #include "declarativecompassaction.h"
-#include "declarativegconfsettings.h"
-#include "declarativesettings.h"
 
 #include <gst/gst.h>
 
@@ -62,12 +60,7 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     qmlRegisterType<DeclarativeCameraExtensions>("com.jolla.camera", 1, 0, "CameraExtensions");
     qmlRegisterType<DeclarativeCameraLocks>("com.jolla.camera", 1, 0, "CameraLocks");
     qmlRegisterType<DeclarativeCompassAction>("com.jolla.camera", 1, 0, "CompassAction");
-    qmlRegisterType<DeclarativeGConfSettings>("com.jolla.camera", 1, 0, "GConfSettings");
-    qmlRegisterType<DeclarativeSettings>("com.jolla.camera", 1, 0, "SettingsBase");
     qmlRegisterType<CaptureModel>("com.jolla.camera", 1, 0, "CaptureModel");
-    qmlRegisterUncreatableType<DeclarativeGConf>("com.jolla.camera", 1, 0, "GConf", QString());
-
-    qmlRegisterSingletonType<DeclarativeSettings>("com.jolla.camera", 1, 0, "Settings", DeclarativeSettings::factory);
 
     SignonUiService *ssoui = new SignonUiService(0, true); // in process
     ssoui->setInProcessServiceName(QLatin1String("com.jolla.camera"));
