@@ -17,6 +17,8 @@ Compass {
     keepSelection: camera.locks.focusStatus == CameraLocks.Searching
                 || camera.locks.exposureStatus == CameraLocks.Searching
 
+    onClicked: if (settingsIcon.enabled) { compass.openMenu(focusMenu) }
+
     topAction {
         smallIcon: SettingsIcons.exposure(Settings.mode.exposureCompensation)
         largeIcon: "image://theme/icon-camera-exposure-compensation"
@@ -55,18 +57,19 @@ Compass {
     Image {
         id: settingsIcon
         anchors.centerIn: parent
-        source: "image://theme/icon-camera-settings?" + Theme.highlightColor
-        opacity: compass.interactive ? 1 : 0
+        source: "image://theme/icon-camera-focus?" + Theme.highlightColor
+        enabled: compass.interactive && Settings.mode.focusDistanceConfigurable
+        opacity: enabled ? 1 : 0
         Behavior on  opacity { FadeAnimation {} }
     }
 
     Label {
         anchors.centerIn: parent
-        opacity: 1 - settingsIcon.opacity
         text: Format.formatDuration(compass.camera.videoRecorder.duration / 1000, Formatter.DurationLong)
         font.pixelSize: Theme.fontSizeExtraSmall
+        opacity: compass.interactive ? 0 : 1
+        Behavior on  opacity { FadeAnimation {} }
     }
-
 
     Component {
         id: timerMenu
@@ -98,6 +101,17 @@ Compass {
             property: "iso"
             model: [ 0, 100, 200, 400, 800, 1600 ]
             delegate: CompassMenuItem { value: modelData; icon: SettingsIcons.iso(modelData) }
+        }
+    }
+
+    Component {
+        id: focusMenu
+
+        CompassMenu {
+            settings: Settings.mode
+            property: "focusDistance"
+            model: [ Camera.FocusAuto, Camera.FocusInfinity, Camera.FocusMacro ]
+            delegate: CompassMenuItem { value: modelData; icon: SettingsIcons.focusDistance(Camera, modelData) }
         }
     }
 }
