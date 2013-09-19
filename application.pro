@@ -2,7 +2,7 @@ TEMPLATE = app
 TARGET = jolla-camera
 TARGETPATH = /usr/bin
 
-QT += dbus qml quick multimedia
+QT += dbus qml quick multimedia multimedia-private
 CONFIG += link_pkgconfig
 PKGCONFIG += libjollasignonuiservice-qt5
 

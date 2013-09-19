@@ -23,6 +23,7 @@ Drawer {
     property Item page
 
     readonly property bool playing: mediaPlayer.playbackState == MediaPlayer.PlayingState
+    readonly property bool _transposeVideo: isPortrait ^ (video.implicitHeight > video.implicitWidth)
 
     dock: isPortrait ? Dock.Top : Dock.Left
 
@@ -126,6 +127,8 @@ Drawer {
                     mimeType: model.mimeType
                     duration: model.duration
 
+                    transpose: galleryView.isPortrait ^ (implicitHeight > implicitWidth)
+
                     onClicked: {
                         if (mediaPlayer.playbackState == MediaPlayer.PlayingState) {
                             mediaPlayer.pause()
@@ -166,9 +169,13 @@ Drawer {
                 }
 
                 visible: mediaPlayer.playbackState != MediaPlayer.StoppedState
-                width: galleryView.width
-                height: galleryView.height
+                width: !galleryView._transposeVideo ? galleryView.width : galleryView.height
+                height: !galleryView._transposeVideo ? galleryView.height : galleryView.width
                 anchors.centerIn: galleryView._activeItem
+
+                rotation: galleryView._transposeVideo
+                        ? (video.implicitHeight > video.implicitWidth ? 270 : 90)
+                        : 0
             }
         ]
     }
