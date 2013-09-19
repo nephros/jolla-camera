@@ -20,6 +20,14 @@
             <locale name="C"/>
         </schema>
         <schema>
+            <key>/schemas/apps/jolla-camera/videoFocus</key>
+            <applyto>/apps/jolla-camera/videoFocus</applyto>
+            <owner>jolla</owner>
+            <type>int</type>
+            <default>8</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
             <key>/schemas/apps/jolla-camera/settingsVerticalAlignment</key>
             <applyto>/apps/jolla-camera/settingsVerticalAlignment</applyto>
             <owner>jolla</owner>
@@ -62,14 +70,6 @@
         <schema>
             <key>/schemas/apps/jolla-camera/automatic/focusDistance</key>
             <applyto>/apps/jolla-camera/automatic/focusDistance</applyto>
-            <owner>jolla</owner>
-            <type>int</type>
-            <default>8</default>
-            <locale name="C"/>
-        </schema>
-        <schema>
-            <key>/schemas/apps/jolla-camera/automatic/videoFocus</key>
-            <applyto>/apps/jolla-camera/automatic/videoFocus</applyto>
             <owner>jolla</owner>
             <type>int</type>
             <default>8</default>
@@ -148,14 +148,6 @@
             <locale name="C"/>
         </schema>
         <schema>
-            <key>/schemas/apps/jolla-camera/automatic/videoFocusConfigurable</key>
-            <applyto>/apps/jolla-camera/automatic/videoFocusConfigurable</applyto>
-            <owner>jolla</owner>
-            <type>bool</type>
-            <default>true</default>
-            <locale name="C"/>
-        </schema>
-        <schema>
             <key>/schemas/apps/jolla-camera/automatic/flashConfigurable</key>
             <applyto>/apps/jolla-camera/automatic/flashConfigurable</applyto>
             <owner>jolla</owner>
@@ -206,14 +198,6 @@
         <schema>
             <key>/schemas/apps/jolla-camera/program/focusDistance</key>
             <applyto>/apps/jolla-camera/program/focusDistance</applyto>
-            <owner>jolla</owner>
-            <type>int</type>
-            <default>8</default>
-            <locale name="C"/>
-        </schema>
-        <schema>
-            <key>/schemas/apps/jolla-camera/program/videoFocus</key>
-            <applyto>/apps/jolla-camera/program/videoFocus</applyto>
             <owner>jolla</owner>
             <type>int</type>
             <default>8</default>
@@ -292,14 +276,6 @@
             <locale name="C"/>
         </schema>
         <schema>
-            <key>/schemas/apps/jolla-camera/program/videoFocusConfigurable</key>
-            <applyto>/apps/jolla-camera/program/videoFocusConfigurable</applyto>
-            <owner>jolla</owner>
-            <type>bool</type>
-            <default>true</default>
-            <locale name="C"/>
-        </schema>
-        <schema>
             <key>/schemas/apps/jolla-camera/program/flashConfigurable</key>
             <applyto>/apps/jolla-camera/program/flashConfigurable</applyto>
             <owner>jolla</owner>
@@ -353,14 +329,6 @@
             <owner>jolla</owner>
             <type>int</type>
             <default>32</default>
-            <locale name="C"/>
-        </schema>
-        <schema>
-            <key>/schemas/apps/jolla-camera/macro/videoFocus</key>
-            <applyto>/apps/jolla-camera/macro/videoFocus</applyto>
-            <owner>jolla</owner>
-            <type>int</type>
-            <default>8</default>
             <locale name="C"/>
         </schema>
         <schema>
@@ -436,14 +404,6 @@
             <locale name="C"/>
         </schema>
         <schema>
-            <key>/schemas/apps/jolla-camera/macro/videoFocusConfigurable</key>
-            <applyto>/apps/jolla-camera/macro/videoFocusConfigurable</applyto>
-            <owner>jolla</owner>
-            <type>bool</type>
-            <default>true</default>
-            <locale name="C"/>
-        </schema>
-        <schema>
             <key>/schemas/apps/jolla-camera/macro/flashConfigurable</key>
             <applyto>/apps/jolla-camera/macro/flashConfigurable</applyto>
             <owner>jolla</owner>
@@ -494,14 +454,6 @@
         <schema>
             <key>/schemas/apps/jolla-camera/sports/focusDistance</key>
             <applyto>/apps/jolla-camera/sports/focusDistance</applyto>
-            <owner>jolla</owner>
-            <type>int</type>
-            <default>8</default>
-            <locale name="C"/>
-        </schema>
-        <schema>
-            <key>/schemas/apps/jolla-camera/sports/videoFocus</key>
-            <applyto>/apps/jolla-camera/sports/videoFocus</applyto>
             <owner>jolla</owner>
             <type>int</type>
             <default>8</default>
@@ -580,14 +532,6 @@
             <locale name="C"/>
         </schema>
         <schema>
-            <key>/schemas/apps/jolla-camera/sports/videoFocusConfigurable</key>
-            <applyto>/apps/jolla-camera/sports/videoFocusConfigurable</applyto>
-            <owner>jolla</owner>
-            <type>bool</type>
-            <default>true</default>
-            <locale name="C"/>
-        </schema>
-        <schema>
             <key>/schemas/apps/jolla-camera/sports/flashConfigurable</key>
             <applyto>/apps/jolla-camera/sports/flashConfigurable</applyto>
             <owner>jolla</owner>
@@ -638,14 +582,6 @@
         <schema>
             <key>/schemas/apps/jolla-camera/landscape/focusDistance</key>
             <applyto>/apps/jolla-camera/landscape/focusDistance</applyto>
-            <owner>jolla</owner>
-            <type>int</type>
-            <default>8</default>
-            <locale name="C"/>
-        </schema>
-        <schema>
-            <key>/schemas/apps/jolla-camera/landscape/videoFocus</key>
-            <applyto>/apps/jolla-camera/landscape/videoFocus</applyto>
             <owner>jolla</owner>
             <type>int</type>
             <default>8</default>
@@ -724,14 +660,6 @@
             <locale name="C"/>
         </schema>
         <schema>
-            <key>/schemas/apps/jolla-camera/landscape/videoFocusConfigurable</key>
-            <applyto>/apps/jolla-camera/landscape/videoFocusConfigurable</applyto>
-            <owner>jolla</owner>
-            <type>bool</type>
-            <default>true</default>
-            <locale name="C"/>
-        </schema>
-        <schema>
             <key>/schemas/apps/jolla-camera/landscape/flashConfigurable</key>
             <applyto>/apps/jolla-camera/landscape/flashConfigurable</applyto>
             <owner>jolla</owner>
@@ -782,14 +710,6 @@
         <schema>
             <key>/schemas/apps/jolla-camera/portrait/focusDistance</key>
             <applyto>/apps/jolla-camera/portrait/focusDistance</applyto>
-            <owner>jolla</owner>
-            <type>int</type>
-            <default>8</default>
-            <locale name="C"/>
-        </schema>
-        <schema>
-            <key>/schemas/apps/jolla-camera/portrait/videoFocus</key>
-            <applyto>/apps/jolla-camera/portrait/videoFocus</applyto>
             <owner>jolla</owner>
             <type>int</type>
             <default>8</default>
@@ -868,14 +788,6 @@
             <locale name="C"/>
         </schema>
         <schema>
-            <key>/schemas/apps/jolla-camera/portrait/videoFocusConfigurable</key>
-            <applyto>/apps/jolla-camera/portrait/videoFocusConfigurable</applyto>
-            <owner>jolla</owner>
-            <type>bool</type>
-            <default>true</default>
-            <locale name="C"/>
-        </schema>
-        <schema>
             <key>/schemas/apps/jolla-camera/portrait/flashConfigurable</key>
             <applyto>/apps/jolla-camera/portrait/flashConfigurable</applyto>
             <owner>jolla</owner>
@@ -929,14 +841,6 @@
             <owner>jolla</owner>
             <type>int</type>
             <default>4</default>
-            <locale name="C"/>
-        </schema>
-        <schema>
-            <key>/schemas/apps/jolla-camera/front-camera/videoFocus</key>
-            <applyto>/apps/jolla-camera/front-camera/videoFocus</applyto>
-            <owner>jolla</owner>
-            <type>int</type>
-            <default>8</default>
             <locale name="C"/>
         </schema>
         <schema>
@@ -1009,14 +913,6 @@
             <owner>jolla</owner>
             <type>bool</type>
             <default>false</default>
-            <locale name="C"/>
-        </schema>
-        <schema>
-            <key>/schemas/apps/jolla-camera/front-camera/videoFocusConfigurable</key>
-            <applyto>/apps/jolla-camera/front-camera/videoFocusConfigurable</applyto>
-            <owner>jolla</owner>
-            <type>bool</type>
-            <default>true</default>
             <locale name="C"/>
         </schema>
         <schema>

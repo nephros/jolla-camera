@@ -12,4 +12,7 @@ SOURCES += \
         declarativegconfschema.cpp \
         main.cpp
 
-include (../../src/src.pri)
+MODULENAME = com/jolla/camera/settings
+TARGETPATH = $$[QT_INSTALL_QML]/$$MODULENAME
+
+include (../../settings/settings.pri)

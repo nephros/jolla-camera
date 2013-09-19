@@ -2,6 +2,7 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 import Sailfish.Media 1.0
 import com.jolla.camera 1.0
+import com.jolla.camera.settings 1.0
 import QtDocGallery 5.0
 import QtMultimedia 5.0
 import "capture"

@@ -1,15 +1,13 @@
 
 #include "declarativesettings.h"
-#include "declarativecameraextensions.h"
 
-#include <QCameraFocus>
-#include <QCameraExposure>
-#include <QCameraImageProcessing>
+#include <QDebug>
 #include <QDir>
 #include <QDirIterator>
 #include <QQmlComponent>
 #include <QQmlEngine>
 #include <QStandardPaths>
+
 
 DeclarativeSettings::DeclarativeSettings(QObject *parent)
     : QObject(parent)
@@ -25,7 +23,7 @@ DeclarativeSettings::~DeclarativeSettings()
 
 QObject *DeclarativeSettings::factory(QQmlEngine *engine, QJSEngine *)
 {
-    const QUrl source = engine->baseUrl().resolved(QUrl(QStringLiteral("pages/settings/settings.qml")));
+    const QUrl source = QUrl::fromLocalFile(QStringLiteral(DEPLOYMENT_PATH "/settings.qml"));
     QQmlComponent component(engine, source);
     if (component.isReady()) {
         return component.create();
