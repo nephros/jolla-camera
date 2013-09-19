@@ -15,6 +15,11 @@ Page {
         VerticalScrollDecorator {}
 
         Column {
+            PageHeader {
+                //% "Camera"
+                title: qsTrId("camera_settings-ph-camera")
+            }
+
             SectionHeader {
                 //% "Photo settings"
                 text: qsTrId("camera_settings-ph-photo-settings")
