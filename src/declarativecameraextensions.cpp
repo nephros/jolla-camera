@@ -15,6 +15,7 @@ DeclarativeCameraExtensions::DeclarativeCameraExtensions(QObject *parent)
     , m_imageEncoderControl(0)
     , m_videoEncoderControl(0)
     , m_metaDataControl(0)
+    , m_sensorControl(0)
     , m_rotation(-1)
     , m_orientation(0)
 {
@@ -35,6 +36,9 @@ DeclarativeCameraExtensions::~DeclarativeCameraExtensions()
         if (m_metaDataControl) {
             m_mediaObject->service()->releaseControl(m_metaDataControl);
         }
+        if (m_sensorControl) {
+            m_mediaObject->service()->releaseControl(m_sensorControl);
+        }
     }
 }
 
@@ -45,7 +49,6 @@ QObject *DeclarativeCameraExtensions::camera() const
 
 void DeclarativeCameraExtensions::setCamera(QObject *camera)
 {
-    qDebug() << Q_FUNC_INFO;
     if (m_deviceControl) {
         disconnect(m_deviceControl, SIGNAL(lockStatusChanged(QCamera::LockType,QCamera::LockStatus,QCamera::LockChangeReason)),
                 this, SLOT(lockStatusChanged(QCamera::LockType)));
@@ -64,6 +67,11 @@ void DeclarativeCameraExtensions::setCamera(QObject *camera)
         m_mediaObject->service()->releaseControl(m_metaDataControl);
         m_metaDataControl = 0;
     }
+    if (m_sensorControl) {
+        m_sensorControl->disconnect(this);
+        m_mediaObject->service()->releaseControl(m_sensorControl);
+        m_sensorControl = 0;
+    }
 
     m_camera = camera;
     m_mediaObject = m_camera
@@ -77,6 +85,12 @@ void DeclarativeCameraExtensions::setCamera(QObject *camera)
         m_imageEncoderControl = m_mediaObject->service()->requestControl<QImageEncoderControl *>();
         m_videoEncoderControl = m_mediaObject->service()->requestControl<QVideoEncoderSettingsControl *>();
         m_metaDataControl = m_mediaObject->service()->requestControl<QMetaDataWriterControl *>();
+        m_sensorControl = m_mediaObject->service()->requestControl<QCameraSensorControl *>();
+
+        if (m_sensorControl) {
+            connect(m_sensorControl, &QCameraSensorControl::propertyChanged,
+                    this, &DeclarativeCameraExtensions::sensorPropertyChanged);
+        }
 
         if (m_rotation != -1) {
             setRotation(m_rotation);
@@ -127,7 +141,13 @@ void DeclarativeCameraExtensions::setRotation(int rotation)
         m_videoEncoderControl->setVideoSettings(videoSettings);
     }
 
-    int orientation = (m_face == Back ? 90 - rotation : 270 + rotation) % 360;
+    int sensorOrientation = m_sensorControl
+            ? m_sensorControl->property(QCameraSensorControl::Orientation).toInt()
+            : 0;
+
+    int orientation = (m_face == Back
+                ? sensorOrientation - rotation
+                : sensorOrientation + rotation) % 360;
     if (orientation < 0) {
         orientation += 360;
     }
@@ -172,4 +192,9 @@ void DeclarativeCameraExtensions::updateDevice()
         }
     }
     qmlInfo(this) << deviceName << "is not a supported device";
+}
+
+void DeclarativeCameraExtensions::sensorPropertyChanged(QCameraSensorControl::Property)
+{
+    setRotation(m_rotation);
 }

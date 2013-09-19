@@ -9,6 +9,8 @@
 #include <QMediaObject>
 #include <QPointer>
 
+#include <private/qcamerasensorcontrol_p.h>
+
 class DeclarativeCameraExtensions : public QObject
 {
     Q_OBJECT
@@ -49,6 +51,9 @@ signals:
     void rotationChanged();
     void orientationChanged();
 
+private slots:
+    void sensorPropertyChanged(QCameraSensorControl::Property);
+
 private:
     void updateDevice();
 
@@ -58,6 +63,7 @@ private:
     QImageEncoderControl *m_imageEncoderControl;
     QVideoEncoderSettingsControl *m_videoEncoderControl;
     QMetaDataWriterControl *m_metaDataControl;
+    QCameraSensorControl *m_sensorControl;
     Face m_face;
     int m_rotation;
     int m_orientation;
