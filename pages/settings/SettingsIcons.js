@@ -61,3 +61,10 @@ function whiteBalance(CameraImageProcessing, balance) {
     }
 }
 
+function focusDistance(Camera, focusDistance) {
+    switch (focusDistance) {
+    case Camera.FocusAuto:      return "image://theme/icon-camera-focus-auto"
+    case Camera.FocusInfinity:  return "image://theme/icon-camera-focus-infinity"
+    case Camera.FocusMacro:    return "image://theme/icon-camera-focus-macro"
+    }
+}
