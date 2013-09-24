@@ -26,6 +26,8 @@ public:
     QObject *source() const;
     void setSource(QObject *source);
 
+    Q_INVOKABLE void deleteFile(int index);
+
     QHash<int, QByteArray> roleNames() const;
     QModelIndex index(int row, int column, const QModelIndex &parent) const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
