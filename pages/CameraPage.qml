@@ -81,6 +81,8 @@ Page {
             if (!moving) {
                 galleryView.active = galleryView.ListView.isCurrentItem
                 captureView.active = captureView.ListView.isCurrentItem
+            } else if (captureView.active) {
+                galleryView.positionViewAtBeginning()
             }
         }
     }

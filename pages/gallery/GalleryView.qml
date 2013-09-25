@@ -25,16 +25,18 @@ Drawer {
     readonly property bool playing: mediaPlayer.playbackState == MediaPlayer.PlayingState
     readonly property bool _transposeVideo: isPortrait ^ (video.implicitHeight > video.implicitWidth)
 
+    function positionViewAtBeginning() {
+        pageView.currentIndex = 0
+        pageView.positionViewAtBeginning()
+    }
+
     dock: isPortrait ? Dock.Top : Dock.Left
 
     onActiveChanged: {
         if (!active) {
             mediaPlayer.stop()
             mediaPlayer.source = ""
-            pageView.currentIndex = -1
             open = false
-        } else {
-            pageView.currentIndex = 0
         }
         if (_activeItem) {
             _activeItem.active = active
@@ -58,14 +60,14 @@ Drawer {
         pressDelay: 50
         boundsBehavior: Flickable.StopAtBounds
         cacheBuffer: width * 3
-        currentIndex: -1
 
-        orientation: ListView.Horizontal
-        layoutDirection: Qt.RightToLeft
         snapMode: ListView.SnapOneItem
         highlightRangeMode: ListView.StrictlyEnforceRange
 
-        interactive: !galleryView.menuOpen && pageView.count > 1
+        orientation: ListView.Horizontal
+        layoutDirection: Qt.RightToLeft
+
+        interactive: pageView.count > 1
 
         onCurrentItemChanged: {
             if (!moving && currentItem) {
@@ -75,6 +77,18 @@ Drawer {
 
                 galleryView._activeItem = currentItem
                 galleryView._activeItem.active = true
+            }
+        }
+
+        onCurrentIndexChanged: {
+            if (!moving) {
+                // ListView's item positioning and currentIndex can get out of sync
+                // when items are removed from and possibly when inserted into the
+                // model.  Finding and fixing all the corner cases in ListView is a
+                // bit of a battle so as a final safeguard, we force the position to
+                // update if anything other than flicking the list changes the current
+                // index.
+                positionViewAtIndex(currentIndex, ListView.SnapPosition)
             }
         }
 
@@ -96,8 +110,12 @@ Drawer {
             id: galleryItem
 
             property bool active
-            readonly property QtObject modelData: model
-            readonly property bool isImage: model.mimeType.indexOf("image/") == 0
+            readonly property int index: model.index
+            readonly property string title: model.title
+            readonly property string mimeType: model.mimeType
+            readonly property url url: model.url
+
+            readonly property bool isImage: mimeType.indexOf("image/") == 0
             readonly property bool scaled: loader.item.scaled != undefined && loader.item.scaled
 
             width: galleryView.width
@@ -154,7 +172,7 @@ Drawer {
                 width: galleryView.width
                 height: galleryView.height
 
-                enabled: galleryView.count > 0
+                enabled: pageView.count > 0
 
                 onClicked: galleryView.open = !galleryView.open
             }
@@ -190,11 +208,61 @@ Drawer {
                 width: galleryView.backgroundItem.width
                 height: galleryView.backgroundItem.height
 
-                title: pageView.currentItem ? pageView.currentItem.modelData.title : ""
-                filter: pageView.currentItem ? pageView.currentItem.modelData.mimeType : ""
+                title: pageView.currentItem ? pageView.currentItem.title : ""
+                filter: pageView.currentItem ? pageView.currentItem.mimeType : ""
                 isImage: pageView.currentItem ? pageView.currentItem.isImage : false
-                url: pageView.currentItem ? pageView.currentItem.modelData.url : ""
+                url: pageView.currentItem ? pageView.currentItem.url : ""
+
+                onDeleteFile: {
+                    var remorse = remorseComponent.createObject(galleryView)
+                    var item = pageView.currentItem
+                    item.ListView.delayRemove = true
+                    //: Deleting photo or video in 5 seconds
+                    //% "Deleting"
+                    remorse.execute(item, qsTrId("camera-la-deleting"), function() {
+                        item.ListView.delayRemove = false
+                        galleryView.model.deleteFile(item.index)
+                        remorse.destroy(1)
+                    })
+                }
             }
         }
     ]
+
+    Component {
+        id: remorseComponent
+
+        Item {
+            id: wrapper
+
+            x: 0
+            y: -pageView.y
+            width: parent.width
+            height: Theme.itemSizeSmall
+
+            function execute(item, label, callback) {
+                parent = item
+                remorse.execute(positioner, label, callback)
+            }
+
+            Rectangle {
+                color: Theme.highlightDimmerColor
+                opacity: 0.6
+                anchors.fill: parent
+            }
+
+            Item {
+                id: positioner
+                anchors.fill: parent
+            }
+
+            RemorseItem {
+                id: remorse
+
+                onCanceled: {
+                    wrapper.destroy(1)
+                }
+            }
+        }
+    }
 }

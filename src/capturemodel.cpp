@@ -1,6 +1,7 @@
 #include "capturemodel.h"
 
 #include <QDebug>
+#include <QFile>
 #include <QUrl>
 
 CaptureModel::CaptureModel(QObject *parent)
@@ -8,7 +9,6 @@ CaptureModel::CaptureModel(QObject *parent)
     , m_fileUrl(QUrl::fromLocalFile(QLatin1String("/")))
     , m_count(0)
 {
-
 }
 
 CaptureModel::~CaptureModel()
@@ -78,6 +78,25 @@ void CaptureModel::setSource(QObject *source)
     }
 }
 
+void CaptureModel::deleteFile(int index)
+{
+    QUrl url;
+    if (index < 0) {
+    } else if (index < m_captures.count()) {
+        url = m_captures.at(index).url;
+        beginRemoveRows(QModelIndex(), index, index);
+        m_captures.remove(index);
+        endRemoveRows();
+    } else if (index < m_captures.count() + m_count) {
+        index -= m_captures.count();
+        url = m_model->index(index, 0).data(m_roles[Url]).toUrl();
+    }
+
+    if (url.isLocalFile()) {
+        QFile::remove(url.toLocalFile());
+    }
+}
+
 QHash<int, QByteArray> CaptureModel::roleNames() const
 {
     QHash<int, QByteArray> roleNames;
@@ -130,7 +149,7 @@ QVariant CaptureModel::data(const QModelIndex &index, int role) const
 void CaptureModel::_q_rowsRemoved(const QModelIndex &parent, int begin, int end)
 {
     if (!parent.isValid()) {
-        beginRemoveRows(QModelIndex(), begin, end);
+        beginRemoveRows(QModelIndex(), m_captures.count() + begin, m_captures.count() + end);
         m_count -= end - begin + 1;
         endRemoveRows();
 
@@ -162,7 +181,7 @@ void CaptureModel::_q_rowsInserted(const QModelIndex &parent, int begin, int end
                 continue;
             }
 
-            const int to = m_captures.count() + i;
+            int to = m_captures.count() + i;
             if (begin < i) {
                 beginInsertRows(QModelIndex(), m_captures.count() + begin, to - 1);
                 m_count += i - begin;
@@ -172,6 +191,9 @@ void CaptureModel::_q_rowsInserted(const QModelIndex &parent, int begin, int end
             begin = i + 1;
 
             const bool moved = beginMoveRows(QModelIndex(), from, from, QModelIndex(), to);
+
+            if (to >= m_captures.count())
+                to -= 1;
 
             m_captures.remove(from--);
             m_count += 1;

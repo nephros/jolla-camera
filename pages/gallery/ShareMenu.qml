@@ -13,6 +13,8 @@ ShareMethodList {
 
     property Item page
 
+    signal deleteFile
+
     //% "Share"
     listHeader: qsTrId("camera-la-share")
 
@@ -27,7 +29,7 @@ ShareMethodList {
         MenuItem {
             //% "Delete"
             text: qsTrId("camera-me-delete")
-            visible: false  // JB#7884
+            onClicked: menuList.deleteFile()
         }
 
         MenuItem {
