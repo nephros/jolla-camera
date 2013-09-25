@@ -28,7 +28,7 @@ Page {
         snapMode: ListView.SnapOneItem
         boundsBehavior: Flickable.StopAtBounds
         highlightRangeMode: ListView.StrictlyEnforceRange
-        interactive: !captureView.menuOpen && !galleryView.interactive && captureModel.count > 0
+        interactive: !galleryView.positionLocked && captureModel.count > 0
 
         model: VisualItemModel {
             CaptureView {

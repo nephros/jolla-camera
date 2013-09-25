@@ -17,11 +17,6 @@ Item {
 
     property alias camera: camera
 
-    property bool menuOpen: shootingModeOverlay.expanded
-            || settingsCompass.expanded
-            || captureCompass.expanded
-            || positioner.enabled
-
     property bool _complete
     property int _unload
     property int _aspectRatio
@@ -38,6 +33,15 @@ Item {
             camera.exposure.setAutoIsoSensitivity()
         } else {
             camera.exposure.manualIso = Settings.mode.iso
+        }
+    }
+
+    onActiveChanged: {
+        if (!active) {
+            shootingModeOverlay.open = false
+            settingsCompass.closeMenu()
+            captureCompass.closeMenu()
+            positioner.enabled = false
         }
     }
 
