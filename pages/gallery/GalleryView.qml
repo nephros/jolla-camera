@@ -213,7 +213,7 @@ Drawer {
                 title: pageView.currentItem ? pageView.currentItem.title : ""
                 filter: pageView.currentItem ? pageView.currentItem.mimeType : ""
                 isImage: pageView.currentItem ? pageView.currentItem.isImage : false
-                url: pageView.currentItem ? pageView.currentItem.url : ""
+                source: pageView.currentItem ? pageView.currentItem.url : ""
 
                 onDeleteFile: {
                     var remorse = remorseComponent.createObject(galleryView)
