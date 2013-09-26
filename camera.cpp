@@ -68,7 +68,7 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 
     QDBusConnection sessionBus = QDBusConnection::sessionBus();
     bool registeredService = sessionBus.registerService(QLatin1String("com.jolla.camera"));
-    bool registeredObject = sessionBus.registerObject(QLatin1String("/JollaGallerySignonUi"), ssoui,
+    bool registeredObject = sessionBus.registerObject(QLatin1String("/JollaCameraSignonUi"), ssoui,
             QDBusConnection::ExportAllContents);
 
     if (!registeredService || !registeredObject) {
