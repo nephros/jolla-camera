@@ -8,7 +8,7 @@ import com.jolla.camera 1.0
 Drawer {
     id: galleryView
 
-    readonly property bool interactive: active && (playing || (_activeItem && _activeItem.scaled))
+    readonly property bool positionLocked: active && _activeItem && _activeItem.scaled
     property bool active
     property bool windowActive
     property bool isPortrait
@@ -67,7 +67,7 @@ Drawer {
         orientation: ListView.Horizontal
         layoutDirection: Qt.RightToLeft
 
-        interactive: pageView.count > 1
+        interactive: pageView.count > 1 && !galleryView.positionLocked
 
         onCurrentItemChanged: {
             if (!moving && currentItem) {
@@ -116,7 +116,7 @@ Drawer {
             readonly property url url: model.url
 
             readonly property bool isImage: mimeType.indexOf("image/") == 0
-            readonly property bool scaled: loader.item.scaled != undefined && loader.item.scaled
+            readonly property bool scaled: loader.item && loader.item.scaled
 
             width: galleryView.width
             height: galleryView.height
@@ -139,6 +139,8 @@ Drawer {
                 id: videoComponent
 
                 VideoPoster {
+                    property bool scaled: false
+
                     player: mediaPlayer
                     active: galleryItem.active
                     source: url
@@ -211,7 +213,7 @@ Drawer {
                 title: pageView.currentItem ? pageView.currentItem.title : ""
                 filter: pageView.currentItem ? pageView.currentItem.mimeType : ""
                 isImage: pageView.currentItem ? pageView.currentItem.isImage : false
-                url: pageView.currentItem ? pageView.currentItem.url : ""
+                source: pageView.currentItem ? pageView.currentItem.url : ""
 
                 onDeleteFile: {
                     var remorse = remorseComponent.createObject(galleryView)

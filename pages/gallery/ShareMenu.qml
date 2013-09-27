@@ -9,7 +9,6 @@ ShareMethodList {
 
     property bool isImage
     property string title
-    property url url
 
     property Item page
 
