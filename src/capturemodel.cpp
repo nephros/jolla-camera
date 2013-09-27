@@ -26,7 +26,7 @@ void CaptureModel::setSource(QObject *source)
         const int count = m_count + m_captures.count();
 
         if (m_count > 0) {
-            beginRemoveRows(QModelIndex(), m_captures.count(), m_captures.count() + m_count - 1);
+            beginRemoveRows(QModelIndex(), 0,  m_count - 1);
         }
 
         if (m_model) {
@@ -47,7 +47,7 @@ void CaptureModel::setSource(QObject *source)
         if (QAbstractItemModel *model = qobject_cast<QAbstractItemModel *>(source)) {
             int count = model ? model->rowCount() : 0;
             if (count > 0) {
-                beginInsertRows(QModelIndex(), m_captures.count(), m_captures.count() + count - 1);
+                beginInsertRows(QModelIndex(), 0, count - 1);
 
                 const QHash<int, QByteArray> roleNames = model->roleNames();
                 m_roles[Url] = roleNames.key("url");
@@ -82,14 +82,14 @@ void CaptureModel::deleteFile(int index)
 {
     QUrl url;
     if (index < 0) {
-    } else if (index < m_captures.count()) {
+    } else if (index < m_count) {
+        url = m_model->index(index, 0).data(m_roles[Url]).toUrl();
+    } else if (m_captures.count() + m_count) {
+        index -= m_count;
         url = m_captures.at(index).url;
         beginRemoveRows(QModelIndex(), index, index);
         m_captures.remove(index);
         endRemoveRows();
-    } else if (index < m_captures.count() + m_count) {
-        index -= m_captures.count();
-        url = m_model->index(index, 0).data(m_roles[Url]).toUrl();
     }
 
     if (url.isLocalFile()) {
@@ -124,8 +124,8 @@ QVariant CaptureModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid()) {
         return QVariant();
-    } else if (index.row() < m_captures.count()) {
-        const Capture &capture = m_captures.at(index.row());
+    } else if (index.row() >= m_count) {
+        const Capture &capture = m_captures.at(index.row() - m_count);
         if (role == Url) {
             return capture.url;
         } else if (role == Title) {
@@ -140,7 +140,7 @@ QVariant CaptureModel::data(const QModelIndex &index, int role) const
             return QVariant();
         }
     } else if (role >= 0 && role < RoleCount) {
-        return m_model ? m_model->index(index.row() - m_captures.count(), 0).data(m_roles[role]) : QVariant();
+        return m_model ? m_model->index(index.row(), 0).data(m_roles[role]) : QVariant();
     } else {
         return QVariant();
     }
@@ -149,7 +149,7 @@ QVariant CaptureModel::data(const QModelIndex &index, int role) const
 void CaptureModel::_q_rowsRemoved(const QModelIndex &parent, int begin, int end)
 {
     if (!parent.isValid()) {
-        beginRemoveRows(QModelIndex(), m_captures.count() + begin, m_captures.count() + end);
+        beginRemoveRows(QModelIndex(), begin, end);
         m_count -= end - begin + 1;
         endRemoveRows();
 
@@ -174,28 +174,25 @@ void CaptureModel::_q_rowsInserted(const QModelIndex &parent, int begin, int end
 
     const int count = m_count + m_captures.count();
 
-    for (int i = begin; i <= end; ++i) {
-        const QUrl url = m_model->index(i, 0).data(m_roles[Url]).toUrl();
-        for (int from = 0; from < m_captures.count(); ++from) {
-            if (m_captures.at(from).url != url) {
+    for (int to = begin; to <= end; ++to) {
+        const QUrl url = m_model->index(to, 0).data(m_roles[Url]).toUrl();
+        for (int i = 0; i < m_captures.count(); ++i) {
+            if (m_captures.at(i).url != url) {
                 continue;
             }
 
-            int to = m_captures.count() + i;
-            if (begin < i) {
-                beginInsertRows(QModelIndex(), m_captures.count() + begin, to - 1);
-                m_count += i - begin;
+            if (begin < to) {
+                beginInsertRows(QModelIndex(), begin, to - 1);
+                m_count += to - begin;
                 endInsertRows();
             }
 
-            begin = i + 1;
+            begin = to + 1;
 
+            int from = m_count + i;
             const bool moved = beginMoveRows(QModelIndex(), from, from, QModelIndex(), to);
 
-            if (to >= m_captures.count())
-                to -= 1;
-
-            m_captures.remove(from--);
+            m_captures.remove(i--);
             m_count += 1;
             if (moved) {
                 endMoveRows();
@@ -205,7 +202,7 @@ void CaptureModel::_q_rowsInserted(const QModelIndex &parent, int begin, int end
     }
 
     if (begin <= end) {
-        beginInsertRows(QModelIndex(), begin + m_captures.count(), end + m_captures.count());
+        beginInsertRows(QModelIndex(), begin, end);
         m_count += end - begin + 1;
         endInsertRows();
     }
@@ -219,28 +216,24 @@ void CaptureModel::_q_dataChanged(
             const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
 {
     if (!topLeft.parent().isValid() && topLeft.column() == 0) {
-        emit dataChanged(
-                    createIndex(topLeft.row() + m_captures.count(), 0),
-                    createIndex(bottomRight.row() + m_captures.count(), 0), roles);
+        emit dataChanged(createIndex(topLeft.row(), 0), createIndex(bottomRight.row(), 0), roles);
     }
 }
 
-void CaptureModel::prependCapture(
+void CaptureModel::appendCapture(
         const QUrl &url, const QString &mimeType, int orientation, qint64 duration)
 {
     QUrl resolvedUrl = m_fileUrl.resolved(url);
 
-    // This is almost guaranteed to never happen but it possible an item could be indexed before
-    // we prepend, so perform a quick check of the most recent items for duplicates.
-    int existingCount = qMin(10, m_model ? m_model->rowCount() : 0);
-    for (int i = 0; i < existingCount; ++i) {
+
+    for (int i = 0; i < m_model->rowCount(); ++i) {
         if (m_model->index(i, 0).data(m_roles[Url]).toUrl() == resolvedUrl) {
             return;
         }
     }
-    beginInsertRows(QModelIndex(), 0, 0);
+    beginInsertRows(QModelIndex(), m_count + m_captures.count(), m_count + m_captures.count());
     Capture capture = { resolvedUrl, mimeType, orientation, duration };
-    m_captures.prepend(capture);
+    m_captures.append(capture);
     endInsertRows();
 
     emit countChanged();

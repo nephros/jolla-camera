@@ -14,8 +14,40 @@ Page {
 
     property bool windowActive
     property Item pageStack
+    property alias viewfinder: captureView.viewfinder
 
     allowedOrientations: Orientation.Portrait | Orientation.Landscape
+
+    orientationTransitions: Transition {
+        to: 'Portrait,Landscape,PortraitInverted,LandscapeInverted'
+        from: 'Portrait,Landscape,PortraitInverted,LandscapeInverted'
+        SequentialAnimation {
+            PropertyAction {
+                target: page
+                property: 'orientationTransitionRunning'
+                value: true
+            }
+            FadeAnimation {
+                target: page.pageStack
+                to: 0
+                duration: 150
+            }
+            PropertyAction {
+                target: page
+                properties: 'width,height,rotation,orientation'
+            }
+            FadeAnimation {
+                target: page.pageStack
+                to: 1
+                duration: 150
+            }
+            PropertyAction {
+                target: page
+                property: 'orientationTransitionRunning'
+                value: false
+            }
+        }
+    }
 
     ListView {
         id: switcherView
@@ -24,35 +56,13 @@ Page {
         height: page.height
 
         orientation: ListView.Horizontal
-        layoutDirection: Qt.RightToLeft
         snapMode: ListView.SnapOneItem
         boundsBehavior: Flickable.StopAtBounds
         highlightRangeMode: ListView.StrictlyEnforceRange
         interactive: !galleryView.positionLocked && captureModel.count > 0
+        currentIndex: 1
 
         model: VisualItemModel {
-            CaptureView {
-                id: captureView
-
-                width: page.width
-                height: page.height
-
-                active: true
-
-                orientation: page.orientation
-                windowActive: page.windowActive
-
-                visible: switcherView.moving || captureView.active
-
-                camera.imageCapture.onImageSaved: {
-                    captureModel.prependCapture(path, "image/jpeg", camera.extensions.orientation, 0)
-                }
-
-                onRecordingStopped: {
-                    captureModel.prependCapture(url, mimeType, camera.extensions.orientation, camera.videoRecorder.duration / 1000)
-                }
-            }
-
             GalleryView {
                 id: galleryView
 
@@ -67,6 +77,28 @@ Page {
                             || page.orientation == Orientation.PortraitInverted
 
                 visible: switcherView.moving || galleryView.active
+            }
+
+            CaptureView {
+                id: captureView
+
+                width: page.width
+                height: page.height
+
+                active: true
+
+                orientation: page.orientation
+                windowActive: page.windowActive
+
+                visible: switcherView.moving || captureView.active
+
+                camera.imageCapture.onImageSaved: {
+                    captureModel.appendCapture(path, "image/jpeg", camera.extensions.orientation, 0)
+                }
+
+                onRecordingStopped: {
+                    captureModel.appendCapture(url, mimeType, camera.extensions.orientation, camera.videoRecorder.duration / 1000)
+                }
             }
         }
 
@@ -93,7 +125,7 @@ Page {
         source: DocumentGalleryModel {
             rootType: DocumentGallery.File
             properties: [ "url", "title", "mimeType", "orientation", "duration" ]
-            sortProperties: ["-fileName"]
+            sortProperties: ["fileName"]
             autoUpdate: true
             filter: GalleryFilterUnion {
                 GalleryEqualsFilter { property: "path"; value: Settings.photoDirectory }
@@ -103,7 +135,7 @@ Page {
 
         onCountChanged: {
             if (count == 0) {
-                switcherView.currentIndex = 0
+                switcherView.currentIndex = 1
             }
         }
     }

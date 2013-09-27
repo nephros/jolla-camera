@@ -16,10 +16,13 @@ Item {
     property int effectiveIso: Settings.mode.iso
 
     property alias camera: camera
+    property QtObject viewfinder
 
     property bool _complete
     property int _unload
     property int _aspectRatio
+
+    property real _shutterOffset
 
     property bool _capturing
 
@@ -178,26 +181,43 @@ Item {
         }
     }
 
-    GStreamerVideoOutput {
-        id: viewfinder
-
-        width: captureView.width
-        height: captureView.height
-
-        source: camera
-        orientation: extensions.rotation
-        mirror: extensions.face == CameraExtensions.Front
+    Binding {
+        target: captureView.viewfinder
+        property: "x"
+        value: captureView.isPortrait
+               ? captureView.parent.x + captureView.x + captureView._shutterOffset
+               : 0
     }
 
+    Binding {
+        target: captureView.viewfinder
+        property: "y"
+        value: !captureView.isPortrait
+                ? captureView.parent.x + captureView.x + captureView._shutterOffset
+                : 0
+    }
+
+    Binding {
+        target: captureView.viewfinder
+        property: "source"
+        value: camera
+    }
+
+
+    Binding {
+        target: captureView.viewfinder
+        property: "mirror"
+        value: extensions.face == CameraExtensions.Front
+    }
 
     SequentialAnimation {
         id: captureAnimation
 
         NumberAnimation {
-            target: viewfinder
-            property: "x"
+            target: captureView
+            property: "_shutterOffset"
             from: 0
-            to: -captureView.width
+            to: captureView.isPortrait ? -captureView.height : -captureView.width
             duration: 200
         }
 
@@ -208,8 +228,8 @@ Item {
         }
 
         PropertyAction {
-            target: viewfinder
-            property: "x"
+            target: captureView
+            property: "_shutterOffset"
             value: 0
         }
         FadeAnimation {
