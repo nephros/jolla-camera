@@ -26,8 +26,8 @@ Drawer {
     readonly property bool _transposeVideo: isPortrait ^ (video.implicitHeight > video.implicitWidth)
 
     function positionViewAtBeginning() {
-        pageView.currentIndex = 0
-        pageView.positionViewAtBeginning()
+        pageView.currentIndex = pageView.count - 1
+        pageView.positionViewAtEnd()
     }
 
     dock: isPortrait ? Dock.Top : Dock.Left
@@ -65,7 +65,6 @@ Drawer {
         highlightRangeMode: ListView.StrictlyEnforceRange
 
         orientation: ListView.Horizontal
-        layoutDirection: Qt.RightToLeft
 
         interactive: pageView.count > 1 && !galleryView.positionLocked
 

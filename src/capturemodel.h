@@ -34,7 +34,7 @@ public:
     QVariant data(const QModelIndex &index, int role) const;
 
 public slots:
-    void prependCapture(const QUrl &url, const QString &mimeType, int orientation, qint64 duration);
+    void appendCapture(const QUrl &url, const QString &mimeType, int orientation, qint64 duration);
 
 signals:
     void sourceChanged();

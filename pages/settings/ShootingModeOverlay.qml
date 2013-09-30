@@ -96,7 +96,7 @@ Item {
             }
 
             width: overlay.width
-            height: overlay.height / 3
+            height: Screen.width / 3
         }
 
         Rectangle {
