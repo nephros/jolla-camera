@@ -3,6 +3,7 @@ import QtMultimedia 5.0
 import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
 import com.jolla.camera.settings 1.0
+import org.nemomobile.time 1.0
 import "../compass"
 import "SettingsIcons.js" as SettingsIcons
 
@@ -12,6 +13,9 @@ Compass {
     property int timer: 0
 
     property Camera camera
+
+    property var _startTime: new Date()
+    property var _endTime: _startTime
 
     interactive: camera.captureMode == Camera.CaptureStillImage
     keepSelection: camera.locks.focusStatus == CameraLocks.Searching
@@ -65,10 +69,26 @@ Compass {
 
     Label {
         anchors.centerIn: parent
-        text: Format.formatDuration(compass.camera.videoRecorder.duration / 1000, Formatter.DurationLong)
+        text: Format.formatDuration(
+                  ((clock.enabled ? clock.time : compass._endTime) - compass._startTime) / 1000,
+                  Formatter.DurationLong)
         font.pixelSize: Theme.fontSizeExtraSmall
         opacity: compass.interactive ? 0 : 1
         Behavior on  opacity { FadeAnimation {} }
+    }
+
+    WallClock {
+        id: clock
+        updateFrequency: WallClock.Second
+        enabled: camera.videoRecorder.recorderState == CameraRecorder.RecordingState
+        onEnabledChanged: {
+            if (enabled) {
+                compass._startTime = clock.time
+                compass._endTime = compass._startTime
+            } else {
+                compass._endTime = compass._startTime
+            }
+        }
     }
 
     Component {
