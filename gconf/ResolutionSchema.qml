@@ -7,6 +7,7 @@ GConfSchema {
 
     property alias image: imageSchema.defaultValue
     property alias video: videoSchema.defaultValue
+    property alias viewfinder: viewfinderSchema.defaultValue
 
     GConfSchema {
         id: imageSchema
@@ -21,6 +22,16 @@ GConfSchema {
     GConfSchema {
         id: videoSchema
         path: "video"
+        owner: "jolla"
+        type: GConfSchema.Pair
+        carType: GConfSchema.Float
+        cdrType: GConfSchema.Float
+        GConfDescription { locale: "C" }
+    }
+
+    GConfSchema {
+        id: viewfinderSchema
+        path: "viewfinder"
         owner: "jolla"
         type: GConfSchema.Pair
         carType: GConfSchema.Float

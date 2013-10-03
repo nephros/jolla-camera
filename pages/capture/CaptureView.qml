@@ -173,6 +173,8 @@ Item {
             }
         }
 
+        viewfinderResolution: Settings.resolutions.viewfinder
+
         onFaceChanged: {
             if (captureView._complete) {
                 // Force the camera to reload when the selected face changes.

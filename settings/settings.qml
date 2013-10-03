@@ -60,6 +60,7 @@ SettingsBase {
                         : "4_3"
                 property size image: "1280x720"     // Last gasp defaults, the real value comes
                 property size video: "1280x720"     // from the schema or an explicity overridden value.
+                property size viewfinder: "1280x720"
             }
         }
     }

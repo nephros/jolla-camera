@@ -36,6 +36,9 @@ DeclarativeCameraExtensions::~DeclarativeCameraExtensions()
         if (m_metaDataControl) {
             m_mediaObject->service()->releaseControl(m_metaDataControl);
         }
+        if (m_viewfinderSettingsControl) {
+            m_mediaObject->service()->releaseControl(m_viewfinderSettingsControl);
+        }
         if (m_sensorControl) {
             m_mediaObject->service()->releaseControl(m_sensorControl);
         }
@@ -67,6 +70,10 @@ void DeclarativeCameraExtensions::setCamera(QObject *camera)
         m_mediaObject->service()->releaseControl(m_metaDataControl);
         m_metaDataControl = 0;
     }
+    if (m_viewfinderSettingsControl) {
+        m_mediaObject->service()->releaseControl(m_viewfinderSettingsControl);
+        m_viewfinderSettingsControl = 0;
+    }
     if (m_sensorControl) {
         m_sensorControl->disconnect(this);
         m_mediaObject->service()->releaseControl(m_sensorControl);
@@ -85,6 +92,7 @@ void DeclarativeCameraExtensions::setCamera(QObject *camera)
         m_imageEncoderControl = m_mediaObject->service()->requestControl<QImageEncoderControl *>();
         m_videoEncoderControl = m_mediaObject->service()->requestControl<QVideoEncoderSettingsControl *>();
         m_metaDataControl = m_mediaObject->service()->requestControl<QMetaDataWriterControl *>();
+        m_viewfinderSettingsControl = m_mediaObject->service()->requestControl<QCameraViewfinderSettingsControl *>();
         m_sensorControl = m_mediaObject->service()->requestControl<QCameraSensorControl *>();
 
         if (m_sensorControl) {
@@ -172,6 +180,22 @@ void DeclarativeCameraExtensions::setRotation(int rotation)
 int DeclarativeCameraExtensions::orientation() const
 {
     return m_orientation;
+}
+
+QSize DeclarativeCameraExtensions::viewfinderResolution() const
+{
+    return m_viewfinderSettingsControl
+            ? m_viewfinderSettingsControl->viewfinderParameter(QCameraViewfinderSettingsControl::Resolution).toSize()
+            : QSize();
+}
+
+void DeclarativeCameraExtensions::setViewfinderResolution(const QSize &resolution)
+{
+    if (m_viewfinderSettingsControl) {
+        m_viewfinderSettingsControl->setViewfinderParameter(
+                    QCameraViewfinderSettingsControl::Resolution, resolution);
+        emit viewfinderResolutionChanged();
+    }
 }
 
 void DeclarativeCameraExtensions::updateDevice()

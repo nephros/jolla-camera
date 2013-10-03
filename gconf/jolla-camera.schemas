@@ -968,6 +968,16 @@
             <locale name="C"/>
         </schema>
         <schema>
+            <key>/schemas/apps/jolla-camera/resolutions/back/16_9/viewfinder</key>
+            <applyto>/apps/jolla-camera/resolutions/back/16_9/viewfinder</applyto>
+            <owner>jolla</owner>
+            <type>pair</type>
+            <car_type>float</car_type>
+            <cdr_type>float</cdr_type>
+            <default>(768,432)</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
             <key>/schemas/apps/jolla-camera/resolutions/back/4_3/image</key>
             <applyto>/apps/jolla-camera/resolutions/back/4_3/image</applyto>
             <owner>jolla</owner>
@@ -980,6 +990,16 @@
         <schema>
             <key>/schemas/apps/jolla-camera/resolutions/back/4_3/video</key>
             <applyto>/apps/jolla-camera/resolutions/back/4_3/video</applyto>
+            <owner>jolla</owner>
+            <type>pair</type>
+            <car_type>float</car_type>
+            <cdr_type>float</cdr_type>
+            <default>(640,480)</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/resolutions/back/4_3/viewfinder</key>
+            <applyto>/apps/jolla-camera/resolutions/back/4_3/viewfinder</applyto>
             <owner>jolla</owner>
             <type>pair</type>
             <car_type>float</car_type>
@@ -1008,6 +1028,16 @@
             <locale name="C"/>
         </schema>
         <schema>
+            <key>/schemas/apps/jolla-camera/resolutions/front/16_9/viewfinder</key>
+            <applyto>/apps/jolla-camera/resolutions/front/16_9/viewfinder</applyto>
+            <owner>jolla</owner>
+            <type>pair</type>
+            <car_type>float</car_type>
+            <cdr_type>float</cdr_type>
+            <default>(768,432)</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
             <key>/schemas/apps/jolla-camera/resolutions/front/4_3/image</key>
             <applyto>/apps/jolla-camera/resolutions/front/4_3/image</applyto>
             <owner>jolla</owner>
@@ -1020,6 +1050,16 @@
         <schema>
             <key>/schemas/apps/jolla-camera/resolutions/front/4_3/video</key>
             <applyto>/apps/jolla-camera/resolutions/front/4_3/video</applyto>
+            <owner>jolla</owner>
+            <type>pair</type>
+            <car_type>float</car_type>
+            <cdr_type>float</cdr_type>
+            <default>(640,480)</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/resolutions/front/4_3/viewfinder</key>
+            <applyto>/apps/jolla-camera/resolutions/front/4_3/viewfinder</applyto>
             <owner>jolla</owner>
             <type>pair</type>
             <car_type>float</car_type>
