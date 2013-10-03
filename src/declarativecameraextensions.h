@@ -6,6 +6,7 @@
 #include <QMetaDataWriterControl>
 #include <QVideoDeviceSelectorControl>
 #include <QVideoEncoderSettingsControl>
+#include <QCameraViewfinderSettingsControl>
 #include <QMediaObject>
 #include <QPointer>
 
@@ -18,6 +19,7 @@ class DeclarativeCameraExtensions : public QObject
     Q_PROPERTY(Face face READ face WRITE setFace NOTIFY faceChanged)
     Q_PROPERTY(int rotation READ rotation WRITE setRotation NOTIFY rotationChanged)
     Q_PROPERTY(int orientation READ orientation NOTIFY orientationChanged)
+    Q_PROPERTY(QSize viewfinderResolution READ viewfinderResolution WRITE setViewfinderResolution NOTIFY viewfinderResolutionChanged)
     Q_ENUMS(Face)
     Q_ENUMS(AspectRatio)
 public:
@@ -45,11 +47,15 @@ public:
 
     int orientation() const;
 
+    QSize viewfinderResolution() const;
+    void setViewfinderResolution(const QSize &resolution);
+
 signals:
     void cameraChanged();
     void faceChanged();
     void rotationChanged();
     void orientationChanged();
+    void viewfinderResolutionChanged();
 
 private slots:
     void sensorPropertyChanged(QCameraSensorControl::Property);
@@ -63,6 +69,7 @@ private:
     QImageEncoderControl *m_imageEncoderControl;
     QVideoEncoderSettingsControl *m_videoEncoderControl;
     QMetaDataWriterControl *m_metaDataControl;
+    QCameraViewfinderSettingsControl *m_viewfinderSettingsControl;
     QCameraSensorControl *m_sensorControl;
     Face m_face;
     int m_rotation;
