@@ -67,6 +67,7 @@ Drawer {
         highlightRangeMode: ListView.StrictlyEnforceRange
 
         orientation: ListView.Horizontal
+        currentIndex: count - 1
 
         interactive: pageView.count > 1 && !galleryView.positionLocked
 

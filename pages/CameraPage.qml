@@ -64,14 +64,28 @@ Page {
         currentIndex: 1
 
         model: VisualItemModel {
-            Loader {
-                id: galleryLoader
+            Item {
+                id: galleryItem
 
                 width: page.width
                 height: page.height
 
-                asynchronous: true
-                visible: switcherView.moving || page.galleryActive
+                Loader {
+                    id: galleryLoader
+
+                    anchors.fill: parent
+
+                    asynchronous: true
+                    visible: switcherView.moving || page.galleryActive
+                }
+
+                BusyIndicator {
+                    id: galleryIndicator
+                    visible: galleryLoader.status == Loader.Loading
+                    anchors.centerIn: parent
+                    size: BusyIndicatorSize.Large
+                    running: true
+                }
             }
 
             CaptureView {
@@ -105,14 +119,14 @@ Page {
 
         onCurrentItemChanged: {
             if (!moving) {
-                page.galleryActive = galleryLoader.ListView.isCurrentItem
+                page.galleryActive = galleryItem.ListView.isCurrentItem
                 captureView.active = captureView.ListView.isCurrentItem
             }
         }
 
         onMovingChanged: {
             if (!moving) {
-                page.galleryActive = galleryLoader.ListView.isCurrentItem
+                page.galleryActive = galleryItem.ListView.isCurrentItem
                 captureView.active = captureView.ListView.isCurrentItem
             } else if (captureView.active) {
                 if (galleryLoader.source == "") {
