@@ -18,7 +18,6 @@ BuildRequires:  pkgconfig(gconf-2.0)
 BuildRequires:  pkgconfig(mlite5)
 BuildRequires:  qt5-qttools
 BuildRequires:  qt5-qttools-linguist
-BuildRequires:  pkgconfig(libjollasignonuiservice-qt5)
 BuildRequires:  pkgconfig(gstreamer-0.10)
 
 Requires:  ambient-icons-closed
@@ -37,6 +36,7 @@ Requires:  nemo-qml-plugin-time-qt5
 Requires:  sailfish-components-accounts-qt5
 Requires:  sailfish-components-media-qt5 >= 0.0.10
 Requires:  sailfish-components-gallery-qt5 >= 0.0.18
+Requires:  libjollasignonuiservice-qt5-plugin >= 0.0.29
 Requires:  ambienced
 Requires:  gst-plugins-bad
 Requires:  %{name}-settings = %{version}

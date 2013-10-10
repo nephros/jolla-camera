@@ -5,7 +5,6 @@ import com.jolla.camera 1.0
 import com.jolla.camera.settings 1.0
 import org.nemomobile.time 1.0
 import "../compass"
-import "SettingsIcons.js" as SettingsIcons
 
 Compass {
     id: compass
@@ -24,13 +23,13 @@ Compass {
     onClicked: if (settingsIcon.enabled) { compass.openMenu(focusMenu) }
 
     topAction {
-        smallIcon: SettingsIcons.exposure(Settings.mode.exposureCompensation)
+        smallIcon: Settings.exposureIcon(Settings.mode.exposureCompensation)
         largeIcon: "image://theme/icon-camera-exposure-compensation"
         enabled: Settings.mode.exposureConfigurable
         onActivated: compass.openMenu(exposureMenu)
     }
     bottomAction {
-        smallIcon: SettingsIcons.timer(Settings.mode.timer)
+        smallIcon: Settings.timerIcon(Settings.mode.timer)
         largeIcon: "image://theme/icon-camera-timer"
         // ### Timer UI is disabled until design is finalized and the feature is implemented.
         // JB#1222
@@ -52,7 +51,7 @@ Compass {
         }
     }
     rightAction {
-        smallIcon: SettingsIcons.iso(Settings.mode.iso)
+        smallIcon: Settings.isoIcon(Settings.mode.iso)
         largeIcon: "image://theme/icon-camera-iso"
         enabled: Settings.mode.isoConfigurable
         onActivated: compass.openMenu(isoMenu)
@@ -98,7 +97,7 @@ Compass {
             settings: Settings.mode
             property: "timer"
             model: [ 0, 3, 15, 20 ]
-            delegate: CompassMenuItem { value: modelData; icon: SettingsIcons.timer(modelData) }
+            delegate: CompassMenuItem { value: modelData; icon: Settings.timerIcon(modelData) }
         }
     }
 
@@ -109,7 +108,7 @@ Compass {
             settings: Settings.mode
             property: "exposureCompensation"
             model: [ -4, -3, -2, -1, 0, 1, 2, 3, 4 ]
-            delegate: CompassMenuItem { value: modelData; icon: SettingsIcons.exposure(modelData) }
+            delegate: CompassMenuItem { value: modelData; icon: Settings.exposureIcon(modelData) }
         }
     }
 
@@ -120,7 +119,7 @@ Compass {
             settings: Settings.mode
             property: "iso"
             model: [ 0, 100, 200, 400, 800, 1600 ]
-            delegate: CompassMenuItem { value: modelData; icon: SettingsIcons.iso(modelData) }
+            delegate: CompassMenuItem { value: modelData; icon: Settings.isoIcon(modelData) }
         }
     }
 
@@ -131,7 +130,7 @@ Compass {
             settings: Settings.mode
             property: "focusDistance"
             model: [ Camera.FocusAuto, Camera.FocusInfinity, Camera.FocusMacro ]
-            delegate: CompassMenuItem { value: modelData; icon: SettingsIcons.focusDistance(Camera, modelData) }
+            delegate: CompassMenuItem { value: modelData; icon: Settings.focusDistanceIcon(modelData) }
         }
     }
 }

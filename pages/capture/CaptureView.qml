@@ -30,6 +30,7 @@ Item {
                 || orientation == Orientation.PortraitInverted
 
     signal recordingStopped(url url, string mimeType)
+    signal loaded
 
     onEffectiveIsoChanged: {
         if (effectiveIso == 0) {
@@ -44,7 +45,6 @@ Item {
             shootingModeOverlay.open = false
             settingsCompass.closeMenu()
             captureCompass.closeMenu()
-            positioner.enabled = false
         }
     }
 
@@ -104,7 +104,12 @@ Item {
                     : Camera.UnloadedState
 
         onCaptureModeChanged: captureView._capturing = false
-        onCameraStateChanged: captureView._capturing = false
+        onCameraStateChanged: {
+            captureView._capturing = false
+            if (cameraState == Camera.ActiveState) {
+                captureView.loaded()
+            }
+        }
 
         imageCapture {
             resolution: Settings.resolutions.image
@@ -251,7 +256,6 @@ Item {
 
         interactive: !settingsCompass.expanded && !captureCompass.expanded
         isPortrait: captureView.isPortrait
-        opacity: 1 - positioner.opacity
 
         onExpandedChanged: {
             if (!expanded) {
@@ -273,8 +277,8 @@ Item {
             id: compassAnchor
             anchors {
                 fill: parent
-                leftMargin: settingsCompass.width / 2
-                rightMargin: settingsCompass.width / 2
+                leftMargin: captureCompass.width / 2
+                rightMargin: captureCompass.width / 2
             }
         }
 
@@ -296,8 +300,6 @@ Item {
                 top: parent.top
                 bottom: parent.bottom
             }
-
-            onPressAndHold: if (interactive) { positioner.enabled = true }
         }
 
         Rectangle {
@@ -340,8 +342,8 @@ Item {
             verticalAlignment: !captureView.isPortrait
                         ? Settings.global.captureVerticalAlignment
                         : Qt.AlignBottom
-            topMargin: settingsCompass.topMargin
-            bottomMargin: settingsCompass.bottomMargin
+            topMargin: Theme.iconSizeMedium + (Theme.paddingLarge * 2)
+            bottomMargin: 112
             anchors {
                 horizontalCenter: !Settings.global.reverseButtons
                             ? compassAnchor.right
@@ -350,25 +352,7 @@ Item {
                 bottom: parent.bottom
             }
             onRecordingStopped: captureView.recordingStopped(url, mimeType)
-
-            onPressAndHold: if (interactive) { positioner.enabled = true }
         }
-    }
-
-    CompassPositioner {
-        id: positioner
-
-        width: captureView.width
-        height: captureView.height
-        topMargin: captureView.isPortrait
-                    ? captureView.height - settingsCompass.width - settingsCompass.bottomMargin
-                    : settingsCompass.topMargin
-        bottomMargin: settingsCompass.bottomMargin
-
-        enabled: false
-        visible: enabled || animating || positionerOpacity.running
-        opacity: enabled || animating ? 1 : 0
-        Behavior on opacity { FadeAnimation { id: positionerOpacity } }
     }
 
     MediaKey {

@@ -10,9 +10,6 @@
 #include <QQuickView>
 #include <QQmlComponent>
 
-#include <QtDBus/QDBusConnection>
-#include <signonuiservice.h>
-
 #ifdef HAS_BOOSTER
 #include <MDeclarativeCache>
 #endif
@@ -61,23 +58,6 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     qmlRegisterType<DeclarativeCameraLocks>("com.jolla.camera", 1, 0, "CameraLocks");
     qmlRegisterType<DeclarativeCompassAction>("com.jolla.camera", 1, 0, "CompassAction");
     qmlRegisterType<CaptureModel>("com.jolla.camera", 1, 0, "CaptureModel");
-
-    SignonUiService *ssoui = new SignonUiService(0, true); // in process
-    ssoui->setInProcessServiceName(QLatin1String("com.jolla.camera"));
-    ssoui->setInProcessObjectPath(QLatin1String("/JollaCameraSignonUi"));
-
-    QDBusConnection sessionBus = QDBusConnection::sessionBus();
-    bool registeredService = sessionBus.registerService(QLatin1String("com.jolla.camera"));
-    bool registeredObject = sessionBus.registerObject(QLatin1String("/JollaCameraSignonUi"), ssoui,
-            QDBusConnection::ExportAllContents);
-
-    if (!registeredService || !registeredObject) {
-        qWarning() << Q_FUNC_INFO << "CRITICAL: unable to register signon ui service:"
-                   << QLatin1String("com.jolla.camera") << "at object path:"
-                   << QLatin1String("/JollaCameraSignonUi");
-    }
-
-    view->rootContext()->setContextProperty("jolla_signon_ui_service", ssoui);
 
     view->setSource(path + QLatin1String("camera.qml"));
 

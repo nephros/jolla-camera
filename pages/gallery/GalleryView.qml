@@ -4,14 +4,14 @@ import Sailfish.Media 1.0
 import Sailfish.Gallery 1.0
 import QtMultimedia 5.0
 import com.jolla.camera 1.0
+import ".."
 
 Drawer {
     id: galleryView
 
     readonly property bool positionLocked: active && _activeItem && _activeItem.scaled
-    property bool active
-    property bool windowActive
-    property bool isPortrait
+    readonly property bool active: page.galleryActive
+    readonly property bool windowActive: page.windowActive
     property Item _activeItem
 
     property alias contentItem: pageView.contentItem
@@ -20,17 +20,17 @@ Drawer {
 
     property alias model: pageView.model
 
-    property Item page
+    property CameraPage page
 
     readonly property bool playing: mediaPlayer.playbackState == MediaPlayer.PlayingState
-    readonly property bool _transposeVideo: isPortrait ^ (video.implicitHeight > video.implicitWidth)
+    readonly property bool _transposeVideo: page.isPortrait ^ (video.implicitHeight > video.implicitWidth)
 
     function positionViewAtBeginning() {
         pageView.currentIndex = pageView.count - 1
         pageView.positionViewAtEnd()
     }
 
-    dock: isPortrait ? Dock.Top : Dock.Left
+    dock: page.isPortrait ? Dock.Top : Dock.Left
 
     onActiveChanged: {
         if (!active) {
@@ -48,6 +48,8 @@ Drawer {
             mediaPlayer.pause()
         }
     }
+
+    Component.onCompleted: positionViewAtBeginning()
 
     ListView {
         id: pageView
@@ -127,7 +129,7 @@ Drawer {
                 ImageViewer {
                     source: url
                     onClicked: galleryView.open = !galleryView.open
-                    fit: galleryView.isPortrait ? Fit.Width : Fit.Height
+                    fit: galleryView.page.isPortrait ? Fit.Width : Fit.Height
                     menuOpen: galleryView.opened
 
                     orientation: model.orientation
@@ -146,7 +148,7 @@ Drawer {
                     mimeType: model.mimeType
                     duration: model.duration
 
-                    transpose: galleryView.isPortrait ^ (implicitHeight > implicitWidth)
+                    transpose: galleryView.page.isPortrait ^ (implicitHeight > implicitWidth)
 
                     onClicked: {
                         if (mediaPlayer.playbackState == MediaPlayer.PlayingState) {
@@ -200,32 +202,28 @@ Drawer {
     }
 
     background: [
-        Loader {
-            asynchronous: true
+        ShareMenu {
+            page: galleryView.page
 
-            ShareMenu {
-                page: galleryView.page
+            width: galleryView.backgroundItem.width
+            height: galleryView.backgroundItem.height
 
-                width: galleryView.backgroundItem.width
-                height: galleryView.backgroundItem.height
+            title: pageView.currentItem ? pageView.currentItem.title : ""
+            filter: pageView.currentItem ? pageView.currentItem.mimeType : ""
+            isImage: pageView.currentItem ? pageView.currentItem.isImage : false
+            source: pageView.currentItem ? pageView.currentItem.url : ""
 
-                title: pageView.currentItem ? pageView.currentItem.title : ""
-                filter: pageView.currentItem ? pageView.currentItem.mimeType : ""
-                isImage: pageView.currentItem ? pageView.currentItem.isImage : false
-                source: pageView.currentItem ? pageView.currentItem.url : ""
-
-                onDeleteFile: {
-                    var remorse = remorseComponent.createObject(galleryView)
-                    var item = pageView.currentItem
-                    item.ListView.delayRemove = true
-                    //: Deleting photo or video in 5 seconds
-                    //% "Deleting"
-                    remorse.execute(item, qsTrId("camera-la-deleting"), function() {
-                        item.ListView.delayRemove = false
-                        galleryView.model.deleteFile(item.index)
-                        remorse.destroy(1)
-                    })
-                }
+            onDeleteFile: {
+                var remorse = remorseComponent.createObject(galleryView)
+                var item = pageView.currentItem
+                item.ListView.delayRemove = true
+                //: Deleting photo or video in 5 seconds
+                //% "Deleting"
+                remorse.execute(item, qsTrId("camera-la-deleting"), function() {
+                    item.ListView.delayRemove = false
+                    galleryView.model.deleteFile(item.index)
+                    remorse.destroy(1)
+                })
             }
         }
     ]

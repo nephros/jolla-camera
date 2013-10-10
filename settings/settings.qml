@@ -64,4 +64,74 @@ SettingsBase {
             }
         }
     }
+
+
+    function shootingModeIcon(mode) {
+        return "image://theme/icon-camera-" + mode
+    }
+
+    function exposureIcon(exposure) {
+        // Exposure is value * 2 so it can be stored as an integer
+        switch (exposure) {
+        case -4: return "image://theme/icon-camera-ec-minus2"
+        case -3: return "image://theme/icon-camera-ec-minus15"
+        case -2: return "image://theme/icon-camera-ec-minus1"
+        case -1: return "image://theme/icon-camera-ec-minus05"
+        case 0:  return "image://theme/icon-camera-exposure-compensation"
+        case 1:  return "image://theme/icon-camera-ec-plus05"
+        case 2:  return "image://theme/icon-camera-ec-plus1"
+        case 3:  return "image://theme/icon-camera-ec-plus15"
+        case 4:  return "image://theme/icon-camera-ec-plus2"
+        }
+    }
+
+    function timerIcon(timer) {
+        return timer > 0
+                ? "image://theme/icon-camera-timer-" + timer + "s"
+                : "image://theme/icon-camera-timer"
+    }
+
+    function isoIcon(iso) {
+        return iso > 0
+                ? "image://theme/icon-camera-iso-" + iso
+                : "image://theme/icon-camera-iso"
+    }
+
+    function meteringModeIcon(mode) {
+        switch (mode) {
+        case Camera.MeteringMatrix:  return "image://theme/icon-camera-metering-matrix"
+        case Camera.MeteringAverage: return "image://theme/icon-camera-metering-weighted"
+        case Camera.MeteringSpot:    return "image://theme/icon-camera-metering-spot"
+        }
+    }
+
+    function flashIcon(flash) {
+        switch (flash) {
+        case Camera.FlashAuto:              return "image://theme/icon-camera-flash-automatic"
+        case Camera.FlashOff:               return "image://theme/icon-camera-flash-off"
+        case Camera.FlashOn:                return "image://theme/icon-camera-flash-on"
+        case Camera.FlashRedEyeReduction:   return "image://theme/icon-camera-flash-redeye"
+        }
+    }
+
+    function whiteBalanceIcon(balance) {
+        switch (balance) {
+        case CameraImageProcessing.WhiteBalanceAuto:        return "image://theme/icon-camera-wb-automatic"
+        case CameraImageProcessing.WhiteBalanceSunlight:    return "image://theme/icon-camera-wb-sunny"
+        case CameraImageProcessing.WhiteBalanceCloudy:      return "image://theme/icon-camera-wb-cloudy"
+        case CameraImageProcessing.WhiteBalanceShade:       return "image://theme/icon-camera-wb-shade"
+        case CameraImageProcessing.WhiteBalanceSunset:      return "image://theme/icon-camera-wb-sunset"
+        case CameraImageProcessing.WhiteBalanceFluorescent: return "image://theme/icon-camera-wb-fluorecent"
+        case CameraImageProcessing.WhiteBalanceTungsten:    return "image://theme/icon-camera-wb-tungsten"
+        default: return "image://theme/icon-camera-wb-default"
+        }
+    }
+
+    function focusDistanceIcon(focusDistance) {
+        switch (focusDistance) {
+        case Camera.FocusAuto:      return "image://theme/icon-camera-focus-auto"
+        case Camera.FocusInfinity:  return "image://theme/icon-camera-focus-infinity"
+        case Camera.FocusMacro:    return "image://theme/icon-camera-focus-macro"
+        }
+    }
 }

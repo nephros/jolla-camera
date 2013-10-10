@@ -3,6 +3,7 @@ import Sailfish.Silica 1.0
 import Sailfish.Ambience 1.0
 import Sailfish.TransferEngine 1.0
 import com.jolla.settings.accounts 1.0
+import com.jolla.signonuiservice 1.0
 
 ShareMethodList {
     id: menuList
@@ -71,6 +72,12 @@ ShareMethodList {
             jolla_signon_ui_service.inProcessParent = menuList.page
             menuList.page.pageStack.push(accountsPage)
         }
+    }
+
+    SignonUiService {
+        id: jolla_signon_ui_service
+        inProcessServiceName: "com.jolla.camera"
+        inProcessObjectPath: "/JollaCameraSignonUi"
     }
 
     Component {
