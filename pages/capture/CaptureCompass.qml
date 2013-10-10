@@ -4,7 +4,6 @@ import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
 import com.jolla.camera.settings 1.0
 import "../compass"
-import "../settings/SettingsIcons.js" as SettingsIcons
 
 Compass {
     id: compass
@@ -60,13 +59,13 @@ Compass {
     }
 
     leftAction {
-        smallIcon: SettingsIcons.meteringMode(Camera, Settings.mode.meteringMode)
+        smallIcon: Settings.meteringModeIcon(Settings.mode.meteringMode)
         largeIcon: "image://theme/icon-camera-metering-mode"
         enabled: Settings.mode.meteringModeConfigurable
         onActivated: compass.openMenu(meteringMenu)
     }
     topAction {
-        smallIcon: SettingsIcons.flash(Camera, Settings.mode.flash)
+        smallIcon: Settings.flashIcon(Settings.mode.flash)
         largeIcon: "image://theme/icon-camera-flash"
         enabled: Settings.mode.flashConfigurable
         onActivated: compass.openMenu(flashMenu)
@@ -127,7 +126,7 @@ Compass {
             ]
             delegate:  CompassMenuItem {
                 value: modelData
-                icon: SettingsIcons.meteringMode(Camera, modelData)
+                icon: Settings.meteringModeIcon(modelData)
             }
         }
     }
@@ -145,7 +144,7 @@ Compass {
             ]
             delegate: CompassMenuItem {
                 value: modelData
-                icon: SettingsIcons.flash(Camera, modelData)
+                icon: Settings.flashIcon(modelData)
             }
         }
     }
@@ -166,7 +165,7 @@ Compass {
             ]
             delegate: CompassMenuItem {
                 value: modelData
-                icon: SettingsIcons.whiteBalance(CameraImageProcessing, modelData)
+                icon: Settings.whiteBalanceIcon(modelData)
             }
         }
     }

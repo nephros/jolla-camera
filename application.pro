@@ -4,7 +4,6 @@ TARGETPATH = /usr/bin
 
 QT += dbus qml quick multimedia multimedia-private
 CONFIG += link_pkgconfig
-PKGCONFIG += libjollasignonuiservice-qt5
 
 SOURCES += camera.cpp
 

@@ -15,6 +15,7 @@ Page {
     property bool windowActive
     property Item pageStack
     property alias viewfinder: captureView.viewfinder
+    property bool galleryActive
 
     allowedOrientations: Orientation.Portrait | Orientation.Landscape
 
@@ -59,24 +60,32 @@ Page {
         snapMode: ListView.SnapOneItem
         boundsBehavior: Flickable.StopAtBounds
         highlightRangeMode: ListView.StrictlyEnforceRange
-        interactive: !galleryView.positionLocked && captureModel.count > 0
+        interactive: (!galleryLoader.item || !galleryLoader.item.positionLocked) && captureModel.count > 0
         currentIndex: 1
 
         model: VisualItemModel {
-            GalleryView {
-                id: galleryView
+            Item {
+                id: galleryItem
 
                 width: page.width
                 height: page.height
 
-                page: page
-                model: captureModel
-                active: false
-                windowActive: page.windowActive
-                isPortrait: page.orientation == Orientation.Portrait
-                            || page.orientation == Orientation.PortraitInverted
+                Loader {
+                    id: galleryLoader
 
-                visible: switcherView.moving || galleryView.active
+                    anchors.fill: parent
+
+                    asynchronous: true
+                    visible: switcherView.moving || page.galleryActive
+                }
+
+                BusyIndicator {
+                    id: galleryIndicator
+                    visible: galleryLoader.status == Loader.Loading
+                    anchors.centerIn: parent
+                    size: BusyIndicatorSize.Large
+                    running: true
+                }
             }
 
             CaptureView {
@@ -99,22 +108,32 @@ Page {
                 onRecordingStopped: {
                     captureModel.appendCapture(url, mimeType, camera.extensions.orientation, camera.videoRecorder.duration / 1000)
                 }
+
+                onLoaded: {
+                    if (galleryLoader.source == "") {
+                        galleryLoader.setSource("gallery/GalleryView.qml", { page: page, model: captureModel })
+                    }
+                }
             }
         }
 
         onCurrentItemChanged: {
             if (!moving) {
-                galleryView.active = galleryView.ListView.isCurrentItem
+                page.galleryActive = galleryItem.ListView.isCurrentItem
                 captureView.active = captureView.ListView.isCurrentItem
             }
         }
 
         onMovingChanged: {
             if (!moving) {
-                galleryView.active = galleryView.ListView.isCurrentItem
+                page.galleryActive = galleryItem.ListView.isCurrentItem
                 captureView.active = captureView.ListView.isCurrentItem
             } else if (captureView.active) {
-                galleryView.positionViewAtBeginning()
+                if (galleryLoader.source == "") {
+                    galleryLoader.setSource("gallery/GalleryView.qml", { page: page, model: captureModel })
+                } else if (galleryLoader.item) {
+                    galleryLoader.item.positionViewAtBeginning()
+                }
             }
         }
     }
@@ -141,6 +160,7 @@ Page {
     }
 
     ScreenBlank {
-        suspend: galleryView.playing || captureView.camera.captureMode == Camera.CaptureVideo
+        suspend: (galleryLoader.item && galleryLoader.item.playing)
+                    || captureView.camera.captureMode == Camera.CaptureVideo
     }
 }
