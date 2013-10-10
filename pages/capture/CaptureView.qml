@@ -89,8 +89,7 @@ Item {
 
         function captureImage() {
             if (!captureView._capturing
-                    && cameraLocks.focusStatus == Camera.Unlocked
-                    && camera.focus.focusMode == Camera.FocusAuto) {
+                    && cameraLocks.focusStatus == Camera.Unlocked) {
                 captureView._capturing = true
                 cameraLocks.lockFocus()
             } else {
