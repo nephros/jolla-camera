@@ -60,7 +60,7 @@ Compass {
     Image {
         id: settingsIcon
         anchors.centerIn: parent
-        source: "image://theme/icon-camera-focus?" + Theme.highlightColor
+        source: Settings.focusDistanceIcon(Settings.mode.focusDistance) + "?" + Theme.highlightColor
         enabled: compass.interactive && Settings.mode.focusDistanceConfigurable
         opacity: enabled ? 1 : 0
         Behavior on  opacity { FadeAnimation {} }
