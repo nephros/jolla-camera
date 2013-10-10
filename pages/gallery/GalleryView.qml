@@ -61,7 +61,7 @@ Drawer {
 
         pressDelay: 50
         boundsBehavior: Flickable.StopAtBounds
-        cacheBuffer: width * 3
+        cacheBuffer: width
 
         snapMode: ListView.SnapOneItem
         highlightRangeMode: ListView.StrictlyEnforceRange
