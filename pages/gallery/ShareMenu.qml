@@ -37,7 +37,7 @@ ShareMethodList {
             text: qsTrId("camera-me-create_ambience")
 
             visible: menuList.isImage
-            onClicked: Ambience.source = menuList.url
+            onClicked: Ambience.source = menuList.source
         }
     }
 
