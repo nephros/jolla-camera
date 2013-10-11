@@ -4,6 +4,7 @@ import Sailfish.Silica 1.0
 import Sailfish.Media 1.0
 import com.jolla.camera 1.0
 import com.jolla.camera.settings 1.0
+import org.nemomobile.time 1.0
 import org.nemomobile.policy 1.0
 import "../settings"
 
@@ -14,6 +15,7 @@ Item {
     property bool windowActive
     property int orientation
     property int effectiveIso: Settings.mode.iso
+    property alias inButtonLayout: settingsOverlay.inButtonLayout
 
     property alias camera: camera
     property QtObject viewfinder
@@ -22,12 +24,21 @@ Item {
     property int _unload
     property int _aspectRatio
 
-    property real _shutterOffset
+    property bool _touchFocus
 
-    property bool _capturing
+    property real _shutterOffset
 
     readonly property bool isPortrait: orientation == Orientation.Portrait
                 || orientation == Orientation.PortraitInverted
+    readonly property bool effectiveActive: windowActive && active
+
+
+    readonly property int _stillFocus: !_touchFocus || Settings.mode.focusDistance != Camera.FocusContinuous
+                ? Settings.mode.focusDistance
+                : Camera.FocusAuto
+
+    property var _startTime: new Date()
+    property var _endTime: _startTime
 
     signal recordingStopped(url url, string mimeType)
     signal loaded
@@ -40,11 +51,9 @@ Item {
         }
     }
 
-    onActiveChanged: {
-        if (!active) {
-            shootingModeOverlay.open = false
-            settingsCompass.closeMenu()
-            captureCompass.closeMenu()
+    onEffectiveActiveChanged: {
+        if (!effectiveActive) {
+            settingsOverlay.open = false
         }
     }
 
@@ -59,16 +68,6 @@ Item {
         if (_aspectRatio != Settings.global.aspectRatio) {
             _aspectRatio = Settings.global.aspectRatio
             _unload = true
-        }
-    }
-
-    function _autoFocus() {
-        if (Settings.mode.focusDistanceConfigurable) {
-            if (cameraLocks.focusStatus == Camera.Unlocked) {
-                cameraLocks.lockFocus()
-            } else if (!captureView._capturing) {
-                cameraLocks.unlockFocus()
-            }
         }
     }
 
@@ -87,24 +86,37 @@ Item {
         property alias locks: cameraLocks
         property alias extensions: extensions
 
-        function captureImage() {
-            if (!captureView._capturing
-                    && cameraLocks.focusStatus == Camera.Unlocked) {
-                captureView._capturing = true
+        function autoFocus() {
+            if (cameraLocks.focusStatus == Camera.Unlocked) {
                 cameraLocks.lockFocus()
-            } else {
-                camera.imageCapture.captureToLocation(Settings.photoCapturePath('jpg'))
             }
         }
 
-        captureMode: Camera.CaptureStillImage
-        cameraState: captureView._complete && captureView.windowActive && !captureView._unload && captureView.active
+        function captureImage() {
+            camera.imageCapture.captureToLocation(Settings.photoCapturePath('jpg'))
+        }
+
+        function record() {
+            videoRecorder.outputLocation = Settings.videoCapturePath("mp4")
+            videoRecorder.record()
+            if (videoRecorder.recorderState == CameraRecorder.RecordingState) {
+                videoRecorder.recorderStateChanged.connect(_finishRecording)
+            }
+        }
+
+        function _finishRecording() {
+            if (videoRecorder.recorderState == CameraRecorder.StoppedState) {
+                videoRecorder.recorderStateChanged.disconnect(_finishRecording)
+                captureView.recordingStopped(videoRecorder.outputLocation, videoRecorder.mediaContainer)
+            }
+        }
+
+        captureMode: Settings.captureMode
+        cameraState: captureView._complete && captureView.effectiveActive && !captureView._unload
                     ? Camera.ActiveState
                     : Camera.UnloadedState
 
-        onCaptureModeChanged: captureView._capturing = false
         onCameraStateChanged: {
-            captureView._capturing = false
             if (cameraState == Camera.ActiveState) {
                 captureView.loaded()
             }
@@ -114,15 +126,11 @@ Item {
             resolution: Settings.resolutions.image
 
             onImageSaved: {
-                captureView._capturing = false
                 cameraLocks.unlockFocus()
 
                 captureAnimation.start()
             }
-            onCaptureFailed: {
-                captureView._capturing = false
-                cameraLocks.unlockFocus()
-            }
+            onCaptureFailed: cameraLocks.unlockFocus()
         }
         videoRecorder{
             resolution: Settings.resolutions.video
@@ -135,7 +143,7 @@ Item {
         }
         focus {
             focusMode: captureMode == Camera.CaptureStillImage
-                    ? Settings.mode.focusDistance
+                    ? captureView._stillFocus
                     : Settings.global.videoFocus
             focusPointMode: Settings.mode.focusDistanceConfigurable
                     ? Camera.FocusPointCustom
@@ -149,15 +157,15 @@ Item {
             exposureCompensation: Settings.mode.exposureCompensation / 2.0
             meteringMode: Settings.mode.meteringMode
         }
-
     }
 
     CameraLocks {
         id: cameraLocks
         camera: camera
+
         onFocusStatusChanged: {
-            if (focusStatus != Camera.Searching && captureView._capturing) {
-                camera.captureImage()
+            if (focusStatus == Camera.Unlocked) {
+                captureView._touchFocus = false
             }
         }
      }
@@ -247,15 +255,14 @@ Item {
         }
     }
 
-    ShootingModeOverlay {
-        id: shootingModeOverlay
+    SettingsOverlay {
+        id: settingsOverlay
 
         camera: camera
 
         width: captureView.width
         height: captureView.height
 
-        interactive: !settingsCompass.expanded && !captureCompass.expanded
         isPortrait: captureView.isPortrait
 
         onExpandedChanged: {
@@ -265,41 +272,70 @@ Item {
         }
 
         onClicked: {
-            if (shootingModeOverlay.interactive && !shootingModeOverlay.expanded) {
-                captureView._autoFocus()
+            if (captureView._touchFocus && !captureButton.pressed) {
+                cameraLocks.unlockFocus()
             } else {
-                shootingModeOverlay.open = false
-                settingsCompass.closeMenu()
-                captureCompass.closeMenu()
+                captureView._touchFocus = true
+                cameraLocks.lockFocus()
             }
         }
 
         Item {
-            id: compassAnchor
+            id: captureAnchor
             anchors {
                 fill: parent
-                leftMargin: captureCompass.width / 2
-                rightMargin: captureCompass.width / 2
+                margins: Theme.paddingLarge + (Theme.itemSizeExtraLarge / 2)
             }
         }
 
-        SettingsCompass {
-            id: settingsCompass
+        MouseArea {
+            id: captureButton
 
-            camera: camera
-            enabled: !shootingModeOverlay.expanded && !captureCompass.expanded
-            centerMenu: !captureView.isPortrait
-            verticalAlignment: !captureView.isPortrait
-                        ? Settings.global.settingsVerticalAlignment
-                        : Qt.AlignBottom
-            topMargin: Theme.iconSizeMedium + (Theme.paddingLarge * 2)
-            bottomMargin: 112
-            anchors {
-                horizontalCenter: !Settings.global.reverseButtons
-                            ? compassAnchor.left
-                            : compassAnchor.right
-                top: parent.top
-                bottom: parent.bottom
+            width: Theme.itemSizeExtraLarge
+            height: Theme.itemSizeExtraLarge
+
+            z: settingsOverlay.inButtonLayout ? 1 : 0
+
+            enabled: !settingsOverlay.inButtonLayout
+
+            anchors.centerIn: captureView.isPortrait
+                    ? settingsOverlay.portraitAnchor
+                    : settingsOverlay.landscapeAnchor
+
+            onPressed: {
+                camera.autoFocus()
+            }
+
+            onClicked: {
+                if (camera.captureMode == Camera.CaptureStillImage) {
+                    camera.captureImage()
+                } else if (camera.videoRecorder.recorderState == CameraRecorder.RecordingState) {
+                    camera.videoRecorder.stop()
+                } else {
+                    camera.record()
+                }
+            }
+
+            Rectangle {
+                radius: Theme.itemSizeMedium / 2
+                width: Theme.itemSizeMedium
+                height: Theme.itemSizeMedium
+
+                anchors.centerIn: parent
+
+                opacity: 0.6
+                color: Theme.highlightDimmerColor
+            }
+
+            Image {
+                width: Theme.iconSizeMedium
+                height: Theme.iconSizeMedium
+
+                anchors.centerIn: parent
+
+                source: camera.videoRecorder.recorderState == CameraRecorder.RecordingState
+                        ? "image://theme/icon-camera-stop?" + (captureButton.pressed ? Theme.highlightDimmerColor : Theme.highlightColor)
+                        : "image://theme/icon-camera-shutter-release?" + (captureButton.pressed ? Theme.highlightDimmerColor : Theme.highlightColor)
             }
         }
 
@@ -312,12 +348,10 @@ Item {
             anchors.centerIn: parent
 
             border.width: 3
-            border.color: Theme.highlightBackgroundColor
+            border.color: Theme.primaryColor
             color: "#00000000"
 
-            opacity: cameraLocks.focusStatus != Camera.Unlocked
-                     ? (cameraLocks.focusStatus == Camera.Locked && !captureView._capturing ? 1.0 : 0.3)
-                     : 0
+            opacity: (cameraLocks.focusStatus == Camera.Locked ? 1.0 : 0.3)
             Behavior on opacity { FadeAnimation {} }
         }
 
@@ -327,46 +361,48 @@ Item {
 
             radius: 2
             anchors.centerIn: parent
-            color: Theme.highlightBackgroundColor
+            color: Theme.primaryColor
 
             opacity: Settings.mode.meteringMode == Camera.MeteringSpot ? 1 : 0
             Behavior on opacity { FadeAnimation {} }
         }
 
-        CaptureCompass {
-            id: captureCompass
+        Label {
+            anchors.centerIn: parent
+            text: Format.formatDuration(
+                      ((clock.enabled ? clock.time : captureView._endTime) - captureView._startTime) / 1000,
+                      Formatter.DurationLong)
+            font.pixelSize: Theme.fontSizeExtraSmall
+            opacity: camera.captureMode == Camera.CaptureVideo ? 1 : 0
+            Behavior on  opacity { FadeAnimation {} }
+        }
 
-            camera: camera
-
-            enabled: !shootingModeOverlay.expanded && !settingsCompass.expanded
-            centerMenu: !captureView.isPortrait
-            verticalAlignment: !captureView.isPortrait
-                        ? Settings.global.captureVerticalAlignment
-                        : Qt.AlignBottom
-            topMargin: Theme.iconSizeMedium + (Theme.paddingLarge * 2)
-            bottomMargin: 112
-            anchors {
-                horizontalCenter: !Settings.global.reverseButtons
-                            ? compassAnchor.right
-                            : compassAnchor.left
-                top: parent.top
-                bottom: parent.bottom
+        WallClock {
+            id: clock
+            updateFrequency: WallClock.Second
+            enabled: camera.videoRecorder.recorderState == CameraRecorder.RecordingState
+            onEnabledChanged: {
+                if (enabled) {
+                    captureView._startTime = clock.time
+                    captureView._endTime = captureView._startTime
+                } else {
+                    captureView._endTime = captureView._startTime
+                }
             }
-            onRecordingStopped: captureView.recordingStopped(url, mimeType)
         }
     }
 
     MediaKey {
         enabled: keysResource.acquired && camera.captureMode == Camera.CaptureStillImage
         key: Qt.Key_VolumeUp
-        onPressed: {
-            camera.captureImage()
-        }
+        onPressed: camera.autoFocus()
+        onReleased: camera.captureImage()
     }
     MediaKey {
         enabled: keysResource.acquired && camera.captureMode == Camera.CaptureStillImage
         key: Qt.Key_VolumeDown
-        onPressed: captureView._autoFocus()
+        onPressed: camera.autoFocus()
+        onReleased: camera.captureImage()
     }
 
     Permissions {

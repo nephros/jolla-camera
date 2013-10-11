@@ -21,50 +21,18 @@ GConfSchema {
         defaultValue: Camera.FocusAuto
     }
     IntegerSchema {
-        path: "settingsVerticalAlignment"
-        defaultValue: Qt.AlignVCenter
+        path: "captureButtonLocation"
+        defaultValue: 5
     }
-    GConfSchema {
-        path: "reverseButtons"
-        owner: "jolla"
-        type: GConfSchema.Bool
-        defaultValue: false
-        GConfDescription { locale: "C" }
-    }
-    IntegerSchema {
-        path: "captureVerticalAlignment"
-        defaultValue: Qt.AlignVCenter
-    }
-    AutomaticSchema {
-        path: "automatic"
+    ModeSchema {
+        path: "main-camera"
         exposureMode: Camera.ExposureAuto
     }
     ModeSchema {
-        path: "program"
-        exposureMode: Camera.ExposureManual
-    }
-    AutomaticSchema {
-        path: "macro"
-        exposureMode: Camera.ExposureSmallAperture
-        focusDistance: Camera.FocusMacro
-        focusDistanceConfigurable: false
-    }
-    AutomaticSchema {
-        path: "sports"
-        exposureMode: Camera.ExposureSports
-    }
-    AutomaticSchema {
-        path: "landscape"
-        exposureMode: Camera.ExposureLargeAperture
-    }
-    AutomaticSchema {
-        path: "portrait"
-        exposureMode: Camera.ExposurePortrait
-    }
-    AutomaticSchema {
         path: "front-camera"
         face: Settings.Front
         focusDistance: Camera.FocusInfinity
+        flash: Camera.FlashOff
         flashConfigurable: false
         focusDistanceConfigurable: false
     }

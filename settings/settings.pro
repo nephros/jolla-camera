@@ -20,8 +20,8 @@ target.path = $$TARGETPATH
 settingsqml.path = /usr/share/jolla-settings/pages/jolla-camera
 settingsqml.files = \
         SettingsComboBox.qml \
-        SettingsMenu.qml \
-        SettingsMenuItem.qml
+        SettingsComboItem.qml \
+        SettingsPage.qml \
 
 plugin_entry.path = /usr/share/jolla-settings/entries
 plugin_entry.files = jolla-camera.json
