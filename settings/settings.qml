@@ -21,6 +21,7 @@ SettingsBase {
         property int videoFocus: Camera.FocusAuto
 
         property string audioCodec: "audio/mpeg, mpegversion=(int)4"
+        property int audioSampleRate: 48000
         property string videoCodec: "video/mpeg, mpegversion=(int)4"
         property string mediaContainer: "video/quicktime, variant=(string)iso"
 
