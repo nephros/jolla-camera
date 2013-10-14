@@ -127,6 +127,8 @@ Item {
         videoRecorder{
             resolution: Settings.resolutions.video
             frameRate: 30
+            audioChannels: 2
+            audioSampleRate: Settings.global.audioSampleRate
             audioCodec: Settings.global.audioCodec
             videoCodec: Settings.global.videoCodec
             mediaContainer: Settings.global.mediaContainer
