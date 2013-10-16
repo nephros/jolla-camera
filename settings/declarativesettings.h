@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QDate>
 
+#include <MGConfItem>
+
 QT_BEGIN_NAMESPACE
 class QQmlEngine;
 class QJSEngine;
@@ -41,9 +43,11 @@ public:
 private:
     void verifyCapturePrefix();
 
+    MGConfItem m_counter;
+    MGConfItem m_counterDate;
+
     QString m_prefix;
     QDate m_prefixDate;
-    int m_counter;
 };
 
 #endif

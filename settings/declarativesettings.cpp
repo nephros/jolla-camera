@@ -11,10 +11,14 @@
 
 DeclarativeSettings::DeclarativeSettings(QObject *parent)
     : QObject(parent)
-    , m_counter(0)
+    , m_counter(QLatin1String("/apps/jolla-camera/captureCounter"))
+    , m_counterDate(QLatin1String("/apps/jolla-camera/captureCounterDate"))
 {
     QDir(photoDirectory()).mkpath(QLatin1String("."));
     QDir(videoDirectory()).mkpath(QLatin1String("."));
+
+    m_prefixDate = QDate::fromString(m_counterDate.value().toString(), Qt::ISODate);
+    m_prefix = m_prefixDate.toString(QLatin1String("yyyyMMdd_"));
 }
 
 DeclarativeSettings::~DeclarativeSettings()
@@ -48,20 +52,28 @@ QString DeclarativeSettings::videoDirectory() const
 QString DeclarativeSettings::photoCapturePath(const QString &extension)
 {
     verifyCapturePrefix();
+
+    const int counter = m_counter.value().toInt() + 1;
+    m_counter.set(counter);
+
     return photoDirectory()
                 + QLatin1Char('/')
                 + m_prefix
-                + QString(QStringLiteral("%1.")).arg(++m_counter, 3, 10, QLatin1Char('0'))
+                + QString(QStringLiteral("%1.")).arg(counter, 3, 10, QLatin1Char('0'))
                 + extension;
 }
 
 QString DeclarativeSettings::videoCapturePath(const QString &extension)
 {
     verifyCapturePrefix();
+
+    const int counter = m_counter.value().toInt() + 1;
+    m_counter.set(counter);
+
     return videoDirectory()
                 + QLatin1Char('/')
                 + m_prefix
-                + QString(QStringLiteral("%1.")).arg(++m_counter, 3, 10, QLatin1Char('0'))
+                + QString(QStringLiteral("%1.")).arg(counter, 3, 10, QLatin1Char('0'))
                 + extension;
 }
 
@@ -83,8 +95,11 @@ void DeclarativeSettings::verifyCapturePrefix()
     if (m_prefixDate != currentDate) {
         m_prefixDate = currentDate;
         m_prefix = currentDate.toString(QLatin1String("yyyyMMdd_"));
-        m_counter = counterStartValue(photoDirectory(), m_prefix);
-        m_counter = counterStartValue(videoDirectory(), m_prefix, m_counter);
+        int counter = counterStartValue(photoDirectory(), m_prefix);
+        counter = counterStartValue(videoDirectory(), m_prefix, counter);
+
+        m_counter.set(counter);
+        m_counterDate.set(m_prefixDate.toString(Qt::ISODate));
     }
 }
 
