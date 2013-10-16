@@ -160,6 +160,11 @@ void DeclarativeCameraExtensions::setRotation(int rotation)
         orientation += 360;
     }
 
+    if (m_viewfinderSettingsControl && m_viewfinderResolution.isValid()) {
+        m_viewfinderSettingsControl->setViewfinderParameter(
+                    QCameraViewfinderSettingsControl::Resolution, m_viewfinderResolution);
+    }
+
     if (m_metaDataControl) {
         m_metaDataControl->setMetaData(
                     QMediaMetaData::Orientation,
@@ -184,16 +189,17 @@ int DeclarativeCameraExtensions::orientation() const
 
 QSize DeclarativeCameraExtensions::viewfinderResolution() const
 {
-    return m_viewfinderSettingsControl
-            ? m_viewfinderSettingsControl->viewfinderParameter(QCameraViewfinderSettingsControl::Resolution).toSize()
-            : QSize();
+    return m_viewfinderResolution;
 }
 
 void DeclarativeCameraExtensions::setViewfinderResolution(const QSize &resolution)
 {
-    if (m_viewfinderSettingsControl) {
-        m_viewfinderSettingsControl->setViewfinderParameter(
-                    QCameraViewfinderSettingsControl::Resolution, resolution);
+    if (m_viewfinderResolution != resolution) {
+        m_viewfinderResolution = resolution;
+        if (m_viewfinderSettingsControl) {
+            m_viewfinderSettingsControl->setViewfinderParameter(
+                        QCameraViewfinderSettingsControl::Resolution, resolution);
+        }
         emit viewfinderResolutionChanged();
     }
 }

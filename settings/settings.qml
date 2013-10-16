@@ -75,6 +75,18 @@ SettingsBase {
         }
     }
 
+    function captureModeText(mode) {
+        switch (mode) {
+        //: "Still image capture mode"
+        //% "Camera mode"
+        case Camera.CaptureStillImage: return qsTrId("camera-la-camera-mode")
+        //: "Video recording mode"
+        //% "Video mode"
+        case Camera.CaptureVideo:      return qsTrId("camera-la-video-mode")
+        default:  return ""
+        }
+    }
+
     function shootingModeIcon(mode) {
         return "image://theme/icon-camera-" + mode
     }

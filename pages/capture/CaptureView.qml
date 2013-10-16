@@ -22,7 +22,6 @@ Item {
 
     property bool _complete
     property int _unload
-    property int _aspectRatio
 
     property bool _touchFocus
 
@@ -57,19 +56,7 @@ Item {
         }
     }
 
-    Component.onCompleted: {
-        extensions.face = Settings.mode.face
-        _aspectRatio = Settings.global.aspectRatio
-        _complete = true
-    }
-
-
-    function reloadOnSettingsChanged() {
-        if (_aspectRatio != Settings.global.aspectRatio) {
-            _aspectRatio = Settings.global.aspectRatio
-            _unload = true
-        }
-    }
+    Component.onCompleted: _complete = true
 
     Timer {
         id: reloadTimer
@@ -87,7 +74,8 @@ Item {
         property alias extensions: extensions
 
         function autoFocus() {
-            if (cameraLocks.focusStatus == Camera.Unlocked) {
+            if (camera.captureMode == Camera.CaptureStillImage
+                        && cameraLocks.focusStatus == Camera.Unlocked) {
                 cameraLocks.lockFocus()
             }
         }
@@ -174,6 +162,8 @@ Item {
         id: extensions
         camera: camera
 
+        face: Settings.mode.face
+
         rotation: {
             switch (captureView.orientation) {
             case Orientation.Portrait:
@@ -258,26 +248,14 @@ Item {
     SettingsOverlay {
         id: settingsOverlay
 
-        camera: camera
-
         width: captureView.width
         height: captureView.height
 
         isPortrait: captureView.isPortrait
 
-        onExpandedChanged: {
-            if (!expanded) {
-                extensions.face = Settings.mode.face
-            }
-        }
-
         onClicked: {
-            if (captureView._touchFocus && !captureButton.pressed) {
-                cameraLocks.unlockFocus()
-            } else {
-                captureView._touchFocus = true
-                cameraLocks.lockFocus()
-            }
+            captureView._touchFocus = true
+            cameraLocks.lockFocus()
         }
 
         Item {
@@ -339,20 +317,42 @@ Item {
             }
         }
 
-        Rectangle {
-            id: focusLock
+        Item {
+            id: focusArea
 
-            width: 180
-            height: 180
+            width: Screen.width
+                   * extensions.viewfinderResolution.width
+                   / extensions.viewfinderResolution.height
+            height: Screen.width
 
+            rotation: -extensions.orientation
             anchors.centerIn: parent
 
-            border.width: 3
-            border.color: Theme.primaryColor
-            color: "#00000000"
+            visible: camera.captureMode == Camera.CaptureStillImage
 
-            opacity: (cameraLocks.focusStatus == Camera.Locked ? 1.0 : 0.3)
-            Behavior on opacity { FadeAnimation {} }
+            Repeater {
+                model: camera.focus.focusZones
+                delegate: Item {
+                    x: focusArea.width * area.x
+                    y: focusArea.height * area.y
+                    width: focusArea.width * area.width
+                    height: focusArea.height * area.height
+
+                    visible: status != Camera.FocusAreaUnused
+                    opacity: status == Camera.FocusAreaFocused ? 1.0 : 0.3
+                    Behavior on opacity { FadeAnimation {} }
+
+                    Rectangle {
+                        width: Math.min(parent.width, parent.height)
+                        height: width
+
+                        anchors.centerIn: parent
+                        border.width: 3
+                        border.color: Theme.primaryColor
+                        color: "#00000000"
+                    }
+                }
+            }
         }
 
         Rectangle {
@@ -363,6 +363,7 @@ Item {
             anchors.centerIn: parent
             color: Theme.primaryColor
 
+            visible: camera.captureMode == Camera.CaptureStillImage
             opacity: Settings.mode.meteringMode == Camera.MeteringSpot ? 1 : 0
             Behavior on opacity { FadeAnimation {} }
         }

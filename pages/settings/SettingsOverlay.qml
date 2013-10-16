@@ -7,7 +7,6 @@ import com.jolla.camera.settings 1.0
 Item {
     id: overlay
 
-    property Camera camera
     property bool isPortrait
     property bool open
     property bool inButtonLayout
@@ -76,8 +75,6 @@ Item {
             overlay._lastPos = panel.y
         }
 
-
-
         MouseArea {
             id: container
 
@@ -128,6 +125,15 @@ Item {
                 }
             }
 
+            MouseArea {
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: row.width
+                height: Theme.itemSizeLarge
+                enabled: !overlay.expanded
+
+                onClicked: overlay.open = true
+            }
+
             ButtonAnchor { index: 0; anchors { left: parent.left; top: parent.top } }
             ButtonAnchor { index: 1; anchors { left: parent.left; verticalCenter: parent.verticalCenter } }
             ButtonAnchor { index: 2; anchors { left: parent.left; bottom: parent.bottom } }
@@ -144,9 +150,10 @@ Item {
                 target: panel
                 property: "y"
                 value: open ? 0 : -panel.height
-                when: !dragArea.drag.active
+                when: expandBehavior.enabled
             }
             Behavior on y {
+                id: expandBehavior
                 enabled: !dragArea.drag.active
                 NumberAnimation {
                     id: verticalAnimation
@@ -155,7 +162,7 @@ Item {
             }
 
             width: overlay.width
-            height: Screen.width
+            height: Screen.width / 2
         }
 
         Rectangle {
@@ -184,8 +191,7 @@ Item {
             SettingsMenu {
                 id: captureModeMenu
 
-                //% "Camera Mode"
-                title: qsTrId("camera-la-capture-mode")
+                title: Settings.captureModeText(Settings.captureMode)
                 model: [ Camera.CaptureStillImage, Camera.CaptureVideo ]
                 delegate: SettingsMenuItem {
                     property: "captureMode"
@@ -295,15 +301,6 @@ Item {
                         : "main-camera"
             }
         }
-    }
-
-    MouseArea {
-        anchors.horizontalCenter: parent.horizontalCenter
-        width: row.width
-        height: Theme.itemSizeLarge
-        enabled: !overlay.expanded
-
-        onClicked: overlay.open = true
     }
 
     Row {
