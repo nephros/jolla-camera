@@ -9,6 +9,7 @@
 #include <QCameraViewfinderSettingsControl>
 #include <QMediaObject>
 #include <QPointer>
+#include <QQuickItem>
 
 #include <private/qcamerasensorcontrol_p.h>
 
@@ -49,6 +50,8 @@ public:
 
     QSize viewfinderResolution() const;
     void setViewfinderResolution(const QSize &resolution);
+
+    Q_INVOKABLE void disableNotifications(QQuickItem *item, bool disable);
 
 signals:
     void cameraChanged();

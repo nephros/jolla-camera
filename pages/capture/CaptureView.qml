@@ -89,12 +89,14 @@ Item {
             videoRecorder.record()
             if (videoRecorder.recorderState == CameraRecorder.RecordingState) {
                 videoRecorder.recorderStateChanged.connect(_finishRecording)
+                extensions.disableNotifications(captureView, true)
             }
         }
 
         function _finishRecording() {
             if (videoRecorder.recorderState == CameraRecorder.StoppedState) {
                 videoRecorder.recorderStateChanged.disconnect(_finishRecording)
+                extensions.disableNotifications(captureView, false)
                 captureView.recordingStopped(videoRecorder.outputLocation, videoRecorder.mediaContainer)
             }
         }
