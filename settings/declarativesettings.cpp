@@ -15,7 +15,7 @@ DeclarativeSettings::DeclarativeSettings(QObject *parent)
     , m_counterDate(QLatin1String("/apps/jolla-camera/captureCounterDate"))
 {
     QDir(photoDirectory()).mkpath(QLatin1String("."));
-    QDir(videoDirectory()).mkpath(QLatin1String("."));
+    QDir(videoDirectory()).mkpath(QLatin1String(".recording"));
 
     m_prefixDate = QDate::fromString(m_counterDate.value().toString(), Qt::ISODate);
     m_prefix = m_prefixDate.toString(QLatin1String("yyyyMMdd_"));
@@ -71,10 +71,30 @@ QString DeclarativeSettings::videoCapturePath(const QString &extension)
     m_counter.set(counter);
 
     return videoDirectory()
-                + QLatin1Char('/')
+                + QLatin1String("/.recording/")
                 + m_prefix
                 + QString(QStringLiteral("%1.")).arg(counter, 3, 10, QLatin1Char('0'))
                 + extension;
+}
+
+QUrl DeclarativeSettings::completeCapture(const QUrl &file)
+{
+    const QString recordingDir = QStringLiteral("/.recording/");
+    const QString absolutePath = file.toLocalFile();
+    const int index = absolutePath.lastIndexOf(recordingDir) + 1;
+    if (index == -1) {
+        return file;
+    }
+
+    QString targetPath = absolutePath;
+    targetPath.remove(index, recordingDir.length() - 1);
+
+    if (QFile::rename(absolutePath, targetPath)) {
+        return QUrl::fromLocalFile(targetPath);
+    } else {
+        QFile::remove(absolutePath);
+        return QUrl();
+    }
 }
 
 static int counterStartValue(const QString &directory, const QString &prefix, int maximum = 0)

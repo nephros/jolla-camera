@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QDate>
 
+#include <QUrl>
 #include <MGConfItem>
 
 QT_BEGIN_NAMESPACE
@@ -39,6 +40,8 @@ public:
 
     Q_INVOKABLE QString photoCapturePath(const QString &extension);
     Q_INVOKABLE QString videoCapturePath(const QString &extension);
+
+    Q_INVOKABLE QUrl completeCapture(const QUrl &file);
 
 private:
     void verifyCapturePrefix();
