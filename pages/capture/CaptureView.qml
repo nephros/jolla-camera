@@ -31,6 +31,8 @@ Item {
                 || orientation == Orientation.PortraitInverted
     readonly property bool effectiveActive: windowActive && active
 
+    readonly property bool _canCapture: (camera.captureMode == Camera.CaptureStillImage && camera.imageCapture.ready)
+                || (camera.captureMode == Camera.CaptureVideo && camera.videoRecorder.recorderStatus >= CameraRecorder.LoadedStatus)
 
     readonly property int _stillFocus: !_touchFocus || Settings.mode.focusDistance != Camera.FocusContinuous
                 ? Settings.mode.focusDistance
@@ -89,13 +91,18 @@ Item {
             videoRecorder.record()
             if (videoRecorder.recorderState == CameraRecorder.RecordingState) {
                 videoRecorder.recorderStateChanged.connect(_finishRecording)
+                extensions.disableNotifications(captureView, true)
             }
         }
 
         function _finishRecording() {
             if (videoRecorder.recorderState == CameraRecorder.StoppedState) {
                 videoRecorder.recorderStateChanged.disconnect(_finishRecording)
-                captureView.recordingStopped(videoRecorder.outputLocation, videoRecorder.mediaContainer)
+                extensions.disableNotifications(captureView, false)
+                var finalUrl = Settings.completeCapture(videoRecorder.outputLocation)
+                if (finalUrl != "") {
+                    captureView.recordingStopped(finalUrl, videoRecorder.mediaContainer)
+                }
             }
         }
 
@@ -274,7 +281,7 @@ Item {
 
             z: settingsOverlay.inButtonLayout ? 1 : 0
 
-            enabled: !settingsOverlay.inButtonLayout
+            enabled: !settingsOverlay.inButtonLayout && captureView._canCapture
 
             anchors.centerIn: captureView.isPortrait
                     ? settingsOverlay.portraitAnchor
@@ -311,9 +318,13 @@ Item {
 
                 anchors.centerIn: parent
 
+                opacity: captureButton.pressed ? 0.5 : 1.0
+
                 source: camera.videoRecorder.recorderState == CameraRecorder.RecordingState
-                        ? "image://theme/icon-camera-stop?" + (captureButton.pressed ? Theme.highlightDimmerColor : Theme.highlightColor)
-                        : "image://theme/icon-camera-shutter-release?" + (captureButton.pressed ? Theme.highlightDimmerColor : Theme.highlightColor)
+                        ? "image://theme/icon-camera-stop?" + Theme.highlightColor
+                        : "image://theme/icon-camera-shutter-release?" + (captureView._canCapture
+                                ? Theme.highlightColor
+                                : Theme.highlightDimmerColor)
             }
         }
 

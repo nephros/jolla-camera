@@ -3,6 +3,7 @@ import Sailfish.Silica 1.0
 import Sailfish.Media 1.0
 import com.jolla.camera 1.0
 import com.jolla.camera.settings 1.0
+import org.nemomobile.dbus 1.0
 import QtDocGallery 5.0
 import QtMultimedia 5.0
 import "capture"
@@ -164,5 +165,17 @@ Page {
     ScreenBlank {
         suspend: (galleryLoader.item && galleryLoader.item.playing)
                     || captureView.camera.videoRecorder.recorderState == CameraRecorder.RecordingState
+    }
+
+    DBusAdaptor {
+        iface: "com.jolla.camera.ui"
+        service: "com.jolla.camera"
+        path: "/"
+
+        signal showViewfinder(variant args)
+        onShowViewfinder: {
+            switcherView.positionViewAtEnd()
+            window.activate()
+        }
     }
 }

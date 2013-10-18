@@ -4,6 +4,9 @@
 #include <QObject>
 #include <QDate>
 
+#include <QUrl>
+#include <MGConfItem>
+
 QT_BEGIN_NAMESPACE
 class QQmlEngine;
 class QJSEngine;
@@ -38,12 +41,16 @@ public:
     Q_INVOKABLE QString photoCapturePath(const QString &extension);
     Q_INVOKABLE QString videoCapturePath(const QString &extension);
 
+    Q_INVOKABLE QUrl completeCapture(const QUrl &file);
+
 private:
     void verifyCapturePrefix();
 
+    MGConfItem m_counter;
+    MGConfItem m_counterDate;
+
     QString m_prefix;
     QDate m_prefixDate;
-    int m_counter;
 };
 
 #endif

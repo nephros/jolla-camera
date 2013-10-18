@@ -1,11 +1,15 @@
 
 #include "declarativecameraextensions.h"
 
+#include <QGuiApplication>
 #include <QMediaService>
 #include <QQmlInfo>
 
 #include <QtDebug>
 #include <QMediaMetaData>
+
+#include <QQuickWindow>
+#include <qpa/qplatformnativeinterface.h>
 
 DeclarativeCameraExtensions::DeclarativeCameraExtensions(QObject *parent)
     : QObject(parent)
@@ -201,6 +205,15 @@ void DeclarativeCameraExtensions::setViewfinderResolution(const QSize &resolutio
                         QCameraViewfinderSettingsControl::Resolution, resolution);
         }
         emit viewfinderResolutionChanged();
+    }
+}
+
+void DeclarativeCameraExtensions::disableNotifications(QQuickItem *item, bool disable)
+{
+    if (QWindow *window = item ? item->window() : 0) {
+        QGuiApplication::platformNativeInterface()->setWindowProperty(
+                    window->handle(), QLatin1String("NOTIFICATION_PREVIEWS_DISABLED"),
+                    QVariant(disable ? 3 : 0));
     }
 }
 

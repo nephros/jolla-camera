@@ -8,6 +8,8 @@ packagesExist(gconf-2.0) {
     DEFINES += GCONF_DISABLED
 }
 
+PKGCONFIG += mlite5
+
 HEADERS += \
         $$PWD/declarativesettings.h
 

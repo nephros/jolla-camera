@@ -2,7 +2,7 @@ TEMPLATE = app
 TARGET = jolla-camera
 TARGETPATH = /usr/bin
 
-QT += dbus qml quick multimedia multimedia-private
+QT += gui-private dbus qml quick multimedia multimedia-private
 CONFIG += link_pkgconfig
 
 SOURCES += camera.cpp
