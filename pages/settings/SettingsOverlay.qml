@@ -14,7 +14,7 @@ Item {
     default property alias _data: container.data
 
     property alias portraitAnchor: portraitAnchor
-    readonly property Item landscapeAnchor: container.children[Settings.global.captureButtonLocation + 1]
+    readonly property Item landscapeAnchor: container.children[Settings.global.captureButtonLocation + 2]
 
     property real _lastPos
     property real _direction

@@ -55,6 +55,7 @@ Item {
     onEffectiveActiveChanged: {
         if (!effectiveActive) {
             settingsOverlay.open = false
+            settingsOverlay.inButtonLayout = false
         }
     }
 
