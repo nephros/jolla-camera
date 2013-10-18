@@ -35,12 +35,12 @@ Page {
                 settings: Settings.global
                 property: "aspectRatio"
                 menu: ContextMenu {
-                    SettingsMenuItem {
+                    SettingsComboItem {
                         //% "16:9"
                         text: qsTrId("camera_settings-me-16-9")
                         value: Settings.AspectRatio_16_9
                     }
-                    SettingsMenuItem {
+                    SettingsComboItem {
                         //% "4:3"
                         text: qsTrId("camera_settings-me-4-3")
                         value: Settings.AspectRatio_4_3
@@ -62,12 +62,12 @@ Page {
                 settings: Settings.global
                 property: "videoFocus"
                 menu: ContextMenu {
-                    SettingsMenuItem {
+                    SettingsComboItem {
                         //% "On"
                         text: qsTrId("camera_settings-me-continuous-autofocus-on")
                         value: Camera.FocusContinuous
                     }
-                    SettingsMenuItem {
+                    SettingsComboItem {
                         //% "Off"
                         text: qsTrId("camera_settings-me-focus-continuous-autofocus-off")
                         value: Camera.FocusAuto

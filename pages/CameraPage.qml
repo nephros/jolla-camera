@@ -17,7 +17,9 @@ Page {
     property alias viewfinder: captureView.viewfinder
     property bool galleryActive
 
-    allowedOrientations: Orientation.Portrait | Orientation.Landscape
+    allowedOrientations: !captureView.inButtonLayout
+            ? Orientation.Portrait | Orientation.Landscape
+            : Orientation.Landscape
 
     orientationTransitions: Transition {
         to: 'Portrait,Landscape,PortraitInverted,LandscapeInverted'
@@ -161,6 +163,6 @@ Page {
 
     ScreenBlank {
         suspend: (galleryLoader.item && galleryLoader.item.playing)
-                    || captureView.camera.captureMode == Camera.CaptureVideo
+                    || captureView.camera.videoRecorder.recorderState == CameraRecorder.RecordingState
     }
 }

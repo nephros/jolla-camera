@@ -71,6 +71,7 @@ private:
     QMetaDataWriterControl *m_metaDataControl;
     QCameraViewfinderSettingsControl *m_viewfinderSettingsControl;
     QCameraSensorControl *m_sensorControl;
+    QSize m_viewfinderResolution;
     Face m_face;
     int m_rotation;
     int m_orientation;

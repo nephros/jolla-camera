@@ -6,7 +6,7 @@
             "type": "page",
             "icon": "image://theme/icon-m-camera",
             "params": {
-                "source": "/usr/share/jolla-settings/pages/jolla-camera/SettingsMenu.qml"
+                "source": "/usr/share/jolla-settings/pages/jolla-camera/SettingsPage.qml"
             }
         }
     ]

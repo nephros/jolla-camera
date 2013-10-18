@@ -17,7 +17,6 @@
 #include "capturemodel.h"
 #include "declarativecameraextensions.h"
 #include "declarativecameralocks.h"
-#include "declarativecompassaction.h"
 
 #include <gst/gst.h>
 
@@ -56,7 +55,6 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 
     qmlRegisterType<DeclarativeCameraExtensions>("com.jolla.camera", 1, 0, "CameraExtensions");
     qmlRegisterType<DeclarativeCameraLocks>("com.jolla.camera", 1, 0, "CameraLocks");
-    qmlRegisterType<DeclarativeCompassAction>("com.jolla.camera", 1, 0, "CompassAction");
     qmlRegisterType<CaptureModel>("com.jolla.camera", 1, 0, "CaptureModel");
 
     view->setSource(path + QLatin1String("camera.qml"));

@@ -7,15 +7,16 @@ SettingsBase {
     property alias global: globalSettings
     property alias resolutions: resolutionSettings
 
+    property int captureMode: Camera.CaptureStillImage
+    readonly property bool captureModeConfigurable: true
+
     property GConfSettings _global: GConfSettings {
         id: globalSettings
 
         path: "/apps/jolla-camera"
         property string shootingMode: "automatic"
         property int aspectRatio: SettingsBase.AspectRatio_16_9
-        property int settingsVerticalAlignment: Qt.AlignVCenter
-        property int captureVerticalAlignment: Qt.AlignVCenter
-        property bool reverseButtons: false
+        property int captureButtonLocation: 5
         property bool enableExtendedModes: false
 
         property int videoFocus: Camera.FocusAuto
@@ -66,6 +67,25 @@ SettingsBase {
         }
     }
 
+    function captureModeIcon(mode) {
+        switch (mode) {
+        case Camera.CaptureStillImage: return "image://theme/icon-m-camera"
+        case Camera.CaptureVideo:      return "image://theme/icon-m-video"
+        default:  return ""
+        }
+    }
+
+    function captureModeText(mode) {
+        switch (mode) {
+        //: "Still image capture mode"
+        //% "Camera mode"
+        case Camera.CaptureStillImage: return qsTrId("camera-la-camera-mode")
+        //: "Video recording mode"
+        //% "Video mode"
+        case Camera.CaptureVideo:      return qsTrId("camera-la-video-mode")
+        default:  return ""
+        }
+    }
 
     function shootingModeIcon(mode) {
         return "image://theme/icon-camera-" + mode
@@ -115,6 +135,23 @@ SettingsBase {
         }
     }
 
+    function flashText(flash) {
+        switch (flash) {
+        //: "Automatic camera flash mode"
+        //% "Flash automatic"
+        case Camera.FlashAuto:       return qsTrId("camera-la-flash-auto")
+        //: "Camera flash disabled"
+        //% "Flash disabled"
+        case Camera.FlashOff:   return qsTrId("camera-la-flash-off")
+        //: "Camera flash enabled"
+        //% "Flash enabled"
+        case Camera.FlashOn:      return qsTrId("camera-la-flash-on")
+        //: "Camera flash with red eye reduction"
+        //% "Flash red eye"
+        case Camera.FlashRedEyeReduction: return qsTrId("camera-la-flash-redeye")
+        }
+    }
+
     function whiteBalanceIcon(balance) {
         switch (balance) {
         case CameraImageProcessing.WhiteBalanceAuto:        return "image://theme/icon-camera-wb-automatic"
@@ -128,11 +165,55 @@ SettingsBase {
         }
     }
 
+    function whiteBalanceText(balance) {
+        switch (balance) {
+        //: "Automatic white balance"
+        //% "Automatic"
+        case CameraImageProcessing.WhiteBalanceAuto:        return qsTrId("camera-la-wb-automatic")
+        //: "Sunny white balance"
+        //% "Sunny"
+        case CameraImageProcessing.WhiteBalanceSunlight:    return qsTrId("camera-la-wb-sunny")
+        //: "Cloudy white balance"
+        //% "Cloudy"
+        case CameraImageProcessing.WhiteBalanceCloudy:      return qsTrId("camera-la-wb-cloudy")
+        //: "Shade white balance"
+        //% "Shade"
+        case CameraImageProcessing.WhiteBalanceShade:       return qsTrId("camera-la-wb-shade")
+        //: "Sunset white balance"
+        //% "Sunset"
+        case CameraImageProcessing.WhiteBalanceSunset:      return qsTrId("camera-la-wb-sunset")
+        //: "Fluorecent white balance"
+        //% "Fluorecent"
+        case CameraImageProcessing.WhiteBalanceFluorescent: return qsTrId("camera-la-wb-fluorecent")
+        //: "Tungsten white balance"
+        //% "Tungsten"
+        case CameraImageProcessing.WhiteBalanceTungsten:    return qsTrId("camera-la-wb-tungsten")
+        default: return ""
+        }
+    }
+
     function focusDistanceIcon(focusDistance) {
         switch (focusDistance) {
-        case Camera.FocusAuto:      return "image://theme/icon-camera-focus-auto"
-        case Camera.FocusInfinity:  return "image://theme/icon-camera-focus-infinity"
-        case Camera.FocusMacro:    return "image://theme/icon-camera-focus-macro"
+        case Camera.FocusAuto:       return "image://theme/icon-camera-focus"
+        case Camera.FocusInfinity:   return "image://theme/icon-camera-focus-infinity"
+        case Camera.FocusMacro:      return "image://theme/icon-camera-focus-macro"
+        case Camera.FocusContinuous: return "image://theme/icon-camera-focus-auto"
+        }
+    }
+
+    function focusDistanceText(focusDistance) {
+        switch (focusDistance) {
+        //% "Auto focus"
+        case Camera.FocusAuto:       return qsTrId("camera-la-focus-auto")
+        //: "Infinite focus distance"
+        //% "Infinity focus"
+        case Camera.FocusInfinity:   return qsTrId("camera-la-focus-infinity")
+        //: "Macro/close up focus distance"
+        //% "Macro focus"
+        case Camera.FocusMacro:      return qsTrId("camera-la-focus-macro")
+        //: "Continuous auto focus"
+        //% "Continuous focus"
+        case Camera.FocusContinuous: return qsTrId("camera-la-focus-continuous")
         }
     }
 }
