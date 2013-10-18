@@ -6,6 +6,7 @@ import com.jolla.camera 1.0
 import com.jolla.camera.settings 1.0
 import org.nemomobile.time 1.0
 import org.nemomobile.policy 1.0
+import org.nemomobile.ngf 1.0
 import "../settings"
 
 Item {
@@ -59,6 +60,12 @@ Item {
         }
     }
 
+    on_CanCaptureChanged: {
+        if (!_canCapture) {
+            startRecordTimer.running = false
+        }
+    }
+
     Component.onCompleted: _complete = true
 
     Timer {
@@ -68,6 +75,34 @@ Item {
         onTriggered: {
             captureView._unload = false
         }
+    }
+
+    NonGraphicalFeedback {
+        id: shutterEvent
+        event: "camera_shutter"
+    }
+
+    NonGraphicalFeedback {
+        id: recordStartEvent
+        event: "video_record_start"
+    }
+
+    Timer {
+        id: startRecordTimer
+
+        interval: 200
+        onTriggered: {
+            camera.videoRecorder.record()
+            if (camera.videoRecorder.recorderState == CameraRecorder.RecordingState) {
+                camera.videoRecorder.recorderStateChanged.connect(camera._finishRecording)
+                extensions.disableNotifications(captureView, true)
+            }
+        }
+    }
+
+    NonGraphicalFeedback {
+        id: recordStopEvent
+        event: "video_record_stop"
     }
 
     Camera {
@@ -84,16 +119,14 @@ Item {
         }
 
         function captureImage() {
+            shutterEvent.play()
             camera.imageCapture.captureToLocation(Settings.photoCapturePath('jpg'))
         }
 
         function record() {
             videoRecorder.outputLocation = Settings.videoCapturePath("mp4")
-            videoRecorder.record()
-            if (videoRecorder.recorderState == CameraRecorder.RecordingState) {
-                videoRecorder.recorderStateChanged.connect(_finishRecording)
-                extensions.disableNotifications(captureView, true)
-            }
+            startRecordTimer.running = true
+            recordStartEvent.play()
         }
 
         function _finishRecording() {
@@ -104,6 +137,7 @@ Item {
                 if (finalUrl != "") {
                     captureView.recordingStopped(finalUrl, videoRecorder.mediaContainer)
                 }
+                recordStopEvent.play()
             }
         }
 
@@ -295,6 +329,8 @@ Item {
             onClicked: {
                 if (camera.captureMode == Camera.CaptureStillImage) {
                     camera.captureImage()
+                } else if (startRecordTimer.running) {
+                    startRecordTimer.running = false
                 } else if (camera.videoRecorder.recorderState == CameraRecorder.RecordingState) {
                     camera.videoRecorder.stop()
                 } else {
@@ -321,7 +357,7 @@ Item {
 
                 opacity: captureButton.pressed ? 0.5 : 1.0
 
-                source: camera.videoRecorder.recorderState == CameraRecorder.RecordingState
+                source: startRecordTimer.running || camera.videoRecorder.recorderState == CameraRecorder.RecordingState
                         ? "image://theme/icon-camera-stop?" + Theme.highlightColor
                         : "image://theme/icon-camera-shutter-release?" + (captureView._canCapture
                                 ? Theme.highlightColor
