@@ -10,6 +10,7 @@
 #include <QMediaObject>
 #include <QPointer>
 #include <QQuickItem>
+#include <QDateTime>
 
 #include <private/qcamerasensorcontrol_p.h>
 
@@ -21,6 +22,7 @@ class DeclarativeCameraExtensions : public QObject
     Q_PROPERTY(int rotation READ rotation WRITE setRotation NOTIFY rotationChanged)
     Q_PROPERTY(int orientation READ orientation NOTIFY orientationChanged)
     Q_PROPERTY(QSize viewfinderResolution READ viewfinderResolution WRITE setViewfinderResolution NOTIFY viewfinderResolutionChanged)
+    Q_PROPERTY(QDateTime captureTime READ captureTime WRITE setCaptureTime NOTIFY captureTimeChanged)
     Q_ENUMS(Face)
     Q_ENUMS(AspectRatio)
 public:
@@ -51,6 +53,9 @@ public:
     QSize viewfinderResolution() const;
     void setViewfinderResolution(const QSize &resolution);
 
+    QDateTime captureTime() const;
+    void setCaptureTime(const QDateTime &time);
+
     Q_INVOKABLE void disableNotifications(QQuickItem *item, bool disable);
 
 signals:
@@ -59,6 +64,7 @@ signals:
     void rotationChanged();
     void orientationChanged();
     void viewfinderResolutionChanged();
+    void captureTimeChanged();
 
 private slots:
     void sensorPropertyChanged(QCameraSensorControl::Property);
@@ -75,6 +81,7 @@ private:
     QCameraViewfinderSettingsControl *m_viewfinderSettingsControl;
     QCameraSensorControl *m_sensorControl;
     QSize m_viewfinderResolution;
+    QDateTime m_captureTime;
     Face m_face;
     int m_rotation;
     int m_orientation;

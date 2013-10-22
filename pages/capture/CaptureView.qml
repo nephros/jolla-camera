@@ -92,6 +92,7 @@ Item {
 
         interval: 200
         onTriggered: {
+            extensions.captureTime = new Date()
             camera.videoRecorder.record()
             if (camera.videoRecorder.recorderState == CameraRecorder.RecordingState) {
                 camera.videoRecorder.recorderStateChanged.connect(camera._finishRecording)
@@ -120,6 +121,7 @@ Item {
 
         function captureImage() {
             shutterEvent.play()
+            extensions.captureTime = new Date()
             camera.imageCapture.captureToLocation(Settings.photoCapturePath('jpg'))
         }
 
