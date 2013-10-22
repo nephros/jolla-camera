@@ -59,7 +59,6 @@ Drawer {
         width: galleryView.width
         height: galleryView.height
 
-        pressDelay: 50
         boundsBehavior: Flickable.StopAtBounds
         cacheBuffer: width
 
