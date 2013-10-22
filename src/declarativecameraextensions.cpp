@@ -139,6 +139,24 @@ int DeclarativeCameraExtensions::rotation() const
     return m_rotation;
 }
 
+QDateTime DeclarativeCameraExtensions::captureTime() const
+{
+    return m_captureTime;
+}
+
+void DeclarativeCameraExtensions::setCaptureTime(const QDateTime &time)
+{
+    if (m_captureTime != time) {
+        m_captureTime = time;
+
+        if (m_metaDataControl) {
+            m_metaDataControl->setMetaData(QMediaMetaData::Date, m_captureTime);
+        }
+
+        emit captureTimeChanged();
+    }
+}
+
 void DeclarativeCameraExtensions::setRotation(int rotation)
 {
     if (m_imageEncoderControl) {
