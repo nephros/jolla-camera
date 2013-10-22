@@ -25,6 +25,7 @@ Item {
     property int _unload
 
     property bool _touchFocus
+    property bool _captureOnFocus
 
     property real _shutterOffset
 
@@ -114,21 +115,29 @@ Item {
 
         function autoFocus() {
             if (camera.captureMode == Camera.CaptureStillImage
-                        && cameraLocks.focusStatus == Camera.Unlocked) {
+                    && cameraLocks.focusStatus == Camera.Unlocked) {
                 cameraLocks.lockFocus()
             }
         }
 
         function captureImage() {
-            shutterEvent.play()
-            extensions.captureTime = new Date()
-            camera.imageCapture.captureToLocation(Settings.photoCapturePath('jpg'))
+            if (cameraLocks.focusStatus != Camera.Searching) {
+                _completeCapture()
+            } else {
+                captureView._captureOnFocus = true
+            }
         }
 
         function record() {
             videoRecorder.outputLocation = Settings.videoCapturePath("mp4")
             startRecordTimer.running = true
             recordStartEvent.play()
+        }
+
+        function _completeCapture() {
+            shutterEvent.play()
+            extensions.captureTime = new Date()
+            camera.imageCapture.captureToLocation(Settings.photoCapturePath('jpg'))
         }
 
         function _finishRecording() {
@@ -198,6 +207,10 @@ Item {
         onFocusStatusChanged: {
             if (focusStatus == Camera.Unlocked) {
                 captureView._touchFocus = false
+            }
+            if (focusStatus != Camera.Searching && captureView._captureOnFocus) {
+                captureView._captureOnFocus = false
+                camera._completeCapture()
             }
         }
      }
@@ -298,8 +311,10 @@ Item {
         isPortrait: captureView.isPortrait
 
         onClicked: {
-            captureView._touchFocus = true
-            cameraLocks.lockFocus()
+            if (!captureView._captureOnFocus) {
+                captureView._touchFocus = true
+                cameraLocks.lockFocus()
+            }
         }
 
         Item {
@@ -318,14 +333,21 @@ Item {
 
             z: settingsOverlay.inButtonLayout ? 1 : 0
 
-            enabled: !settingsOverlay.inButtonLayout && captureView._canCapture
+            enabled: !settingsOverlay.inButtonLayout
+                        && !settingsOverlay.expanded
+                        && captureView._canCapture
+                        && !captureView._captureOnFocus
+                        && !volumeDown.pressed
+                        && !volumeUp.pressed
 
             anchors.centerIn: captureView.isPortrait
                     ? settingsOverlay.portraitAnchor
                     : settingsOverlay.landscapeAnchor
 
             onPressed: {
-                camera.autoFocus()
+                if (camera.captureMode == Camera.CaptureStillImage) {
+                    camera.autoFocus()
+                }
             }
 
             onClicked: {
@@ -444,13 +466,18 @@ Item {
     }
 
     MediaKey {
-        enabled: keysResource.acquired && camera.captureMode == Camera.CaptureStillImage
+        id: volumeUp
+        enabled: keysResource.acquired
+                    && camera.captureMode == Camera.CaptureStillImage
+                    && !captureButton.pressed
+                    && !captureView._captureOnFocus
         key: Qt.Key_VolumeUp
         onPressed: camera.autoFocus()
         onReleased: camera.captureImage()
     }
     MediaKey {
-        enabled: keysResource.acquired && camera.captureMode == Camera.CaptureStillImage
+        id: volumeDown
+        enabled: volumeUp.enabled
         key: Qt.Key_VolumeDown
         onPressed: camera.autoFocus()
         onReleased: camera.captureImage()
