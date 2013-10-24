@@ -19,8 +19,8 @@ target.path = $$TARGETPATH
 
 settingsqml.path = /usr/share/jolla-settings/pages/jolla-camera
 settingsqml.files = \
-        SettingsComboBox.qml \
-        SettingsComboItem.qml \
+        ResolutionComboBox.qml \
+        ResolutionComboItem.qml \
         SettingsPage.qml \
 
 plugin_entry.path = /usr/share/jolla-settings/entries

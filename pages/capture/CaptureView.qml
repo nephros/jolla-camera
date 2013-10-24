@@ -22,7 +22,7 @@ Item {
     property QtObject viewfinder
 
     property bool _complete
-    property int _unload
+    property bool _unload
 
     property bool _touchFocus
     property bool _captureOnFocus
@@ -45,6 +45,12 @@ Item {
 
     signal recordingStopped(url url, string mimeType)
     signal loaded
+
+    function reload() {
+        if (captureView._complete) {
+            captureView._unload = true;
+        }
+    }
 
     onEffectiveIsoChanged: {
         if (effectiveIso == 0) {
@@ -74,6 +80,7 @@ Item {
         interval: 10
         running: captureView._unload && camera.cameraStatus == Camera.UnloadedStatus
         onTriggered: {
+            console.log("reload", camera.imageCapture.resolution, camera.videoRecorder.resolution, extensions.viewfinderResolution)
             captureView._unload = false
         }
     }
@@ -152,7 +159,7 @@ Item {
             }
         }
 
-        captureMode: Settings.captureMode
+        captureMode: Settings.mode.captureMode
         cameraState: captureView._complete && captureView.effectiveActive && !captureView._unload
                     ? Camera.ActiveState
                     : Camera.UnloadedState
@@ -164,7 +171,8 @@ Item {
         }
 
         imageCapture {
-            resolution: Settings.resolutions.image
+            resolution: Settings.mode.imageResolution
+            onResolutionChanged: reload()
 
             onImageSaved: {
                 cameraLocks.unlockFocus()
@@ -174,7 +182,8 @@ Item {
             onCaptureFailed: cameraLocks.unlockFocus()
         }
         videoRecorder{
-            resolution: Settings.resolutions.video
+            resolution: Settings.mode.videoResolution
+            onResolutionChanged: reload()
             frameRate: 30
             audioChannels: 2
             audioSampleRate: Settings.global.audioSampleRate
@@ -183,12 +192,7 @@ Item {
             mediaContainer: Settings.global.mediaContainer
         }
         focus {
-            focusMode: captureMode == Camera.CaptureStillImage
-                    ? captureView._stillFocus
-                    : Settings.global.videoFocus
-            focusPointMode: Settings.mode.focusDistanceConfigurable
-                    ? Camera.FocusPointCustom
-                    : Camera.FocusPointAuto
+            focusMode: captureView._stillFocus
         }
         flash.mode: Settings.mode.flash
         imageProcessing.whiteBalanceMode: Settings.mode.whiteBalance
@@ -219,7 +223,7 @@ Item {
         id: extensions
         camera: camera
 
-        face: Settings.mode.face
+        device: Settings.global.cameraDevice
 
         rotation: {
             switch (captureView.orientation) {
@@ -234,14 +238,10 @@ Item {
             }
         }
 
-        viewfinderResolution: Settings.resolutions.viewfinder
+        viewfinderResolution: Settings.mode.viewfinderResolution
 
-        onFaceChanged: {
-            if (captureView._complete) {
-                // Force the camera to reload when the selected face changes.
-                captureView._unload = true;
-            }
-        }
+        onViewfinderResolutionChanged: captureView.reload()
+        onDeviceChanged: captureView.reload()
     }
 
     Binding {
@@ -270,7 +270,7 @@ Item {
     Binding {
         target: captureView.viewfinder
         property: "mirror"
-        value: extensions.face == CameraExtensions.Front
+        value: Settings.global.cameraDevice == "secondary"
     }
 
     SequentialAnimation {

@@ -4,6 +4,30 @@ import Sailfish.Silica 1.0
 import com.jolla.camera.settings 1.0
 
 Page {
+    GConfSettings {
+        id: globalSettings
+
+        path: "/apps/jolla-camera"
+
+        GConfSettings {
+            id: primaryImageSettings
+
+            path: "primary/image"
+
+            property size imageResolution
+            property size viewfinderResolution
+        }
+
+        GConfSettings {
+            id: secondaryImageSettings
+
+            path: "secondary/image"
+
+            property size imageResolution
+            property size viewfinderResolution
+        }
+    }
+
     SilicaFlickable {
         id: panel
 
@@ -20,57 +44,61 @@ Page {
                 title: qsTrId("camera_settings-ph-camera")
             }
 
-            SectionHeader {
-                //% "Photo settings"
-                text: qsTrId("camera_settings-ph-photo-settings")
-            }
-
             id: column
             width: parent.width
 
-            SettingsComboBox {
-                id: aspectRatio
-                //% "Aspect Ratio"
-                label: qsTrId("camera_settings-cb-aspect-ratio")
-                settings: Settings.global
-                property: "aspectRatio"
+            SectionHeader {
+                //% "Back camera"
+                text: qsTrId("camera-ph-back-camera")
+            }
+
+            ResolutionComboBox {
+                settings: primaryImageSettings
+
+                //% "Photo resolution"
+                label: qsTrId("camera_settings-cb-photo-resolution")
                 menu: ContextMenu {
-                    SettingsComboItem {
-                        //% "16:9"
-                        text: qsTrId("camera_settings-me-16-9")
-                        value: Settings.AspectRatio_16_9
+                    ResolutionComboItem {
+                        //: "6 mega pixel image resolution with 16:9 aspect ratio"
+                        //% "16:9 (6Mpix)"
+                        text: qsTrId("camera_settings-me-16-9-6m")
+                        imageResolution: "3264x1840"
+                        viewfinderResolution: "768x432"
+
                     }
-                    SettingsComboItem {
-                        //% "4:3"
-                        text: qsTrId("camera_settings-me-4-3")
-                        value: Settings.AspectRatio_4_3
+                    ResolutionComboItem {
+                        //: "8 mega pixel image resolution with 4:3 aspect ratio"
+                        //% "4:3 (8Mpix)"
+                        text: qsTrId("camera_settings-me-4-3-8m")
+                        imageResolution: "3264x2448"
+                        viewfinderResolution: "640x480"
                     }
                 }
             }
 
             SectionHeader {
-                //% "Video settings"
-                text: qsTrId("camera-ph-video-settings")
+                //% "Front camera"
+                text: qsTrId("camera-ph-front-camera")
             }
 
-            SettingsComboBox {
-                id: videoFocus
-                width: parent.width
-                //: Continuous auto focus
-                //% "Continuous AF"
-                label: qsTrId("camera_settings-cb-continuous-autofocus")
-                settings: Settings.global
-                property: "videoFocus"
+            ResolutionComboBox {
+                settings: secondaryImageSettings
+
+                label: qsTrId("camera_settings-cb-photo-resolution")
                 menu: ContextMenu {
-                    SettingsComboItem {
-                        //% "On"
-                        text: qsTrId("camera_settings-me-continuous-autofocus-on")
-                        value: Camera.FocusContinuous
+                    ResolutionComboItem {
+                        //: "1 mega pixel image resolution with 16:9 aspect ratio"
+                        //% "16:9 (1Mpix)"
+                        text: qsTrId("camera_settings-me-16-9-1m")
+                        imageResolution: "1280x720"
+                        viewfinderResolution: "768x432"
                     }
-                    SettingsComboItem {
-                        //% "Off"
-                        text: qsTrId("camera_settings-me-focus-continuous-autofocus-off")
-                        value: Camera.FocusAuto
+                    ResolutionComboItem {
+                        //: "0.3 mega pixel image resolution with 4:3 aspect ratio"
+                        //% "4:3 (0.3Mpix)"
+                        text: qsTrId("camera_settings-me-4-3-0.3m")
+                        imageResolution: "640x480"
+                        viewfinderResolution: "640x480"
                     }
                 }
             }

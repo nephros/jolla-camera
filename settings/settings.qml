@@ -1,25 +1,20 @@
 import QtQuick 2.0
 import QtMultimedia 5.0
-import com.jolla.camera 1.0
+import com.jolla.camera.settings 1.0
 
 SettingsBase {
     property alias mode: modeSettings
     property alias global: globalSettings
-    property alias resolutions: resolutionSettings
-
-    property int captureMode: Camera.CaptureStillImage
-    readonly property bool captureModeConfigurable: true
 
     property GConfSettings _global: GConfSettings {
         id: globalSettings
 
         path: "/apps/jolla-camera"
-        property string shootingMode: "automatic"
-        property int aspectRatio: SettingsBase.AspectRatio_16_9
-        property int captureButtonLocation: 5
-        property bool enableExtendedModes: false
 
-        property int videoFocus: Camera.FocusAuto
+        property string cameraDevice: "primary"
+        property string captureMode: "image"
+
+        property int captureButtonLocation: 5
 
         property string audioCodec: "audio/mpeg, mpegversion=(int)4"
         property int audioSampleRate: 48000
@@ -28,49 +23,48 @@ SettingsBase {
 
         GConfSettings {
             id: modeSettings
-            path: globalSettings.shootingMode
+            path: globalSettings.cameraDevice + "/" + globalSettings.captureMode
+
+            property int captureMode: Camera.CaptureStillImage
 
             property int iso: 0
             property int whiteBalance: CameraImageProcessing.WhiteBalanceAuto
-            property int focusDistance: Camera.FocusAuto
-            property int flash: Camera.FlashAuto
+            property int focusDistance: Camera.FocusInfinity
+            property int flash: Camera.FlashOff
             property int exposureCompensation: 0
             property int exposureMode: 0
             property int meteringMode: Camera.MeteringMatrix
             property int timer: 0
-            property int face: SettingsBase.Back
 
-            property bool isoConfigurable: true
-            property bool whiteBalanceConfigurable: true
-            property bool focusDistanceConfigurable: true
-            property bool videoFocusConfigurable: true
-            property bool flashConfigurable: true
-            property bool exposureConfigurable: true
-            property bool meteringModeConfigurable: true
-            property bool timerConfigurable: true
-        }
+            property size imageResolution: "1280x720"
+            property size videoResolution: "1280x720"
+            property size viewfinderResolution: "1280x720"
 
-        GConfSettings {
-            path: modeSettings.face == SettingsBase.Back
-                        ? "resolutions/back"
-                        : "resolutions/front"
-
-            GConfSettings {
-                id: resolutionSettings
-                path: globalSettings.aspectRatio == SettingsBase.AspectRatio_16_9
-                        ? "16_9"
-                        : "4_3"
-                property size image: "1280x720"     // Last gasp defaults, the real value comes
-                property size video: "1280x720"     // from the schema or an explicity overridden value.
-                property size viewfinder: "1280x720"
-            }
+            property variant isoValues: [ 0 ]
+            property variant whiteBalanceValues: [
+                CameraImageProcessing.WhiteBalanceAuto,
+                CameraImageProcessing.WhiteBalanceCloudy,
+                CameraImageProcessing.WhiteBalanceSunlight,
+                CameraImageProcessing.WhiteBalanceFluorescent,
+                CameraImageProcessing.WhiteBalanceTungsten
+            ]
+            property variant focusDistanceValues: [ Camera.FocusInfinity ]
+            property variant flashValues: [ Camera.FlashOff ]
+            property variant exposureCompensationValues: [ 0 ]
+            property variant exposureModeValues: [ Camera.ExposureAuto ]
+            property variant meteringModeValues: [
+                Camera.MeteringMatrix,
+                Camera.MeteringAverage,
+                Camera.MeteringSpot
+            ]
+            property variant timerValues: [ 0, 3, 5, 15, 20 ]
         }
     }
 
     function captureModeIcon(mode) {
         switch (mode) {
-        case Camera.CaptureStillImage: return "image://theme/icon-m-camera"
-        case Camera.CaptureVideo:      return "image://theme/icon-m-video"
+        case "image": return "image://theme/icon-m-camera"
+        case "video":      return "image://theme/icon-m-video"
         default:  return ""
         }
     }
@@ -79,16 +73,12 @@ SettingsBase {
         switch (mode) {
         //: "Still image capture mode"
         //% "Camera mode"
-        case Camera.CaptureStillImage: return qsTrId("camera-la-camera-mode")
+        case "image": return qsTrId("camera_settings-la-camera-mode")
         //: "Video recording mode"
         //% "Video mode"
-        case Camera.CaptureVideo:      return qsTrId("camera-la-video-mode")
+        case "video":      return qsTrId("camera_settings-la-video-mode")
         default:  return ""
         }
-    }
-
-    function shootingModeIcon(mode) {
-        return "image://theme/icon-camera-" + mode
     }
 
     function exposureIcon(exposure) {
@@ -139,16 +129,16 @@ SettingsBase {
         switch (flash) {
         //: "Automatic camera flash mode"
         //% "Flash automatic"
-        case Camera.FlashAuto:       return qsTrId("camera-la-flash-auto")
+        case Camera.FlashAuto:       return qsTrId("camera_settings-la-flash-auto")
         //: "Camera flash disabled"
         //% "Flash disabled"
-        case Camera.FlashOff:   return qsTrId("camera-la-flash-off")
+        case Camera.FlashOff:   return qsTrId("camera_settings-la-flash-off")
         //: "Camera flash enabled"
         //% "Flash enabled"
-        case Camera.FlashOn:      return qsTrId("camera-la-flash-on")
+        case Camera.FlashOn:      return qsTrId("camera_settings-la-flash-on")
         //: "Camera flash with red eye reduction"
         //% "Flash red eye"
-        case Camera.FlashRedEyeReduction: return qsTrId("camera-la-flash-redeye")
+        case Camera.FlashRedEyeReduction: return qsTrId("camera_settings-la-flash-redeye")
         }
     }
 
@@ -169,25 +159,25 @@ SettingsBase {
         switch (balance) {
         //: "Automatic white balance"
         //% "Automatic"
-        case CameraImageProcessing.WhiteBalanceAuto:        return qsTrId("camera-la-wb-automatic")
+        case CameraImageProcessing.WhiteBalanceAuto:        return qsTrId("camera_settings-la-wb-automatic")
         //: "Sunny white balance"
         //% "Sunny"
-        case CameraImageProcessing.WhiteBalanceSunlight:    return qsTrId("camera-la-wb-sunny")
+        case CameraImageProcessing.WhiteBalanceSunlight:    return qsTrId("camera_settings-la-wb-sunny")
         //: "Cloudy white balance"
         //% "Cloudy"
-        case CameraImageProcessing.WhiteBalanceCloudy:      return qsTrId("camera-la-wb-cloudy")
+        case CameraImageProcessing.WhiteBalanceCloudy:      return qsTrId("camera_settings-la-wb-cloudy")
         //: "Shade white balance"
         //% "Shade"
-        case CameraImageProcessing.WhiteBalanceShade:       return qsTrId("camera-la-wb-shade")
+        case CameraImageProcessing.WhiteBalanceShade:       return qsTrId("camera_settings-la-wb-shade")
         //: "Sunset white balance"
         //% "Sunset"
-        case CameraImageProcessing.WhiteBalanceSunset:      return qsTrId("camera-la-wb-sunset")
+        case CameraImageProcessing.WhiteBalanceSunset:      return qsTrId("camera_settings-la-wb-sunset")
         //: "Fluorecent white balance"
         //% "Fluorecent"
-        case CameraImageProcessing.WhiteBalanceFluorescent: return qsTrId("camera-la-wb-fluorecent")
+        case CameraImageProcessing.WhiteBalanceFluorescent: return qsTrId("camera_settings-la-wb-fluorecent")
         //: "Tungsten white balance"
         //% "Tungsten"
-        case CameraImageProcessing.WhiteBalanceTungsten:    return qsTrId("camera-la-wb-tungsten")
+        case CameraImageProcessing.WhiteBalanceTungsten:    return qsTrId("camera_settings-la-wb-tungsten")
         default: return ""
         }
     }
@@ -203,17 +193,17 @@ SettingsBase {
 
     function focusDistanceText(focusDistance) {
         switch (focusDistance) {
-        //% "Auto focus"
-        case Camera.FocusAuto:       return qsTrId("camera-la-focus-auto")
+        //% "Tap to focus"
+        case Camera.FocusAuto:       return qsTrId("camera_settings-la-focus-auto")
         //: "Infinite focus distance"
         //% "Infinity focus"
-        case Camera.FocusInfinity:   return qsTrId("camera-la-focus-infinity")
+        case Camera.FocusInfinity:   return qsTrId("camera_settings-la-focus-infinity")
         //: "Macro/close up focus distance"
         //% "Macro focus"
-        case Camera.FocusMacro:      return qsTrId("camera-la-focus-macro")
+        case Camera.FocusMacro:      return qsTrId("camera_settings-la-focus-macro")
         //: "Continuous auto focus"
-        //% "Continuous focus"
-        case Camera.FocusContinuous: return qsTrId("camera-la-focus-continuous")
+        //% "Continuous"
+        case Camera.FocusContinuous: return qsTrId("camera_settings-la-focus-continuous")
         }
     }
 }

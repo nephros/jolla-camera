@@ -14,5 +14,3 @@ SOURCES += \
 
 MODULENAME = com/jolla/camera/settings
 TARGETPATH = $$[QT_INSTALL_QML]/$$MODULENAME
-
-include (../../settings/settings.pri)

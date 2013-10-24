@@ -3,7 +3,7 @@ import com.jolla.gconf.schema 1.0
 
 GConfSchema {
     owner: "jolla"
-    type: GConfSchema.Bool;
-    defaultValue: true
+    type: GConfSchema.String;
+
     GConfDescription { locale: "C" }
 }

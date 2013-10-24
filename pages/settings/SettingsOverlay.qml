@@ -191,11 +191,11 @@ Item {
             SettingsMenu {
                 id: captureModeMenu
 
-                title: Settings.captureModeText(Settings.captureMode)
-                model: [ Camera.CaptureStillImage, Camera.CaptureVideo ]
+                title: Settings.captureModeText(Settings.global.captureMode)
+                model: [ "image", "video" ]
                 delegate: SettingsMenuItem {
                     property: "captureMode"
-                    settings: Settings
+                    settings: Settings.global
                     value: modelData
                     icon: Settings.captureModeIcon(modelData)
                 }
@@ -204,7 +204,7 @@ Item {
                 id: flashMenu
 
                 title: Settings.flashText(Settings.mode.flash)
-                model: [ Camera.FlashOn, Camera.FlashOff, Camera.FlashAuto ]
+                model: Settings.mode.flashValues
                 delegate: SettingsMenuItem {
                     settings: Settings.mode
                     property: "flash"
@@ -216,13 +216,7 @@ Item {
                 id: whiteBalanceMenu
 
                 title: Settings.whiteBalanceText(Settings.mode.whiteBalance)
-                model: [
-                    CameraImageProcessing.WhiteBalanceSunlight,
-                    CameraImageProcessing.WhiteBalanceCloudy,
-                    CameraImageProcessing.WhiteBalanceAuto,
-                    CameraImageProcessing.WhiteBalanceTungsten,
-                    CameraImageProcessing.WhiteBalanceFluorescent
-                ]
+                model: Settings.mode.whiteBalanceValues
                 delegate: SettingsMenuItem {
                     settings: Settings.mode
                     property: "whiteBalance"
@@ -234,12 +228,7 @@ Item {
                 id: focusMenu
 
                 title: Settings.focusDistanceText(Settings.mode.focusDistance)
-                model: [
-                    Camera.FocusContinuous,
-                    Camera.FocusInfinity,
-                    Camera.FocusMacro,
-                    Camera.FocusAuto
-                ]
+                model: Settings.mode.focusDistanceValues
                 delegate: SettingsMenuItem {
                     settings: Settings.mode
                     property: "focusDistance"
@@ -268,7 +257,7 @@ Item {
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
 
-                text: Settings.global.shootingMode == "main-camera"
+                text: Settings.global.cameraDevice == "primary"
                         //% "Main camera"
                         ? qsTrId("camera-la-main-camera")
                         //% "Front camera"
@@ -295,9 +284,9 @@ Item {
 
             anchors.fill: switcherColumn
             onClicked: {
-                Settings.global.shootingMode = Settings.global.shootingMode == "main-camera"
-                        ? "front-camera"
-                        : "main-camera"
+                Settings.global.cameraDevice = Settings.global.cameraDevice == "primary"
+                        ? "secondary"
+                        : "primary"
             }
         }
     }
