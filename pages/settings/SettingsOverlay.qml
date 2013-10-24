@@ -264,7 +264,6 @@ Item {
                 height: Theme.itemSizeExtraSmall
 
                 color: Theme.highlightColor
-                font.capitalization: Font.AllUppercase
                 font.pixelSize: Theme.fontSizeTiny
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
