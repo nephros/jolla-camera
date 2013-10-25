@@ -14,7 +14,11 @@ GConfSchema {
         defaultValue: "image"
     }
     IntegerSchema {
-        path: "captureButtonLocation"
+        path: "portraitCaptureButtonLocation"
+        defaultValue: 4
+    }
+    IntegerSchema {
+        path: "landscapeCaptureButtonLocation"
         defaultValue: 5
     }
     ModeSchema {

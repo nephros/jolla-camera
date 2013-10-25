@@ -29,6 +29,8 @@ Item {
 
     property real _shutterOffset
 
+    property int _recordingDuration: ((clock.enabled ? clock.time : captureView._endTime) - captureView._startTime) / 1000
+
     readonly property bool isPortrait: orientation == Orientation.Portrait
                 || orientation == Orientation.PortraitInverted
     readonly property bool effectiveActive: windowActive && active
@@ -317,15 +319,7 @@ Item {
             }
         }
 
-        Item {
-            id: captureAnchor
-            anchors {
-                fill: parent
-                margins: Theme.paddingLarge + (Theme.itemSizeExtraLarge / 2)
-            }
-        }
-
-        MouseArea {
+        shutter: MouseArea {
             id: captureButton
 
             width: Theme.itemSizeExtraLarge
@@ -340,9 +334,7 @@ Item {
                         && !volumeDown.pressed
                         && !volumeUp.pressed
 
-            anchors.centerIn: captureView.isPortrait
-                    ? settingsOverlay.portraitAnchor
-                    : settingsOverlay.landscapeAnchor
+            anchors.centerIn: parent
 
             onPressed: {
                 if (camera.captureMode == Camera.CaptureStillImage) {
@@ -389,6 +381,34 @@ Item {
             }
         }
 
+        timer: Rectangle {
+            radius: 3
+            anchors {
+                centerIn: parent
+                horizontalCenterOffset: settingsOverlay.timerAlignment == Qt.AlignLeft
+                        ? -(timerLabel.width + Theme.paddingMedium - Theme.itemSizeMedium) / 2
+                        : (timerLabel.width + Theme.paddingMedium - Theme.itemSizeMedium) / 2
+            }
+            width: timerLabel.implicitWidth + (2 * Theme.paddingMedium)
+            height: timerLabel.implicitHeight + (2 * Theme.paddingSmall)
+
+            color: Theme.highlightColor
+            opacity: timerLabel.opacity
+
+            Label {
+                id: timerLabel
+
+                anchors.centerIn: parent
+
+                text: Format.formatDuration(
+                          captureView._recordingDuration,
+                          captureView._recordingDuration >= 3600 ? Formatter.DurationLong : Formatter.DurationShort)
+                font.pixelSize: Theme.fontSizeMedium
+                opacity: camera.captureMode == Camera.CaptureVideo ? 1 : 0
+                Behavior on  opacity { FadeAnimation {} }
+            }
+        }
+
         Item {
             id: focusArea
 
@@ -399,8 +419,6 @@ Item {
 
             rotation: -extensions.orientation
             anchors.centerIn: parent
-
-            visible: camera.captureMode == Camera.CaptureStillImage
 
             Repeater {
                 model: camera.focus.focusZones
@@ -438,16 +456,6 @@ Item {
             visible: camera.captureMode == Camera.CaptureStillImage
             opacity: Settings.mode.meteringMode == Camera.MeteringSpot ? 1 : 0
             Behavior on opacity { FadeAnimation {} }
-        }
-
-        Label {
-            anchors.centerIn: parent
-            text: Format.formatDuration(
-                      ((clock.enabled ? clock.time : captureView._endTime) - captureView._startTime) / 1000,
-                      Formatter.DurationLong)
-            font.pixelSize: Theme.fontSizeExtraSmall
-            opacity: camera.captureMode == Camera.CaptureVideo ? 1 : 0
-            Behavior on  opacity { FadeAnimation {} }
         }
 
         WallClock {

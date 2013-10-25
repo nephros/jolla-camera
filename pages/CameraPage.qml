@@ -117,6 +117,12 @@ Page {
                         galleryLoader.setSource("gallery/GalleryView.qml", { page: page, model: captureModel })
                     }
                 }
+
+                onInButtonLayoutChanged: {
+                    page.allowedOrientations = inButtonLayout
+                            ? page.orientation
+                            : Orientation.Portrait | Orientation.Landscape
+                }
             }
         }
 
