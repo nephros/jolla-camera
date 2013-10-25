@@ -462,7 +462,7 @@ Item {
                             margins: -1
                         }
                         border {
-                            width: 5
+                            width: Theme.paddingSmall
                             color: "black"
                         }
                         color: "#00000000"
@@ -477,7 +477,7 @@ Item {
                         opacity: 0.6
                         anchors.centerIn: parent
                         border {
-                            width: 3
+                            width: Theme.paddingSmall - 2
                             color: status == Camera.FocusAreaFocused
                                         ? Theme.highlightColor
                                         : Theme.primaryColor
@@ -494,6 +494,20 @@ Item {
 
                         source: "image://theme/icon-system-warning?" + Theme.highlightColor
                         visible: captureView._focusFailed
+                        rotation: -focusArea.rotation
+                    }
+
+                    Image {
+                        anchors {
+                            horizontalCenter: focusRectangle.right
+                            verticalCenter: captureView.isPortrait
+                                        ? focusRectangle.top
+                                        : focusRectangle.bottom
+                        }
+
+                        source: "image://theme/icon-camera-focus-infinity?" + Theme.highlightColor
+                        visible: model.status == Camera.FocusAreaFocused
+                                    && camera.focus.focusMode == Camera.FocusInfinity
                         rotation: -focusArea.rotation
                     }
                 }
