@@ -27,6 +27,8 @@ Item {
     property bool _touchFocus
     property bool _captureOnFocus
 
+    property bool _focusFailed
+
     property real _shutterOffset
 
     property int _recordingDuration: ((clock.enabled ? clock.time : captureView._endTime) - captureView._startTime) / 1000
@@ -52,6 +54,13 @@ Item {
         if (captureView._complete) {
             captureView._unload = true;
         }
+    }
+
+    function _resetFocus() {
+        focusTimer.running = false
+        _touchFocus = false
+        _focusFailed = false
+        cameraLocks.unlockFocus()
     }
 
     onEffectiveIsoChanged: {
@@ -82,7 +91,6 @@ Item {
         interval: 10
         running: captureView._unload && camera.cameraStatus == Camera.UnloadedStatus
         onTriggered: {
-            console.log("reload", camera.imageCapture.resolution, camera.videoRecorder.resolution, extensions.viewfinderResolution)
             captureView._unload = false
         }
     }
@@ -177,11 +185,11 @@ Item {
             onResolutionChanged: reload()
 
             onImageSaved: {
-                cameraLocks.unlockFocus()
+                captureView._resetFocus()
 
                 captureAnimation.start()
             }
-            onCaptureFailed: cameraLocks.unlockFocus()
+            onCaptureFailed: captureView._resetFocus()
         }
         videoRecorder{
             resolution: Settings.mode.videoResolution
@@ -212,11 +220,23 @@ Item {
 
         onFocusStatusChanged: {
             if (focusStatus == Camera.Unlocked) {
+                if (captureView._touchFocus
+                        || volumeUp.pressed
+                        || volumeDown.pressed
+                        || captureButton.pressed) {
+                    captureView._focusFailed = true
+                    focusTimer.running = true
+                }
                 captureView._touchFocus = false
+            } else {
+                captureView._focusFailed = false
             }
+
             if (focusStatus != Camera.Searching && captureView._captureOnFocus) {
                 captureView._captureOnFocus = false
                 camera._completeCapture()
+            } else if (focusStatus == Camera.Locked) {
+                focusTimer.running = true
             }
         }
      }
@@ -435,20 +455,56 @@ Item {
                     height: focusArea.height * area.height
 
                     visible: status != Camera.FocusAreaUnused
-                    opacity: status == Camera.FocusAreaFocused ? 1.0 : 0.3
-                    Behavior on opacity { FadeAnimation {} }
 
                     Rectangle {
+                        anchors {
+                            fill: focusRectangle
+                            margins: -1
+                        }
+                        border {
+                            width: 5
+                            color: "black"
+                        }
+                        color: "#00000000"
+                    }
+
+                    Rectangle {
+                        id: focusRectangle
+
                         width: Math.min(parent.width, parent.height)
                         height: width
 
+                        opacity: 0.6
                         anchors.centerIn: parent
-                        border.width: 3
-                        border.color: Theme.primaryColor
+                        border {
+                            width: 3
+                            color: status == Camera.FocusAreaFocused
+                                        ? Theme.highlightColor
+                                        : Theme.primaryColor
+                        }
                         color: "#00000000"
+                    }
+                    Image {
+                        anchors {
+                            horizontalCenter: focusRectangle.right
+                            verticalCenter: captureView.isPortrait
+                                        ? focusRectangle.top
+                                        : focusRectangle.bottom
+                        }
+
+                        source: "image://theme/icon-system-warning?" + Theme.highlightColor
+                        visible: captureView._focusFailed
+                        rotation: -focusArea.rotation
                     }
                 }
             }
+        }
+
+        Timer {
+            id: focusTimer
+
+            interval: 15000
+            onTriggered: captureView._resetFocus()
         }
 
         Rectangle {
