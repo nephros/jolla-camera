@@ -291,6 +291,17 @@ Item {
         }
     }
 
+    Rectangle {
+        width: overlay.width
+        height: Theme.itemSizeSmall
+
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: Theme.rgba(Theme.highlightDimmerColor, 0.6) }
+            GradientStop { position: 0.9; color: Theme.rgba(Theme.highlightDimmerColor, 0.2) }
+            GradientStop { position: 1.0; color: Theme.rgba(Theme.highlightDimmerColor, 0.0) }
+        }
+    }
+
     Row {
         spacing: Theme.paddingMedium
 
