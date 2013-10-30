@@ -70,7 +70,7 @@ ShareMethodList {
 
         onClicked: {
             jolla_signon_ui_service.inProcessParent = menuList.page
-            menuList.page.pageStack.push(accountsPage)
+            accountCreator.startAccountCreation()
         }
     }
 
@@ -80,8 +80,9 @@ ShareMethodList {
         inProcessObjectPath: "/JollaCameraSignonUi"
     }
 
-    Component {
-        id: accountsPage
-        AccountsPage { }
+    AccountCreationManager {
+        id: accountCreator
+        endDestination: menuList.page
+        endDestinationAction: PageStackAction.Pop
     }
 }
