@@ -4,4 +4,4 @@ element-name=GstOMXH264Enc-omxh264enc
 
 [high]
 control-rate=1
-target-bitrate=800000
+target-bitrate=12000000
