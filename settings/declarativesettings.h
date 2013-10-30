@@ -17,19 +17,7 @@ class DeclarativeSettings : public QObject
     Q_OBJECT
     Q_PROPERTY(QString photoDirectory READ photoDirectory CONSTANT)
     Q_PROPERTY(QString videoDirectory READ videoDirectory CONSTANT)
-    Q_ENUMS(Face)
-    Q_ENUMS(AspectRatio)
 public:
-    enum Face {
-        Back,
-        Front
-    };
-
-    enum AspectRatio {
-        AspectRatio_4_3,
-        AspectRatio_16_9
-    };
-
     DeclarativeSettings(QObject *parent = 0);
     ~DeclarativeSettings();
 

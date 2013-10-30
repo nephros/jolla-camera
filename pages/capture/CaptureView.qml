@@ -22,12 +22,16 @@ Item {
     property QtObject viewfinder
 
     property bool _complete
-    property int _unload
+    property bool _unload
 
     property bool _touchFocus
     property bool _captureOnFocus
 
+    property bool _focusFailed
+
     property real _shutterOffset
+
+    property int _recordingDuration: ((clock.enabled ? clock.time : captureView._endTime) - captureView._startTime) / 1000
 
     readonly property bool isPortrait: orientation == Orientation.Portrait
                 || orientation == Orientation.PortraitInverted
@@ -45,6 +49,19 @@ Item {
 
     signal recordingStopped(url url, string mimeType)
     signal loaded
+
+    function reload() {
+        if (captureView._complete) {
+            captureView._unload = true;
+        }
+    }
+
+    function _resetFocus() {
+        focusTimer.running = false
+        _touchFocus = false
+        _focusFailed = false
+        cameraLocks.unlockFocus()
+    }
 
     onEffectiveIsoChanged: {
         if (effectiveIso == 0) {
@@ -152,7 +169,7 @@ Item {
             }
         }
 
-        captureMode: Settings.captureMode
+        captureMode: Settings.mode.captureMode
         cameraState: captureView._complete && captureView.effectiveActive && !captureView._unload
                     ? Camera.ActiveState
                     : Camera.UnloadedState
@@ -164,17 +181,19 @@ Item {
         }
 
         imageCapture {
-            resolution: Settings.resolutions.image
+            resolution: Settings.mode.imageResolution
+            onResolutionChanged: reload()
 
             onImageSaved: {
-                cameraLocks.unlockFocus()
+                captureView._resetFocus()
 
                 captureAnimation.start()
             }
-            onCaptureFailed: cameraLocks.unlockFocus()
+            onCaptureFailed: captureView._resetFocus()
         }
         videoRecorder{
-            resolution: Settings.resolutions.video
+            resolution: Settings.mode.videoResolution
+            onResolutionChanged: reload()
             frameRate: 30
             audioChannels: 2
             audioSampleRate: Settings.global.audioSampleRate
@@ -183,12 +202,7 @@ Item {
             mediaContainer: Settings.global.mediaContainer
         }
         focus {
-            focusMode: captureMode == Camera.CaptureStillImage
-                    ? captureView._stillFocus
-                    : Settings.global.videoFocus
-            focusPointMode: Settings.mode.focusDistanceConfigurable
-                    ? Camera.FocusPointCustom
-                    : Camera.FocusPointAuto
+            focusMode: captureView._stillFocus
         }
         flash.mode: Settings.mode.flash
         imageProcessing.whiteBalanceMode: Settings.mode.whiteBalance
@@ -206,11 +220,23 @@ Item {
 
         onFocusStatusChanged: {
             if (focusStatus == Camera.Unlocked) {
+                if (captureView._touchFocus
+                        || volumeUp.pressed
+                        || volumeDown.pressed
+                        || captureButton.pressed) {
+                    captureView._focusFailed = true
+                    focusTimer.running = true
+                }
                 captureView._touchFocus = false
+            } else {
+                captureView._focusFailed = false
             }
+
             if (focusStatus != Camera.Searching && captureView._captureOnFocus) {
                 captureView._captureOnFocus = false
                 camera._completeCapture()
+            } else if (focusStatus == Camera.Locked) {
+                focusTimer.running = true
             }
         }
      }
@@ -219,7 +245,7 @@ Item {
         id: extensions
         camera: camera
 
-        face: Settings.mode.face
+        device: Settings.global.cameraDevice
 
         rotation: {
             switch (captureView.orientation) {
@@ -234,14 +260,10 @@ Item {
             }
         }
 
-        viewfinderResolution: Settings.resolutions.viewfinder
+        viewfinderResolution: Settings.mode.viewfinderResolution
 
-        onFaceChanged: {
-            if (captureView._complete) {
-                // Force the camera to reload when the selected face changes.
-                captureView._unload = true;
-            }
-        }
+        onViewfinderResolutionChanged: captureView.reload()
+        onDeviceChanged: captureView.reload()
     }
 
     Binding {
@@ -270,7 +292,7 @@ Item {
     Binding {
         target: captureView.viewfinder
         property: "mirror"
-        value: extensions.face == CameraExtensions.Front
+        value: Settings.global.cameraDevice == "secondary"
     }
 
     SequentialAnimation {
@@ -317,15 +339,13 @@ Item {
             }
         }
 
-        Item {
-            id: captureAnchor
-            anchors {
-                fill: parent
-                margins: Theme.paddingLarge + (Theme.itemSizeExtraLarge / 2)
-            }
+        onPinchUpdated: {
+            camera.digitalZoom = Math.max(1, Math.min(
+                        camera.digitalZoom + (pinch.scale - pinch.previousScale),
+                        camera.maximumDigitalZoom))
         }
 
-        MouseArea {
+        shutter: MouseArea {
             id: captureButton
 
             width: Theme.itemSizeExtraLarge
@@ -340,9 +360,7 @@ Item {
                         && !volumeDown.pressed
                         && !volumeUp.pressed
 
-            anchors.centerIn: captureView.isPortrait
-                    ? settingsOverlay.portraitAnchor
-                    : settingsOverlay.landscapeAnchor
+            anchors.centerIn: parent
 
             onPressed: {
                 if (camera.captureMode == Camera.CaptureStillImage) {
@@ -389,6 +407,34 @@ Item {
             }
         }
 
+        timer: Rectangle {
+            radius: 3
+            anchors {
+                centerIn: parent
+                horizontalCenterOffset: settingsOverlay.timerAlignment == Qt.AlignLeft
+                        ? -(timerLabel.width + Theme.paddingMedium - Theme.itemSizeMedium) / 2
+                        : (timerLabel.width + Theme.paddingMedium - Theme.itemSizeMedium) / 2
+            }
+            width: timerLabel.implicitWidth + (2 * Theme.paddingMedium)
+            height: timerLabel.implicitHeight + (2 * Theme.paddingSmall)
+
+            color: Theme.highlightColor
+            opacity: timerLabel.opacity
+
+            Label {
+                id: timerLabel
+
+                anchors.centerIn: parent
+
+                text: Format.formatDuration(
+                          captureView._recordingDuration,
+                          captureView._recordingDuration >= 3600 ? Formatter.DurationLong : Formatter.DurationShort)
+                font.pixelSize: Theme.fontSizeMedium
+                opacity: camera.captureMode == Camera.CaptureVideo ? 1 : 0
+                Behavior on  opacity { FadeAnimation {} }
+            }
+        }
+
         Item {
             id: focusArea
 
@@ -400,8 +446,6 @@ Item {
             rotation: -extensions.orientation
             anchors.centerIn: parent
 
-            visible: camera.captureMode == Camera.CaptureStillImage
-
             Repeater {
                 model: camera.focus.focusZones
                 delegate: Item {
@@ -411,20 +455,56 @@ Item {
                     height: focusArea.height * area.height
 
                     visible: status != Camera.FocusAreaUnused
-                    opacity: status == Camera.FocusAreaFocused ? 1.0 : 0.3
-                    Behavior on opacity { FadeAnimation {} }
 
                     Rectangle {
+                        anchors {
+                            fill: focusRectangle
+                            margins: -1
+                        }
+                        border {
+                            width: 5
+                            color: "black"
+                        }
+                        color: "#00000000"
+                    }
+
+                    Rectangle {
+                        id: focusRectangle
+
                         width: Math.min(parent.width, parent.height)
                         height: width
 
+                        opacity: 0.6
                         anchors.centerIn: parent
-                        border.width: 3
-                        border.color: Theme.primaryColor
+                        border {
+                            width: 3
+                            color: status == Camera.FocusAreaFocused
+                                        ? Theme.highlightColor
+                                        : Theme.primaryColor
+                        }
                         color: "#00000000"
+                    }
+                    Image {
+                        anchors {
+                            horizontalCenter: focusRectangle.right
+                            verticalCenter: captureView.isPortrait
+                                        ? focusRectangle.top
+                                        : focusRectangle.bottom
+                        }
+
+                        source: "image://theme/icon-system-warning?" + Theme.highlightColor
+                        visible: captureView._focusFailed
+                        rotation: -focusArea.rotation
                     }
                 }
             }
+        }
+
+        Timer {
+            id: focusTimer
+
+            interval: 15000
+            onTriggered: captureView._resetFocus()
         }
 
         Rectangle {
@@ -438,16 +518,6 @@ Item {
             visible: camera.captureMode == Camera.CaptureStillImage
             opacity: Settings.mode.meteringMode == Camera.MeteringSpot ? 1 : 0
             Behavior on opacity { FadeAnimation {} }
-        }
-
-        Label {
-            anchors.centerIn: parent
-            text: Format.formatDuration(
-                      ((clock.enabled ? clock.time : captureView._endTime) - captureView._startTime) / 1000,
-                      Formatter.DurationLong)
-            font.pixelSize: Theme.fontSizeExtraSmall
-            opacity: camera.captureMode == Camera.CaptureVideo ? 1 : 0
-            Behavior on  opacity { FadeAnimation {} }
         }
 
         WallClock {

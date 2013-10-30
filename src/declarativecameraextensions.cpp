@@ -116,21 +116,21 @@ void DeclarativeCameraExtensions::setCamera(QObject *camera)
     }
 }
 
-DeclarativeCameraExtensions::Face DeclarativeCameraExtensions::face() const
+QString DeclarativeCameraExtensions::device() const
 {
-    return m_face;
+    return m_device;
 }
 
-void DeclarativeCameraExtensions::setFace(Face face)
+void DeclarativeCameraExtensions::setDevice(const QString &device)
 {
-    if (face != m_face) {
-        m_face = face;
+    if (device != m_device) {
+        m_device = device;
 
         setRotation(m_rotation);
         if (m_deviceControl) {
             updateDevice();
         }
-        emit faceChanged();
+        emit deviceChanged();
     }
 }
 
@@ -175,7 +175,7 @@ void DeclarativeCameraExtensions::setRotation(int rotation)
             ? m_sensorControl->property(QCameraSensorControl::Orientation).toInt()
             : 0;
 
-    int orientation = (m_face == Back
+    int orientation = (m_device == QLatin1String("primary")
                 ? sensorOrientation - rotation
                 : sensorOrientation + rotation) % 360;
     if (orientation < 0) {
@@ -237,22 +237,12 @@ void DeclarativeCameraExtensions::disableNotifications(QQuickItem *item, bool di
 
 void DeclarativeCameraExtensions::updateDevice()
 {
-    QString deviceName;
-    if (m_face == Back) {
-        deviceName = QLatin1String("primary");
-    } else if (m_face == Front) {
-        deviceName = QLatin1String("secondary");
-    } else {
-        deviceName = QString();
-    }
-
     for (int i = 0; i < m_deviceControl->deviceCount(); ++i) {
-        if (m_deviceControl->deviceName(i) == deviceName) {
+        if (m_deviceControl->deviceName(i) == m_device) {
             m_deviceControl->setSelectedDevice(i);
             return;
         }
     }
-    qmlInfo(this) << deviceName << "is not a supported device";
 }
 
 void DeclarativeCameraExtensions::sensorPropertyChanged(QCameraSensorControl::Property)

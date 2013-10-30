@@ -4,7 +4,7 @@ import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
 import com.jolla.camera.settings 1.0
 
-Item {
+PinchArea {
     id: overlay
 
     property bool isPortrait
@@ -13,8 +13,13 @@ Item {
     readonly property bool expanded: open || _closing || verticalAnimation.running || dragArea.drag.active
     default property alias _data: container.data
 
-    property alias portraitAnchor: portraitAnchor
-    readonly property Item landscapeAnchor: container.children[Settings.global.captureButtonLocation + 2]
+    readonly property int _captureButtonLocation: overlay.isPortrait
+                ? Settings.global.portraitCaptureButtonLocation
+                : Settings.global.landscapeCaptureButtonLocation
+
+    readonly property int timerAlignment: timerContainer.parent == timerAnchorBL
+                ? Qt.AlignLeft
+                : Qt.AlignRight
 
     property real _lastPos
     property real _direction
@@ -24,7 +29,9 @@ Item {
 
     property bool interactive: true
 
-    readonly property int _captureButtonLocation: Settings.global.captureButtonLocation
+    property alias shutter: shutterContainer.children
+    property alias timer: timerContainer.children
+
     on_CaptureButtonLocationChanged: inButtonLayout = false
 
     property list<SettingsMenuItem> _menus
@@ -42,6 +49,33 @@ Item {
         open = false
         inButtonLayout = false
         _closing = false
+    }
+
+    property list<Item> _buttonAnchors
+    _buttonAnchors: [
+        ButtonAnchor { id: buttonAnchorTL; index: 0; anchors { left: parent.left; top: parent.top } visible: !overlay.isPortrait },
+        ButtonAnchor { id: buttonAnchorCL; index: 1; anchors { left: parent.left; verticalCenter: parent.verticalCenter } },
+        ButtonAnchor { id: buttonAnchorBL; index: 2; anchors { left: parent.left; bottom: parent.bottom } },
+        ButtonAnchor { id: buttonAnchorBC; index: 3; anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom } },
+        ButtonAnchor { id: buttonAnchorBR; index: 4; anchors { right: parent.right; bottom: parent.bottom } },
+        ButtonAnchor { id: buttonAnchorCR; index: 5; anchors { right: parent.right; verticalCenter: parent.verticalCenter } },
+        ButtonAnchor { id: buttonAnchorTR; index: 6; anchors { right: parent.right; top: parent.top } visible: !overlay.isPortrait }
+    ]
+
+    Item {
+        id: shutterContainer
+
+        parent: overlay._buttonAnchors[overlay._captureButtonLocation]
+        anchors.fill: parent
+    }
+
+    Item {
+        id: timerContainer
+
+        parent: overlay.isPortrait
+                        ? (shutterContainer.parent != buttonAnchorBR ? timerAnchorBR : timerAnchorBL)
+                        : (shutterContainer.parent != buttonAnchorTR ? timerAnchorTR : timerAnchorBR)
+        anchors.fill: parent
     }
 
     MouseArea {
@@ -80,7 +114,7 @@ Item {
 
             width: overlay.width
             height: overlay.height
-            opacity: 1 - overlay._progress
+            opacity: Math.min(1 - overlay._progress, 1 - anchorContainer.opacity)
 
             onClicked: {
                 if (overlay.expanded) {
@@ -97,31 +131,13 @@ Item {
             }
 
             Rectangle {
-                id: layoutHighlight
-
                 width: overlay.width
-                height: overlay.height
+                height: Theme.itemSizeSmall
 
-                z: 1
-
-                color: Theme.highlightDimmerColor
-                visible: overlay.inButtonLayout || layoutAnimation.running
-                opacity: overlay.inButtonLayout ? 0.6 : 0.0
-                Behavior on opacity { FadeAnimation { id: layoutAnimation } }
-
-                Label {
-                    anchors {
-                        centerIn: parent
-                        verticalCenterOffset: -Theme.paddingLarge
-                    }
-                    width: Screen.width - Theme.itemSizeExtraLarge
-                    font.pixelSize: Theme.fontSizeExtraLarge
-                    horizontalAlignment: Text.AlignHCenter
-                    wrapMode: Text.Wrap
-
-                    //% "Select location for the landscape capture key"
-                    text: qsTrId("camera-la-capture-key-location")
-
+                gradient: Gradient {
+                    GradientStop { position: 0.0; color: Theme.rgba(Theme.highlightDimmerColor, 0.6) }
+                    GradientStop { position: 0.9; color: Theme.rgba(Theme.highlightDimmerColor, 0.2) }
+                    GradientStop { position: 1.0; color: Theme.rgba(Theme.highlightDimmerColor, 0.0) }
                 }
             }
 
@@ -129,18 +145,19 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: row.width
                 height: Theme.itemSizeLarge
-                enabled: !overlay.expanded
+                enabled: !overlay.expanded && !overlay.inButtonLayout
 
                 onClicked: overlay.open = true
             }
 
-            ButtonAnchor { index: 0; anchors { left: parent.left; top: parent.top } }
-            ButtonAnchor { index: 1; anchors { left: parent.left; verticalCenter: parent.verticalCenter } }
-            ButtonAnchor { index: 2; anchors { left: parent.left; bottom: parent.bottom } }
-            ButtonAnchor { id: portraitAnchor; index: 3; anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom } }
-            ButtonAnchor { index: 4; anchors { right: parent.right; bottom: parent.bottom } }
-            ButtonAnchor { index: 5; anchors { right: parent.right; verticalCenter: parent.verticalCenter } }
-            ButtonAnchor { index: 6; anchors { right: parent.right; top: parent.top } }
+            TimerAnchor { id: timerAnchorBL; anchors { left: parent.left; bottom: parent.bottom } }
+            TimerAnchor { id: timerAnchorBR; anchors { right: parent.right; bottom: parent.bottom } }
+            Item {
+                id: timerAnchorTR
+                width: Theme.itemSizeMedium
+                height: Theme.itemSizeSmall
+                anchors { right: parent.right; top: parent.top; rightMargin: Theme.paddingLarge }
+            }
         }
 
         Item {
@@ -191,11 +208,11 @@ Item {
             SettingsMenu {
                 id: captureModeMenu
 
-                title: Settings.captureModeText(Settings.captureMode)
-                model: [ Camera.CaptureStillImage, Camera.CaptureVideo ]
+                title: Settings.captureModeText(Settings.global.captureMode)
+                model: [ "image", "video" ]
                 delegate: SettingsMenuItem {
                     property: "captureMode"
-                    settings: Settings
+                    settings: Settings.global
                     value: modelData
                     icon: Settings.captureModeIcon(modelData)
                 }
@@ -204,7 +221,7 @@ Item {
                 id: flashMenu
 
                 title: Settings.flashText(Settings.mode.flash)
-                model: [ Camera.FlashOn, Camera.FlashOff, Camera.FlashAuto ]
+                model: Settings.mode.flashValues
                 delegate: SettingsMenuItem {
                     settings: Settings.mode
                     property: "flash"
@@ -216,13 +233,7 @@ Item {
                 id: whiteBalanceMenu
 
                 title: Settings.whiteBalanceText(Settings.mode.whiteBalance)
-                model: [
-                    CameraImageProcessing.WhiteBalanceSunlight,
-                    CameraImageProcessing.WhiteBalanceCloudy,
-                    CameraImageProcessing.WhiteBalanceAuto,
-                    CameraImageProcessing.WhiteBalanceTungsten,
-                    CameraImageProcessing.WhiteBalanceFluorescent
-                ]
+                model: Settings.mode.whiteBalanceValues
                 delegate: SettingsMenuItem {
                     settings: Settings.mode
                     property: "whiteBalance"
@@ -234,12 +245,7 @@ Item {
                 id: focusMenu
 
                 title: Settings.focusDistanceText(Settings.mode.focusDistance)
-                model: [
-                    Camera.FocusContinuous,
-                    Camera.FocusInfinity,
-                    Camera.FocusMacro,
-                    Camera.FocusAuto
-                ]
+                model: Settings.mode.focusDistanceValues
                 delegate: SettingsMenuItem {
                     settings: Settings.mode
                     property: "focusDistance"
@@ -264,12 +270,11 @@ Item {
                 height: Theme.itemSizeExtraSmall
 
                 color: Theme.highlightColor
-                font.capitalization: Font.AllUppercase
                 font.pixelSize: Theme.fontSizeTiny
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
 
-                text: Settings.global.shootingMode == "main-camera"
+                text: Settings.global.cameraDevice == "primary"
                         //% "Main camera"
                         ? qsTrId("camera-la-main-camera")
                         //% "Front camera"
@@ -296,9 +301,9 @@ Item {
 
             anchors.fill: switcherColumn
             onClicked: {
-                Settings.global.shootingMode = Settings.global.shootingMode == "main-camera"
-                        ? "front-camera"
-                        : "main-camera"
+                Settings.global.cameraDevice = Settings.global.cameraDevice == "primary"
+                        ? "secondary"
+                        : "primary"
             }
         }
     }
@@ -331,6 +336,47 @@ Item {
                     smooth: true
                 }
             }
+        }
+    }
+
+    Item {
+        id: anchorContainer
+
+        width: overlay.width
+        height: overlay.height
+
+        visible: overlay.inButtonLayout || layoutAnimation.running
+        opacity: overlay.inButtonLayout ? 1.0 : 0.0
+        Behavior on opacity { FadeAnimation { id: layoutAnimation } }
+
+        Rectangle {
+            id: layoutHighlight
+
+            width: overlay.width
+            height: overlay.height
+
+            opacity: 0.8
+            color: Theme.highlightDimmerColor
+        }
+
+        Label {
+            anchors {
+                centerIn: parent
+                verticalCenterOffset: -Theme.paddingLarge
+            }
+            width: overlay.isPortrait
+                    ? Screen.width - (2 * Theme.itemSizeExtraLarge)
+                    : Screen.width - Theme.itemSizeExtraLarge
+            font.pixelSize: Theme.fontSizeExtraLarge
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.Wrap
+            color: Theme.highlightColor
+
+            text: overlay.isPortrait
+                    //% "Select location for the portrait capture key"
+                    ? qsTrId("camera-la-portrait-capture-key-location")
+                    //% "Select location for the landscape capture key"
+                    : qsTrId("camera-la-landscape-capture-key-location")
         }
     }
 }

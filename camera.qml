@@ -21,6 +21,12 @@ ApplicationWindow {
         }
     }
 
+    Rectangle {
+        anchors.fill: videoOutput
+        z: -1
+        color: "black"
+    }
+
     GStreamerVideoOutput {
         id: videoOutput
 

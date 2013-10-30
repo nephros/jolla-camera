@@ -212,14 +212,17 @@ static void writeTypeElement(
 static QString toString(const QVariant &variant)
 {
     QStringList stringList;
+    bool isList = false;
 
     if (variant.type() == QVariant::StringList) {
         stringList = variant.toStringList();
+        isList = true;
     } else if (variant.userType() == qMetaTypeId<QVariantList>()) {
         const QVariantList list = variant.value<QVariantList>();
         for (int i = 0; i < list.count(); ++i) {
             stringList.append(list.at(i).toString());
         }
+        isList = true;
     } else if (variant.type() == QVariant::Size) {
         QSize size = variant.toSize();
         return QString(QStringLiteral("(%1,%2)")).arg(size.width()).arg(size.height());
@@ -229,7 +232,9 @@ static QString toString(const QVariant &variant)
     } else {
         return variant.toString();
     }
-    return stringList.join(QLatin1String(", "));
+    return isList
+            ? QLatin1Char('[') + stringList.join(QLatin1String(",")) + QLatin1Char(']')
+            : stringList.join(QLatin1String(","));
 }
 
 void DeclarativeGConfSchema::write(QXmlStreamWriter *writer, const QByteArray &parentPath)

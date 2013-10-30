@@ -11,7 +11,6 @@ MouseArea {
     property QtObject settings
 
     readonly property bool selected: settings[property] == value
-    visible: selected || settings[property + "Configurable"]
 
     width: Theme.itemSizeLarge
     height: Theme.itemSizeSmall

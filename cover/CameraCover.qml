@@ -16,7 +16,7 @@ Cover {
         columns: 2
         spacing: Theme.paddingLarge
         anchors.centerIn: parent
-        CoverIcon { icon: Settings.captureModeIcon(Settings.captureMode) }
+        CoverIcon { icon: Settings.captureModeIcon(Settings.global.captureMode) }
         CoverIcon { icon: Settings.isoIcon(Settings.mode.iso) }
         CoverIcon { icon: Settings.timerIcon(Settings.mode.timer) }
         CoverIcon { icon: Settings.focusDistanceIcon(Settings.mode.focusDistance) }

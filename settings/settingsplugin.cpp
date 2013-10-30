@@ -51,8 +51,8 @@ public:
         Q_UNUSED(uri)
         Q_ASSERT(QLatin1String(uri) == QLatin1String("com.jolla.camera.settings"));
 
-        qmlRegisterType<DeclarativeGConfSettings>("com.jolla.camera", 1, 0, "GConfSettings");
-        qmlRegisterType<DeclarativeSettings>("com.jolla.camera", 1, 0, "SettingsBase");
+        qmlRegisterType<DeclarativeGConfSettings>("com.jolla.camera.settings", 1, 0, "GConfSettings");
+        qmlRegisterType<DeclarativeSettings>("com.jolla.camera.settings", 1, 0, "SettingsBase");
         qmlRegisterSingletonType<DeclarativeSettings>("com.jolla.camera.settings", 1, 0, "Settings", DeclarativeSettings::factory);
 
     }

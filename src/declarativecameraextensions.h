@@ -18,32 +18,20 @@ class DeclarativeCameraExtensions : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QObject *camera READ camera WRITE setCamera NOTIFY cameraChanged)
-    Q_PROPERTY(Face face READ face WRITE setFace NOTIFY faceChanged)
+    Q_PROPERTY(QString device READ device WRITE setDevice NOTIFY deviceChanged)
     Q_PROPERTY(int rotation READ rotation WRITE setRotation NOTIFY rotationChanged)
     Q_PROPERTY(int orientation READ orientation NOTIFY orientationChanged)
     Q_PROPERTY(QSize viewfinderResolution READ viewfinderResolution WRITE setViewfinderResolution NOTIFY viewfinderResolutionChanged)
     Q_PROPERTY(QDateTime captureTime READ captureTime WRITE setCaptureTime NOTIFY captureTimeChanged)
-    Q_ENUMS(Face)
-    Q_ENUMS(AspectRatio)
 public:
-    enum Face {
-        Back,
-        Front
-    };
-
-    enum AspectRatio {
-        AspectRatio_4_3,
-        AspectRatio_16_9
-    };
-
     DeclarativeCameraExtensions(QObject *parent = 0);
     ~DeclarativeCameraExtensions();
 
     QObject *camera() const;
     void setCamera(QObject *camera);
 
-    Face face() const;
-    void setFace(Face face);
+    QString device() const;
+    void setDevice(const QString &device);
 
     int rotation() const;
     void setRotation(int rotation);
@@ -60,7 +48,7 @@ public:
 
 signals:
     void cameraChanged();
-    void faceChanged();
+    void deviceChanged();
     void rotationChanged();
     void orientationChanged();
     void viewfinderResolutionChanged();
@@ -82,7 +70,7 @@ private:
     QCameraSensorControl *m_sensorControl;
     QSize m_viewfinderResolution;
     QDateTime m_captureTime;
-    Face m_face;
+    QString m_device;
     int m_rotation;
     int m_orientation;
 };
