@@ -4,8 +4,8 @@ import Sailfish.Silica 1.0
 Image {
     property url icon
 
-    width: Theme.iconSizeSmall + Theme.paddingMedium
-    height: Theme.iconSizeSmall + Theme.paddingMedium
+    width: 64
+    height: 64
     fillMode: Image.PreserveAspectFit
-    source: icon + "?" + Theme.highlightDimmerColor
+    source: icon + "?" + Theme.highlightColor
 }
