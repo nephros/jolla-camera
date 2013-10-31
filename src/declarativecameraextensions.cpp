@@ -159,6 +159,14 @@ void DeclarativeCameraExtensions::setCaptureTime(const QDateTime &time)
 
 void DeclarativeCameraExtensions::setRotation(int rotation)
 {
+    int sensorOrientation = m_sensorControl
+            ? m_sensorControl->property(QCameraSensorControl::Orientation).toInt()
+            : 0;
+
+    if (m_device == QLatin1String("secondary")) {
+        rotation = -rotation;
+    }
+
     if (m_imageEncoderControl) {
         QImageEncoderSettings imageSettings = m_imageEncoderControl->imageSettings();
         imageSettings.setEncodingOption(QLatin1String("rotation"), rotation);
@@ -171,9 +179,6 @@ void DeclarativeCameraExtensions::setRotation(int rotation)
         m_videoEncoderControl->setVideoSettings(videoSettings);
     }
 
-    int sensorOrientation = m_sensorControl
-            ? m_sensorControl->property(QCameraSensorControl::Orientation).toInt()
-            : 0;
 
     int orientation = (m_device == QLatin1String("primary")
                 ? sensorOrientation - rotation
