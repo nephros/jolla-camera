@@ -39,6 +39,7 @@ Requires:  sailfish-components-gallery-qt5 >= 0.0.18
 Requires:  libjollasignonuiservice-qt5-plugin >= 0.0.29
 Requires:  libngf-qt5-declarative
 Requires:  ambienced
+Requires:  gst-plugins-good
 Requires:  gst-plugins-bad
 Requires:  %{name}-settings = %{version}
 
