@@ -55,6 +55,8 @@ void CaptureModel::setSource(QObject *source)
                 m_roles[MimeType] = roleNames.key("mimeType");
                 m_roles[Orientation] = roleNames.key("orientation");
                 m_roles[Duration] = roleNames.key("duration");
+                m_roles[Width] = roleNames.key("width");
+                m_roles[Height] = roleNames.key("height");
             }
 
             m_model = model;
@@ -105,6 +107,8 @@ QHash<int, QByteArray> CaptureModel::roleNames() const
     roleNames.insert(MimeType, "mimeType");
     roleNames.insert(Orientation, "orientation");
     roleNames.insert(Duration, "duration");
+    roleNames.insert(Width, "width");
+    roleNames.insert(Height, "height");
     return roleNames;
 }
 
@@ -136,6 +140,10 @@ QVariant CaptureModel::data(const QModelIndex &index, int role) const
             return capture.orientation;
         } else if (role == Duration) {
             return capture.duration;
+        } else if (role == Width) {
+            return capture.width;
+        } else if (role == Height) {
+            return capture.height;
         } else {
             return QVariant();
         }
@@ -170,6 +178,8 @@ void CaptureModel::_q_rowsInserted(const QModelIndex &parent, int begin, int end
         m_roles[MimeType] = roleNames.key("mimeType");
         m_roles[Orientation] = roleNames.key("orientation");
         m_roles[Duration] = roleNames.key("duration");
+        m_roles[Width] = roleNames.key("width");
+        m_roles[Height] = roleNames.key("height");
     }
 
     const int count = m_count + m_captures.count();
@@ -221,7 +231,7 @@ void CaptureModel::_q_dataChanged(
 }
 
 void CaptureModel::appendCapture(
-        const QUrl &url, const QString &mimeType, int orientation, qint64 duration)
+        const QUrl &url, const QString &mimeType, int orientation, qint64 duration, const QSize &resolution)
 {
     QUrl resolvedUrl = m_fileUrl.resolved(url);
 
@@ -232,7 +242,7 @@ void CaptureModel::appendCapture(
         }
     }
     beginInsertRows(QModelIndex(), m_count + m_captures.count(), m_count + m_captures.count());
-    Capture capture = { resolvedUrl, mimeType, orientation, duration };
+    Capture capture = { resolvedUrl, mimeType, orientation, duration, resolution.width(), resolution.height() };
     m_captures.append(capture);
     endInsertRows();
 
