@@ -24,7 +24,7 @@ Requires:  ambient-icons-closed
 Requires:  sailfishsilica-qt5
 Requires:  mapplauncherd-booster-silica-qt5
 Requires: qt5-qtdeclarative-import-multimedia
-Requires: qt5-qtmultimedia-plugin-mediaservice-gstcamerabin
+Requires: qt5-qtmultimedia-plugin-mediaservice-gstcamerabin >= 5.1.0+git22
 Requires: qt5-qtmultimedia-plugin-mediaservice-gstmediaplayer
 Requires:  declarative-transferengine-qt5
 Requires:  nemo-qml-plugin-accounts-qt5
@@ -39,7 +39,7 @@ Requires:  sailfish-components-gallery-qt5 >= 0.0.24
 Requires:  libjollasignonuiservice-qt5-plugin >= 0.0.29
 Requires:  libngf-qt5-declarative
 Requires:  ambienced
-Requires:  gst-plugins-good
+Requires:  gst-plugins-good >= 0.10.31+git3
 Requires:  gst-plugins-bad
 Requires:  %{name}-settings = %{version}
 
