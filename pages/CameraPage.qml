@@ -65,6 +65,7 @@ Page {
         highlightRangeMode: ListView.StrictlyEnforceRange
         interactive: (!galleryLoader.item || !galleryLoader.item.positionLocked) && captureModel.count > 0
         currentIndex: 1
+        pressDelay: 0
 
         model: VisualItemModel {
             Item {
@@ -105,11 +106,21 @@ Page {
                 visible: switcherView.moving || captureView.active
 
                 camera.imageCapture.onImageSaved: {
-                    captureModel.appendCapture(path, "image/jpeg", camera.extensions.orientation, 0)
+                    captureModel.appendCapture(
+                                path,
+                                "image/jpeg",
+                                camera.extensions.orientation,
+                                0,
+                                camera.imageCapture.resolution)
                 }
 
                 onRecordingStopped: {
-                    captureModel.appendCapture(url, mimeType, camera.extensions.orientation, camera.videoRecorder.duration / 1000)
+                    captureModel.appendCapture(
+                                url,
+                                mimeType,
+                                camera.extensions.orientation,
+                                camera.videoRecorder.duration / 1000,
+                                camera.videoRecorder.resolution)
                 }
 
                 onLoaded: {
@@ -152,7 +163,7 @@ Page {
 
         source: DocumentGalleryModel {
             rootType: DocumentGallery.File
-            properties: [ "url", "title", "mimeType", "orientation", "duration" ]
+            properties: [ "url", "title", "mimeType", "orientation", "duration", "width", "height" ]
             sortProperties: ["fileName"]
             autoUpdate: true
             filter: GalleryFilterUnion {

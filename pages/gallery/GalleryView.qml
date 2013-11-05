@@ -67,6 +67,7 @@ Drawer {
 
         orientation: ListView.Horizontal
         currentIndex: count - 1
+        pressDelay: 0
 
         interactive: pageView.count > 1 && !galleryView.positionLocked
 
@@ -131,8 +132,13 @@ Drawer {
                     onClicked: galleryView.open = !galleryView.open
                     fit: galleryView.page.isPortrait ? Fit.Width : Fit.Height
                     menuOpen: galleryView.opened
+                    enableZoom: !pageView.moving
 
                     orientation: model.orientation
+                    maximumWidth: model.width
+                    maximumHeight: model.height
+
+                    active: galleryItem.active
                 }
             }
 

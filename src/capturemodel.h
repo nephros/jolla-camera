@@ -3,6 +3,7 @@
 
 #include <QAbstractItemModel>
 #include <QPointer>
+#include <QSize>
 #include <QUrl>
 
 class CaptureModel : public QAbstractListModel
@@ -17,6 +18,8 @@ public:
         MimeType,
         Orientation,
         Duration,
+        Width,
+        Height,
         RoleCount
     };
 
@@ -34,7 +37,12 @@ public:
     QVariant data(const QModelIndex &index, int role) const;
 
 public slots:
-    void appendCapture(const QUrl &url, const QString &mimeType, int orientation, qint64 duration);
+    void appendCapture(
+            const QUrl &url,
+            const QString &mimeType,
+            int orientation,
+            qint64 duration,
+            const QSize &resolution);
 
 signals:
     void sourceChanged();
@@ -51,6 +59,8 @@ private:
         QString mimeType;
         int orientation;
         qint64 duration;
+        int width;
+        int height;
     };
     QVector<Capture> m_captures;
     QPointer<QAbstractItemModel> m_model;
