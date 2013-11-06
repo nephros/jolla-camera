@@ -18,11 +18,19 @@
             <locale name="C"/>
         </schema>
         <schema>
-            <key>/schemas/apps/jolla-camera/captureButtonLocation</key>
-            <applyto>/apps/jolla-camera/captureButtonLocation</applyto>
+            <key>/schemas/apps/jolla-camera/portraitCaptureButtonLocation</key>
+            <applyto>/apps/jolla-camera/portraitCaptureButtonLocation</applyto>
             <owner>jolla</owner>
             <type>int</type>
-            <default>5</default>
+            <default>3</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/landscapeCaptureButtonLocation</key>
+            <applyto>/apps/jolla-camera/landscapeCaptureButtonLocation</applyto>
+            <owner>jolla</owner>
+            <type>int</type>
+            <default>4</default>
             <locale name="C"/>
         </schema>
         <schema>
@@ -104,7 +112,7 @@
             <type>pair</type>
             <car_type>float</car_type>
             <cdr_type>float</cdr_type>
-            <default>(3264,2448)</default>
+            <default>(3264,1840)</default>
             <locale name="C"/>
         </schema>
         <schema>
