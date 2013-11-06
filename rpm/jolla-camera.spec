@@ -20,7 +20,7 @@ BuildRequires:  qt5-qttools
 BuildRequires:  qt5-qttools-linguist
 BuildRequires:  pkgconfig(gstreamer-0.10)
 
-Requires:  ambient-icons-closed
+Requires:  jolla-ambient >= 0.3.16
 Requires:  sailfishsilica-qt5
 Requires:  mapplauncherd-booster-silica-qt5
 Requires: qt5-qtdeclarative-import-multimedia

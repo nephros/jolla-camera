@@ -2,21 +2,32 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 
 Column {
+    id: menu
+
     property alias title: titleText.text
     property alias model: repeater.model
     property alias delegate: repeater.delegate
     property Item currentItem
 
-    width: Theme.itemSizeLarge
+    width: Screen.width / 4
+
+    Item {
+        width: 1
+        height: Theme.paddingLarge
+    }
 
     Label {
         id: titleText
 
-        width : Theme.itemSizeLarge
-        height: Theme.itemSizeExtraSmall
+        x: Theme.paddingSmall
+        width : parent.width - (2 * Theme.paddingSmall)
+        height: (Theme.fontSizeExtraSmall * 2) + Theme.paddingLarge
 
-        color: Theme.highlightColor
-        font.pixelSize: Theme.fontSizeTiny
+        color: Theme.highlightBackgroundColor
+        font {
+            pixelSize: Theme.fontSizeExtraSmall
+            capitalization: Font.Capitalize
+        }
         wrapMode: Text.Wrap
         horizontalAlignment: Text.AlignHCenter
     }

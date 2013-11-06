@@ -195,11 +195,11 @@ PinchArea {
         Row {
             id: row
 
-            y: Theme.paddingSmall + height * panel.y / panel.height
+            y: height * panel.y / panel.height
             anchors.horizontalCenter: parent.horizontalCenter
 
-            height: overlay.height - Theme.paddingSmall
-            spacing: Theme.paddingMedium
+            width: Screen.width
+            height: overlay.height
 
             opacity: 1 - container.opacity
 
@@ -262,15 +262,22 @@ PinchArea {
             anchors {
                 right: parent.right
                 bottom: row.bottom
-                margins: (Screen.width - row.width) / 2
+                rightMargin: Theme.paddingLarge
+                bottomMargin: Theme.paddingLarge * 2
             }
 
-            Label {
-                width: Theme.itemSizeMedium
-                height: Theme.itemSizeExtraSmall
+            width: Screen.width / 4
 
-                color: Theme.highlightColor
-                font.pixelSize: Theme.fontSizeTiny
+            Label {
+                x: Theme.paddingSmall
+                width: parent.width - (2 * Theme.paddingSmall)
+                height: (Theme.fontSizeExtraSmall * 2) + Theme.paddingLarge
+
+                color: Theme.highlightBackgroundColor
+                font {
+                    pixelSize: Theme.fontSizeExtraSmall
+                    capitalization: Font.Capitalize
+                }
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
 
@@ -282,12 +289,12 @@ PinchArea {
             }
 
             Item {
-                width: Theme.itemSizeMedium
-                height: Theme.itemSizeSmall
+                width: parent.width
+                height: (Screen.width - (Theme.fontSizeExtraSmall * 2) - (3 * Theme.paddingLarge)) / 5
 
                 Image {
-                    width: Theme.iconSizeSmall
-                    height: Theme.iconSizeSmall
+                    width: Theme.itemSizeExtraSmall * 0.8
+                    height: Theme.itemSizeExtraSmall * 0.8
 
                     anchors.centerIn: parent
                     source: "image://theme/icon-camera-front-camera"
@@ -309,8 +316,6 @@ PinchArea {
     }
 
     Row {
-        spacing: Theme.paddingMedium
-
         anchors.horizontalCenter: parent.horizontalCenter
 
         Repeater {
@@ -322,12 +327,12 @@ PinchArea {
                         ? Math.max(0, row.y + model.y)
                         : 0
 
-                width: Theme.itemSizeLarge
-                height: Theme.itemSizeSmall
+                width: Screen.width / 4
+                height: (Screen.width - (Theme.fontSizeExtraSmall * 2) - (3 * Theme.paddingLarge)) / 5
 
                 Image {
-                    width: Theme.iconSizeSmall
-                    height: Theme.iconSizeSmall
+                    width: Theme.itemSizeExtraSmall * 0.8
+                    height: Theme.itemSizeExtraSmall * 0.8
 
                     anchors.centerIn: parent
                     source: model.icon != undefined
