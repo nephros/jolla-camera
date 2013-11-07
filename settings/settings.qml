@@ -14,8 +14,8 @@ SettingsBase {
         property string cameraDevice: "primary"
         property string captureMode: "image"
 
-        property int portraitCaptureButtonLocation: 4
-        property int landscapeCaptureButtonLocation: 5
+        property int portraitCaptureButtonLocation: 3
+        property int landscapeCaptureButtonLocation: 4
 
         property string audioCodec: "audio/mpeg, mpegversion=(int)4"
         property int audioSampleRate: 48000

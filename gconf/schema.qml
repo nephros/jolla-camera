@@ -15,11 +15,11 @@ GConfSchema {
     }
     IntegerSchema {
         path: "portraitCaptureButtonLocation"
-        defaultValue: 4
+        defaultValue: 3
     }
     IntegerSchema {
         path: "landscapeCaptureButtonLocation"
-        defaultValue: 5
+        defaultValue: 4
     }
     ModeSchema {
         path: "primary/image"
@@ -27,7 +27,7 @@ GConfSchema {
         focusDistance: Camera.FocusContinuous
         flash: Camera.FlashAuto
 
-        imageResolution: "3264x2448"
+        imageResolution: "3264x1840"
 
         focusDistanceValues: [
             Camera.FocusAuto,
