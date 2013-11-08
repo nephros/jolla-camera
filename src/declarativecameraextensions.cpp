@@ -163,26 +163,24 @@ void DeclarativeCameraExtensions::setRotation(int rotation)
             ? m_sensorControl->property(QCameraSensorControl::Orientation).toInt()
             : 0;
 
-    int orientation = (m_device == QLatin1String("primary")
-                ? sensorOrientation - rotation
-                : sensorOrientation + rotation) % 360;
+    const int correctedRotation = m_device == QLatin1String("secondary")
+            ? -rotation
+            : rotation;
+
+    int orientation = (sensorOrientation - correctedRotation) % 360;
     if (orientation < 0) {
         orientation += 360;
     }
 
-    if (m_device == QLatin1String("secondary")) {
-        rotation = -rotation;
-    }
-
     if (m_imageEncoderControl) {
         QImageEncoderSettings imageSettings = m_imageEncoderControl->imageSettings();
-        imageSettings.setEncodingOption(QLatin1String("rotation"), rotation);
+        imageSettings.setEncodingOption(QLatin1String("rotation"), correctedRotation);
         m_imageEncoderControl->setImageSettings(imageSettings);
     }
 
     if (m_videoEncoderControl) {
         QVideoEncoderSettings videoSettings = m_videoEncoderControl->videoSettings();
-        videoSettings.setEncodingOption(QLatin1String("rotation"), rotation);
+        videoSettings.setEncodingOption(QLatin1String("rotation"), correctedRotation);
         m_videoEncoderControl->setVideoSettings(videoSettings);
     }
 
