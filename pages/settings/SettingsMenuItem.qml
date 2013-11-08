@@ -28,9 +28,6 @@ MouseArea {
     }
 
     Image {
-        width: Theme.itemSizeExtraSmall * 0.8
-        height: Theme.itemSizeExtraSmall * 0.8
-
         anchors.centerIn: parent
         source: menuItem.pressed
                 ? menuItem.icon + "?" + Theme.highlightColor

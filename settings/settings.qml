@@ -65,7 +65,7 @@ SettingsBase {
     function captureModeIcon(mode) {
         switch (mode) {
         case "image": return "image://theme/icon-camera-camera-mode"
-        case "video": return "image://theme/icon-m-video"
+        case "video": return "image://theme/icon-camera-video"
         default:  return ""
         }
     }

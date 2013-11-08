@@ -417,10 +417,10 @@ Item {
             width: timerLabel.implicitWidth + (2 * Theme.paddingMedium)
             height: timerLabel.implicitHeight + (2 * Theme.paddingSmall)
             opacity: camera.captureMode == Camera.CaptureVideo ? 1 : 0
-            Behavior on  opacity { FadeAnimation {} }
+            Behavior on opacity { FadeAnimation {} }
 
             Rectangle {
-                radius: 3
+                radius: Theme.paddingSmall / 2
 
                 anchors.fill: parent
                 color: Theme.highlightBackgroundColor

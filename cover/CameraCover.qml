@@ -9,7 +9,8 @@ CoverBackground {
         columns: 2
         spacing: Theme.paddingLarge + Theme.paddingLarge
         anchors {
-            fill: parent
+            top: parent.top
+            horizontalCenter: parent.horizontalCenter
             margins: Theme.paddingLarge + Theme.paddingMedium
         }
 

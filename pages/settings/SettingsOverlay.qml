@@ -293,9 +293,6 @@ PinchArea {
                 height: (Screen.width - (Theme.fontSizeExtraSmall * 2) - (3 * Theme.paddingLarge)) / 5
 
                 Image {
-                    width: Theme.itemSizeExtraSmall * 0.8
-                    height: Theme.itemSizeExtraSmall * 0.8
-
                     anchors.centerIn: parent
                     source: "image://theme/icon-camera-front-camera"
                                 + (switcher.pressed ? "?" + Theme.highlightColor : "")
@@ -331,9 +328,6 @@ PinchArea {
                 height: (Screen.width - (Theme.fontSizeExtraSmall * 2) - (3 * Theme.paddingLarge)) / 5
 
                 Image {
-                    width: Theme.itemSizeExtraSmall * 0.8
-                    height: Theme.itemSizeExtraSmall * 0.8
-
                     anchors.centerIn: parent
                     source: model.icon != undefined
                             ? model.icon + "?" + Theme.highlightColor
