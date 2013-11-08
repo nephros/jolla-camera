@@ -4,7 +4,7 @@ import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
 import com.jolla.camera.settings 1.0
 
-PinchArea {
+Item {
     id: overlay
 
     property bool isPortrait

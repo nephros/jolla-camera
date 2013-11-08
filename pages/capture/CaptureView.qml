@@ -339,12 +339,6 @@ Item {
             }
         }
 
-        onPinchUpdated: {
-            camera.digitalZoom = Math.max(1, Math.min(
-                        camera.digitalZoom + (pinch.scale - pinch.previousScale),
-                        camera.maximumDigitalZoom))
-        }
-
         shutter: MouseArea {
             id: captureButton
 
