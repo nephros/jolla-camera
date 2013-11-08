@@ -12,8 +12,8 @@ MouseArea {
 
     readonly property bool selected: settings[property] == value
 
-    width: Theme.itemSizeLarge
-    height: Theme.itemSizeSmall
+    width: parent.width
+    height: (Screen.width - (Theme.fontSizeExtraSmall * 2) - (3 * Theme.paddingLarge)) / 5
 
     opacity: selected ? 0 : 1
 
@@ -28,9 +28,6 @@ MouseArea {
     }
 
     Image {
-        width: Theme.iconSizeSmall
-        height: Theme.iconSizeSmall
-
         anchors.centerIn: parent
         source: menuItem.pressed
                 ? menuItem.icon + "?" + Theme.highlightColor

@@ -401,8 +401,7 @@ Item {
             }
         }
 
-        timer: Rectangle {
-            radius: 3
+        timer: Item {
             anchors {
                 centerIn: parent
                 horizontalCenterOffset: settingsOverlay.timerAlignment == Qt.AlignLeft
@@ -411,10 +410,16 @@ Item {
             }
             width: timerLabel.implicitWidth + (2 * Theme.paddingMedium)
             height: timerLabel.implicitHeight + (2 * Theme.paddingSmall)
+            opacity: camera.captureMode == Camera.CaptureVideo ? 1 : 0
+            Behavior on opacity { FadeAnimation {} }
 
-            color: Theme.highlightColor
-            opacity: timerLabel.opacity
+            Rectangle {
+                radius: Theme.paddingSmall / 2
 
+                anchors.fill: parent
+                color: Theme.highlightBackgroundColor
+                opacity: 0.6
+            }
             Label {
                 id: timerLabel
 
@@ -424,8 +429,7 @@ Item {
                           captureView._recordingDuration,
                           captureView._recordingDuration >= 3600 ? Formatter.DurationLong : Formatter.DurationShort)
                 font.pixelSize: Theme.fontSizeMedium
-                opacity: camera.captureMode == Camera.CaptureVideo ? 1 : 0
-                Behavior on  opacity { FadeAnimation {} }
+
             }
         }
 
