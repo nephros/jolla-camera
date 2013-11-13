@@ -276,7 +276,6 @@ Item {
                 color: Theme.highlightBackgroundColor
                 font {
                     pixelSize: Theme.fontSizeExtraSmall
-                    capitalization: Font.Capitalize
                 }
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
