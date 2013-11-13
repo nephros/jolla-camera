@@ -131,7 +131,7 @@ Drawer {
                     source: url
                     onClicked: galleryView.open = !galleryView.open
                     fit: galleryView.page.isPortrait ? Fit.Width : Fit.Height
-                    menuOpen: galleryView.opened
+                    menuOpen: galleryView.open
                     enableZoom: !pageView.moving
 
                     orientation: model.orientation
