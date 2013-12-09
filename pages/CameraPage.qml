@@ -18,9 +18,10 @@ Page {
     property alias viewfinder: captureView.viewfinder
     property bool galleryActive
 
-    allowedOrientations: !captureView.inButtonLayout
-            ? Orientation.Portrait | Orientation.Landscape
-            : Orientation.Landscape
+    allowedOrientations: Orientation.Portrait
+                | Orientation.PortraitInverted
+                | Orientation.Landscape
+                | Orientation.LandscapeInverted
 
     orientationTransitions: Transition {
         to: 'Portrait,Landscape,PortraitInverted,LandscapeInverted'
@@ -132,7 +133,10 @@ Page {
                 onInButtonLayoutChanged: {
                     page.allowedOrientations = inButtonLayout
                             ? page.orientation
-                            : Orientation.Portrait | Orientation.Landscape
+                            : Orientation.Portrait
+                                | Orientation.PortraitInverted
+                                | Orientation.Landscape
+                                | Orientation.LandscapeInverted
                 }
             }
         }
