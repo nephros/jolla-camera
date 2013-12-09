@@ -44,6 +44,11 @@ Item {
                 ? Settings.mode.focusDistance
                 : Camera.FocusAuto
 
+    readonly property bool _capturePending: _captureOnFocus
+                || volumeUp.pressed
+                || volumeDown.pressed
+                || captureButton.pressed
+
     property var _startTime: new Date()
     property var _endTime: _startTime
 
@@ -220,10 +225,11 @@ Item {
 
         onFocusStatusChanged: {
             if (focusStatus == Camera.Unlocked) {
-                if (captureView._touchFocus
-                        || volumeUp.pressed
-                        || volumeDown.pressed
-                        || captureButton.pressed) {
+                if (camera.focus.focusMode == Camera.FocusContinuous && captureView._capturePending) {
+                    captureView._touchFocus = true
+                    cameraLocks.lockFocus()
+                    return
+                } else if (captureView._touchFocus || captureView._capturePending) {
                     captureView._focusFailed = true
                     focusTimer.running = true
                 }
