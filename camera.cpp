@@ -57,6 +57,7 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     qmlRegisterType<DeclarativeCameraLocks>("com.jolla.camera", 1, 0, "CameraLocks");
     qmlRegisterType<CaptureModel>("com.jolla.camera", 1, 0, "CaptureModel");
 
+    view->setTitle(qtTrId("jolla-camera-ap-name"));
     view->setSource(path + QLatin1String("camera.qml"));
 
     if (app->arguments().contains("-desktop")) {
