@@ -21,6 +21,7 @@ BuildRequires:  qt5-qttools-linguist
 BuildRequires:  pkgconfig(gstreamer-0.10)
 
 Requires:  jolla-ambient >= 0.3.19
+Requires:  jolla-settings-accounts >= 0.1.31
 Requires:  sailfishsilica-qt5
 Requires:  mapplauncherd-booster-silica-qt5
 Requires: qt5-qtdeclarative-import-multimedia
