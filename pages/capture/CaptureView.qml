@@ -30,6 +30,9 @@ Item {
     property bool _focusFailed
 
     property real _shutterOffset
+    readonly property real _viewfinderPosition: orientation == Orientation.Portrait || orientation == Orientation.Landscape
+                ? parent.x + x + _shutterOffset
+                : -parent.x - x - _shutterOffset
 
     property int _recordingDuration: ((clock.enabled ? clock.time : captureView._endTime) - captureView._startTime) / 1000
 
@@ -276,7 +279,7 @@ Item {
         target: captureView.viewfinder
         property: "x"
         value: captureView.isPortrait
-               ? captureView.parent.x + captureView.x + captureView._shutterOffset
+               ? captureView._viewfinderPosition
                : 0
     }
 
@@ -284,7 +287,7 @@ Item {
         target: captureView.viewfinder
         property: "y"
         value: !captureView.isPortrait
-                ? captureView.parent.x + captureView.x + captureView._shutterOffset
+                ? captureView._viewfinderPosition
                 : 0
     }
 
