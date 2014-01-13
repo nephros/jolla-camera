@@ -42,7 +42,6 @@ Requires:  libngf-qt5-declarative
 Requires:  ambienced
 Requires:  gst-plugins-good >= 0.10.31+git3
 Requires:  gst-plugins-bad
-Requires:  %{name}-settings = %{version}
 
 %description
 The Jolla Camera application.
@@ -59,6 +58,7 @@ Translation source for Jolla Camera
 Summary:   Setting page for jolla-camera
 License:   TBD
 Group:     System/Applications
+Requires:   %{name} = %{version}-%{release}
 Requires:  jolla-settings
 
 %description settings
@@ -100,17 +100,17 @@ desktop-file-install --delete-original       \
 %{_bindir}/jolla-camera
 %{_datadir}/translations/jolla-camera_eng_en.qm
 %{_datadir}/dbus-1/services/com.jolla.camera.service
+%{_libdir}/qt5/qml/com/jolla/camera/libjollacameraplugin.so
+%{_libdir}/qt5/qml/com/jolla/camera/qmldir
+%{_libdir}/qt5/qml/com/jolla/camera/settings.qml
 %{_sysconfdir}/gconf/schemas/*.schemas
 
 %files ts-devel
 %defattr(-,root,root,-)
 %{_datadir}/translations/source/jolla-camera.ts
-%{_datadir}/translations/source/jolla-camera_settings.ts
 
 %files settings
-%{_libdir}/qt5/qml/com/jolla/camera/settings/*
 %{_datadir}/jolla-settings/*
-%{_datadir}/translations/jolla-camera_settings_eng_en.qm
 
 %files tests
 %defattr(-,root,root,-)

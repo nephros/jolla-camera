@@ -1,7 +1,7 @@
 import QtQuick 2.0
 import QtMultimedia 5.0
 import Sailfish.Silica 1.0
-import com.jolla.camera.settings 1.0
+import com.jolla.camera 1.0
 
 Page {
     GConfSettings {
@@ -94,10 +94,10 @@ Page {
                         viewfinderResolution: "768x432"
                     }
                     ResolutionComboItem {
-                        //: "0.3 mega pixel image resolution with 4:3 aspect ratio"
-                        //% "4:3 (0.3Mpix)"
+                        //: "2 mega pixel image resolution with 4:3 aspect ratio"
+                        //% "4:3 (2Mpix)"
                         text: qsTrId("camera_settings-me-4-3-0.3m")
-                        imageResolution: "640x480"
+                        imageResolution: "1600x1200"
                         viewfinderResolution: "640x480"
                     }
                 }
