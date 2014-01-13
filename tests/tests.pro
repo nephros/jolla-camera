@@ -1,8 +1,5 @@
 TEMPLATE = subdirs
 
-SUBDIRS = \
-        imports
-
 OTHER_FILES += auto/*
 
 auto.files = auto/*

@@ -14,10 +14,6 @@
 #include <MDeclarativeCache>
 #endif
 
-#include "capturemodel.h"
-#include "declarativecameraextensions.h"
-#include "declarativecameralocks.h"
-
 #include <gst/gst.h>
 
 Q_DECL_EXPORT int main(int argc, char *argv[])
@@ -34,29 +30,11 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 #endif
 
     QString path(QLatin1String(DEPLOYMENT_PATH));
-    QString translationPath("/usr/share/translations/");
-
-    if (app->arguments().contains("-desktop")) {
-        path = app->applicationDirPath() + QDir::separator();
-        translationPath = path;
-    }
 
     view->engine()->setBaseUrl(QUrl::fromLocalFile(path));
 
     //% "Camera"
     QT_TRID_NOOP("jolla-camera-ap-name");
-    QTranslator engineeringEnglish;
-    engineeringEnglish.load("jolla-camera_eng_en", translationPath);
-    qApp->installTranslator(&engineeringEnglish);
-
-    QTranslator translator;
-    translator.load(QLocale(), "jolla-camera", "-", translationPath);
-    qApp->installTranslator(&translator);
-
-    qmlRegisterType<DeclarativeCameraExtensions>("com.jolla.camera", 1, 0, "CameraExtensions");
-    qmlRegisterType<DeclarativeCameraLocks>("com.jolla.camera", 1, 0, "CameraLocks");
-    qmlRegisterType<CaptureModel>("com.jolla.camera", 1, 0, "CaptureModel");
-
     view->setTitle(qtTrId("jolla-camera-ap-name"));
     view->setSource(path + QLatin1String("camera.qml"));
 
