@@ -94,10 +94,10 @@ Page {
                         viewfinderResolution: "768x432"
                     }
                     ResolutionComboItem {
-                        //: "0.3 mega pixel image resolution with 4:3 aspect ratio"
-                        //% "4:3 (0.3Mpix)"
+                        //: "2 mega pixel image resolution with 4:3 aspect ratio"
+                        //% "4:3 (2Mpix)"
                         text: qsTrId("camera_settings-me-4-3-0.3m")
-                        imageResolution: "640x480"
+                        imageResolution: "1600x1200"
                         viewfinderResolution: "640x480"
                     }
                 }
