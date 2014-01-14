@@ -96,7 +96,7 @@ Page {
                     ResolutionComboItem {
                         //: "2 mega pixel image resolution with 4:3 aspect ratio"
                         //% "4:3 (2Mpix)"
-                        text: qsTrId("camera_settings-me-4-3-0.3m")
+                        text: qsTrId("camera_settings-me-4-3-2m")
                         imageResolution: "1600x1200"
                         viewfinderResolution: "640x480"
                     }
