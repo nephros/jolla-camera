@@ -68,7 +68,7 @@ Item {
         focusTimer.running = false
         _touchFocus = false
         _focusFailed = false
-        cameraLocks.unlockFocus()
+        camera.unlock()
     }
 
     onEffectiveIsoChanged: {
@@ -135,18 +135,17 @@ Item {
     Camera {
         id: camera
 
-        property alias locks: cameraLocks
         property alias extensions: extensions
 
         function autoFocus() {
             if (camera.captureMode == Camera.CaptureStillImage
-                    && cameraLocks.focusStatus == Camera.Unlocked) {
-                cameraLocks.lockFocus()
+                    && camera.lockStatus == Camera.Unlocked) {
+                camera.searchAndLock()
             }
         }
 
         function captureImage() {
-            if (cameraLocks.focusStatus != Camera.Searching) {
+            if (camera.lockStatus != Camera.Searching) {
                 _completeCapture()
             } else {
                 captureView._captureOnFocus = true
@@ -220,35 +219,30 @@ Item {
             exposureCompensation: Settings.mode.exposureCompensation / 2.0
             meteringMode: Settings.mode.meteringMode
         }
+
+        onLockStatusChanged: {
+           if (lockStatus == Camera.Unlocked) {
+               if (camera.focus.focusMode == Camera.FocusContinuous && captureView._capturePending) {
+                   captureView._touchFocus = true
+                   camera.searchAndLock()
+                   return
+               } else if (captureView._touchFocus || captureView._capturePending) {
+                   captureView._focusFailed = true
+                   focusTimer.running = true
+               }
+               captureView._touchFocus = false
+           } else {
+               captureView._focusFailed = false
+           }
+
+           if (lockStatus != Camera.Searching && captureView._captureOnFocus) {
+               captureView._captureOnFocus = false
+               camera._completeCapture()
+           } else if (lockStatus == Camera.Locked) {
+               focusTimer.running = true
+           }
+       }
     }
-
-    CameraLocks {
-        id: cameraLocks
-        camera: camera
-
-        onFocusStatusChanged: {
-            if (focusStatus == Camera.Unlocked) {
-                if (camera.focus.focusMode == Camera.FocusContinuous && captureView._capturePending) {
-                    captureView._touchFocus = true
-                    cameraLocks.lockFocus()
-                    return
-                } else if (captureView._touchFocus || captureView._capturePending) {
-                    captureView._focusFailed = true
-                    focusTimer.running = true
-                }
-                captureView._touchFocus = false
-            } else {
-                captureView._focusFailed = false
-            }
-
-            if (focusStatus != Camera.Searching && captureView._captureOnFocus) {
-                captureView._captureOnFocus = false
-                camera._completeCapture()
-            } else if (focusStatus == Camera.Locked) {
-                focusTimer.running = true
-            }
-        }
-     }
 
     CameraExtensions {
         id: extensions
@@ -344,7 +338,7 @@ Item {
         onClicked: {
             if (!captureView._captureOnFocus) {
                 captureView._touchFocus = true
-                cameraLocks.lockFocus()
+                camera.searchAndLock()
             }
         }
 

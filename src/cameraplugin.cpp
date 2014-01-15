@@ -9,7 +9,6 @@
 
 #include "capturemodel.h"
 #include "declarativecameraextensions.h"
-#include "declarativecameralocks.h"
 #include "declarativegconfsettings.h"
 #include "declarativesettings.h"
 
@@ -56,7 +55,6 @@ public:
 
         qmlRegisterType<CaptureModel>("com.jolla.camera", 1, 0, "CaptureModel");
         qmlRegisterType<DeclarativeCameraExtensions>("com.jolla.camera", 1, 0, "CameraExtensions");
-        qmlRegisterType<DeclarativeCameraLocks>("com.jolla.camera", 1, 0, "CameraLocks");
         qmlRegisterType<DeclarativeGConfSettings>("com.jolla.camera", 1, 0, "GConfSettings");
         qmlRegisterType<DeclarativeSettings>("com.jolla.camera", 1, 0, "SettingsBase");
         qmlRegisterSingletonType<DeclarativeSettings>("com.jolla.camera", 1, 0, "Settings", DeclarativeSettings::factory);
