@@ -52,6 +52,8 @@ Item {
                 || volumeDown.pressed
                 || captureButton.pressed
 
+    readonly property bool _mirrorViewfinder: Settings.global.cameraDevice == "secondary"
+
     property var _startTime: new Date()
     property var _endTime: _startTime
 
@@ -68,6 +70,7 @@ Item {
         focusTimer.running = false
         _touchFocus = false
         _focusFailed = false
+        camera.focus.focusPointMode = Camera.FocusPointAuto
         camera.unlock()
     }
 
@@ -139,6 +142,7 @@ Item {
 
         function autoFocus() {
             if (camera.captureMode == Camera.CaptureStillImage
+                    && Settings.mode.focusDistance != Camera.FocusInfinity
                     && camera.lockStatus == Camera.Unlocked) {
                 camera.searchAndLock()
             }
@@ -210,6 +214,11 @@ Item {
         }
         focus {
             focusMode: captureView._stillFocus
+            onFocusModeChanged: {
+                if (focus.focusMode != Camera.FocusAuto) {
+                    focus.focusPointMode = Camera.FocusPointAuto
+                }
+            }
         }
         flash.mode: Settings.mode.flash
         imageProcessing.whiteBalanceMode: Settings.mode.whiteBalance
@@ -228,7 +237,7 @@ Item {
                    return
                } else if (captureView._touchFocus || captureView._capturePending) {
                    captureView._focusFailed = true
-                   focusTimer.running = true
+                   focusTimer.restart()
                }
                captureView._touchFocus = false
            } else {
@@ -239,7 +248,7 @@ Item {
                captureView._captureOnFocus = false
                camera._completeCapture()
            } else if (lockStatus == Camera.Locked) {
-               focusTimer.running = true
+               focusTimer.restart()
            }
        }
     }
@@ -295,7 +304,7 @@ Item {
     Binding {
         target: captureView.viewfinder
         property: "mirror"
-        value: Settings.global.cameraDevice == "secondary"
+        value: captureView._mirrorViewfinder
     }
 
     SequentialAnimation {
@@ -336,8 +345,49 @@ Item {
         isPortrait: captureView.isPortrait
 
         onClicked: {
-            if (!captureView._captureOnFocus) {
+            if (!captureView._captureOnFocus
+                    && Settings.mode.focusDistance != Camera.FocusInfinity) {
                 captureView._touchFocus = true
+
+                if (Settings.mode.focusDistance == Camera.FocusAuto) {
+                    // Translate and rotate the touch point into focusArea's space.
+                    var focusPoint
+                    switch ((360 - extensions.orientation) % 360) {
+                    case 90:
+                        focusPoint = Qt.point(
+                                    mouse.y - ((height - focusArea.width) / 2),
+                                    width - mouse.x);
+                        break;
+                    case 180:
+                        focusPoint = Qt.point(
+                                    width - mouse.x - ((width - focusArea.width) / 2),
+                                    height - mouse.y);
+                        break;
+                    case 270:
+                        focusPoint = Qt.point(
+                                    height - mouse.y - ((height - focusArea.width) / 2),
+                                    mouse.x);
+                        break;
+                    default:
+                        focusPoint = Qt.point(
+                                    mouse.x - ((width - focusArea.width) / 2),
+                                    mouse.y);
+                        break;
+                    }
+
+                    // Normalize the focus point.
+                    focusPoint.x = focusPoint.x / focusArea.width
+                    focusPoint.y = focusPoint.y / focusArea.height
+
+                    // Mirror the point if the viewfinder is mirrored.
+                    if (captureView._mirrorViewfinder) {
+                        focusPoint.x = 1 - focusPoint.x
+                    }
+
+                    camera.focus.focusPointMode = Camera.FocusPointCustom
+                    camera.focus.customFocusPoint = focusPoint
+                }
+
                 camera.searchAndLock()
             }
         }
@@ -369,11 +419,7 @@ Item {
 
             anchors.centerIn: parent
 
-            onPressed: {
-                if (camera.captureMode == Camera.CaptureStillImage) {
-                    camera.autoFocus()
-                }
-            }
+            onPressed: camera.autoFocus()
 
             onClicked: {
                 if (camera.captureMode == Camera.CaptureStillImage) {
@@ -460,7 +506,9 @@ Item {
             Repeater {
                 model: camera.focus.focusZones
                 delegate: Item {
-                    x: focusArea.width * area.x
+                    x: focusArea.width * (captureView._mirrorViewfinder
+                                ? 1 - area.x - area.width
+                                : area.x)
                     y: focusArea.height * area.y
                     width: focusArea.width * area.width
                     height: focusArea.height * area.height
