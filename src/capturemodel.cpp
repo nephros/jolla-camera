@@ -102,6 +102,7 @@ void CaptureModel::deleteFile(int index)
 QHash<int, QByteArray> CaptureModel::roleNames() const
 {
     QHash<int, QByteArray> roleNames;
+    roleNames.insert(ItemId, "itemId");
     roleNames.insert(Url, "url");
     roleNames.insert(Title, "title");
     roleNames.insert(MimeType, "mimeType");
@@ -109,6 +110,7 @@ QHash<int, QByteArray> CaptureModel::roleNames() const
     roleNames.insert(Duration, "duration");
     roleNames.insert(Width, "width");
     roleNames.insert(Height, "height");
+    roleNames.insert(Resolved, "resolved");
     return roleNames;
 }
 
@@ -130,7 +132,9 @@ QVariant CaptureModel::data(const QModelIndex &index, int role) const
         return QVariant();
     } else if (index.row() >= m_count) {
         const Capture &capture = m_captures.at(index.row() - m_count);
-        if (role == Url) {
+        if (role == ItemId) {
+            return QVariant();
+        } else if (role == Url) {
             return capture.url;
         } else if (role == Title) {
             return QString();
@@ -144,11 +148,15 @@ QVariant CaptureModel::data(const QModelIndex &index, int role) const
             return capture.width;
         } else if (role == Height) {
             return capture.height;
+        } else if (role == Resolved) {
+            return false;
         } else {
             return QVariant();
         }
     } else if (role >= 0 && role < RoleCount) {
         return m_model ? m_model->index(index.row(), 0).data(m_roles[role]) : QVariant();
+    } else if (role == Resolved) {
+        return true;
     } else {
         return QVariant();
     }
@@ -173,6 +181,7 @@ void CaptureModel::_q_rowsInserted(const QModelIndex &parent, int begin, int end
 
     if (m_count == 0) {
         const QHash<int, QByteArray> roleNames = m_model->roleNames();
+        m_roles[ItemId] = roleNames.key("itemId");
         m_roles[Url] = roleNames.key("url");
         m_roles[Title] = roleNames.key("title");
         m_roles[MimeType] = roleNames.key("mimeType");

@@ -36,7 +36,7 @@ Requires:  nemo-qml-plugin-policy-qt5
 Requires:  nemo-qml-plugin-time-qt5
 Requires:  sailfish-components-accounts-qt5
 Requires:  sailfish-components-media-qt5 >= 0.0.18
-Requires:  sailfish-components-gallery-qt5 >= 0.0.30
+Requires:  sailfish-components-gallery-qt5 >= 0.0.34
 Requires:  libjollasignonuiservice-qt5-plugin >= 0.0.29
 Requires:  libngf-qt5-declarative
 Requires:  ambienced
