@@ -112,10 +112,12 @@ Drawer {
             id: galleryItem
 
             property bool active
+            readonly property variant itemId: model.itemId
             readonly property int index: model.index
             readonly property string title: model.title
             readonly property string mimeType: model.mimeType
             readonly property url url: model.url
+            readonly property bool resolved: model.resolved
 
             readonly property bool isImage: mimeType.indexOf("image/") == 0
             readonly property bool scaled: loader.item && loader.item.scaled
@@ -218,6 +220,7 @@ Drawer {
             filter: pageView.currentItem ? pageView.currentItem.mimeType : ""
             isImage: pageView.currentItem ? pageView.currentItem.isImage : false
             source: pageView.currentItem ? pageView.currentItem.url : ""
+            resolved: pageView.currentItem ? pageView.currentItem.resolved : false
 
             onDeleteFile: {
                 var remorse = remorseComponent.createObject(galleryView)
@@ -231,8 +234,17 @@ Drawer {
                     remorse.destroy(1)
                 })
             }
+
+            onShowDetails: {
+                page.pageStack.push(detailsPage, {modelItem: pageView.currentItem.itemId} )
+            }
         }
     ]
+
+    Component {
+        id: detailsPage
+        DetailsPage {}
+    }
 
     Component {
         id: remorseComponent

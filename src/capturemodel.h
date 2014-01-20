@@ -13,6 +13,7 @@ class CaptureModel : public QAbstractListModel
     Q_PROPERTY(int count READ rowCount NOTIFY countChanged)
 public:
     enum {
+        ItemId,
         Url,
         Title,
         MimeType,
@@ -20,7 +21,8 @@ public:
         Duration,
         Width,
         Height,
-        RoleCount
+        RoleCount,
+        Resolved
     };
 
     CaptureModel(QObject *parent = 0);

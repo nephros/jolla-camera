@@ -10,10 +10,12 @@ ShareMethodList {
 
     property bool isImage
     property string title
+    property alias resolved: detailsItem.enabled
 
     property Item page
 
     signal deleteFile
+    signal showDetails
 
     //% "Share"
     listHeader: qsTrId("camera-la-share")
@@ -21,9 +23,10 @@ ShareMethodList {
     PullDownMenu {
         id: pullDownMenu
         MenuItem {
+            id: detailsItem
             //% "Details"
             text: qsTrId("camera-me-details")
-            visible: false  // JB#7882
+            onClicked: menuList.showDetails()
         }
 
         MenuItem {
