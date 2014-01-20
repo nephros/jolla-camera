@@ -252,6 +252,15 @@ Drawer {
         Item {
             id: wrapper
 
+            readonly property bool isActiveItem: parent && parent.active
+            onIsActiveItemChanged: {
+                if (!parent.active) {
+                    remorse.cancel()
+                    galleryView.model.deleteFile(parent.index)
+                    parent.ListView.delayRemove = false
+                }
+            }
+
             x: -pageView.x
             y: -pageView.y
             width: galleryView.foregroundItem.width
