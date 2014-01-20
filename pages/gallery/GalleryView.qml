@@ -252,9 +252,9 @@ Drawer {
         Item {
             id: wrapper
 
-            x: 0
+            x: -pageView.x
             y: -pageView.y
-            width: parent.width
+            width: galleryView.foregroundItem.width
             height: Theme.itemSizeSmall
 
             function execute(item, label, callback) {
