@@ -1,4 +1,5 @@
 import QtQuick 2.1
+import QtQml.Models 2.1
 import Sailfish.Silica 1.0
 import Sailfish.Media 1.0
 import Sailfish.Gallery 1.0
@@ -18,7 +19,7 @@ Drawer {
     property alias header: pageView.header
     property alias currentIndex: pageView.currentIndex
 
-    property alias model: pageView.model
+    property alias model: delegateModel.model
 
     property CameraPage page
 
@@ -51,62 +52,8 @@ Drawer {
 
     Component.onCompleted: positionViewAtBeginning()
 
-    ListView {
-        id: pageView
-
-        x: -parent.x / 2
-        y: -parent.y / 2
-        width: galleryView.width
-        height: galleryView.height
-
-        boundsBehavior: Flickable.StopAtBounds
-        cacheBuffer: width
-
-        snapMode: ListView.SnapOneItem
-        highlightRangeMode: ListView.StrictlyEnforceRange
-
-        orientation: ListView.Horizontal
-        currentIndex: count - 1
-        pressDelay: 0
-
-        interactive: pageView.count > 1 && !galleryView.positionLocked
-
-        onCurrentItemChanged: {
-            if (!moving && currentItem) {
-                if (galleryView._activeItem) {
-                    galleryView._activeItem.active = false
-                }
-
-                galleryView._activeItem = currentItem
-                galleryView._activeItem.active = true
-            }
-        }
-
-        onCurrentIndexChanged: {
-            if (!moving) {
-                // ListView's item positioning and currentIndex can get out of sync
-                // when items are removed from and possibly when inserted into the
-                // model.  Finding and fixing all the corner cases in ListView is a
-                // bit of a battle so as a final safeguard, we force the position to
-                // update if anything other than flicking the list changes the current
-                // index.
-                positionViewAtIndex(currentIndex, ListView.SnapPosition)
-            }
-        }
-
-        onMovingChanged: {
-            if (!moving && galleryView._activeItem != currentItem) {
-                if (galleryView._activeItem) {
-                    galleryView._activeItem.active = false
-                }
-                mediaPlayer.stop()
-                mediaPlayer.source = ""
-                galleryView._activeItem = currentItem
-                if (galleryView._activeItem) {
-                    galleryView._activeItem.active = true
-                }
-            }
-        }
+    DelegateModel {
+        id: delegateModel
 
         delegate: Item {
             id: galleryItem
@@ -176,6 +123,66 @@ Drawer {
                 sourceComponent: galleryItem.isImage ? imageComponent: videoComponent
             }
         }
+    }
+
+    ListView {
+        id: pageView
+
+        x: -parent.x / 2
+        y: -parent.y / 2
+        width: galleryView.width
+        height: galleryView.height
+
+        boundsBehavior: Flickable.StopAtBounds
+        cacheBuffer: width
+
+        snapMode: ListView.SnapOneItem
+        highlightRangeMode: ListView.StrictlyEnforceRange
+
+        orientation: ListView.Horizontal
+        currentIndex: count - 1
+        pressDelay: 0
+
+        interactive: pageView.count > 1 && !galleryView.positionLocked
+
+        model: delegateModel
+
+        onCurrentItemChanged: {
+            if (!moving && currentItem) {
+                if (galleryView._activeItem) {
+                    galleryView._activeItem.active = false
+                }
+
+                galleryView._activeItem = currentItem
+                galleryView._activeItem.active = true
+            }
+        }
+
+        onCurrentIndexChanged: {
+            if (!moving) {
+                // ListView's item positioning and currentIndex can get out of sync
+                // when items are removed from and possibly when inserted into the
+                // model.  Finding and fixing all the corner cases in ListView is a
+                // bit of a battle so as a final safeguard, we force the position to
+                // update if anything other than flicking the list changes the current
+                // index.
+                positionViewAtIndex(currentIndex, ListView.SnapPosition)
+            }
+        }
+
+        onMovingChanged: {
+            if (!moving && galleryView._activeItem != currentItem) {
+                if (galleryView._activeItem) {
+                    galleryView._activeItem.active = false
+                }
+                mediaPlayer.stop()
+                mediaPlayer.source = ""
+                galleryView._activeItem = currentItem
+                if (galleryView._activeItem) {
+                    galleryView._activeItem.active = true
+                }
+            }
+        }
 
         children: [
             MouseArea {
@@ -229,9 +236,10 @@ Drawer {
                 //: Deleting photo or video in 5 seconds
                 //% "Deleting"
                 remorse.execute(item, qsTrId("camera-la-deleting"), function() {
-                    item.ListView.delayRemove = false
+                    delegateModel.items.remove(item.DelegateModel.itemsIndex, 1)
                     galleryView.model.deleteFile(item.index)
                     remorse.destroy(1)
+                    item.ListView.delayRemove = false
                 })
             }
 
@@ -252,9 +260,20 @@ Drawer {
         Item {
             id: wrapper
 
-            x: 0
+            readonly property bool isActiveItem: parent && parent.active
+            onIsActiveItemChanged: {
+                if (!parent.active) {
+                    remorse.cancel()
+                    delegateModel.items.remove(parent.DelegateModel.itemsIndex, 1)
+                    galleryView.model.deleteFile(parent.index)
+                    wrapper.destroy(1)
+                    parent.ListView.delayRemove = false
+                }
+            }
+
+            x: -pageView.x
             y: -pageView.y
-            width: parent.width
+            width: galleryView.foregroundItem.width
             height: Theme.itemSizeSmall
 
             function execute(item, label, callback) {
