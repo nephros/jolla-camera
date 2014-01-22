@@ -43,6 +43,7 @@ Requires:  libngf-qt5-declarative
 Requires:  ambienced
 Requires:  gst-plugins-good >= 0.10.31+git3
 Requires:  gst-plugins-bad
+Requires:  %{name}-settings = %{version}
 
 %description
 The Jolla Camera application.
