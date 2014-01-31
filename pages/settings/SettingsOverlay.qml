@@ -41,6 +41,8 @@ PinchArea {
                 ? Qt.AlignRight
                 : Qt.AlignLeft
 
+    readonly property real _menuWidth: isPortrait ? Screen.width / 4 : Screen.height / 8
+
     on_CaptureButtonLocationChanged: inButtonLayout = false
 
     property list<SettingsMenuItem> _menus
@@ -50,6 +52,8 @@ PinchArea {
         whiteBalanceMenu.currentItem,
         focusMenu.currentItem
     ]
+
+
 
     signal clicked(var mouse)
 
@@ -203,6 +207,8 @@ PinchArea {
                 enabled: !overlay.expanded && !overlay.inButtonLayout
 
                 onClicked: overlay.open = true
+
+                onPressAndHold: container.pressAndHold(mouse)
             }
 
             TimerAnchor { id: timerAnchorBL; anchors { left: parent.left; bottom: parent.bottom } }
@@ -260,16 +266,17 @@ PinchArea {
             y: height * panel.y / panel.height
             anchors.horizontalCenter: parent.horizontalCenter
 
-            width: Screen.width
-            height: overlay.height
+            height: whiteBalanceMenu.height
 
             opacity: 1 - container.opacity
 
             enabled: overlay.expanded
+            visible: overlay.expanded
 
             SettingsMenu {
                 id: captureModeMenu
 
+                width: overlay._menuWidth
                 title: Settings.captureModeText(Settings.global.captureMode)
                 model: [ "image", "video" ]
                 delegate: SettingsMenuItem {
@@ -282,6 +289,7 @@ PinchArea {
             SettingsMenu {
                 id: flashMenu
 
+                width: overlay._menuWidth
                 title: Settings.flashText(Settings.mode.flash)
                 model: Settings.mode.flashValues
                 delegate: SettingsMenuItem {
@@ -294,6 +302,7 @@ PinchArea {
             SettingsMenu {
                 id: whiteBalanceMenu
 
+                width: overlay._menuWidth
                 title: Settings.whiteBalanceText(Settings.mode.whiteBalance)
                 model: Settings.mode.whiteBalanceValues
                 delegate: SettingsMenuItem {
@@ -306,6 +315,7 @@ PinchArea {
             SettingsMenu {
                 id: focusMenu
 
+                width: overlay._menuWidth
                 title: Settings.focusDistanceText(Settings.mode.focusDistance)
                 model: Settings.mode.focusDistanceValues
                 delegate: SettingsMenuItem {
@@ -317,58 +327,100 @@ PinchArea {
             }
         }
 
-        Column {
-            id: switcherColumn
+        Row {
+            anchors {
+                top: overlay.isPortrait ? row.bottom : row.top
+                right: overlay.isPortrait ? row.horizontalCenter : row.left
+            }
 
             opacity: row.opacity
-            anchors {
-                right: parent.right
-                bottom: row.bottom
-                rightMargin: Theme.paddingLarge
-                bottomMargin: Theme.paddingLarge * 2
-            }
+            visible: overlay.expanded
 
-            width: Screen.width / 4
+            SettingsMenu {
+                id: isoMenu
 
-            Label {
-                x: Theme.paddingSmall
-                width: parent.width - (2 * Theme.paddingSmall)
-                height: (Theme.fontSizeExtraSmall * 2) + Theme.paddingLarge
-
-                color: Theme.highlightBackgroundColor
-                font {
-                    pixelSize: Theme.fontSizeExtraSmall
+                width: overlay._menuWidth
+                title: Settings.isoText(Settings.mode.iso)
+                model: Settings.mode.isoValues
+                delegate: SettingsMenuItem {
+                    settings: Settings.mode
+                    property: "iso"
+                    value: modelData
+                    icon: Settings.isoIcon(modelData)
+                    opacity: 1
                 }
-                wrapMode: Text.Wrap
-                horizontalAlignment: Text.AlignHCenter
-
-                text: Settings.global.cameraDevice == "primary"
-                        //% "Main camera"
-                        ? qsTrId("camera-la-main-camera")
-                        //% "Front camera"
-                        : qsTrId("camera-la-front-camera")
             }
+            SettingsMenu {
+                id: gridMenu
 
-            Item {
-                width: parent.width
-                height: (Screen.width - (Theme.fontSizeExtraSmall * 2) - (3 * Theme.paddingLarge)) / 5
-
-                Image {
-                    anchors.centerIn: parent
-                    source: "image://theme/icon-camera-front-camera"
-                                + (switcher.pressed ? "?" + Theme.highlightColor : "")
-                    smooth: true
+                width: overlay._menuWidth
+                title: Settings.viewfinderGridText(Settings.mode.viewfinderGrid)
+                model: Settings.mode.viewfinderGridValues
+                delegate: SettingsMenuItem {
+                    settings: Settings.mode
+                    property: "viewfinderGrid"
+                    value: modelData
+                    icon: Settings.viewfinderGridIcon(modelData)
+                    opacity: 1
                 }
             }
         }
-        MouseArea {
-            id: switcher
 
-            anchors.fill: switcherColumn
-            onClicked: {
-                Settings.global.cameraDevice = Settings.global.cameraDevice == "primary"
-                        ? "secondary"
-                        : "primary"
+        Row {
+            anchors {
+                top: overlay.isPortrait ? row.bottom : row.top
+                left: overlay.isPortrait ? row.horizontalCenter : row.right
+            }
+
+            opacity: row.opacity
+            visible: overlay.expanded
+
+            SettingsMenu {
+                id: timerMenu
+
+                width: overlay._menuWidth
+                title: Settings.timerText(Settings.mode.timer)
+                model: Settings.mode.timerValues
+                delegate: SettingsMenuItem {
+                    settings: Settings.mode
+                    property: "timer"
+                    value: modelData
+                    icon: Settings.timerIcon(modelData)
+                    opacity: 1
+                }
+            }
+
+            MouseArea {
+                id: switcher
+
+                width: cameraDeviceMenu.width
+                height: cameraDeviceMenu.height
+
+                onClicked: {
+                    Settings.global.cameraDevice = Settings.global.cameraDevice == "primary"
+                            ? "secondary"
+                            : "primary"
+                }
+
+                SettingsMenu {
+                    id: cameraDeviceMenu
+                    width: overlay._menuWidth
+                    title: Settings.global.cameraDevice == "primary"
+                                //% "Main camera"
+                                ? qsTrId("camera-la-main-camera")
+                                //% "Front camera"
+                                : qsTrId("camera-la-front-camera")
+                    model: 1
+                    delegate: SettingsMenuItem {
+                        settings: Settings.global
+                        property: "cameraDevice"
+                        value: Settings.global.cameraDevice == "primary"
+                               ? "secondary"
+                               : "primary"
+                        opacity: 1.0
+                        icon: "image://theme/icon-camera-front-camera"
+                    }
+                }
             }
         }
     }
@@ -385,7 +437,7 @@ PinchArea {
                         ? Math.max(0, row.y + model.y)
                         : 0
 
-                width: Screen.width / 4
+                width: overlay._menuWidth
                 height: (Screen.width - (Theme.fontSizeExtraSmall * 2) - (3 * Theme.paddingLarge)) / 5
 
                 Image {

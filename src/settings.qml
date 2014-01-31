@@ -36,12 +36,13 @@ SettingsBase {
             property int exposureMode: 0
             property int meteringMode: Camera.MeteringMatrix
             property int timer: 0
+            property string viewfinderGrid: "none"
 
             property size imageResolution: "1280x720"
             property size videoResolution: "1280x720"
             property size viewfinderResolution: "1280x720"
 
-            property variant isoValues: [ 0 ]
+            property variant isoValues: [ 0, 100, 200, 400 ]
             property variant whiteBalanceValues: [
                 CameraImageProcessing.WhiteBalanceAuto,
                 CameraImageProcessing.WhiteBalanceCloudy,
@@ -59,6 +60,7 @@ SettingsBase {
                 Camera.MeteringSpot
             ]
             property variant timerValues: [ 0, 3, 5, 15, 20 ]
+            property variant viewfinderGridValues: [ "none", "thirds", "ambience" ]
         }
     }
 
@@ -103,10 +105,23 @@ SettingsBase {
                 : "image://theme/icon-camera-timer"
     }
 
+    function timerText(timer) {
+        return timer > 0
+                //% "%1 second delay"
+                ? qsTrId("camera_settings-la-timer-seconds-delay").arg(timer)
+                  //% "No delay"
+                : qsTrId("camera_settings-la-timer-no-delay")
+    }
+
     function isoIcon(iso) {
         return iso > 0
                 ? "image://theme/icon-camera-iso-" + iso
                 : "image://theme/icon-camera-iso"
+    }
+
+    function isoText(iso) {
+        //% "Light sensitivity"
+        return qsTrId("camera_settings-la-light-sensitivity")
     }
 
     function meteringModeIcon(mode) {
@@ -205,6 +220,24 @@ SettingsBase {
         //: "Continuous auto focus"
         //% "Continuous"
         case Camera.FocusContinuous: return qsTrId("camera_settings-la-focus-continuous")
+        }
+    }
+
+    function viewfinderGridIcon(grid) {
+        switch (grid) {
+        case "none": return "image://theme/icon-camera-metering-matrix"
+        case "thirds": return "image://theme/icon-camera-metering-weighted"
+        case "ambience": return "image://theme/icon-camera-metering-spot"
+        default: return ""
+        }
+    }
+
+    function viewfinderGridText(grid) {
+        switch (grid) {
+        case "none": return qsTrId("No grid")
+        case "thirds": return qsTrId("Thirds grid")
+        case "ambience": return qsTrId("Ambience grid")
+        default: return ""
         }
     }
 }

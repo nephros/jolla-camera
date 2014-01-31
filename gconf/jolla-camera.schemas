@@ -106,6 +106,14 @@
             <locale name="C"/>
         </schema>
         <schema>
+            <key>/schemas/apps/jolla-camera/primary/image/viewfinderGrid</key>
+            <applyto>/apps/jolla-camera/primary/image/viewfinderGrid</applyto>
+            <owner>jolla</owner>
+            <type>string</type>
+            <default>none</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
             <key>/schemas/apps/jolla-camera/primary/image/imageResolution</key>
             <applyto>/apps/jolla-camera/primary/image/imageResolution</applyto>
             <owner>jolla</owner>
@@ -135,12 +143,12 @@
             <locale name="C"/>
         </schema>
         <schema>
-            <key>/schemas/apps/jolla-camera/primary/image/iso</key>
-            <applyto>/apps/jolla-camera/primary/image/iso</applyto>
+            <key>/schemas/apps/jolla-camera/primary/image/isoValues</key>
+            <applyto>/apps/jolla-camera/primary/image/isoValues</applyto>
             <owner>jolla</owner>
             <type>list</type>
             <list_type>int</list_type>
-            <default>[0,100,200,400,800,1600]</default>
+            <default>[0,100,200,400]</default>
             <locale name="C"/>
         </schema>
         <schema>
@@ -203,7 +211,16 @@
             <owner>jolla</owner>
             <type>list</type>
             <list_type>int</list_type>
-            <default>[0,3,5,15,20]</default>
+            <default>[0,3,5,15]</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/primary/image/viewfinderGridValues</key>
+            <applyto>/apps/jolla-camera/primary/image/viewfinderGridValues</applyto>
+            <owner>jolla</owner>
+            <type>list</type>
+            <list_type>string</list_type>
+            <default>[none,thirds,ambience]</default>
             <locale name="C"/>
         </schema>
         <schema>
@@ -279,6 +296,14 @@
             <locale name="C"/>
         </schema>
         <schema>
+            <key>/schemas/apps/jolla-camera/primary/video/viewfinderGrid</key>
+            <applyto>/apps/jolla-camera/primary/video/viewfinderGrid</applyto>
+            <owner>jolla</owner>
+            <type>string</type>
+            <default>none</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
             <key>/schemas/apps/jolla-camera/primary/video/imageResolution</key>
             <applyto>/apps/jolla-camera/primary/video/imageResolution</applyto>
             <owner>jolla</owner>
@@ -308,12 +333,12 @@
             <locale name="C"/>
         </schema>
         <schema>
-            <key>/schemas/apps/jolla-camera/primary/video/iso</key>
-            <applyto>/apps/jolla-camera/primary/video/iso</applyto>
+            <key>/schemas/apps/jolla-camera/primary/video/isoValues</key>
+            <applyto>/apps/jolla-camera/primary/video/isoValues</applyto>
             <owner>jolla</owner>
             <type>list</type>
             <list_type>int</list_type>
-            <default>[0,100,200,400,800,1600]</default>
+            <default>[0,100,200,400]</default>
             <locale name="C"/>
         </schema>
         <schema>
@@ -376,7 +401,16 @@
             <owner>jolla</owner>
             <type>list</type>
             <list_type>int</list_type>
-            <default>[0,3,5,15,20]</default>
+            <default>[0,3,5,15]</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/primary/video/viewfinderGridValues</key>
+            <applyto>/apps/jolla-camera/primary/video/viewfinderGridValues</applyto>
+            <owner>jolla</owner>
+            <type>list</type>
+            <list_type>string</list_type>
+            <default>[none,thirds,ambience]</default>
             <locale name="C"/>
         </schema>
         <schema>
@@ -452,6 +486,14 @@
             <locale name="C"/>
         </schema>
         <schema>
+            <key>/schemas/apps/jolla-camera/secondary/image/viewfinderGrid</key>
+            <applyto>/apps/jolla-camera/secondary/image/viewfinderGrid</applyto>
+            <owner>jolla</owner>
+            <type>string</type>
+            <default>none</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
             <key>/schemas/apps/jolla-camera/secondary/image/imageResolution</key>
             <applyto>/apps/jolla-camera/secondary/image/imageResolution</applyto>
             <owner>jolla</owner>
@@ -482,12 +524,12 @@
             <locale name="C"/>
         </schema>
         <schema>
-            <key>/schemas/apps/jolla-camera/secondary/image/iso</key>
-            <applyto>/apps/jolla-camera/secondary/image/iso</applyto>
+            <key>/schemas/apps/jolla-camera/secondary/image/isoValues</key>
+            <applyto>/apps/jolla-camera/secondary/image/isoValues</applyto>
             <owner>jolla</owner>
             <type>list</type>
             <list_type>int</list_type>
-            <default>[0,100,200,400,800,1600]</default>
+            <default>[0,100,200,400]</default>
             <locale name="C"/>
         </schema>
         <schema>
@@ -550,7 +592,16 @@
             <owner>jolla</owner>
             <type>list</type>
             <list_type>int</list_type>
-            <default>[0,3,5,15,20]</default>
+            <default>[0,3,5,15]</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/secondary/image/viewfinderGridValues</key>
+            <applyto>/apps/jolla-camera/secondary/image/viewfinderGridValues</applyto>
+            <owner>jolla</owner>
+            <type>list</type>
+            <list_type>string</list_type>
+            <default>[none,thirds,ambience]</default>
             <locale name="C"/>
         </schema>
         <schema>
@@ -626,6 +677,14 @@
             <locale name="C"/>
         </schema>
         <schema>
+            <key>/schemas/apps/jolla-camera/secondary/video/viewfinderGrid</key>
+            <applyto>/apps/jolla-camera/secondary/video/viewfinderGrid</applyto>
+            <owner>jolla</owner>
+            <type>string</type>
+            <default>none</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
             <key>/schemas/apps/jolla-camera/secondary/video/imageResolution</key>
             <applyto>/apps/jolla-camera/secondary/video/imageResolution</applyto>
             <owner>jolla</owner>
@@ -656,12 +715,12 @@
             <locale name="C"/>
         </schema>
         <schema>
-            <key>/schemas/apps/jolla-camera/secondary/video/iso</key>
-            <applyto>/apps/jolla-camera/secondary/video/iso</applyto>
+            <key>/schemas/apps/jolla-camera/secondary/video/isoValues</key>
+            <applyto>/apps/jolla-camera/secondary/video/isoValues</applyto>
             <owner>jolla</owner>
             <type>list</type>
             <list_type>int</list_type>
-            <default>[0,100,200,400,800,1600]</default>
+            <default>[0,100,200,400]</default>
             <locale name="C"/>
         </schema>
         <schema>
@@ -724,7 +783,16 @@
             <owner>jolla</owner>
             <type>list</type>
             <list_type>int</list_type>
-            <default>[0,3,5,15,20]</default>
+            <default>[0,3,5,15]</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
+            <key>/schemas/apps/jolla-camera/secondary/video/viewfinderGridValues</key>
+            <applyto>/apps/jolla-camera/secondary/video/viewfinderGridValues</applyto>
+            <owner>jolla</owner>
+            <type>list</type>
+            <list_type>string</list_type>
+            <default>[none,thirds,ambience]</default>
             <locale name="C"/>
         </schema>
     </schemalist>

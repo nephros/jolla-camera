@@ -28,6 +28,7 @@ Item {
     property bool _captureOnFocus
 
     property bool _focusFailed
+    property real _captureCountdown
 
     property real _shutterOffset
     readonly property real _viewfinderPosition: orientation == Orientation.Portrait || orientation == Orientation.Landscape
@@ -72,6 +73,23 @@ Item {
         _focusFailed = false
         camera.focus.focusPointMode = Camera.FocusPointAuto
         camera.unlock()
+    }
+
+    function _triggerCapture() {
+        if (captureTimer.running) {
+            captureView._resetFocus()
+            captureTimer.running = false
+        } else if (startRecordTimer.running) {
+            startRecordTimer.running = false
+        } else if (camera.videoRecorder.recorderState == CameraRecorder.RecordingState) {
+            camera.videoRecorder.stop()
+        } else if (Settings.mode.timer != 0) {
+            captureTimer.restart()
+        } else if (camera.captureMode == Camera.CaptureStillImage) {
+            camera.captureImage()
+        } else {
+            camera.record()
+        }
     }
 
     onEffectiveIsoChanged: {
@@ -126,6 +144,29 @@ Item {
             if (camera.videoRecorder.recorderState == CameraRecorder.RecordingState) {
                 camera.videoRecorder.recorderStateChanged.connect(camera._finishRecording)
                 extensions.disableNotifications(captureView, true)
+            }
+        }
+    }
+
+    SequentialAnimation {
+        id: captureTimer
+
+        NumberAnimation {
+            id: timerAnimation
+            duration: Settings.mode.timer * 1000
+            from: Settings.mode.timer
+            to: 0
+            easing.type: Easing.Linear
+            target: captureView
+            property: "_captureCountdown"
+        }
+        ScriptAction {
+            script: {
+                if (camera.captureMode == Camera.CaptureStillImage) {
+                     camera.captureImage()
+                 } else {
+                     camera.record()
+                 }
             }
         }
     }
@@ -247,7 +288,7 @@ Item {
            if (lockStatus != Camera.Searching && captureView._captureOnFocus) {
                captureView._captureOnFocus = false
                camera._completeCapture()
-           } else if (lockStatus == Camera.Locked) {
+           } else if (lockStatus == Camera.Locked && !captureTimer.running) {
                focusTimer.restart()
            }
        }
@@ -421,17 +462,7 @@ Item {
 
             onPressed: camera.autoFocus()
 
-            onClicked: {
-                if (camera.captureMode == Camera.CaptureStillImage) {
-                    camera.captureImage()
-                } else if (startRecordTimer.running) {
-                    startRecordTimer.running = false
-                } else if (camera.videoRecorder.recorderState == CameraRecorder.RecordingState) {
-                    camera.videoRecorder.stop()
-                } else {
-                    camera.record()
-                }
-            }
+            onClicked: captureView._triggerCapture()
 
             Rectangle {
                 radius: Theme.itemSizeMedium / 2
@@ -450,13 +481,22 @@ Item {
 
                 anchors.centerIn: parent
 
-                opacity: captureButton.pressed ? 0.5 : 1.0
+                opacity: captureTimer.running || captureButton.pressed ? 0.5 : 1.0
 
                 source: startRecordTimer.running || camera.videoRecorder.recorderState == CameraRecorder.RecordingState
                         ? "image://theme/icon-camera-stop?" + Theme.highlightColor
                         : "image://theme/icon-camera-shutter-release?" + (captureView._canCapture
                                 ? Theme.highlightColor
                                 : Theme.highlightDimmerColor)
+            }
+
+            Text {
+                anchors.centerIn: parent
+                text: Math.floor(captureView._captureCountdown + 1)
+                visible: captureTimer.running
+                opacity: captureView._captureCountdown % 1
+                color: Theme.primaryColor
+                font.pixelSize: Theme.fontSizeHuge
             }
         }
 
@@ -492,12 +532,50 @@ Item {
             }
         }
 
+        // Viewfinder Grid
+        Item {
+            anchors.centerIn: parent
+            width: extensions.orientation % 180 == 0 ? focusArea.width : focusArea.height
+            height: extensions.orientation % 180 == 0 ? focusArea.height : focusArea.width
+            visible: Settings.mode.viewfinderGrid != "none" && camera.cameraStatus == Camera.ActiveStatus
+            clip: true
+            opacity: 0.5
+
+            Rectangle {
+                anchors.centerIn: parent
+                width: Settings.mode.viewfinderGrid == "ambience"
+                       ? parent.height * Screen.width * 3 / (Screen.height * 5)
+                       : parent.width / 3
+                height: parent.height + (2 * border.width)
+
+                color: "transparent"
+                border {
+                    color: Theme.highlightColor
+                    width: Theme.paddingSmall / 2
+                }
+            }
+
+            Rectangle {
+                anchors.centerIn: parent
+                width: parent.width + (2 * border.width)
+                height: Settings.mode.viewfinderGrid == "ambience"
+                        ? parent.height * 3 / 5
+                        : parent.height / 3
+
+                color: "transparent"
+                border {
+                    color: Theme.highlightColor
+                    width: Theme.paddingSmall / 2
+                }
+            }
+        }
+
         Item {
             id: focusArea
 
             width: Screen.width
-                   * extensions.viewfinderResolution.width
-                   / extensions.viewfinderResolution.height
+                   * Settings.mode.viewfinderResolution.width
+                   / Settings.mode.viewfinderResolution.height
             height: Screen.width
 
             rotation: -extensions.orientation
@@ -628,14 +706,14 @@ Item {
                     && !captureView._captureOnFocus
         key: Qt.Key_VolumeUp
         onPressed: camera.autoFocus()
-        onReleased: camera.captureImage()
+        onReleased: captureView._triggerCapture()
     }
     MediaKey {
         id: volumeDown
         enabled: volumeUp.enabled
         key: Qt.Key_VolumeDown
         onPressed: camera.autoFocus()
-        onReleased: camera.captureImage()
+        onReleased: captureView._triggerCapture()
     }
 
     Permissions {
