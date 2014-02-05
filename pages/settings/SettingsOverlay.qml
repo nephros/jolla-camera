@@ -112,9 +112,17 @@ PinchArea {
         MouseArea {
             id: container
 
+            property real pressX
+            property real pressY
+
             width: overlay.width
             height: overlay.height
             opacity: Math.min(1 - overlay._progress, 1 - anchorContainer.opacity)
+
+            onPressed: {
+                pressX = mouseX
+                pressY = mouseY
+            }
 
             onClicked: {
                 if (overlay.expanded) {
@@ -127,7 +135,11 @@ PinchArea {
             }
 
             onPressAndHold: {
-                overlay.inButtonLayout = true
+                var dragDistance = Math.max(Math.abs(mouseX - pressX),
+                                            Math.abs(mouseY - pressY))
+                if (dragDistance < Theme.startDragDistance) {
+                    overlay.inButtonLayout = true
+                }
             }
 
             Rectangle {
