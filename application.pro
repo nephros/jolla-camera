@@ -20,7 +20,9 @@ OTHER_FILES += \
 target.path = $$TARGETPATH
 
 desktop.path = /usr/share/applications
-desktop.files = jolla-camera.desktop
+desktop.files = \
+            jolla-camera.desktop \
+            jolla-camera-viewfinder.desktop
 
 DEPLOYMENT_PATH = /usr/share/$$TARGET
 DEFINES *= DEPLOYMENT_PATH=\"\\\"\"$${DEPLOYMENT_PATH}/\"\\\"\"
