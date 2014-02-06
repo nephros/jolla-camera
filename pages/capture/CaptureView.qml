@@ -349,9 +349,13 @@ Item {
         }
 
         onPinchUpdated: {
+            // We're not getting notifications when the maximumDigitalZoom changes,
+            // so update the value here.
+            zoomIndicator.maximumZoom = camera.maximumDigitalZoom
             camera.digitalZoom = Math.max(1, Math.min(
                         camera.digitalZoom + 2 * (pinch.scale - pinch.previousScale),
                         camera.maximumDigitalZoom))
+            zoomIndicator.show()
         }
 
         shutter: MouseArea {
@@ -525,6 +529,18 @@ Item {
                     }
                 }
             }
+        }
+
+        ZoomIndicator {
+            id: zoomIndicator
+            anchors {
+                top: parent.top
+                topMargin: Theme.itemSizeMedium
+                horizontalCenter: parent.horizontalCenter
+            }
+
+            zoom: camera.digitalZoom
+            maximumZoom: camera.maximumDigitalZoom
         }
 
         Timer {
