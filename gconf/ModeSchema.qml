@@ -71,7 +71,7 @@ GConfSchema {
     IntegerListSchema {
         id: ecValuesSchema
         path: "exposureCompensationValues"
-        defaultValue: 0
+        defaultValue: [ -4, -2, 0, 2, 4 ]
     }
     IntegerListSchema {
         id: exposureValuesSchema
