@@ -10,7 +10,11 @@ PinchArea {
     property bool isPortrait
     property bool open
     property bool inButtonLayout
-    readonly property bool expanded: open || _closing || verticalAnimation.running || dragArea.drag.active
+    readonly property bool expanded: open
+                || _closing
+                || verticalAnimation.running
+                || dragArea.drag.active
+                || exposureMenu.expanded
     default property alias _data: container.data
 
     readonly property int _captureButtonLocation: overlay.isPortrait
@@ -31,6 +35,11 @@ PinchArea {
 
     property alias shutter: shutterContainer.children
     property alias timer: timerContainer.children
+    property alias exposure: exposureMenu.children
+
+    readonly property int exposureAlignment: shutterContainer.parent == timerAnchorBR
+                ? Qt.AlignRight
+                : Qt.AlignLeft
 
     on_CaptureButtonLocationChanged: inButtonLayout = false
 
@@ -46,6 +55,7 @@ PinchArea {
 
     function _close() {
         _closing = true
+        exposureMenu.open = false
         open = false
         inButtonLayout = false
         _closing = false
@@ -69,12 +79,43 @@ PinchArea {
         anchors.fill: parent
     }
 
+    ExposureMenu {
+        id: exposureMenu
+
+        parent: shutterContainer.parent == buttonAnchorBL
+                    || shutterContainer.parent == buttonAnchorCL
+                    || shutterContainer.parent == buttonAnchorTL
+                ? timerAnchorBR
+                : timerAnchorBL
+        alignment: parent == timerAnchorBR ? Qt.AlignRight : Qt.AlignLeft
+    }
+
     Item {
         id: timerContainer
 
-        parent: overlay.isPortrait
-                        ? (shutterContainer.parent != buttonAnchorBR ? timerAnchorBR : timerAnchorBL)
-                        : (shutterContainer.parent != buttonAnchorTR ? timerAnchorTR : timerAnchorBR)
+        parent: {
+            if (overlay.isPortrait) {
+                if (exposureMenu.parent == timerAnchorBR
+                        && shutterContainer.parent != buttonAnchorBL) {
+                    return timerAnchorBL
+                } else if (exposureMenu.parent == timerAnchorBL
+                            && shutterContainer.parent != buttonAnchorBR) {
+                    return timerAnchorBR
+                } else {
+                    return timerAnchorBC
+                }
+            } else {
+                if (exposureMenu.parent == timerAnchorBR) {
+                    return shutterContainer.parent == buttonAnchorTL
+                            ? timerAnchorBL
+                            : timerAnchorTL
+                } else if (shutterContainer.parent == buttonAnchorTR) {
+                    return timerAnchorBR
+                } else {
+                    return timerAnchorTR
+                }
+            }
+        }
         anchors.fill: parent
     }
 
@@ -125,7 +166,9 @@ PinchArea {
             }
 
             onClicked: {
-                if (overlay.expanded) {
+                if (exposureMenu.expanded) {
+                    exposureMenu.open = false
+                } else if (overlay.expanded) {
                     overlay.open = false
                 } else if (overlay.inButtonLayout) {
                     overlay.inButtonLayout = false
@@ -163,7 +206,14 @@ PinchArea {
             }
 
             TimerAnchor { id: timerAnchorBL; anchors { left: parent.left; bottom: parent.bottom } }
+            TimerAnchor { id: timerAnchorBC; anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom } }
             TimerAnchor { id: timerAnchorBR; anchors { right: parent.right; bottom: parent.bottom } }
+            Item {
+                id: timerAnchorTL
+                width: Theme.itemSizeMedium
+                height: Theme.itemSizeSmall
+                anchors { left: parent.left; top: parent.top; leftMargin: Theme.paddingLarge }
+            }
             Item {
                 id: timerAnchorTR
                 width: Theme.itemSizeMedium

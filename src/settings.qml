@@ -51,7 +51,7 @@ SettingsBase {
             ]
             property variant focusDistanceValues: [ Camera.FocusInfinity ]
             property variant flashValues: [ Camera.FlashOff ]
-            property variant exposureCompensationValues: [ 0 ]
+            property variant exposureCompensationValues: [ -4, -2, 0, 2, 4 ]
             property variant exposureModeValues: [ Camera.ExposureAuto ]
             property variant meteringModeValues: [
                 Camera.MeteringMatrix,
