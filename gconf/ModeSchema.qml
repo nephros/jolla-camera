@@ -14,6 +14,7 @@ GConfSchema {
     property alias exposureMode: exposureSchema.defaultValue
     property alias meteringMode: meteringSchema.defaultValue
     property alias timer: timerSchema.defaultValue
+    property alias viewfinderGrid: viewfinderGridSchema.defaultValue
 
     property alias imageResolution: imageResolutionSchema.defaultValue
     property alias videoResolution: videoResolutionSchema.defaultValue
@@ -27,6 +28,7 @@ GConfSchema {
     property alias exposureModeValues: exposureValuesSchema.defaultValue
     property alias meteringModeValues: meteringValuesSchema.defaultValue
     property alias timerValues: timerValuesSchema.defaultValue
+    property alias viewfinderGridValues: viewfinderGridValuesSchema.defaultValue
 
     IntegerSchema { id: captureModeSchema; path: "captureMode";       defaultValue: Camera.CaptureStillImage }
     IntegerSchema { id: isoSchema;      path: "iso";                  defaultValue: 0 }
@@ -37,15 +39,16 @@ GConfSchema {
     IntegerSchema { id: exposureSchema; path: "exposureMode";         defaultValue: Camera.ExposureAuto }
     IntegerSchema { id: meteringSchema; path: "meteringMode";         defaultValue: Camera.MeteringMatrix }
     IntegerSchema { id: timerSchema;    path: "timer";                defaultValue: 0 }
+    StringSchema { id: viewfinderGridSchema; path: "viewfinderGrid"; defaultValue: "none" }
 
     ResolutionSchema { id: imageResolutionSchema; path: "imageResolution" }
     ResolutionSchema { id: videoResolutionSchema; path: "videoResolution" }
-    ResolutionSchema { id: viewfinderResolutionSchema; path: "viewfinderResolution"; defaultValue: "768x432" }
+    ResolutionSchema { id: viewfinderResolutionSchema; path: "viewfinderResolution"; defaultValue: "960x540" }
 
     IntegerListSchema {
         id: isoValuesSchema
-        path: "iso"
-        defaultValue: [ 0, 100, 200, 400, 800, 1600 ]
+        path: "isoValues"
+        defaultValue: [ 0, 100, 200, 400 ]
     }
     IntegerListSchema {
         id: wbValuesSchema
@@ -71,7 +74,7 @@ GConfSchema {
     IntegerListSchema {
         id: ecValuesSchema
         path: "exposureCompensationValues"
-        defaultValue: [ -4, -2, 0, 2, 4 ]
+        defaultValue: [ 4, 2, 0, -2, -4 ]
     }
     IntegerListSchema {
         id: exposureValuesSchema
@@ -90,6 +93,12 @@ GConfSchema {
     IntegerListSchema {
         id: timerValuesSchema
         path: "timerValues"
-        defaultValue: [ 0, 3, 5, 15, 20 ]
+        defaultValue: [ 0, 3, 5, 15 ]
+    }
+
+    StringListSchema {
+        id: viewfinderGridValuesSchema
+        path: "viewfinderGridValues"
+        defaultValue: [ "none", "thirds", "ambience" ]
     }
 }

@@ -20,14 +20,12 @@ SOURCES += \
         cameraplugin.cpp \
         capturemodel.cpp \
         declarativecameraextensions.cpp \
-        declarativecameralocks.cpp \
         declarativegconfsettings.cpp \
         declarativesettings.cpp
 
 HEADERS += \
         capturemodel.h \
         declarativecameraextensions.h \
-        declarativecameralocks.h \
         declarativegconfsettings.h \
         declarativesettings.h
 

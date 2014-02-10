@@ -27,7 +27,7 @@ Column {
         font {
             pixelSize: Theme.fontSizeExtraSmall
         }
-        wrapMode: Text.Wrap
+        wrapMode: Text.WordWrap
         horizontalAlignment: Text.AlignHCenter
     }
 

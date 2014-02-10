@@ -10,7 +10,7 @@ MouseArea {
     property string property
     property QtObject settings
 
-    readonly property bool selected: settings[property] == value
+    property bool selected: settings[property] == value
 
     width: parent.width
     height: (Screen.width - (Theme.fontSizeExtraSmall * 2) - (3 * Theme.paddingLarge)) / 5
@@ -29,7 +29,7 @@ MouseArea {
 
     Image {
         anchors.centerIn: parent
-        source: menuItem.pressed
+        source: menuItem.pressed || menuItem.selected
                 ? menuItem.icon + "?" + Theme.highlightColor
                 : menuItem.icon
         smooth: true

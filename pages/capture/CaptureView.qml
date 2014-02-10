@@ -28,6 +28,7 @@ Item {
     property bool _captureOnFocus
 
     property bool _focusFailed
+    property real _captureCountdown
 
     property real _shutterOffset
     readonly property real _viewfinderPosition: orientation == Orientation.Portrait || orientation == Orientation.Landscape
@@ -52,6 +53,8 @@ Item {
                 || volumeDown.pressed
                 || captureButton.pressed
 
+    readonly property bool _mirrorViewfinder: Settings.global.cameraDevice == "secondary"
+
     property var _startTime: new Date()
     property var _endTime: _startTime
 
@@ -68,7 +71,25 @@ Item {
         focusTimer.running = false
         _touchFocus = false
         _focusFailed = false
-        cameraLocks.unlockFocus()
+        camera.focus.focusPointMode = Camera.FocusPointAuto
+        camera.unlock()
+    }
+
+    function _triggerCapture() {
+        if (captureTimer.running) {
+            captureView._resetFocus()
+            captureTimer.running = false
+        } else if (startRecordTimer.running) {
+            startRecordTimer.running = false
+        } else if (camera.videoRecorder.recorderState == CameraRecorder.RecordingState) {
+            camera.videoRecorder.stop()
+        } else if (Settings.mode.timer != 0) {
+            captureTimer.restart()
+        } else if (camera.captureMode == Camera.CaptureStillImage) {
+            camera.captureImage()
+        } else {
+            camera.record()
+        }
     }
 
     onEffectiveIsoChanged: {
@@ -127,6 +148,29 @@ Item {
         }
     }
 
+    SequentialAnimation {
+        id: captureTimer
+
+        NumberAnimation {
+            id: timerAnimation
+            duration: Settings.mode.timer * 1000
+            from: Settings.mode.timer
+            to: 0
+            easing.type: Easing.Linear
+            target: captureView
+            property: "_captureCountdown"
+        }
+        ScriptAction {
+            script: {
+                if (camera.captureMode == Camera.CaptureStillImage) {
+                     camera.captureImage()
+                 } else {
+                     camera.record()
+                 }
+            }
+        }
+    }
+
     NonGraphicalFeedback {
         id: recordStopEvent
         event: "video_record_stop"
@@ -135,18 +179,18 @@ Item {
     Camera {
         id: camera
 
-        property alias locks: cameraLocks
         property alias extensions: extensions
 
         function autoFocus() {
             if (camera.captureMode == Camera.CaptureStillImage
-                    && cameraLocks.focusStatus == Camera.Unlocked) {
-                cameraLocks.lockFocus()
+                    && Settings.mode.focusDistance != Camera.FocusInfinity
+                    && camera.lockStatus == Camera.Unlocked) {
+                camera.searchAndLock()
             }
         }
 
         function captureImage() {
-            if (cameraLocks.focusStatus != Camera.Searching) {
+            if (camera.lockStatus != Camera.Searching) {
                 _completeCapture()
             } else {
                 captureView._captureOnFocus = true
@@ -211,6 +255,11 @@ Item {
         }
         focus {
             focusMode: captureView._stillFocus
+            onFocusModeChanged: {
+                if (focus.focusMode != Camera.FocusAuto) {
+                    focus.focusPointMode = Camera.FocusPointAuto
+                }
+            }
         }
         flash.mode: Settings.mode.flash
         imageProcessing.whiteBalanceMode: Settings.mode.whiteBalance
@@ -220,35 +269,30 @@ Item {
             exposureCompensation: Settings.mode.exposureCompensation / 2.0
             meteringMode: Settings.mode.meteringMode
         }
+
+        onLockStatusChanged: {
+           if (lockStatus == Camera.Unlocked) {
+               if (camera.focus.focusMode == Camera.FocusContinuous && captureView._capturePending) {
+                   captureView._touchFocus = true
+                   camera.searchAndLock()
+                   return
+               } else if (captureView._touchFocus || captureView._capturePending) {
+                   captureView._focusFailed = true
+                   focusTimer.restart()
+               }
+               captureView._touchFocus = false
+           } else {
+               captureView._focusFailed = false
+           }
+
+           if (lockStatus != Camera.Searching && captureView._captureOnFocus) {
+               captureView._captureOnFocus = false
+               camera._completeCapture()
+           } else if (lockStatus == Camera.Locked && !captureTimer.running) {
+               focusTimer.restart()
+           }
+       }
     }
-
-    CameraLocks {
-        id: cameraLocks
-        camera: camera
-
-        onFocusStatusChanged: {
-            if (focusStatus == Camera.Unlocked) {
-                if (camera.focus.focusMode == Camera.FocusContinuous && captureView._capturePending) {
-                    captureView._touchFocus = true
-                    cameraLocks.lockFocus()
-                    return
-                } else if (captureView._touchFocus || captureView._capturePending) {
-                    captureView._focusFailed = true
-                    focusTimer.running = true
-                }
-                captureView._touchFocus = false
-            } else {
-                captureView._focusFailed = false
-            }
-
-            if (focusStatus != Camera.Searching && captureView._captureOnFocus) {
-                captureView._captureOnFocus = false
-                camera._completeCapture()
-            } else if (focusStatus == Camera.Locked) {
-                focusTimer.running = true
-            }
-        }
-     }
 
     CameraExtensions {
         id: extensions
@@ -301,7 +345,7 @@ Item {
     Binding {
         target: captureView.viewfinder
         property: "mirror"
-        value: Settings.global.cameraDevice == "secondary"
+        value: captureView._mirrorViewfinder
     }
 
     SequentialAnimation {
@@ -342,9 +386,50 @@ Item {
         isPortrait: captureView.isPortrait
 
         onClicked: {
-            if (!captureView._captureOnFocus) {
+            if (!captureView._captureOnFocus
+                    && Settings.mode.focusDistance != Camera.FocusInfinity) {
                 captureView._touchFocus = true
-                cameraLocks.lockFocus()
+
+                if (Settings.mode.focusDistance == Camera.FocusAuto) {
+                    // Translate and rotate the touch point into focusArea's space.
+                    var focusPoint
+                    switch ((360 - extensions.orientation) % 360) {
+                    case 90:
+                        focusPoint = Qt.point(
+                                    mouse.y - ((height - focusArea.width) / 2),
+                                    width - mouse.x);
+                        break;
+                    case 180:
+                        focusPoint = Qt.point(
+                                    width - mouse.x - ((width - focusArea.width) / 2),
+                                    height - mouse.y);
+                        break;
+                    case 270:
+                        focusPoint = Qt.point(
+                                    height - mouse.y - ((height - focusArea.width) / 2),
+                                    mouse.x);
+                        break;
+                    default:
+                        focusPoint = Qt.point(
+                                    mouse.x - ((width - focusArea.width) / 2),
+                                    mouse.y);
+                        break;
+                    }
+
+                    // Normalize the focus point.
+                    focusPoint.x = focusPoint.x / focusArea.width
+                    focusPoint.y = focusPoint.y / focusArea.height
+
+                    // Mirror the point if the viewfinder is mirrored.
+                    if (captureView._mirrorViewfinder) {
+                        focusPoint.x = 1 - focusPoint.x
+                    }
+
+                    camera.focus.focusPointMode = Camera.FocusPointCustom
+                    camera.focus.customFocusPoint = focusPoint
+                }
+
+                camera.searchAndLock()
             }
         }
 
@@ -375,23 +460,9 @@ Item {
 
             anchors.centerIn: parent
 
-            onPressed: {
-                if (camera.captureMode == Camera.CaptureStillImage) {
-                    camera.autoFocus()
-                }
-            }
+            onPressed: camera.autoFocus()
 
-            onClicked: {
-                if (camera.captureMode == Camera.CaptureStillImage) {
-                    camera.captureImage()
-                } else if (startRecordTimer.running) {
-                    startRecordTimer.running = false
-                } else if (camera.videoRecorder.recorderState == CameraRecorder.RecordingState) {
-                    camera.videoRecorder.stop()
-                } else {
-                    camera.record()
-                }
-            }
+            onClicked: captureView._triggerCapture()
 
             Rectangle {
                 radius: Theme.itemSizeMedium / 2
@@ -410,13 +481,22 @@ Item {
 
                 anchors.centerIn: parent
 
-                opacity: captureButton.pressed ? 0.5 : 1.0
+                opacity: captureTimer.running || captureButton.pressed ? 0.5 : 1.0
 
                 source: startRecordTimer.running || camera.videoRecorder.recorderState == CameraRecorder.RecordingState
                         ? "image://theme/icon-camera-stop?" + Theme.highlightColor
                         : "image://theme/icon-camera-shutter-release?" + (captureView._canCapture
                                 ? Theme.highlightColor
                                 : Theme.highlightDimmerColor)
+            }
+
+            Text {
+                anchors.centerIn: parent
+                text: Math.floor(captureView._captureCountdown + 1)
+                visible: captureTimer.running
+                opacity: captureView._captureCountdown % 1
+                color: Theme.primaryColor
+                font.pixelSize: Theme.fontSizeHuge
             }
         }
 
@@ -452,12 +532,50 @@ Item {
             }
         }
 
+        // Viewfinder Grid
+        Item {
+            anchors.centerIn: parent
+            width: extensions.orientation % 180 == 0 ? focusArea.width : focusArea.height
+            height: extensions.orientation % 180 == 0 ? focusArea.height : focusArea.width
+            visible: Settings.mode.viewfinderGrid != "none" && camera.cameraStatus == Camera.ActiveStatus
+            clip: true
+            opacity: 0.5
+
+            Rectangle {
+                anchors.centerIn: parent
+                width: Settings.mode.viewfinderGrid == "ambience"
+                       ? parent.height * Screen.width * 3 / (Screen.height * 5)
+                       : parent.width / 3
+                height: parent.height + (2 * border.width)
+
+                color: "transparent"
+                border {
+                    color: Theme.highlightColor
+                    width: Theme.paddingSmall / 2
+                }
+            }
+
+            Rectangle {
+                anchors.centerIn: parent
+                width: parent.width + (2 * border.width)
+                height: Settings.mode.viewfinderGrid == "ambience"
+                        ? parent.height * 3 / 5
+                        : parent.height / 3
+
+                color: "transparent"
+                border {
+                    color: Theme.highlightColor
+                    width: Theme.paddingSmall / 2
+                }
+            }
+        }
+
         Item {
             id: focusArea
 
             width: Screen.width
-                   * extensions.viewfinderResolution.width
-                   / extensions.viewfinderResolution.height
+                   * Settings.mode.viewfinderResolution.width
+                   / Settings.mode.viewfinderResolution.height
             height: Screen.width
 
             rotation: -extensions.orientation
@@ -466,7 +584,9 @@ Item {
             Repeater {
                 model: camera.focus.focusZones
                 delegate: Item {
-                    x: focusArea.width * area.x
+                    x: focusArea.width * (captureView._mirrorViewfinder
+                                ? 1 - area.x - area.width
+                                : area.x)
                     y: focusArea.height * area.y
                     width: focusArea.width * area.width
                     height: focusArea.height * area.height
@@ -586,14 +706,14 @@ Item {
                     && !captureView._captureOnFocus
         key: Qt.Key_VolumeUp
         onPressed: camera.autoFocus()
-        onReleased: camera.captureImage()
+        onReleased: captureView._triggerCapture()
     }
     MediaKey {
         id: volumeDown
         enabled: volumeUp.enabled
         key: Qt.Key_VolumeDown
         onPressed: camera.autoFocus()
-        onReleased: camera.captureImage()
+        onReleased: captureView._triggerCapture()
     }
 
     Permissions {
