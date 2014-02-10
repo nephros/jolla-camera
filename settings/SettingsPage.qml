@@ -63,7 +63,7 @@ Page {
                         //% "16:9 (6Mpix)"
                         text: qsTrId("camera_settings-me-16-9-6m")
                         imageResolution: "3264x1840"
-                        viewfinderResolution: "768x432"
+                        viewfinderResolution: "960x540"
 
                     }
                     ResolutionComboItem {
@@ -91,7 +91,7 @@ Page {
                         //% "16:9 (1Mpix)"
                         text: qsTrId("camera_settings-me-16-9-1m")
                         imageResolution: "1280x720"
-                        viewfinderResolution: "768x432"
+                        viewfinderResolution: "960x540"
                     }
                     ResolutionComboItem {
                         //: "2 mega pixel image resolution with 4:3 aspect ratio"

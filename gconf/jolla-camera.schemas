@@ -139,7 +139,7 @@
             <type>pair</type>
             <car_type>float</car_type>
             <cdr_type>float</cdr_type>
-            <default>(768,432)</default>
+            <default>(960,540)</default>
             <locale name="C"/>
         </schema>
         <schema>
@@ -184,7 +184,7 @@
             <owner>jolla</owner>
             <type>list</type>
             <list_type>int</list_type>
-            <default>[-4,-2,0,2,4]</default>
+            <default>[4,2,0,-2,-4]</default>
             <locale name="C"/>
         </schema>
         <schema>
@@ -329,7 +329,7 @@
             <type>pair</type>
             <car_type>float</car_type>
             <cdr_type>float</cdr_type>
-            <default>(768,432)</default>
+            <default>(960,540)</default>
             <locale name="C"/>
         </schema>
         <schema>
@@ -374,7 +374,7 @@
             <owner>jolla</owner>
             <type>list</type>
             <list_type>int</list_type>
-            <default>[-4,-2,0,2,4]</default>
+            <default>[4,2,0,-2,-4]</default>
             <locale name="C"/>
         </schema>
         <schema>
@@ -520,7 +520,7 @@
             <type>pair</type>
             <car_type>float</car_type>
             <cdr_type>float</cdr_type>
-            <default>(768,432)</default>
+            <default>(960,540)</default>
             <locale name="C"/>
         </schema>
         <schema>
@@ -565,7 +565,7 @@
             <owner>jolla</owner>
             <type>list</type>
             <list_type>int</list_type>
-            <default>[-4,-2,0,2,4]</default>
+            <default>[4,2,0,-2,-4]</default>
             <locale name="C"/>
         </schema>
         <schema>
@@ -711,7 +711,7 @@
             <type>pair</type>
             <car_type>float</car_type>
             <cdr_type>float</cdr_type>
-            <default>(768,432)</default>
+            <default>(960,540)</default>
             <locale name="C"/>
         </schema>
         <schema>
@@ -756,7 +756,7 @@
             <owner>jolla</owner>
             <type>list</type>
             <list_type>int</list_type>
-            <default>[-4,-2,0,2,4]</default>
+            <default>[4,2,0,-2,-4]</default>
             <locale name="C"/>
         </schema>
         <schema>

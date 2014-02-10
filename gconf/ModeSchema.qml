@@ -43,7 +43,7 @@ GConfSchema {
 
     ResolutionSchema { id: imageResolutionSchema; path: "imageResolution" }
     ResolutionSchema { id: videoResolutionSchema; path: "videoResolution" }
-    ResolutionSchema { id: viewfinderResolutionSchema; path: "viewfinderResolution"; defaultValue: "768x432" }
+    ResolutionSchema { id: viewfinderResolutionSchema; path: "viewfinderResolution"; defaultValue: "960x540" }
 
     IntegerListSchema {
         id: isoValuesSchema
@@ -74,7 +74,7 @@ GConfSchema {
     IntegerListSchema {
         id: ecValuesSchema
         path: "exposureCompensationValues"
-        defaultValue: [ -4, -2, 0, 2, 4 ]
+        defaultValue: [ 4, 2, 0, -2, -4 ]
     }
     IntegerListSchema {
         id: exposureValuesSchema
