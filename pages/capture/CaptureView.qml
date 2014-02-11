@@ -182,6 +182,7 @@ Item {
         property alias extensions: extensions
 
         function autoFocus() {
+            settingsOverlay.close()
             if (camera.captureMode == Camera.CaptureStillImage
                     && Settings.mode.focusDistance != Camera.FocusInfinity
                     && camera.lockStatus == Camera.Unlocked) {
@@ -451,9 +452,7 @@ Item {
 
             z: settingsOverlay.inButtonLayout ? 1 : 0
 
-            enabled: !settingsOverlay.inButtonLayout
-                        && !settingsOverlay.expanded
-                        && captureView._canCapture
+            enabled: captureView._canCapture
                         && !captureView._captureOnFocus
                         && !volumeDown.pressed
                         && !volumeUp.pressed

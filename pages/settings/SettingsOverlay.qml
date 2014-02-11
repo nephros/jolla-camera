@@ -14,7 +14,6 @@ PinchArea {
                 || _closing
                 || verticalAnimation.running
                 || dragArea.drag.active
-                || exposureMenu.expanded
     default property alias _data: container.data
 
     readonly property int _captureButtonLocation: overlay.isPortrait
@@ -53,11 +52,9 @@ PinchArea {
         focusMenu.currentItem
     ]
 
-
-
     signal clicked(var mouse)
 
-    function _close() {
+    function close() {
         _closing = true
         exposureMenu.open = false
         open = false
@@ -81,6 +78,7 @@ PinchArea {
 
         parent: overlay._buttonAnchors[overlay._captureButtonLocation]
         anchors.fill: parent
+        enabled: !overlay.open && !overlay.inButtonLayout
     }
 
     ExposureMenu {
