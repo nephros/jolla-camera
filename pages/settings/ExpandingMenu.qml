@@ -50,8 +50,7 @@ MouseArea {
         anchors {
             horizontalCenter: menu.horizontalCenter
             horizontalCenterOffset: menu.alignment == Text.AlignRight ? -menu.width : menu.width
-            verticalCenter: menu.verticalCenter
-            verticalCenterOffset: -menu.height
+            verticalCenter: column.verticalCenter
         }
 
         width: menu.width

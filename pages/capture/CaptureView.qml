@@ -182,6 +182,7 @@ Item {
         property alias extensions: extensions
 
         function autoFocus() {
+            settingsOverlay.close()
             if (camera.captureMode == Camera.CaptureStillImage
                     && Settings.mode.focusDistance != Camera.FocusInfinity
                     && camera.lockStatus == Camera.Unlocked) {
@@ -451,9 +452,7 @@ Item {
 
             z: settingsOverlay.inButtonLayout ? 1 : 0
 
-            enabled: !settingsOverlay.inButtonLayout
-                        && !settingsOverlay.expanded
-                        && captureView._canCapture
+            enabled: captureView._canCapture
                         && !captureView._captureOnFocus
                         && !volumeDown.pressed
                         && !volumeUp.pressed
@@ -532,41 +531,81 @@ Item {
             }
         }
 
-        // Viewfinder Grid
-        Item {
-            anchors.centerIn: parent
-            width: extensions.orientation % 180 == 0 ? focusArea.width : focusArea.height
-            height: extensions.orientation % 180 == 0 ? focusArea.height : focusArea.width
-            visible: Settings.mode.viewfinderGrid != "none" && camera.cameraStatus == Camera.ActiveStatus
-            clip: true
-            opacity: 0.5
-
-            Rectangle {
-                anchors.centerIn: parent
-                width: Settings.mode.viewfinderGrid == "ambience"
-                       ? parent.height * Screen.width * 3 / (Screen.height * 5)
-                       : parent.width / 3
-                height: parent.height + (2 * border.width)
-
-                color: "transparent"
-                border {
-                    color: Theme.highlightColor
-                    width: Theme.paddingSmall / 2
-                }
+        Label {
+            anchors {
+                top: parent.top
+                left: parent.left
+                right: parent.right
+                margins: Theme.itemSizeMedium
             }
 
-            Rectangle {
-                anchors.centerIn: parent
-                width: parent.width + (2 * border.width)
-                height: Settings.mode.viewfinderGrid == "ambience"
-                        ? parent.height * 3 / 5
-                        : parent.height / 3
+            //% "Rotate the camera for best ambience results"
+            text: qsTrId("jolla-camera-la-rotate_portrait_for_ambience")
+            visible: grid.landscapeAmbience && camera.cameraStatus == Camera.ActiveStatus
+            horizontalAlignment: Text.AlignHCenter
+            style: Text.Raised
+            styleColor: Theme.highlightBackgroundColor
+        }
 
-                color: "transparent"
-                border {
-                    color: Theme.highlightColor
-                    width: Theme.paddingSmall / 2
+        // Viewfinder Grid
+        Item {
+            id: grid
+
+            property real gridWidth: extensions.orientation % 180 == 0 ? focusArea.width : focusArea.height
+            property real gridHeight: extensions.orientation % 180 == 0 ? focusArea.height : focusArea.width
+            property real ambienceOffset: Settings.mode.viewfinderGrid == "ambience"
+                        ? -5 * gridHeight / 40 // Lockscreen offset is ~3/40 of the ambience height
+                        : 0
+            property bool landscapeAmbience: Settings.mode.viewfinderGrid == "ambience"
+                        && extensions.orientation % 180 == 0
+
+            anchors.centerIn: parent
+
+            visible: Settings.mode.viewfinderGrid != "none"
+                     && camera.cameraStatus == Camera.ActiveStatus
+                     && !grid.landscapeAmbience
+
+            width: Settings.mode.viewfinderGrid == "ambience"
+                   ? gridHeight * Screen.width * 3 / (Screen.height * 5)
+                   : gridWidth / 3
+            height: Settings.mode.viewfinderGrid == "ambience"
+                    ? gridHeight * 3 / 5
+                    : gridHeight / 3
+
+            GridLine {
+                anchors {
+                    horizontalCenter: grid.horizontalCenter;
+                    verticalCenter: grid.top
+                    verticalCenterOffset: grid.ambienceOffset
                 }
+                width: grid.gridWidth
+            }
+
+            GridLine {
+                anchors {
+                    horizontalCenter: grid.horizontalCenter;
+                    verticalCenter: grid.bottom
+                    verticalCenterOffset: grid.ambienceOffset
+                }
+                width: grid.gridWidth
+            }
+
+            GridLine {
+                anchors {
+                    horizontalCenter: grid.left;
+                    verticalCenter: grid.verticalCenter
+                }
+                width: grid.gridHeight
+                rotation: 90
+            }
+
+            GridLine {
+                anchors {
+                    horizontalCenter: grid.right;
+                    verticalCenter: grid.verticalCenter
+                }
+                width: grid.gridHeight
+                rotation: 90
             }
         }
 

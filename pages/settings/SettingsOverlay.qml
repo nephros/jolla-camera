@@ -14,7 +14,6 @@ PinchArea {
                 || _closing
                 || verticalAnimation.running
                 || dragArea.drag.active
-                || exposureMenu.expanded
     default property alias _data: container.data
 
     readonly property int _captureButtonLocation: overlay.isPortrait
@@ -53,11 +52,9 @@ PinchArea {
         focusMenu.currentItem
     ]
 
-
-
     signal clicked(var mouse)
 
-    function _close() {
+    function close() {
         _closing = true
         exposureMenu.open = false
         open = false
@@ -81,6 +78,7 @@ PinchArea {
 
         parent: overlay._buttonAnchors[overlay._captureButtonLocation]
         anchors.fill: parent
+        enabled: !overlay.open && !overlay.inButtonLayout
     }
 
     ExposureMenu {
@@ -191,11 +189,10 @@ PinchArea {
 
             Rectangle {
                 width: overlay.width
-                height: Theme.itemSizeSmall
+                height: Theme.itemSizeMedium
 
                 gradient: Gradient {
                     GradientStop { position: 0.0; color: Theme.rgba(Theme.highlightDimmerColor, 0.6) }
-                    GradientStop { position: 0.9; color: Theme.rgba(Theme.highlightDimmerColor, 0.2) }
                     GradientStop { position: 1.0; color: Theme.rgba(Theme.highlightDimmerColor, 0.0) }
                 }
             }
@@ -260,6 +257,10 @@ PinchArea {
             opacity: 0.6 * (1 - container.opacity)
         }
 
+        TitleHighlight {
+            anchors { left: row.left; top: row.top; right: row.right }
+            opacity: row.opacity
+        }
         Row {
             id: row
 
@@ -327,7 +328,12 @@ PinchArea {
             }
         }
 
+        TitleHighlight {
+            anchors { left: leftRow.left; top: leftRow.top; right: leftRow.right }
+            opacity: row.opacity
+        }
         Row {
+            id: leftRow
             anchors {
                 top: overlay.isPortrait ? row.bottom : row.top
                 right: overlay.isPortrait ? row.horizontalCenter : row.left
@@ -366,7 +372,12 @@ PinchArea {
             }
         }
 
+        TitleHighlight {
+            anchors { left: rightRow.left; top: rightRow.top; right: rightRow.right }
+            opacity: row.opacity
+        }
         Row {
+            id: rightRow
             anchors {
                 top: overlay.isPortrait ? row.bottom : row.top
                 left: overlay.isPortrait ? row.horizontalCenter : row.right
