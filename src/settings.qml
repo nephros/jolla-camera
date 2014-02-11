@@ -59,8 +59,16 @@ SettingsBase {
                 Camera.MeteringAverage,
                 Camera.MeteringSpot
             ]
-            property variant timerValues: [ 0, 3, 5, 15, 20 ]
+            property variant timerValues: [ 0, 3, 5, 10, 15 ]
             property variant viewfinderGridValues: [ "none", "thirds", "ambience" ]
+        }
+    }
+
+    function captureModeCoverIcon(mode) {
+        switch (mode) {
+        case "image": return "image://theme/graphics-cover-camera"
+        case "video": return "image://theme/graphics-cover-camcorder"
+        default:  return ""
         }
     }
 
@@ -225,9 +233,9 @@ SettingsBase {
 
     function viewfinderGridIcon(grid) {
         switch (grid) {
-        case "none": return "image://theme/icon-camera-metering-matrix"
-        case "thirds": return "image://theme/icon-camera-metering-weighted"
-        case "ambience": return "image://theme/icon-camera-metering-spot"
+        case "none": return "image://theme/icon-camera-grid-none"
+        case "thirds": return "image://theme/icon-camera-grid-thirds"
+        case "ambience": return "image://theme/icon-camera-grid-ambience"
         default: return ""
         }
     }
