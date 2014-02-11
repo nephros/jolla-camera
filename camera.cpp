@@ -33,10 +33,10 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 
     view->engine()->setBaseUrl(QUrl::fromLocalFile(path));
 
+    view->setSource(path + QLatin1String("camera.qml"));
     //% "Camera"
     QT_TRID_NOOP("jolla-camera-ap-name");
     view->setTitle(qtTrId("jolla-camera-ap-name"));
-    view->setSource(path + QLatin1String("camera.qml"));
 
     if (app->arguments().contains("-desktop")) {
         view->resize(480, 854);
