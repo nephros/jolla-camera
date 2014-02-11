@@ -26,7 +26,7 @@ Requires:  sailfishsilica-qt5
 Requires:  mapplauncherd-booster-silica-qt5
 Requires:  qt5-qtdeclarative-import-models2
 Requires: qt5-qtdeclarative-import-multimedia
-Requires: qt5-qtmultimedia-plugin-mediaservice-gstcamerabin >= 5.1.0+git22
+Requires: qt5-qtmultimedia-plugin-mediaservice-gstcamerabin >= 5.1.0+git23
 Requires: qt5-qtmultimedia-plugin-mediaservice-gstmediaplayer
 Requires:  declarative-transferengine-qt5
 Requires:  nemo-qml-plugin-accounts-qt5
