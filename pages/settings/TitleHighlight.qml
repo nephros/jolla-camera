@@ -5,7 +5,7 @@ Rectangle {
     height: Theme.itemSizeMedium
 
     gradient: Gradient {
-        GradientStop { position: 0.0; color: Theme.rgba(Theme.highlightColor, 0.6) }
-        GradientStop { position: 1.0; color: Theme.rgba(Theme.highlightColor, 0.0) }
+        GradientStop { position: 0.0; color: Theme.rgba(Theme.highlightDimmerColor, 0.6) }
+        GradientStop { position: 1.0; color: Theme.rgba(Theme.highlightDimmerColor, 0.0) }
     }
 }
