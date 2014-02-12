@@ -93,7 +93,7 @@ GConfSchema {
     IntegerListSchema {
         id: timerValuesSchema
         path: "timerValues"
-        defaultValue: [ 0, 3, 5, 15 ]
+        defaultValue: [ 0, 3, 5, 10 ]
     }
 
     StringListSchema {

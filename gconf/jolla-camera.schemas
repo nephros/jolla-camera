@@ -211,7 +211,7 @@
             <owner>jolla</owner>
             <type>list</type>
             <list_type>int</list_type>
-            <default>[0,3,5,15]</default>
+            <default>[0,3,5,10]</default>
             <locale name="C"/>
         </schema>
         <schema>
@@ -401,7 +401,7 @@
             <owner>jolla</owner>
             <type>list</type>
             <list_type>int</list_type>
-            <default>[0,3,5,15]</default>
+            <default>[0,3,5,10]</default>
             <locale name="C"/>
         </schema>
         <schema>
@@ -592,7 +592,7 @@
             <owner>jolla</owner>
             <type>list</type>
             <list_type>int</list_type>
-            <default>[0,3,5,15]</default>
+            <default>[0,3,5,10]</default>
             <locale name="C"/>
         </schema>
         <schema>
@@ -783,7 +783,7 @@
             <owner>jolla</owner>
             <type>list</type>
             <list_type>int</list_type>
-            <default>[0,3,5,15]</default>
+            <default>[0,3,5,10]</default>
             <locale name="C"/>
         </schema>
         <schema>
