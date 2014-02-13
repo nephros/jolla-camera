@@ -5,6 +5,7 @@ import Sailfish.Media 1.0
 import Sailfish.Gallery 1.0
 import QtMultimedia 5.0
 import com.jolla.camera 1.0
+import org.nemomobile.policy 1.0
 import ".."
 
 Drawer {
@@ -14,6 +15,7 @@ Drawer {
     readonly property bool active: page.galleryActive
     readonly property bool windowActive: page.windowActive
     property Item _activeItem
+    property alias _videoActive: permissions.enabled
 
     property alias contentItem: pageView.contentItem
     property alias header: pageView.header
@@ -51,6 +53,52 @@ Drawer {
     }
 
     Component.onCompleted: positionViewAtBeginning()
+
+    function _play() {
+        if (_videoActive) {
+            mediaPlayer.source = galleryView._activeItem.url
+            mediaPlayer.play()
+        }
+    }
+
+    function _togglePlay() {
+        if (mediaPlayer.playbackState == MediaPlayer.PlayingState) {
+            mediaPlayer.pause()
+        } else if (_videoActive) {
+            mediaPlayer.source = galleryView._activeItem.url
+            mediaPlayer.play()
+        }
+    }
+
+    function _pause() {
+        if (_videoActive) {
+            mediaPlayer.source = galleryView._activeItem.url
+            mediaPlayer.pause()
+        }
+    }
+
+    function _stop() {
+        mediaPlayer.stop()
+    }
+
+    MediaKey { enabled: keysResource.acquired; key: Qt.Key_MediaTogglePlayPause; onPressed: galleryView._togglePlay() }
+    MediaKey { enabled: keysResource.acquired; key: Qt.Key_MediaPlay; onPressed: galleryView._play() }
+    MediaKey { enabled: keysResource.acquired; key: Qt.Key_MediaPause; onPressed: galleryView._pause() }
+    MediaKey { enabled: keysResource.acquired; key: Qt.Key_MediaStop; onPressed: galleryView._stop() }
+    MediaKey { enabled: keysResource.acquired; key: Qt.Key_ToggleCallHangup; onPressed: galleryView._togglePlay() }
+
+    Permissions {
+        id: permissions
+
+        enabled: galleryView.active && galleryView._activeItem && !galleryView._activeItem.isImage
+        applicationClass: "player"
+
+        Resource {
+            id: keysResource
+            type: Resource.HeadsetButtons
+            optional: true
+        }
+    }
 
     DelegateModel {
         id: delegateModel
