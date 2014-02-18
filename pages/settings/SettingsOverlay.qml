@@ -10,6 +10,7 @@ PinchArea {
     property bool isPortrait
     property bool open
     property bool inButtonLayout
+    property bool pinchActive
     readonly property bool expanded: open
                 || _closing
                 || verticalAnimation.running
@@ -61,6 +62,9 @@ PinchArea {
         inButtonLayout = false
         _closing = false
     }
+
+    onPinchStarted: pinchActive = true
+    onPinchFinished: pinchActive = false
 
     property list<Item> _buttonAnchors
     _buttonAnchors: [
@@ -161,6 +165,7 @@ PinchArea {
             width: overlay.width
             height: overlay.height
             opacity: Math.min(1 - overlay._progress, 1 - anchorContainer.opacity)
+            enabled: !overlay.pinchActive
 
             onPressed: {
                 pressX = mouseX

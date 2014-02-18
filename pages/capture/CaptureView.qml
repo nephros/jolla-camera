@@ -434,12 +434,15 @@ Item {
             }
         }
 
-        onPinchUpdated: {
+        onPinchStarted: {
             // We're not getting notifications when the maximumDigitalZoom changes,
             // so update the value here.
             zoomIndicator.maximumZoom = camera.maximumDigitalZoom
+        }
+
+        onPinchUpdated: {
             camera.digitalZoom = Math.max(1, Math.min(
-                        camera.digitalZoom + 2 * (pinch.scale - pinch.previousScale),
+                        camera.digitalZoom + ((camera.maximumDigitalZoom - 1) * ((pinch.scale / Math.abs(pinch.previousScale) - 1))),
                         camera.maximumDigitalZoom))
             zoomIndicator.show()
         }
