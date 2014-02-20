@@ -21,6 +21,9 @@ Item {
     property alias camera: camera
     property QtObject viewfinder
 
+    readonly property bool recording: active
+                && camera.videoRecorder.recorderState == CameraRecorder.RecordingState
+
     property bool _complete
     property bool _unload
 
