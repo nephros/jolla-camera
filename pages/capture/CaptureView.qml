@@ -470,9 +470,9 @@ Item {
             onClicked: captureView._triggerCapture()
 
             Rectangle {
-                radius: Theme.itemSizeMedium / 2
-                width: Theme.itemSizeMedium
-                height: Theme.itemSizeMedium
+                radius: Theme.itemSizeSmall / 2
+                width: Theme.itemSizeSmall
+                height: Theme.itemSizeSmall
 
                 anchors.centerIn: parent
 
@@ -481,12 +481,19 @@ Item {
             }
 
             Image {
-                width: Theme.iconSizeMedium
-                height: Theme.iconSizeMedium
+                id: shutterImage
 
                 anchors.centerIn: parent
 
-                opacity: captureTimer.running || captureButton.pressed ? 0.5 : 1.0
+                opacity: {
+                    if (captureTimer.running) {
+                        return 0.1
+                    } else if (captureButton.pressed) {
+                        return 0.5
+                    } else {
+                        return 1.0
+                    }
+                }
 
                 source: startRecordTimer.running || camera.videoRecorder.recorderState == CameraRecorder.RecordingState
                         ? "image://theme/icon-camera-stop?" + Theme.highlightColor
@@ -495,13 +502,16 @@ Item {
                                 : Theme.highlightDimmerColor)
             }
 
-            Text {
+            Label {
                 anchors.centerIn: parent
                 text: Math.floor(captureView._captureCountdown + 1)
                 visible: captureTimer.running
                 opacity: captureView._captureCountdown % 1
                 color: Theme.primaryColor
-                font.pixelSize: Theme.fontSizeHuge
+                font {
+                    pixelSize: Theme.fontSizeHuge
+                    weight: Font.Light
+                }
             }
         }
 
