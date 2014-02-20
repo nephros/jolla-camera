@@ -5,7 +5,6 @@ import com.jolla.camera 1.0
 import com.jolla.camera 1.0
 
 CoverBackground {
-
     Image {
         id: captureModeIcon
         y: Theme.paddingLarge + Theme.paddingMedium
@@ -13,22 +12,42 @@ CoverBackground {
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
-    Grid {
-        anchors {
-            top: captureModeIcon.bottom
-            topMargin: Theme.paddingMedium
-            horizontalCenter: parent.horizontalCenter
-        }
-        columns: 2
-        columnSpacing: Theme.paddingLarge
-        rowSpacing: Theme.paddingMedium
+    CoverIcon {
+        anchors { left: captureModeIcon.left; bottom: focusIcon.top; bottomMargin: Theme.paddingMedium }
+        icon: Settings.flashIcon(Settings.mode.flash)
+    }
+    CoverIcon {
+        anchors { right: captureModeIcon.right; bottom: isoIcon.top; bottomMargin: Theme.paddingMedium }
+        icon: Settings.whiteBalanceIcon(Settings.mode.whiteBalance)
+    }
+    CoverIcon {
+        id: focusIcon
+        anchors { left: captureModeIcon.left; bottom: exposureIcon.top; bottomMargin: Theme.paddingMedium }
+        icon: Settings.focusDistanceIcon(Settings.mode.focusDistance)
+    }
+    CoverIcon {
+        id: isoIcon
+        anchors { right: captureModeIcon.right; bottom: exposureIcon.top; bottomMargin: Theme.paddingMedium }
+        icon: Settings.isoIcon(Settings.mode.iso)
+    }
 
-        CoverIcon { icon: Settings.flashIcon(Settings.mode.flash) }
-        CoverIcon { icon: Settings.whiteBalanceIcon(Settings.mode.whiteBalance) }
-        CoverIcon { icon: Settings.focusDistanceIcon(Settings.mode.focusDistance) }
-        CoverIcon { icon: Settings.isoIcon(Settings.mode.iso) }
-        CoverIcon { icon: Settings.viewfinderGridIcon(Settings.mode.viewfinderGrid) }
-        CoverIcon { icon: Settings.timerIcon(Settings.mode.timer) }
+    CoverIcon {
+        id: exposureIcon
+        icon: {
+            switch (Settings.mode.exposureCompensation) {
+            case -4: return "image://theme/graphics-cover-camera-exposure2m"
+            case -2: return "image://theme/graphics-cover-camera-exposure1m"
+            case  0: return "image://theme/graphics-cover-camera-exposure0"
+            case  2: return "image://theme/graphics-cover-camera-exposure1p"
+            case  4: return "image://theme/graphics-cover-camera-exposure2p"
+            }
+        }
+
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            bottom: parent.bottom
+
+            bottomMargin: Theme.paddingLarge + Theme.paddingMedium
+        }
     }
 }
-
