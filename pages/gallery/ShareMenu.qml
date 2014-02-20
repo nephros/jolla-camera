@@ -47,7 +47,7 @@ ShareMethodList {
     header: Label {
         text: menuList.title
 
-        x: menuList.width * 0.3
+        anchors { right: menuList.contentItem.right; rightMargin: Theme.paddingLarge }
         width: menuList.width * 0.7
         height: Theme.itemSizeLarge
         truncationMode: TruncationMode.Fade
