@@ -6,7 +6,6 @@
 #include <QQmlInfo>
 
 #include <QtDebug>
-#include <QMediaMetaData>
 
 #include <QQuickWindow>
 #include <qpa/qplatformnativeinterface.h>
@@ -244,6 +243,19 @@ void DeclarativeCameraExtensions::updateDevice()
             m_deviceControl->setSelectedDevice(i);
             return;
         }
+    }
+}
+
+
+QVariant DeclarativeCameraExtensions::metaData(const QString &key) const
+{
+    return m_metaDataControl ? m_metaDataControl->metaData(key) : QVariant();
+}
+
+void DeclarativeCameraExtensions::setMetaData(const QString &key, const QVariant &value)
+{
+    if (m_metaDataControl) {
+        m_metaDataControl->setMetaData(key, value);
     }
 }
 

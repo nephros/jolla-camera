@@ -2,6 +2,7 @@ import QtQuick 2.0
 import QtMultimedia 5.0
 import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
+import org.nemomobile.configuration 1.0
 
 Page {
     GConfSettings {
@@ -28,6 +29,12 @@ Page {
         }
     }
 
+    ConfigurationValue {
+        id: locationEnabledConfig
+        key: "/jolla/location/enabled"
+        defaultValue: false
+    }
+
     SilicaFlickable {
         id: panel
 
@@ -46,6 +53,23 @@ Page {
 
             id: column
             width: parent.width
+
+            IconTextSwitch {
+                automaticCheck: false
+                icon.source: "image://theme/icon-m-gps"
+                //: Save GPS coordinates in photos.
+                //% "Save location"
+                text: qsTrId("camera_settings-la-save_location")
+                description: locationEnabledConfig.value
+                            //% "Save current GPS coordinates in captured photos."
+                            ? qsTrId("camera_settings-la-save_location_description")
+                            //% "Positioning is turned off.  Enable it in Settings | System | Location"
+                            : qsTrId("camera_settings-la-enable_location")
+
+                enabled: locationEnabledConfig.value
+                checked: Settings.global.saveLocationInfo && locationEnabledConfig.value
+                onClicked: Settings.global.saveLocationInfo = !Settings.global.saveLocationInfo
+            }
 
             SectionHeader {
                 //% "Back camera"
