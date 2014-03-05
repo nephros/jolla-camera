@@ -336,6 +336,13 @@ Item {
 
         device: Settings.global.cameraDevice
 
+        //: Name of camera manufacturer to be written into captured photos
+        //% "Jolla"
+        manufacturer: qsTrId("camera-la-manufacturer")
+        //: Name of camera model to be written into captured photos
+        //% "Jolla"
+        model: qsTrId("camera-la-model")
+
         rotation: {
             switch (captureView.orientation) {
             case Orientation.Portrait:
