@@ -27,9 +27,11 @@ MouseArea {
     }
 
     Rectangle {
-        radius: Theme.itemSizeMedium / 2
-        width: Theme.itemSizeMedium
-        height: Theme.itemSizeMedium
+        radius: Theme.itemSizeSmall / 2
+        width: Theme.itemSizeSmall
+        height: Theme.itemSizeSmall
+
+        anchors.centerIn: parent
 
         border {
             color: Theme.highlightColor

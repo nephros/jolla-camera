@@ -64,7 +64,9 @@ Page {
         snapMode: ListView.SnapOneItem
         boundsBehavior: Flickable.StopAtBounds
         highlightRangeMode: ListView.StrictlyEnforceRange
-        interactive: (!galleryLoader.item || !galleryLoader.item.positionLocked) && captureModel.count > 0
+        interactive: (!galleryLoader.item || !galleryLoader.item.positionLocked)
+                    && captureModel.count > 0
+                    && !captureView.recording
         currentIndex: 1
         pressDelay: 0
 
