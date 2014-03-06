@@ -24,7 +24,7 @@ ShareMethodList {
         id: pullDownMenu
         MenuItem {
             id: detailsItem
-            //% "Details"
+            //% "Show details"
             text: qsTrId("camera-me-details")
             onClicked: menuList.showDetails()
         }
