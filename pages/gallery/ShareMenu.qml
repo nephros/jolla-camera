@@ -17,6 +17,8 @@ ShareMethodList {
     signal deleteFile
     signal showDetails
 
+    pressDelay: 0
+
     //% "Share"
     listHeader: qsTrId("camera-la-share")
 
