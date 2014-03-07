@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.1
 import Sailfish.Silica 1.0
 import Sailfish.Media 1.0
 import "pages"
@@ -6,6 +6,10 @@ import "cover"
 
 ApplicationWindow {
     id: window
+
+    property QtObject _window
+    onWindowChanged: _window = window ? window : null
+
     cover: Component{
         CameraCover {
         }
@@ -16,7 +20,7 @@ ApplicationWindow {
             id: cameraPage
 
             pageStack: window.pageStack
-            windowActive: window.applicationActive
+            windowActive: window._window && window._window.visible
             viewfinder: videoOutput
         }
     }
