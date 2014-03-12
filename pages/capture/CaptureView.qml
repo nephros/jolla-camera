@@ -74,7 +74,7 @@ Item {
         focusTimer.running = false
         _touchFocus = false
         _focusFailed = false
-        camera.focus.focusPointMode = Camera.FocusPointAuto
+        camera.focus.customFocusPoint = Qt.point(0.5, 0.5)
         camera.unlock()
     }
 
@@ -259,11 +259,9 @@ Item {
         }
         focus {
             focusMode: captureView._stillFocus
-            onFocusModeChanged: {
-                if (focus.focusMode != Camera.FocusAuto) {
-                    focus.focusPointMode = Camera.FocusPointAuto
-                }
-            }
+            focusPointMode: focus.focusMode != Camera.FocusAuto
+                    ? Camera.FocusPointAuto
+                    : Camera.FocusPointCustom
         }
         flash.mode: Settings.mode.flash
         imageProcessing.whiteBalanceMode: Settings.mode.whiteBalance
@@ -429,7 +427,6 @@ Item {
                         focusPoint.x = 1 - focusPoint.x
                     }
 
-                    camera.focus.focusPointMode = Camera.FocusPointCustom
                     camera.focus.customFocusPoint = focusPoint
                 }
 
