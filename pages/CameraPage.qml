@@ -82,7 +82,6 @@ Page {
 
                     anchors.fill: parent
 
-                    asynchronous: true
                     visible: switcherView.moving || page.galleryActive
                 }
 
