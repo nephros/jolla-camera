@@ -21,6 +21,10 @@ GConfSchema {
         path: "landscapeCaptureButtonLocation"
         defaultValue: 4
     }
+    BooleanSchema {
+        path: "saveLocationInfo"
+        defaultValue: false
+    }
     ModeSchema {
         path: "primary/image"
         captureMode: Camera.CaptureStillImage

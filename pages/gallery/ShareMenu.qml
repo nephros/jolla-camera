@@ -17,6 +17,8 @@ ShareMethodList {
     signal deleteFile
     signal showDetails
 
+    pressDelay: 0
+
     //% "Share"
     listHeader: qsTrId("camera-la-share")
 
@@ -24,7 +26,7 @@ ShareMethodList {
         id: pullDownMenu
         MenuItem {
             id: detailsItem
-            //% "Details"
+            //% "Show details"
             text: qsTrId("camera-me-details")
             onClicked: menuList.showDetails()
         }
@@ -47,7 +49,7 @@ ShareMethodList {
     header: Label {
         text: menuList.title
 
-        x: menuList.width * 0.3
+        anchors { right: menuList.contentItem.right; rightMargin: Theme.paddingLarge }
         width: menuList.width * 0.7
         height: Theme.itemSizeLarge
         truncationMode: TruncationMode.Fade

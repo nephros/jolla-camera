@@ -6,7 +6,6 @@
 #include <QQmlInfo>
 
 #include <QtDebug>
-#include <QMediaMetaData>
 
 #include <QQuickWindow>
 #include <qpa/qplatformnativeinterface.h>
@@ -167,10 +166,7 @@ void DeclarativeCameraExtensions::setRotation(int rotation)
             ? -rotation
             : rotation;
 
-    int orientation = (sensorOrientation - correctedRotation) % 360;
-    if (orientation < 0) {
-        orientation += 360;
-    }
+    const int orientation = (720 - (sensorOrientation + correctedRotation)) % 360;
 
     if (m_imageEncoderControl) {
         QImageEncoderSettings imageSettings = m_imageEncoderControl->imageSettings();
@@ -190,13 +186,11 @@ void DeclarativeCameraExtensions::setRotation(int rotation)
     }
 
     if (m_metaDataControl) {
-        m_metaDataControl->setMetaData(
-                    QMediaMetaData::Orientation,
-                    QString(QStringLiteral("rotate-%1")).arg(orientation));
+        m_metaDataControl->setMetaData(QMediaMetaData::Orientation, orientation);
     }
 
-    if (m_orientation != -orientation) {
-        m_orientation = -orientation;
+    if (m_orientation != orientation) {
+        m_orientation = orientation;
         emit orientationChanged();
     }
 
@@ -244,6 +238,19 @@ void DeclarativeCameraExtensions::updateDevice()
             m_deviceControl->setSelectedDevice(i);
             return;
         }
+    }
+}
+
+
+QVariant DeclarativeCameraExtensions::metaData(const QString &key) const
+{
+    return m_metaDataControl ? m_metaDataControl->metaData(key) : QVariant();
+}
+
+void DeclarativeCameraExtensions::setMetaData(const QString &key, const QVariant &value)
+{
+    if (m_metaDataControl) {
+        m_metaDataControl->setMetaData(key, value);
     }
 }
 

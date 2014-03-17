@@ -34,6 +34,14 @@
             <locale name="C"/>
         </schema>
         <schema>
+            <key>/schemas/apps/jolla-camera/saveLocationInfo</key>
+            <applyto>/apps/jolla-camera/saveLocationInfo</applyto>
+            <owner>jolla</owner>
+            <type>bool</type>
+            <default>false</default>
+            <locale name="C"/>
+        </schema>
+        <schema>
             <key>/schemas/apps/jolla-camera/primary/image/captureMode</key>
             <applyto>/apps/jolla-camera/primary/image/captureMode</applyto>
             <owner>jolla</owner>
@@ -211,7 +219,7 @@
             <owner>jolla</owner>
             <type>list</type>
             <list_type>int</list_type>
-            <default>[0,3,5,10]</default>
+            <default>[0,3,10,15]</default>
             <locale name="C"/>
         </schema>
         <schema>
@@ -401,7 +409,7 @@
             <owner>jolla</owner>
             <type>list</type>
             <list_type>int</list_type>
-            <default>[0,3,5,10]</default>
+            <default>[0,3,10,15]</default>
             <locale name="C"/>
         </schema>
         <schema>
@@ -592,7 +600,7 @@
             <owner>jolla</owner>
             <type>list</type>
             <list_type>int</list_type>
-            <default>[0,3,5,10]</default>
+            <default>[0,3,10,15]</default>
             <locale name="C"/>
         </schema>
         <schema>
@@ -783,7 +791,7 @@
             <owner>jolla</owner>
             <type>list</type>
             <list_type>int</list_type>
-            <default>[0,3,5,10]</default>
+            <default>[0,3,10,15]</default>
             <locale name="C"/>
         </schema>
         <schema>
