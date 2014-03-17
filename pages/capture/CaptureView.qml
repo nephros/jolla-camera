@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import QtMultimedia 5.0
+import QtPositioning 5.1
 import Sailfish.Silica 1.0
 import Sailfish.Media 1.0
 import com.jolla.camera 1.0
@@ -7,6 +8,7 @@ import com.jolla.camera 1.0
 import org.nemomobile.time 1.0
 import org.nemomobile.policy 1.0
 import org.nemomobile.ngf 1.0
+import org.nemomobile.configuration 1.0
 import "../settings"
 
 Item {
@@ -78,6 +80,28 @@ Item {
         camera.unlock()
     }
 
+    function _writeMetaData() {
+        extensions.captureTime = new Date()
+
+        if (positionSource.active) {
+            var coordinate = positionSource.position.coordinate
+            if (coordinate.isValid) {
+                extensions.gpsLatitude = coordinate.latitude
+                extensions.gpsLongitude = coordinate.longitude
+            } else {
+                extensions.gpsLatitude = undefined
+                extensions.gpsLongitude = undefined
+            }
+            extensions.gpsAltitude = positionSource.position.altitudeValid
+                        ? coordinate.altitude
+                        : undefined
+        } else {
+            extensions.gpsLatitude = undefined
+            extensions.gpsLongitude = undefined
+            extensions.gpsAltitude = undefined
+        }
+    }
+
     function _triggerCapture() {
         if (captureTimer.running) {
             captureView._resetFocus()
@@ -118,6 +142,17 @@ Item {
 
     Component.onCompleted: _complete = true
 
+    ConfigurationValue {
+        id: locationEnabledConfig
+        key: "/jolla/location/enabled"
+        defaultValue: false
+    }
+
+    PositionSource {
+        id: positionSource
+        active: captureView.active && locationEnabledConfig.value && Settings.global.saveLocationInfo
+    }
+
     Timer {
         id: reloadTimer
         interval: 10
@@ -142,7 +177,7 @@ Item {
 
         interval: 200
         onTriggered: {
-            extensions.captureTime = new Date()
+            captureView._writeMetaData()
             camera.videoRecorder.record()
             if (camera.videoRecorder.recorderState == CameraRecorder.RecordingState) {
                 camera.videoRecorder.recorderStateChanged.connect(camera._finishRecording)
@@ -209,7 +244,7 @@ Item {
 
         function _completeCapture() {
             shutterEvent.play()
-            extensions.captureTime = new Date()
+            captureView._writeMetaData()
             camera.imageCapture.captureToLocation(Settings.photoCapturePath('jpg'))
         }
 
@@ -301,6 +336,13 @@ Item {
         camera: camera
 
         device: Settings.global.cameraDevice
+
+        //: Name of camera manufacturer to be written into captured photos
+        //% "Jolla"
+        manufacturer: qsTrId("camera-la-manufacturer")
+        //: Name of camera model to be written into captured photos
+        //% "Jolla"
+        model: qsTrId("camera-la-model")
 
         rotation: {
             switch (captureView.orientation) {

@@ -22,6 +22,8 @@ SettingsBase {
         property string videoCodec: "video/mpeg, mpegversion=(int)4"
         property string mediaContainer: "video/quicktime, variant=(string)iso"
 
+        property bool saveLocationInfo
+
         GConfSettings {
             id: modeSettings
             path: globalSettings.cameraDevice + "/" + globalSettings.captureMode
