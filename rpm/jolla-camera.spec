@@ -19,10 +19,11 @@ BuildRequires:  pkgconfig(mlite5)
 BuildRequires:  qt5-qttools
 BuildRequires:  qt5-qttools-linguist
 BuildRequires:  pkgconfig(gstreamer-0.10)
+BuildRequires:  oneshot
 
 Requires:  jolla-ambient >= 0.3.42
 Requires:  jolla-settings-accounts >= 0.1.31
-Requires:  sailfishsilica-qt5
+Requires:  sailfishsilica-qt5 >= 0.11.55
 Requires:  mapplauncherd-booster-silica-qt5
 Requires:  qt5-qtdeclarative-import-models2
 Requires: qt5-qtdeclarative-import-multimedia
@@ -44,6 +45,7 @@ Requires:  ambienced
 Requires:  gst-plugins-good >= 0.10.31+git3
 Requires:  gst-plugins-bad
 Requires:  %{name}-settings = %{version}
+%{_oneshot_requires_post}
 
 %description
 The Jolla Camera application.
@@ -94,6 +96,7 @@ chmod +x %{buildroot}/opt/tests/jolla-camera/auto/run-tests.sh
 desktop-file-install --delete-original       \
   --dir %{buildroot}%{_datadir}/applications             \
    %{buildroot}%{_datadir}/applications/*.desktop
+chmod +x %{buildroot}/%{_oneshotdir}/*
 
 %files
 %defattr(-,root,root,-)
@@ -106,6 +109,7 @@ desktop-file-install --delete-original       \
 %{_libdir}/qt5/qml/com/jolla/camera/qmldir
 %{_libdir}/qt5/qml/com/jolla/camera/settings.qml
 %{_sysconfdir}/gconf/schemas/*.schemas
+%{_oneshotdir}/disable-camera-hints
 
 %files ts-devel
 %defattr(-,root,root,-)
@@ -123,5 +127,8 @@ desktop-file-install --delete-original       \
 %post
 export GCONF_CONFIG_SOURCE="$(gconftool-2 --get-default-source)"
 gconftool-2 --makefile-install-rule /etc/gconf/schemas/jolla-camera.schemas &>/dev/null || :
+if [ "$1" -gt 1 ]; then
+%{_bindir}/add-oneshot --user --now disable-camera-hints
+fi
 
 
