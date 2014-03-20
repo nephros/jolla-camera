@@ -1,2 +1,0 @@
-#!/bin/sh
-/usr/bin/gconftool-2 -s -t int /sailfish/camera/camera_roll_hint_count 1000
