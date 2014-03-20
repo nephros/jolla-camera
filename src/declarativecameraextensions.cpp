@@ -166,7 +166,7 @@ void DeclarativeCameraExtensions::setRotation(int rotation)
             ? -rotation
             : rotation;
 
-    const int orientation = (720 - (sensorOrientation + correctedRotation)) % 360;
+    const int orientation = (720 - sensorOrientation + correctedRotation) % 360;
 
     if (m_imageEncoderControl) {
         QImageEncoderSettings imageSettings = m_imageEncoderControl->imageSettings();

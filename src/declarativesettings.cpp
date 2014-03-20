@@ -27,7 +27,7 @@ DeclarativeSettings::~DeclarativeSettings()
 
 QObject *DeclarativeSettings::factory(QQmlEngine *engine, QJSEngine *)
 {
-    const QUrl source = QUrl::fromLocalFile(QStringLiteral(DEPLOYMENT_PATH "/settings.qml"));
+    const QUrl source = QUrl::fromLocalFile(QStringLiteral(DEPLOYMENT_PATH "settings.qml"));
     QQmlComponent component(engine, source);
     if (component.isReady()) {
         return component.create();
