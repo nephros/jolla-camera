@@ -109,7 +109,7 @@ chmod +x %{buildroot}/%{_oneshotdir}/*
 %{_libdir}/qt5/qml/com/jolla/camera/qmldir
 %{_libdir}/qt5/qml/com/jolla/camera/settings.qml
 %{_sysconfdir}/gconf/schemas/*.schemas
-%{_oneshotdir}/disable-camera-hints
+%{_oneshotdir}/enable-camera-hints
 
 %files ts-devel
 %defattr(-,root,root,-)
@@ -127,8 +127,8 @@ chmod +x %{buildroot}/%{_oneshotdir}/*
 %post
 export GCONF_CONFIG_SOURCE="$(gconftool-2 --get-default-source)"
 gconftool-2 --makefile-install-rule /etc/gconf/schemas/jolla-camera.schemas &>/dev/null || :
-if [ "$1" -gt 1 ]; then
-%{_bindir}/add-oneshot --user --now disable-camera-hints
+if [ "$1" -eq 1 ]; then
+%{_bindir}/add-oneshot --user --now enable-camera-hints
 fi
 
 

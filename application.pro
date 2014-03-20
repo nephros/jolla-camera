@@ -32,8 +32,8 @@ qml.files = *.qml cover pages gconf
 service.files = com.jolla.camera.service
 service.path  = /usr/share/dbus-1/services
 
-disablehints.files = disable-camera-hints
-disablehints.path  = /usr/lib/oneshot.d
+enablehints.files = enable-camera-hints
+enablehints.path  = /usr/lib/oneshot.d
 
 schema.files = gconf/jolla-camera.schemas
 schema.path  = /etc/gconf/schemas
@@ -43,7 +43,7 @@ presets.path = /usr/share/jolla-camera/presets
 
 DEFINES *= JOLLA_CAMERA_GSTREAMER_PRESET_DIRECTORY=\"\\\"\"$${presets.path}/\"\\\"\"
 
-INSTALLS += target desktop qml service schema presets disablehints
+INSTALLS += target desktop qml service schema presets enablehints
 
 PKGCONFIG += gstreamer-0.10
 
