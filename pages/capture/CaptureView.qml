@@ -65,6 +65,7 @@ Item {
 
     signal recordingStopped(url url, string mimeType)
     signal loaded
+    signal captured
 
     function reload() {
         if (captureView._complete) {
@@ -418,6 +419,9 @@ Item {
             target: viewfinder
             from: 0
             to: 1
+        }
+        ScriptAction {
+            script: captureView.captured()
         }
     }
 

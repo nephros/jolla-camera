@@ -139,6 +139,7 @@ Page {
                                 | Orientation.Landscape
                                 | Orientation.LandscapeInverted
                 }
+                CameraRollHint {}
             }
         }
 
