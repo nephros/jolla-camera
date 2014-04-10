@@ -68,7 +68,6 @@ Page {
                     && captureModel.count > 0
                     && !captureView.recording
         currentIndex: 1
-        pressDelay: 50
 
         model: VisualItemModel {
             Item {
