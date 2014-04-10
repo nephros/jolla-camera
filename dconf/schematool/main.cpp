@@ -5,7 +5,7 @@
 # include <QQmlEngine>
 # include <QQmlContext>
 
-#include "declarativegconfschema.h"
+#include "declarativedconfschema.h"
 
 int main(int argc, char *argv[])
 {
@@ -21,13 +21,12 @@ int main(int argc, char *argv[])
 
     const QString source = QString::fromUtf8(argv[1]);
 
-    qmlRegisterType<DeclarativeGConfSchema>("com.jolla.gconf.schema", 1, 0, "GConfSchema");
-    qmlRegisterType<DeclarativeGConfDescription>("com.jolla.gconf.schema", 1, 0, "GConfDescription");
+    qmlRegisterType<DeclarativeDConfSchema>("com.jolla.dconf.schema", 1, 0, "Schema");
 
     QQmlEngine engine;
     QQmlComponent component(&engine, source);
     QScopedPointer<QObject> object(component.create());
-    if (DeclarativeGConfSchema *schema = qobject_cast<DeclarativeGConfSchema *>(object.data())) {
+    if (DeclarativeDConfSchema *schema = qobject_cast<DeclarativeDConfSchema *>(object.data())) {
         schema->writeSchema(QString::fromUtf8(argv[2]));
     } else {
         qWarning() << "Failed to create schema from" << source;

@@ -1,30 +1,16 @@
 import QtQuick 2.0
 import QtMultimedia 5.0
-import com.jolla.gconf.schema 1.0
+import com.jolla.dconf.schema 1.0
 
-GConfSchema {
+Schema {
     path: "/apps/jolla-camera"
 
-    StringSchema {
-        path: "cameraDevice"
-        defaultValue: "primary"
-    }
-    StringSchema {
-        path: "captureMode"
-        defaultValue: "image"
-    }
-    IntegerSchema {
-        path: "portraitCaptureButtonLocation"
-        defaultValue: 3
-    }
-    IntegerSchema {
-        path: "landscapeCaptureButtonLocation"
-        defaultValue: 4
-    }
-    BooleanSchema {
-        path: "saveLocationInfo"
-        defaultValue: false
-    }
+    property string cameraDevice: "primary"
+    property string captureMode: "image"
+    property int portraitCaptureButtonLocation: 3
+    property int landscapeCaptureButtonLocation: 4
+    property bool saveLocationInfo: false
+
     ModeSchema {
         path: "primary/image"
         captureMode: Camera.CaptureStillImage

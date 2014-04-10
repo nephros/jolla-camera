@@ -10,23 +10,15 @@ CONFIG += plugin link_pkgconfig
 
 PKGCONFIG += mlite5
 
-packagesExist(gconf-2.0) {
-    PKGCONFIG += gobject-2.0 gconf-2.0
-} else {
-    DEFINES += GCONF_DISABLED
-}
-
 SOURCES += \
         cameraplugin.cpp \
         capturemodel.cpp \
         declarativecameraextensions.cpp \
-        declarativegconfsettings.cpp \
         declarativesettings.cpp
 
 HEADERS += \
         capturemodel.h \
         declarativecameraextensions.h \
-        declarativegconfsettings.h \
         declarativesettings.h
 
 DEFINES += \

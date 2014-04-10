@@ -9,7 +9,6 @@
 
 #include "capturemodel.h"
 #include "declarativecameraextensions.h"
-#include "declarativegconfsettings.h"
 #include "declarativesettings.h"
 
 // using custom translator so it gets properly removed from qApp when engine is deleted
@@ -55,7 +54,6 @@ public:
 
         qmlRegisterType<CaptureModel>("com.jolla.camera", 1, 0, "CaptureModel");
         qmlRegisterType<DeclarativeCameraExtensions>("com.jolla.camera", 1, 0, "CameraExtensions");
-        qmlRegisterType<DeclarativeGConfSettings>("com.jolla.camera", 1, 0, "GConfSettings");
         qmlRegisterType<DeclarativeSettings>("com.jolla.camera", 1, 0, "SettingsBase");
         qmlRegisterSingletonType<DeclarativeSettings>("com.jolla.camera", 1, 0, "Settings", DeclarativeSettings::factory);
 

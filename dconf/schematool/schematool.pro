@@ -1,15 +1,15 @@
 TEMPLATE = app
-TARGET = gconf-schema-tool
+TARGET = dconf-schema-tool
 
 QT += dbus qml multimedia
 
 DEFINES += DESKTOP
 
 HEADERS += \
-        declarativegconfschema.h
+        declarativedconfschema.h
 
 SOURCES += \
-        declarativegconfschema.cpp \
+        declarativedconfschema.cpp \
         main.cpp
 
 MODULENAME = com/jolla/camera/settings

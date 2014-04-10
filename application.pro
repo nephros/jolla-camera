@@ -12,8 +12,8 @@ OTHER_FILES += \
         settings.qml \
         cover \
         pages \
-        gconf/*.qml \
-        gconf/jolla-camera.schemas
+        dconf/*.qml \
+        dconf/00-jolla-camera
 
 
 
@@ -35,8 +35,8 @@ service.path  = /usr/share/dbus-1/services
 enablehints.files = enable-camera-hints
 enablehints.path  = /usr/lib/oneshot.d
 
-schema.files = gconf/jolla-camera.schemas
-schema.path  = /etc/gconf/schemas
+schema.files = dconf/00-jolla-camera
+schema.path  = /etc/dconf/db/system.d/
 
 presets.files = presets/*.prs
 presets.path = /usr/share/jolla-camera/presets
