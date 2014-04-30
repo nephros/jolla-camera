@@ -143,15 +143,9 @@ Item {
 
     Component.onCompleted: _complete = true
 
-    ConfigurationValue {
-        id: locationEnabledConfig
-        key: "/jolla/location/enabled"
-        defaultValue: false
-    }
-
     PositionSource {
         id: positionSource
-        active: captureView.active && locationEnabledConfig.value && Settings.global.saveLocationInfo
+        active: captureView.active && Settings.locationEnabled && Settings.global.saveLocationInfo
     }
 
     Timer {
