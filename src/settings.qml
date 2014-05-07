@@ -1,12 +1,13 @@
 import QtQuick 2.0
 import QtMultimedia 5.0
+import org.nemomobile.configuration 1.0
 import com.jolla.camera 1.0
 
 SettingsBase {
     property alias mode: modeSettings
     property alias global: globalSettings
 
-    property GConfSettings _global: GConfSettings {
+    property ConfigurationGroup _global: ConfigurationGroup {
         id: globalSettings
 
         path: "/apps/jolla-camera"
@@ -24,7 +25,7 @@ SettingsBase {
 
         property bool saveLocationInfo
 
-        GConfSettings {
+        ConfigurationGroup {
             id: modeSettings
             path: globalSettings.cameraDevice + "/" + globalSettings.captureMode
 
@@ -40,9 +41,9 @@ SettingsBase {
             property int timer: 0
             property string viewfinderGrid: "none"
 
-            property size imageResolution: "1280x720"
-            property size videoResolution: "1280x720"
-            property size viewfinderResolution: "1280x720"
+            property string imageResolution: "1280x720"
+            property string videoResolution: "1280x720"
+            property string viewfinderResolution: "1280x720"
 
             property variant isoValues: [ 0, 100, 200, 400 ]
             property variant whiteBalanceValues: [

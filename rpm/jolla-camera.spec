@@ -14,7 +14,6 @@ BuildRequires:  pkgconfig(Qt5Network)
 BuildRequires:  pkgconfig(Qt5Multimedia)
 BuildRequires:  desktop-file-utils
 BuildRequires:  pkgconfig(qdeclarative5-boostable)
-BuildRequires:  pkgconfig(gconf-2.0)
 BuildRequires:  pkgconfig(mlite5)
 BuildRequires:  qt5-qttools
 BuildRequires:  qt5-qttools-linguist
@@ -36,6 +35,7 @@ Requires:  nemo-qml-plugin-thumbnailer-qt5
 Requires:  nemo-qml-plugin-dbus-qt5
 Requires:  nemo-qml-plugin-policy-qt5
 Requires:  nemo-qml-plugin-time-qt5
+Requires:  nemo-qml-plugin-configuration-qt5
 Requires:  sailfish-components-accounts-qt5
 Requires:  sailfish-components-media-qt5 >= 0.0.18
 Requires:  sailfish-components-gallery-qt5 >= 0.0.34
@@ -108,7 +108,7 @@ chmod +x %{buildroot}/%{_oneshotdir}/*
 %{_libdir}/qt5/qml/com/jolla/camera/libjollacameraplugin.so
 %{_libdir}/qt5/qml/com/jolla/camera/qmldir
 %{_libdir}/qt5/qml/com/jolla/camera/settings.qml
-%{_sysconfdir}/gconf/schemas/*.schemas
+%{_sysconfdir}/dconf/db/system.d/00-jolla-camera
 %{_oneshotdir}/enable-camera-hints
 
 %files ts-devel
@@ -125,8 +125,7 @@ chmod +x %{buildroot}/%{_oneshotdir}/*
 # << files tests
 
 %post
-export GCONF_CONFIG_SOURCE="$(gconftool-2 --get-default-source)"
-gconftool-2 --makefile-install-rule /etc/gconf/schemas/jolla-camera.schemas &>/dev/null || :
+dconf update || :
 if [ "$1" -eq 1 ]; then
 %{_bindir}/add-oneshot --user --now enable-camera-hints
 fi
