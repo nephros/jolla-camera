@@ -29,12 +29,6 @@ Page {
         }
     }
 
-    ConfigurationValue {
-        id: locationEnabledConfig
-        key: "/jolla/location/enabled"
-        defaultValue: false
-    }
-
     SilicaFlickable {
         id: panel
 
@@ -60,14 +54,14 @@ Page {
                 //: Save GPS coordinates in photos.
                 //% "Save location"
                 text: qsTrId("camera_settings-la-save_location")
-                description: locationEnabledConfig.value
+                description: Settings.locationEnabled
                             //% "Save current GPS coordinates in captured photos."
                             ? qsTrId("camera_settings-la-save_location_description")
                             //% "Positioning is turned off.  Enable it in Settings | System | Location"
                             : qsTrId("camera_settings-la-enable_location")
 
-                enabled: locationEnabledConfig.value
-                checked: Settings.global.saveLocationInfo && locationEnabledConfig.value
+                enabled: Settings.locationEnabled
+                checked: Settings.global.saveLocationInfo && Settings.locationEnabled
                 onClicked: Settings.global.saveLocationInfo = !Settings.global.saveLocationInfo
             }
 

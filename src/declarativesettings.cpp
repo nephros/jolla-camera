@@ -4,25 +4,43 @@
 #include <QDebug>
 #include <QDir>
 #include <QDirIterator>
+#include <QEvent>
 #include <QQmlComponent>
 #include <QQmlEngine>
+#include <QSettings>
 #include <QStandardPaths>
 
+#include <dirent.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
+#include <sys/inotify.h>
 
 DeclarativeSettings::DeclarativeSettings(QObject *parent)
-    : QObject(parent)
+    : QSocketNotifier(inotify_init(), Read, parent)
     , m_counter(QLatin1String("/apps/jolla-camera/captureCounter"))
     , m_counterDate(QLatin1String("/apps/jolla-camera/captureCounterDate"))
+    , m_locationWatch(-1)
+    , m_locationEnabled(false)
 {
     QDir(photoDirectory()).mkpath(QLatin1String("."));
     QDir(videoDirectory()).mkpath(QLatin1String(".recording"));
 
     m_prefixDate = QDate::fromString(m_counterDate.value().toString(), Qt::ISODate);
     m_prefix = m_prefixDate.toString(QLatin1String("yyyyMMdd_"));
+
+    updateLocation();
+
+    const int fd = socket();
+    if (fd >= 0) {
+        m_locationWatch = inotify_add_watch(fd, "/etc/location/location.conf", IN_MODIFY);
+    }
 }
 
 DeclarativeSettings::~DeclarativeSettings()
 {
+    close(socket());
 }
 
 QObject *DeclarativeSettings::factory(QQmlEngine *engine, QJSEngine *)
@@ -35,6 +53,23 @@ QObject *DeclarativeSettings::factory(QQmlEngine *engine, QJSEngine *)
         qWarning() << "Failed to instantiate Settings";
         qWarning() << component.errors();
         return 0;
+    }
+}
+
+bool DeclarativeSettings::locationEnabled() const
+{
+    return m_locationEnabled;
+}
+
+void DeclarativeSettings::updateLocation()
+{
+    QSettings locationSettings(QStringLiteral("/etc/location/location.conf"), QSettings::IniFormat);
+    locationSettings.beginGroup(QStringLiteral("location"));
+
+    bool locationEnabled = locationSettings.value(QStringLiteral("enabled")).toBool();
+    if (m_locationEnabled != locationEnabled) {
+        m_locationEnabled = locationEnabled;
+        emit locationEnabledChanged();
     }
 }
 
@@ -97,6 +132,35 @@ QUrl DeclarativeSettings::completeCapture(const QUrl &file)
     }
 }
 
+bool DeclarativeSettings::event(QEvent *event)
+{
+    if (event->type() != QEvent::SockAct) {
+        return QSocketNotifier::event(event);
+    }
+
+#define BUFF_SIZE ((sizeof(struct inotify_event)+FILENAME_MAX)*1024)
+
+    bool locationChanged = false;
+
+    char buff[BUFF_SIZE] = {0};
+    ssize_t length = read (socket(), buff, BUFF_SIZE);
+    struct inotify_event *pevent = 0;
+    for (ssize_t i = 0; i < length; i += sizeof(struct inotify_event) + pevent->len) {
+        pevent = (struct inotify_event *)&buff[i];
+
+        if (pevent->wd == m_locationWatch) {
+            locationChanged = true;
+        }
+    }
+
+
+    if (locationChanged) {
+        updateLocation();
+    }
+
+    return true;
+}
+
 static int counterStartValue(const QString &directory, const QString &prefix, int maximum = 0)
 {
     QDirIterator iterator(directory, QStringList() << prefix + QLatin1Char('*'), QDir::Files);
@@ -122,5 +186,3 @@ void DeclarativeSettings::verifyCapturePrefix()
         m_counterDate.set(m_prefixDate.toString(Qt::ISODate));
     }
 }
-
-
