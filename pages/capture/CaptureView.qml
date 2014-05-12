@@ -666,8 +666,8 @@ Item {
             id: focusArea
 
             width: Screen.width
-                   * Settings.mode.viewfinderResolution.width
-                   / Settings.mode.viewfinderResolution.height
+                   * extensions.viewfinderResolution.width
+                   / extensions.viewfinderResolution.height
             height: Screen.width
 
             rotation: -extensions.orientation

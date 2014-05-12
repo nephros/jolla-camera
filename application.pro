@@ -35,8 +35,8 @@ service.path  = /usr/share/dbus-1/services
 enablehints.files = enable-camera-hints
 enablehints.path  = /usr/lib/oneshot.d
 
-schema.files = dconf/00-jolla-camera
-schema.path  = /etc/dconf/db/system.d/
+schema.files = dconf/jolla-camera.txt
+schema.path  = /etc/dconf/db/vendor.d/
 
 presets.files = presets/*.prs
 presets.path = /usr/share/jolla-camera/presets

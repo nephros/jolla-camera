@@ -2,6 +2,6 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 
 MenuItem {
-    property size imageResolution
-    property size viewfinderResolution
+    property string imageResolution
+    property string viewfinderResolution
 }
