@@ -5,12 +5,12 @@ import com.jolla.camera 1.0
 import org.nemomobile.configuration 1.0
 
 Page {
-    GConfSettings {
+    ConfigurationGroup {
         id: globalSettings
 
         path: "/apps/jolla-camera"
 
-        GConfSettings {
+        ConfigurationGroup {
             id: primaryImageSettings
 
             path: "primary/image"
@@ -19,7 +19,7 @@ Page {
             property size viewfinderResolution
         }
 
-        GConfSettings {
+        ConfigurationGroup {
             id: secondaryImageSettings
 
             path: "secondary/image"
