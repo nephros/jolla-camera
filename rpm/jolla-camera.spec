@@ -108,7 +108,7 @@ chmod +x %{buildroot}/%{_oneshotdir}/*
 %{_libdir}/qt5/qml/com/jolla/camera/libjollacameraplugin.so
 %{_libdir}/qt5/qml/com/jolla/camera/qmldir
 %{_libdir}/qt5/qml/com/jolla/camera/settings.qml
-%{_sysconfdir}/dconf/db/system.d/00-jolla-camera
+%{_sysconfdir}/dconf/db/vendor.d/jolla-camera.txt
 %{_oneshotdir}/enable-camera-hints
 
 %files ts-devel
