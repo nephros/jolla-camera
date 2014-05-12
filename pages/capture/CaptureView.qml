@@ -145,7 +145,7 @@ Item {
 
     PositionSource {
         id: positionSource
-        active: captureView.active && Settings.locationEnabled && Settings.global.saveLocationInfo
+        active: captureView.effectiveActive && Settings.locationEnabled && Settings.global.saveLocationInfo
     }
 
     Timer {
