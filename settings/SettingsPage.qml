@@ -15,8 +15,8 @@ Page {
 
             path: "primary/image"
 
-            property size imageResolution
-            property size viewfinderResolution
+            property string imageResolution
+            property string viewfinderResolution
         }
 
         ConfigurationGroup {
@@ -24,8 +24,8 @@ Page {
 
             path: "secondary/image"
 
-            property size imageResolution
-            property size viewfinderResolution
+            property string imageResolution
+            property string viewfinderResolution
         }
     }
 
