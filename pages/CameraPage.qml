@@ -13,7 +13,7 @@ import "gallery"
 Page {
     id: page
 
-    property bool windowActive
+    property bool windowVisible
     property Item pageStack
     property alias viewfinder: captureView.viewfinder
     property bool galleryActive
@@ -68,6 +68,7 @@ Page {
                     && captureModel.count > 0
                     && !captureView.recording
         currentIndex: 1
+        focus: true
 
         model: VisualItemModel {
             Item {
@@ -103,7 +104,7 @@ Page {
                 active: true
 
                 orientation: page.orientation
-                windowActive: page.windowActive
+                windowVisible: page.windowVisible
 
                 visible: switcherView.moving || captureView.active
 

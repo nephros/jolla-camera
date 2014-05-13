@@ -20,7 +20,7 @@ ApplicationWindow {
             id: cameraPage
 
             pageStack: window.pageStack
-            windowActive: window._window && window._window.visible
+            windowVisible: window._window && window._window.visible
             viewfinder: videoOutput
         }
     }
