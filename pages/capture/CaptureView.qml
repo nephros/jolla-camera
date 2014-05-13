@@ -11,11 +11,11 @@ import org.nemomobile.ngf 1.0
 import org.nemomobile.configuration 1.0
 import "../settings"
 
-Item {
+FocusScope {
     id: captureView
 
     property bool active
-    property bool windowActive
+    property bool windowVisible
     property int orientation
     property int effectiveIso: Settings.mode.iso
     property alias inButtonLayout: settingsOverlay.inButtonLayout
@@ -44,7 +44,7 @@ Item {
 
     readonly property bool isPortrait: orientation == Orientation.Portrait
                 || orientation == Orientation.PortraitInverted
-    readonly property bool effectiveActive: windowActive && active
+    readonly property bool effectiveActive: (activeFocus && active) || (windowVisible && recording)
 
     readonly property bool _canCapture: (camera.captureMode == Camera.CaptureStillImage && camera.imageCapture.ready)
                 || (camera.captureMode == Camera.CaptureVideo && camera.videoRecorder.recorderStatus >= CameraRecorder.LoadedStatus)
@@ -809,7 +809,8 @@ Item {
     }
 
     Permissions {
-        enabled: camera.captureMode == Camera.CaptureStillImage
+        enabled: captureView.activeFocus
+                    && camera.captureMode == Camera.CaptureStillImage
                     && camera.cameraState == Camera.ActiveState
         autoRelease: true
         applicationClass: "camera"
