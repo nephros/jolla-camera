@@ -44,6 +44,7 @@ Requires:  libngf-qt5-declarative
 Requires:  ambienced
 Requires:  gst-plugins-good >= 0.10.31+git3
 Requires:  gst-plugins-bad
+Requires:  dconf
 Requires:  %{name}-settings = %{version}
 %{_oneshot_requires_post}
 
@@ -125,7 +126,7 @@ chmod +x %{buildroot}/%{_oneshotdir}/*
 # << files tests
 
 %post
-dconf update || :
+%{_bindir}/add-oneshot dconf-update
 if [ "$1" -eq 1 ]; then
 %{_bindir}/add-oneshot --user --now enable-camera-hints
 fi
