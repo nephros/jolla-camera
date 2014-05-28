@@ -19,9 +19,6 @@ ShareMethodList {
 
     pressDelay: 0
 
-    //% "Share"
-    listHeader: qsTrId("camera-la-share")
-
     PullDownMenu {
         id: pullDownMenu
         MenuItem {
@@ -46,20 +43,10 @@ ShareMethodList {
         }
     }
 
-    header: Label {
-        text: menuList.title
-
-        anchors { right: menuList.contentItem.right; rightMargin: Theme.paddingLarge }
-        width: menuList.width * 0.7
-        height: Theme.itemSizeLarge
-        truncationMode: TruncationMode.Fade
-        color: Theme.highlightColor
-        horizontalAlignment: Text.AlignRight
-        verticalAlignment: Text.AlignVCenter
-        font {
-            pixelSize: Theme.fontSizeLarge
-            family: Theme.fontFamilyHeading
-        }
+    header: PageHeader {
+        title: menuList.title
+        //% "Share"
+        description: qsTrId("camera-la-share")
     }
 
     // Add "add account" to the footer. User must be able to

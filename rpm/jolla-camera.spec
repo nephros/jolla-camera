@@ -22,13 +22,13 @@ BuildRequires:  oneshot
 
 Requires:  jolla-ambient >= 0.3.42
 Requires:  jolla-settings-accounts >= 0.1.31
-Requires:  sailfishsilica-qt5 >= 0.11.55
+Requires:  sailfishsilica-qt5 >= 0.11.86
 Requires:  mapplauncherd-booster-silica-qt5
 Requires:  qt5-qtdeclarative-import-models2
 Requires: qt5-qtdeclarative-import-multimedia
 Requires: qt5-qtmultimedia-plugin-mediaservice-gstcamerabin >= 5.1.0+git25
 Requires: qt5-qtmultimedia-plugin-mediaservice-gstmediaplayer
-Requires:  declarative-transferengine-qt5
+Requires:  declarative-transferengine-qt5 >= 0.0.49
 Requires:  nemo-qml-plugin-accounts-qt5
 Requires:  nemo-qml-plugin-thumbnailer-qt5-video
 Requires:  nemo-qml-plugin-thumbnailer-qt5
