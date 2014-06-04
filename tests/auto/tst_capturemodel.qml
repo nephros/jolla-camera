@@ -30,6 +30,7 @@ Item {
             property string title: model.title
             property string mimeType: model.mimeType
             property int orientation: model.orientation
+            property size resolution: model.resolution
         }
     }
 
@@ -58,9 +59,9 @@ Item {
             compare(item.model.mimeType, "image/jpeg")
             compare(item.model.orientation, 270)
 
-            captureModel.appendCapture("file:///pictures/image_04.jpg", "image/jpeg", 0, 0)
-            captureModel.appendCapture("file:///videos/movie_05.jpg", "video/mpeg", 0, 60)
-            captureModel.appendCapture("file:///pictures/image_06.jpg", "image/jpeg", 0, 0)
+            captureModel.appendCapture("file:///pictures/image_04.jpg", "image/jpeg", 0, 0, item.model.resolution)
+            captureModel.appendCapture("file:///videos/movie_05.jpg", "video/mpeg", 0, 60, item.model.resolution)
+            captureModel.appendCapture("file:///pictures/image_06.jpg", "image/jpeg", 0, 0, item.model.resolution)
             compare(visualModel.items.count, 6)
 
             item = visualModel.items.get(2)
