@@ -238,7 +238,6 @@ FocusScope {
         }
 
         function _completeCapture() {
-            shutterEvent.play()
             captureView._writeMetaData()
             camera.imageCapture.captureToLocation(Settings.photoCapturePath('jpg'))
         }
@@ -271,6 +270,7 @@ FocusScope {
             onResolutionChanged: reload()
 
             onImageSaved: {
+                shutterEvent.play()
                 captureView._resetFocus()
 
                 captureAnimation.start()
