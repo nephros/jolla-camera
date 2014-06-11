@@ -17,6 +17,12 @@ Page {
 
             property string imageResolution
             property string viewfinderResolution
+            property string imageResolution_16_9
+            property string viewfinderResolution_16_9
+            property string resolutionText_16_9
+            property string imageResolution_4_3
+            property string viewfinderResolution_4_3
+            property string resolutionText_4_3
         }
 
         ConfigurationGroup {
@@ -26,6 +32,12 @@ Page {
 
             property string imageResolution
             property string viewfinderResolution
+            property string imageResolution_16_9
+            property string viewfinderResolution_16_9
+            property string resolutionText_16_9
+            property string imageResolution_4_3
+            property string viewfinderResolution_4_3
+            property string resolutionText_4_3
         }
     }
 
@@ -77,19 +89,15 @@ Page {
                 label: qsTrId("camera_settings-cb-photo-resolution")
                 menu: ContextMenu {
                     ResolutionComboItem {
-                        //: "6 mega pixel image resolution with 16:9 aspect ratio"
-                        //% "16:9 (6Mpix)"
-                        text: qsTrId("camera_settings-me-16-9-6m")
-                        imageResolution: "3264x1840"
-                        viewfinderResolution: "960x540"
+                        text: qsTrId(primaryImageSettings.resolutionText_16_9)
+                        imageResolution: primaryImageSettings.imageResolution_16_9
+                        viewfinderResolution: primaryImageSettings.viewfinderResolution_16_9
 
                     }
                     ResolutionComboItem {
-                        //: "8 mega pixel image resolution with 4:3 aspect ratio"
-                        //% "4:3 (8Mpix)"
-                        text: qsTrId("camera_settings-me-4-3-8m")
-                        imageResolution: "3264x2448"
-                        viewfinderResolution: "640x480"
+                        text: qsTrId(primaryImageSettings.resolutionText_4_3)
+                        imageResolution: primaryImageSettings.imageResolution_4_3
+                        viewfinderResolution: primaryImageSettings.viewfinderResolution_4_3
                     }
                 }
             }
@@ -105,18 +113,14 @@ Page {
                 label: qsTrId("camera_settings-cb-photo-resolution")
                 menu: ContextMenu {
                     ResolutionComboItem {
-                        //: "1 mega pixel image resolution with 16:9 aspect ratio"
-                        //% "16:9 (1Mpix)"
-                        text: qsTrId("camera_settings-me-16-9-1m")
-                        imageResolution: "1280x720"
-                        viewfinderResolution: "960x540"
+                        text: qsTrId(secondaryImageSettings.resolutionText_16_9)
+                        imageResolution: secondaryImageSettings.imageResolution_16_9
+                        viewfinderResolution: secondaryImageSettings.viewfinderResolution_16_9
                     }
                     ResolutionComboItem {
-                        //: "2 mega pixel image resolution with 4:3 aspect ratio"
-                        //% "4:3 (2Mpix)"
-                        text: qsTrId("camera_settings-me-4-3-2m")
-                        imageResolution: "1600x1200"
-                        viewfinderResolution: "640x480"
+                        text: qsTrId(secondaryImageSettings.resolutionText_4_3)
+                        imageResolution: secondaryImageSettings.imageResolution_4_3
+                        viewfinderResolution: secondaryImageSettings.viewfinderResolution_4_3
                     }
                 }
             }

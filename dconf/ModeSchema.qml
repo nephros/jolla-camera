@@ -1,8 +1,9 @@
-import QtQuick 2.0
+import QtQml 2.0
 import QtMultimedia 5.0
-import com.jolla.dconf.schema 1.0
 
-Schema {
+QtObject {
+    property string path
+
     property int captureMode: Camera.CaptureStillImage
     property int iso: 0
     property int whiteBalance: CameraImageProcessing.WhiteBalanceAuto
@@ -16,7 +17,7 @@ Schema {
 
     property string imageResolution
     property string videoResolution
-    property string viewfinderResolution: "960x540"
+    property string viewfinderResolution
 
     property variant isoValues: [ 0, 100, 200, 400 ]
     property variant whiteBalanceValues: [
