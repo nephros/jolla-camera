@@ -185,10 +185,13 @@ PinchArea {
             }
 
             onPressAndHold: {
-                var dragDistance = Math.max(Math.abs(mouseX - pressX),
-                                            Math.abs(mouseY - pressY))
-                if (dragDistance < Theme.startDragDistance) {
-                    overlay.inButtonLayout = true
+                if (!overlay.open) {
+                    var dragDistance = Math.max(Math.abs(mouseX - pressX),
+                                                Math.abs(mouseY - pressY))
+                    if (dragDistance < Theme.startDragDistance) {
+
+                        overlay.inButtonLayout = true
+                    }
                 }
             }
 
