@@ -13,7 +13,7 @@ Drawer {
 
     readonly property bool positionLocked: active && _activeItem && _activeItem.scaled
     readonly property bool active: page.galleryActive
-    readonly property bool windowActive: page.windowActive
+    readonly property bool windowActive: page.windowVisible
     property Item _activeItem
     property alias _videoActive: permissions.enabled
 
