@@ -26,7 +26,6 @@ Drawer {
     property CameraPage page
 
     readonly property bool playing: mediaPlayer.playbackState == MediaPlayer.PlayingState
-    readonly property bool _transposeVideo: page.isPortrait ^ (video.implicitHeight > video.implicitWidth)
 
     function positionViewAtBeginning() {
         pageView.currentIndex = pageView.count - 1
@@ -151,8 +150,6 @@ Drawer {
                     mimeType: model.mimeType
                     duration: model.duration
 
-                    transpose: galleryView.page.isPortrait ^ (implicitHeight > implicitWidth)
-
                     onClicked: {
                         if (mediaPlayer.playbackState == MediaPlayer.PlayingState) {
                             mediaPlayer.pause()
@@ -253,13 +250,9 @@ Drawer {
                 }
 
                 visible: mediaPlayer.playbackState != MediaPlayer.StoppedState
-                width: !galleryView._transposeVideo ? galleryView.width : galleryView.height
-                height: !galleryView._transposeVideo ? galleryView.height : galleryView.width
+                width: galleryView.width
+                height: galleryView.height
                 anchors.centerIn: galleryView._activeItem
-
-                rotation: galleryView._transposeVideo
-                        ? (video.implicitHeight > video.implicitWidth ? 270 : 90)
-                        : 0
             }
         ]
     }
