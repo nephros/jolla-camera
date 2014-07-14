@@ -163,6 +163,12 @@ Page {
                 }
             }
         }
+
+        onDraggingChanged: {
+            if (!dragging && captureModel.count == 0) {
+                switcherView.currentIndex = 1
+            }
+        }
     }
 
     CaptureModel {
@@ -180,7 +186,7 @@ Page {
         }
 
         onCountChanged: {
-            if (count == 0) {
+            if (count == 0 && !switcherView.dragging) {
                 switcherView.currentIndex = 1
             }
         }
