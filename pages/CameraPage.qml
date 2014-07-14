@@ -19,13 +19,12 @@ Page {
     property bool galleryActive
 
     allowedOrientations: Orientation.Portrait
-                | Orientation.PortraitInverted
                 | Orientation.Landscape
                 | Orientation.LandscapeInverted
 
     orientationTransitions: Transition {
-        to: 'Portrait,Landscape,PortraitInverted,LandscapeInverted'
-        from: 'Portrait,Landscape,PortraitInverted,LandscapeInverted'
+        to: 'Portrait,Landscape,LandscapeInverted'
+        from: 'Portrait,Landscape,LandscapeInverted'
         SequentialAnimation {
             PropertyAction {
                 target: page
@@ -136,7 +135,6 @@ Page {
                     page.allowedOrientations = inButtonLayout
                             ? page.orientation
                             : Orientation.Portrait
-                                | Orientation.PortraitInverted
                                 | Orientation.Landscape
                                 | Orientation.LandscapeInverted
                 }
