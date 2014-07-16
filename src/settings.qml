@@ -131,8 +131,16 @@ SettingsBase {
     }
 
     function isoText(iso) {
-        //% "Light sensitivity"
-        return qsTrId("camera_settings-la-light-sensitivity")
+        switch (iso) {
+        //% "Light sensitivity • Automatic"
+        case 0: return qsTrId("camera_settings-la-light-sensitivity-auto")
+        //% "Light sensitivity • ISO 100"
+        case 100: return qsTrId("camera_settings-la-light-sensitivity-100")
+        //% "Light sensitivity • ISO 200"
+        case 200: return qsTrId("camera_settings-la-light-sensitivity-200")
+        //% "Light sensitivity • ISO 400"
+        case 400: return qsTrId("camera_settings-la-light-sensitivity-400")
+        }
     }
 
     function meteringModeIcon(mode) {
@@ -250,5 +258,19 @@ SettingsBase {
         case "ambience": return qsTrId("Ambience grid")
         default: return ""
         }
+    }
+
+    function cameraIcon(device) {
+        return device == "primary"
+                ? "image://theme/icon-camera-backcamera"
+                : "image://theme/icon-camera-front-camera"
+    }
+
+    function cameraText(device) {
+        return device == "primary"
+                //% "Main camera"
+                ? qsTrId("camera-la-main-camera")
+                //% "Front camera"
+                : qsTrId("camera-la-front-camera")
     }
 }

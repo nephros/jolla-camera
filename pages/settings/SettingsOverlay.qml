@@ -45,6 +45,11 @@ PinchArea {
 
     on_CaptureButtonLocationChanged: inButtonLayout = false
 
+    onIsPortraitChanged: {
+        upperHeader.pressedMenu = null
+        lowerHeader.pressedMenu = null
+    }
+
     property list<SettingsMenuItem> _menus
     _menus: [
         captureModeMenu.currentItem,
@@ -269,13 +274,14 @@ PinchArea {
             anchors { left: row.left; top: row.top; right: row.right }
             opacity: row.opacity
         }
+
         Row {
             id: row
 
             y: height * panel.y / panel.height
             anchors.horizontalCenter: parent.horizontalCenter
 
-            height: whiteBalanceMenu.height
+            height: 6 * Theme.itemSizeSmall
 
             opacity: 1 - container.opacity
 
@@ -286,52 +292,60 @@ PinchArea {
                 id: captureModeMenu
 
                 width: overlay._menuWidth
-                title: Settings.captureModeText(Settings.global.captureMode)
+                title: Settings.captureModeText
+                header: upperHeader
                 model: [ "image", "video" ]
                 delegate: SettingsMenuItem {
                     property: "captureMode"
                     settings: Settings.global
                     value: modelData
                     icon: Settings.captureModeIcon(modelData)
+                    iconVisible: !selected
                 }
             }
             SettingsMenu {
                 id: flashMenu
 
                 width: overlay._menuWidth
-                title: Settings.flashText(Settings.mode.flash)
+                title: Settings.flashText
+                header: upperHeader
                 model: Settings.mode.flashValues
                 delegate: SettingsMenuItem {
                     settings: Settings.mode
                     property: "flash"
                     value: modelData
                     icon: Settings.flashIcon(modelData)
+                    iconVisible: !selected
                 }
             }
             SettingsMenu {
                 id: whiteBalanceMenu
 
                 width: overlay._menuWidth
-                title: Settings.whiteBalanceText(Settings.mode.whiteBalance)
+                title: Settings.whiteBalanceText
+                header: upperHeader
                 model: Settings.mode.whiteBalanceValues
                 delegate: SettingsMenuItem {
                     settings: Settings.mode
                     property: "whiteBalance"
                     value: modelData
                     icon: Settings.whiteBalanceIcon(modelData)
+                    iconVisible: !selected
                 }
             }
             SettingsMenu {
                 id: focusMenu
 
                 width: overlay._menuWidth
-                title: Settings.focusDistanceText(Settings.mode.focusDistance)
+                title: Settings.focusDistanceText
+                header: upperHeader
                 model: Settings.mode.focusDistanceValues
                 delegate: SettingsMenuItem {
                     settings: Settings.mode
                     property: "focusDistance"
                     value: modelData
                     icon: Settings.focusDistanceIcon(modelData)
+                    iconVisible: !selected
                 }
             }
         }
@@ -340,6 +354,11 @@ PinchArea {
             anchors { left: leftRow.left; top: leftRow.top; right: leftRow.right }
             opacity: row.opacity
         }
+        TitleHighlight {
+            anchors { left: rightRow.left; top: rightRow.top; right: rightRow.right }
+            opacity: row.opacity
+        }
+
         Row {
             id: leftRow
             anchors {
@@ -354,36 +373,32 @@ PinchArea {
                 id: isoMenu
 
                 width: overlay._menuWidth
-                title: Settings.isoText(Settings.mode.iso)
+                title: Settings.isoText
+                header: overlay.isPortrait ? lowerHeader : upperHeader
                 model: Settings.mode.isoValues
                 delegate: SettingsMenuItem {
                     settings: Settings.mode
                     property: "iso"
                     value: modelData
                     icon: Settings.isoIcon(modelData)
-                    opacity: 1
                 }
             }
             SettingsMenu {
                 id: gridMenu
 
                 width: overlay._menuWidth
-                title: Settings.viewfinderGridText(Settings.mode.viewfinderGrid)
+                title: Settings.viewfinderGridText
+                header: overlay.isPortrait ? lowerHeader : upperHeader
                 model: Settings.mode.viewfinderGridValues
                 delegate: SettingsMenuItem {
                     settings: Settings.mode
                     property: "viewfinderGrid"
                     value: modelData
                     icon: Settings.viewfinderGridIcon(modelData)
-                    opacity: 1
                 }
             }
         }
 
-        TitleHighlight {
-            anchors { left: rightRow.left; top: rightRow.top; right: rightRow.right }
-            opacity: row.opacity
-        }
         Row {
             id: rightRow
             anchors {
@@ -398,49 +413,44 @@ PinchArea {
                 id: timerMenu
 
                 width: overlay._menuWidth
-                title: Settings.timerText(Settings.mode.timer)
+                title: Settings.timerText
+                header: overlay.isPortrait ? lowerHeader : upperHeader
                 model: Settings.mode.timerValues
                 delegate: SettingsMenuItem {
                     settings: Settings.mode
                     property: "timer"
                     value: modelData
                     icon: Settings.timerIcon(modelData)
-                    opacity: 1
                 }
             }
 
-            MouseArea {
-                id: switcher
-
-                width: cameraDeviceMenu.width
-                height: cameraDeviceMenu.height
-
-                onClicked: {
-                    Settings.global.cameraDevice = Settings.global.cameraDevice == "primary"
-                            ? "secondary"
-                            : "primary"
-                }
-
-                SettingsMenu {
-                    id: cameraDeviceMenu
-                    width: overlay._menuWidth
-                    title: Settings.global.cameraDevice == "primary"
-                                //% "Main camera"
-                                ? qsTrId("camera-la-main-camera")
-                                //% "Front camera"
-                                : qsTrId("camera-la-front-camera")
-                    model: 1
-                    delegate: SettingsMenuItem {
-                        settings: Settings.global
-                        property: "cameraDevice"
-                        value: Settings.global.cameraDevice == "primary"
-                               ? "secondary"
-                               : "primary"
-                        opacity: 1.0
-                        icon: "image://theme/icon-camera-front-camera"
-                    }
+            SettingsMenu {
+                id: cameraDeviceMenu
+                width: overlay._menuWidth
+                title: Settings.cameraText
+                header: overlay.isPortrait ? lowerHeader : upperHeader
+                model: [ "primary", "secondary" ]
+                delegate: SettingsMenuItem {
+                    settings: Settings.global
+                    property: "cameraDevice"
+                    value: modelData
+                    icon: Settings.cameraIcon(modelData)
                 }
             }
+        }
+
+        HeaderLabel {
+            id: upperHeader
+
+            anchors { left: parent.left; top: row.top; right: parent.right }
+            opacity: row.opacity
+        }
+
+        HeaderLabel {
+            id: lowerHeader
+
+            anchors { left: parent.left; top: row.bottom; right: parent.right }
+            opacity: row.opacity
         }
     }
 
@@ -453,15 +463,15 @@ PinchArea {
                 id: statusItem
 
                 y: model.y != undefined
-                        ? Math.max(0, row.y + model.y)
+                        ? Math.max(0, row.y + model.y + Theme.itemSizeSmall)
                         : 0
 
                 width: overlay._menuWidth
-                height: (Screen.width - (Theme.fontSizeExtraSmall * 2) - (3 * Theme.paddingLarge)) / 5
+                height: Theme.itemSizeSmall
 
                 Image {
                     anchors.centerIn: parent
-                    source: model.icon != undefined
+                    source: model.icon != undefined && model.icon != ""
                             ? model.icon + "?" + Theme.highlightColor
                             : ""
                     smooth: true

@@ -20,7 +20,7 @@ BuildRequires:  qt5-qttools-linguist
 BuildRequires:  pkgconfig(gstreamer-0.10)
 BuildRequires:  oneshot
 
-Requires:  jolla-ambient >= 0.3.42
+Requires:  jolla-ambient >= 0.4.10
 Requires:  jolla-settings-accounts >= 0.1.31
 Requires:  sailfishsilica-qt5 >= 0.11.86
 Requires:  mapplauncherd-booster-silica-qt5

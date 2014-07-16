@@ -4,32 +4,26 @@ import Sailfish.Silica 1.0
 Column {
     id: menu
 
-    property alias title: titleText.text
+    property var title
     property alias model: repeater.model
     property alias delegate: repeater.delegate
     property Item currentItem
+    property MouseArea pressedItem
+    readonly property Item highlightItem: pressedItem && pressedItem.pressed
+            ? pressedItem
+            : currentItem
+    property Item header
 
-    width: Screen.width / 4
+    property bool pressed: pressedItem && pressedItem.pressed
 
-    Item {
-        width: 1
-        height: Theme.paddingLarge
-    }
-
-    Label {
-        id: titleText
-
-        x: Theme.paddingSmall
-        width : parent.width - (2 * Theme.paddingSmall)
-        height: (Theme.fontSizeExtraSmall * 2) + Theme.paddingLarge
-
-        color: Theme.highlightBackgroundColor
-        font {
-            pixelSize: Theme.fontSizeExtraSmall
+    onPressedChanged: {
+        if (pressed && header) {
+            header.pressedMenu = menu
         }
-        wrapMode: Text.WordWrap
-        horizontalAlignment: Text.AlignHCenter
     }
+
+    y: Theme.itemSizeSmall
+    width: Screen.width / 4
 
     Repeater {
         id: repeater
