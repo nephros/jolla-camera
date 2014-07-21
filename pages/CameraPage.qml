@@ -5,7 +5,7 @@ import com.jolla.camera 1.0
 import com.jolla.camera 1.0
 import org.nemomobile.dbus 1.0
 import QtDocGallery 5.0
-import QtMultimedia 5.0
+import QtMultimedia 5.4
 import "capture"
 import "settings"
 import "gallery"
@@ -108,7 +108,7 @@ Page {
                     captureModel.appendCapture(
                                 path,
                                 "image/jpeg",
-                                camera.extensions.orientation,
+                                captureOrientation,
                                 0,
                                 camera.imageCapture.resolution)
                 }
@@ -117,7 +117,7 @@ Page {
                     captureModel.appendCapture(
                                 url,
                                 mimeType,
-                                camera.extensions.orientation,
+                                captureOrientation,
                                 camera.videoRecorder.duration / 1000,
                                 camera.videoRecorder.resolution)
                 }

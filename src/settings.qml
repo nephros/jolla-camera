@@ -20,8 +20,11 @@ SettingsBase {
 
         property string audioCodec: "audio/mpeg, mpegversion=(int)4"
         property int audioSampleRate: 48000
-        property string videoCodec: "video/mpeg, mpegversion=(int)4"
+        property string videoCodec: "video/mpeg, mpegversion=(int)4, parsed=(boolean)false"
         property string mediaContainer: "video/quicktime, variant=(string)iso"
+
+        property int videoEncodingMode: CameraRecorder.AverageBitRateEncoding
+        property int videoBitRate: 12000000
 
         property bool saveLocationInfo
 

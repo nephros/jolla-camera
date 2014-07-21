@@ -40,14 +40,7 @@ enablehints.path  = /usr/lib/oneshot.d
 schema.files = dconf/jolla-camera.txt
 schema.path  = /etc/dconf/db/vendor.d/
 
-presets.files = presets/*.prs
-presets.path = /usr/share/jolla-camera/presets
-
-DEFINES *= JOLLA_CAMERA_GSTREAMER_PRESET_DIRECTORY=\"\\\"\"$${presets.path}/\"\\\"\"
-
-INSTALLS += target desktop qml service schema presets enablehints
-
-PKGCONFIG += gstreamer-0.10
+INSTALLS += target desktop qml service schema enablehints
 
 packagesExist(qdeclarative5-boostable) {
     message("Building with qdeclarative-boostable support")

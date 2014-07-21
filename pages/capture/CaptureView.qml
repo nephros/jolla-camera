@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import QtMultimedia 5.0
+import QtMultimedia 5.4
 import QtPositioning 5.1
 import Sailfish.Silica 1.0
 import Sailfish.Media 1.0
@@ -18,6 +18,19 @@ FocusScope {
     property int orientation
     property int effectiveIso: Settings.mode.iso
     property alias inButtonLayout: settingsOverlay.inButtonLayout
+
+    readonly property int viewfinderOrientation: {
+        var rotation = 0
+        switch (captureView.orientation) {
+        case Orientation.Landscape: rotation = 90; break;
+        case Orientation.PortraitInverted: rotation = 180; break;
+        case Orientation.LandscapeInverted: rotation = 270; break;
+        }
+        return camera.position == Camera.FrontFace
+                ? (720 + camera.orientation - rotation) % 360
+                : (720 + camera.orientation + rotation) % 360
+    }
+    property int captureOrientation
 
     property alias camera: camera
     property QtObject viewfinder
@@ -81,24 +94,25 @@ FocusScope {
     }
 
     function _writeMetaData() {
-        extensions.captureTime = new Date()
+        captureView.captureOrientation = captureView.viewfinderOrientation
+        camera.metaData.dateTimeOriginal = new Date()
 
         if (positionSource.active) {
             var coordinate = positionSource.position.coordinate
             if (coordinate.isValid) {
-                extensions.gpsLatitude = coordinate.latitude
-                extensions.gpsLongitude = coordinate.longitude
+                camera.metaData.gpsLatitude = coordinate.latitude
+                camera.metaData.gpsLongitude = coordinate.longitude
             } else {
-                extensions.gpsLatitude = undefined
-                extensions.gpsLongitude = undefined
+                camera.metaData.gpsLatitude = undefined
+                camera.metaData.gpsLongitude = undefined
             }
-            extensions.gpsAltitude = positionSource.position.altitudeValid
+            camera.metaData.gpsAltitude = positionSource.position.altitudeValid
                         ? coordinate.altitude
                         : undefined
         } else {
-            extensions.gpsLatitude = undefined
-            extensions.gpsLongitude = undefined
-            extensions.gpsAltitude = undefined
+            camera.metaData.gpsLatitude = undefined
+            camera.metaData.gpsLongitude = undefined
+            camera.metaData.gpsAltitude = undefined
         }
     }
 
@@ -211,8 +225,6 @@ FocusScope {
     Camera {
         id: camera
 
-        property alias extensions: extensions
-
         function autoFocus() {
             settingsOverlay.close()
             if (camera.captureMode == Camera.CaptureStillImage
@@ -253,6 +265,7 @@ FocusScope {
             }
         }
 
+        deviceId: Settings.global.cameraDevice
         captureMode: Settings.mode.captureMode
         cameraState: captureView._complete && captureView.effectiveActive && !captureView._unload
                     ? Camera.ActiveState
@@ -285,6 +298,9 @@ FocusScope {
             audioCodec: Settings.global.audioCodec
             videoCodec: Settings.global.videoCodec
             mediaContainer: Settings.global.mediaContainer
+
+            videoEncodingMode: Settings.global.videoEncodingMode
+            videoBitRate: Settings.global.videoBitRate
         }
         focus {
             focusMode: captureView._stillFocus
@@ -300,6 +316,24 @@ FocusScope {
             exposureCompensation: Settings.mode.exposureCompensation / 2.0
             meteringMode: Settings.mode.meteringMode
         }
+
+        viewfinder.resolution: Settings.mode.viewfinderResolution
+
+
+        metaData {
+            //: Name of camera manufacturer to be written into captured photos
+            //% "Jolla"
+            cameraManufacturer: qsTrId("camera-la-manufacturer")
+            //: Name of camera model to be written into captured photos
+            //% "Jolla"
+            cameraModel: qsTrId("camera-la-model")
+
+            orientation: captureView.captureOrientation
+        }
+
+        onDeviceIdChanged: captureView.reload()
+        viewfinder.onResolutionChanged: captureView.reload()
+        focus.onFocusModeChanged: camera.unlock()
 
         onLockStatusChanged: {
            if (lockStatus == Camera.Unlocked) {
@@ -327,34 +361,6 @@ FocusScope {
 
     CameraExtensions {
         id: extensions
-        camera: camera
-
-        device: Settings.global.cameraDevice
-
-        //: Name of camera manufacturer to be written into captured photos
-        //% "Jolla"
-        manufacturer: qsTrId("camera-la-manufacturer")
-        //: Name of camera model to be written into captured photos
-        //% "Jolla"
-        model: qsTrId("camera-la-model")
-
-        rotation: {
-            switch (captureView.orientation) {
-            case Orientation.Portrait:
-                return 0
-            case Orientation.Landscape:
-                return 90
-            case Orientation.PortraitInverted:
-                return 180
-            case Orientation.LandscapeInverted:
-                return 270
-            }
-        }
-
-        viewfinderResolution: Settings.mode.viewfinderResolution
-
-        onViewfinderResolutionChanged: captureView.reload()
-        onDeviceChanged: captureView.reload()
     }
 
     Binding {
@@ -435,7 +441,8 @@ FocusScope {
                 if (Settings.mode.focusDistance == Camera.FocusAuto) {
                     // Translate and rotate the touch point into focusArea's space.
                     var focusPoint
-                    switch ((360 - extensions.orientation) % 360) {
+                    switch ((360 - captureView.viewfinderOrientation) % 360) {
+
                     case 90:
                         focusPoint = Qt.point(
                                     mouse.y - ((height - focusArea.width) / 2),
@@ -588,8 +595,8 @@ FocusScope {
         Item {
             id: grid
 
-            property real gridWidth: extensions.orientation % 180 == 0 ? focusArea.width : focusArea.height
-            property real gridHeight: extensions.orientation % 180 == 0 ? focusArea.height : focusArea.width
+            property real gridWidth: captureView.viewfinderOrientation % 180 == 0 ? focusArea.width : focusArea.height
+            property real gridHeight: captureView.viewfinderOrientation % 180 == 0 ? focusArea.height : focusArea.width
             property real ambienceScale: Math.min(Screen.width, Screen.height) /
                                          Math.max(Screen.width, Screen.height)
 
@@ -644,11 +651,11 @@ FocusScope {
             id: focusArea
 
             width: Screen.width
-                   * extensions.viewfinderResolution.width
-                   / extensions.viewfinderResolution.height
+                   * camera.viewfinder.resolution.width
+                   / camera.viewfinder.resolution.height
             height: Screen.width
 
-            rotation: -extensions.orientation
+            rotation: -captureView.viewfinderOrientation
             anchors.centerIn: parent
 
             Repeater {
@@ -701,6 +708,7 @@ FocusScope {
 
                         source: "image://theme/icon-system-warning?" + Theme.highlightColor
                         visible: captureView._focusFailed
+                                    && camera.focus.focusMode != Camera.FocusInfinity
                         rotation: -focusArea.rotation
                     }
 
@@ -713,8 +721,7 @@ FocusScope {
                         }
 
                         source: "image://theme/icon-camera-focus-infinity?" + Theme.highlightColor
-                        visible: model.status == Camera.FocusAreaFocused
-                                    && camera.focus.focusMode == Camera.FocusInfinity
+                        visible: camera.focus.focusMode == Camera.FocusInfinity
                         rotation: -focusArea.rotation
                     }
                 }
