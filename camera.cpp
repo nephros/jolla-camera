@@ -14,13 +14,9 @@
 #include <MDeclarativeCache>
 #endif
 
-#include <gst/gst.h>
 
 Q_DECL_EXPORT int main(int argc, char *argv[])
 {
-    gst_init(0, 0);
-    gst_preset_set_app_dir(JOLLA_CAMERA_GSTREAMER_PRESET_DIRECTORY);
-
 #ifdef HAS_BOOSTER
     QScopedPointer<QGuiApplication> app(MDeclarativeCache::qApplication(argc, argv));
     QScopedPointer<QQuickView> view(MDeclarativeCache::qQuickView());

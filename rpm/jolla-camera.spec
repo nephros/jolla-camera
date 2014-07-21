@@ -17,7 +17,6 @@ BuildRequires:  pkgconfig(qdeclarative5-boostable)
 BuildRequires:  pkgconfig(mlite5) >= 0.2.5
 BuildRequires:  qt5-qttools
 BuildRequires:  qt5-qttools-linguist
-BuildRequires:  pkgconfig(gstreamer-0.10)
 BuildRequires:  oneshot
 
 Requires:  jolla-ambient >= 0.4.10
