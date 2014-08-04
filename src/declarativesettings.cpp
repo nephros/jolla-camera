@@ -88,28 +88,37 @@ QString DeclarativeSettings::photoCapturePath(const QString &extension)
 {
     verifyCapturePrefix();
 
-    const int counter = m_counter.value().toInt() + 1;
-    m_counter.set(counter);
+    for (;;) {
+        const int counter = m_counter.value().toInt() + 1;
+        m_counter.set(counter);
 
-    return photoDirectory()
-                + QLatin1Char('/')
-                + m_prefix
-                + QString(QStringLiteral("%1.")).arg(counter, 3, 10, QLatin1Char('0'))
-                + extension;
+        const QString path = photoDirectory()
+                    + QLatin1Char('/')
+                    + m_prefix
+                    + QString(QStringLiteral("%1.")).arg(counter, 3, 10, QLatin1Char('0'))
+                    + extension;
+        if (!QFile::exists(path))
+            return path;
+    }
 }
 
 QString DeclarativeSettings::videoCapturePath(const QString &extension)
 {
     verifyCapturePrefix();
 
-    const int counter = m_counter.value().toInt() + 1;
-    m_counter.set(counter);
+    for (;;) {
+        const int counter = m_counter.value().toInt() + 1;
+        m_counter.set(counter);
 
-    return videoDirectory()
-                + QLatin1String("/.recording/")
-                + m_prefix
-                + QString(QStringLiteral("%1.")).arg(counter, 3, 10, QLatin1Char('0'))
+        const QString path = videoDirectory()
+                  + QLatin1String("/.recording/")
+                  + m_prefix
+                  + QString(QStringLiteral("%1.")).arg(counter, 3, 10, QLatin1Char('0'))
                 + extension;
+
+        if (!QFile::exists(path))
+            return path;
+    }
 }
 
 QUrl DeclarativeSettings::completeCapture(const QUrl &file)
