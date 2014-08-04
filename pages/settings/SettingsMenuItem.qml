@@ -32,8 +32,8 @@ MouseArea {
 
     Rectangle {
         anchors.centerIn: parent
-        width: Theme.iconSizeMedium
-        height: Theme.iconSizeMedium
+        width: Theme.iconSizeMedium + Theme.paddingSmall
+        height: width
 
         radius: width / 2
 
