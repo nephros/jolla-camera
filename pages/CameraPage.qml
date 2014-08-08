@@ -64,7 +64,6 @@ Page {
         boundsBehavior: Flickable.StopAtBounds
         highlightRangeMode: ListView.StrictlyEnforceRange
         interactive: (!galleryLoader.item || !galleryLoader.item.positionLocked)
-                    && captureModel.count > 0
                     && !captureView.recording
         currentIndex: 1
         focus: true
@@ -162,11 +161,6 @@ Page {
             }
         }
 
-        onDraggingChanged: {
-            if (!dragging && captureModel.count == 0) {
-                switcherView.currentIndex = 1
-            }
-        }
     }
 
     CaptureModel {
@@ -180,12 +174,6 @@ Page {
             filter: GalleryFilterUnion {
                 GalleryEqualsFilter { property: "path"; value: Settings.photoDirectory }
                 GalleryEqualsFilter { property: "path"; value: Settings.videoDirectory }
-            }
-        }
-
-        onCountChanged: {
-            if (count == 0 && !switcherView.dragging) {
-                switcherView.currentIndex = 1
             }
         }
     }
