@@ -192,6 +192,12 @@ Drawer {
 
         model: delegateModel
 
+        onCountChanged: {
+            if (count == 0) {
+                galleryView.open = false
+            }
+        }
+
         onCurrentItemChanged: {
             if (!moving && currentItem) {
                 if (galleryView._activeItem) {
@@ -255,6 +261,13 @@ Drawer {
                 anchors.centerIn: galleryView._activeItem
             }
         ]
+
+        ViewPlaceholder {
+            //: Placeholder text for an empty camera reel view
+            //% "Captured photos and videos will appear here when you take some"
+            text: qsTrId("camera-la-no-photos")
+            enabled: pageView.count == 0
+        }
     }
 
     background: [
@@ -303,7 +316,7 @@ Drawer {
 
             readonly property bool isActiveItem: parent && parent.active
             onIsActiveItemChanged: {
-                if (!parent.active) {
+                if (parent && !parent.active) {
                     remorse.cancel()
                     delegateModel.items.remove(parent.DelegateModel.itemsIndex, 1)
                     galleryView.model.deleteFile(parent.index)
