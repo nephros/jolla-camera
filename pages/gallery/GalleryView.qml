@@ -116,14 +116,17 @@ Drawer {
             readonly property bool isImage: mimeType.indexOf("image/") == 0
             readonly property bool scaled: loader.item && loader.item.scaled
 
-            width: galleryView.width
-            height: galleryView.height
+            width: pageView.width
+            height: pageView.height
             clip: true
 
             Component {
                 id: imageComponent
 
                 ImageViewer {
+                    width: galleryView.width
+                    height: galleryView.height
+
                     source: url
                     onClicked: galleryView.open = !galleryView.open
                     fit: galleryView.page.isPortrait ? Fit.Width : Fit.Height
@@ -144,6 +147,12 @@ Drawer {
                 VideoPoster {
                     property bool scaled: false
 
+                    width: galleryItem.width
+                    height: galleryItem.height
+
+                    contentWidth: galleryView.width
+                    contentHeight: galleryView.height
+
                     player: mediaPlayer
                     active: galleryItem.active
                     source: url
@@ -162,8 +171,8 @@ Drawer {
 
             Loader {
                 id: loader
-                width: galleryItem.width
-                height: galleryItem.height
+
+                anchors.centerIn: galleryItem
 
                 sourceComponent: galleryItem.isImage ? imageComponent: videoComponent
             }
@@ -173,10 +182,7 @@ Drawer {
     ListView {
         id: pageView
 
-        x: -parent.x / 2
-        y: -parent.y / 2
-        width: galleryView.width
-        height: galleryView.height
+        anchors.fill: parent
 
         boundsBehavior: Flickable.StopAtBounds
         cacheBuffer: width
