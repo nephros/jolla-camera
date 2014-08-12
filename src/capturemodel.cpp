@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QFile>
+#include <QFileInfo>
 #include <QUrl>
 
 CaptureModel::CaptureModel(QObject *parent)
@@ -137,7 +138,8 @@ QVariant CaptureModel::data(const QModelIndex &index, int role) const
         } else if (role == Url) {
             return capture.url;
         } else if (role == Title) {
-            return QString();
+            return QFileInfo(capture.url.toLocalFile()).baseName()
+                        .replace(QLatin1Char('_'), QLatin1Char(' '));
         } else if (role == MimeType) {
             return capture.mimeType;
         } else if (role == Orientation){
