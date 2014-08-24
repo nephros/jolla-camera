@@ -13,7 +13,7 @@ OTHER_FILES += \
         cover \
         pages \
         dconf/*.qml \
-        dconf/jolla-camera.txt
+        dconf/mako-camera.txt
 
 target.path = $$TARGETPATH
 
@@ -33,7 +33,7 @@ service.path  = /usr/share/dbus-1/services
 enablehints.files = enable-camera-hints
 enablehints.path  = /usr/lib/oneshot.d
 
-schema.files = dconf/jolla-camera.txt
+schema.files = dconf/mako-camera.txt
 schema.path  = /etc/dconf/db/vendor.d/
 
 presets.files = presets/*.prs
