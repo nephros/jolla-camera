@@ -13,6 +13,7 @@ OTHER_FILES += \
         cover \
         pages \
         dconf/*.qml \
+        dconf/jolla-camera.txt \
         dconf/mako-camera.txt
 
 target.path = $$TARGETPATH
