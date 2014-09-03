@@ -4,7 +4,6 @@ import QtPositioning 5.1
 import Sailfish.Silica 1.0
 import Sailfish.Media 1.0
 import com.jolla.camera 1.0
-import com.jolla.camera 1.0
 import org.nemomobile.time 1.0
 import org.nemomobile.policy 1.0
 import org.nemomobile.ngf 1.0
