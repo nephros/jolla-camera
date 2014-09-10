@@ -72,19 +72,19 @@ Item {
 
             item = visualModel.items.get(3)
             compare(item.model.url, "file:///pictures/image_04.jpg")
-            compare(item.model.title, "")
+            compare(item.model.title, "image 04")
             compare(item.model.mimeType, "image/jpeg")
             compare(item.model.orientation, 0)
 
             item = visualModel.items.get(4)
             compare(item.model.url, "file:///videos/movie_05.jpg")
-            compare(item.model.title, "")
+            compare(item.model.title, "movie 05")
             compare(item.model.mimeType, "video/mpeg")
             compare(item.model.orientation, 0)
 
             item = visualModel.items.get(5)
             compare(item.model.url, "file:///pictures/image_06.jpg")
-            compare(item.model.title, "")
+            compare(item.model.title, "image 06")
             compare(item.model.mimeType, "image/jpeg")
             compare(item.model.orientation, 0)
 
