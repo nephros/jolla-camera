@@ -5,6 +5,12 @@ import com.jolla.camera 1.0
 import org.nemomobile.configuration 1.0
 
 Page {
+    onStatusChanged: {
+        if (status == PageStatus.Activating) {
+            Settings.recheckLocationEnabled()
+        }
+    }
+
     ConfigurationGroup {
         id: globalSettings
 

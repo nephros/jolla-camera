@@ -1,7 +1,7 @@
 #ifndef DECLARATIVESETTINGS_H
 #define DECLARATIVESETTINGS_H
 
-#include <QSocketNotifier>
+#include <QObject>
 #include <QDate>
 
 #include <QUrl>
@@ -12,7 +12,7 @@ class QQmlEngine;
 class QJSEngine;
 QT_END_NAMESPACE
 
-class DeclarativeSettings : public QSocketNotifier
+class DeclarativeSettings : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString photoDirectory READ photoDirectory CONSTANT)
@@ -34,7 +34,8 @@ public:
 
     Q_INVOKABLE QUrl completeCapture(const QUrl &file);
 
-    bool event(QEvent *event);
+public slots:
+    void recheckLocationEnabled();
 
 signals:
     void locationEnabledChanged();
@@ -49,7 +50,6 @@ private:
     QString m_prefix;
     QDate m_prefixDate;
 
-    int m_locationWatch;
     bool m_locationEnabled;
 };
 
