@@ -53,15 +53,6 @@ Page {
         }
     }
 
-    Connections {
-        target: Qt.application
-        onActiveChanged: {
-            if (Qt.application.active) {
-                Settings.updateLocation()
-            }
-        }
-    }
-
     ListView {
         id: switcherView
 
