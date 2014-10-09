@@ -57,7 +57,7 @@ Page {
         target: Qt.application
         onActiveChanged: {
             if (Qt.application.active) {
-                Settings.recheckLocationEnabled()
+                Settings.updateLocation()
             }
         }
     }

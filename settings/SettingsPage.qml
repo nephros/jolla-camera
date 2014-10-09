@@ -7,7 +7,7 @@ import org.nemomobile.configuration 1.0
 Page {
     onStatusChanged: {
         if (status == PageStatus.Activating) {
-            Settings.recheckLocationEnabled()
+            Settings.updateLocation()
         }
     }
 

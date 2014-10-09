@@ -35,14 +35,13 @@ public:
     Q_INVOKABLE QUrl completeCapture(const QUrl &file);
 
 public slots:
-    void recheckLocationEnabled();
+    void updateLocation();
 
 signals:
     void locationEnabledChanged();
 
 private:
     void verifyCapturePrefix();
-    void updateLocation();
 
     MGConfItem m_counter;
     MGConfItem m_counterDate;

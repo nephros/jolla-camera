@@ -153,8 +153,3 @@ void DeclarativeSettings::verifyCapturePrefix()
         m_counterDate.set(m_prefixDate.toString(Qt::ISODate));
     }
 }
-
-void DeclarativeSettings::recheckLocationEnabled()
-{
-    updateLocation();
-}
