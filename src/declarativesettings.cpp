@@ -10,18 +10,10 @@
 #include <QSettings>
 #include <QStandardPaths>
 
-#include <dirent.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-
-#include <sys/inotify.h>
-
 DeclarativeSettings::DeclarativeSettings(QObject *parent)
-    : QSocketNotifier(inotify_init(), Read, parent)
+    : QObject(parent)
     , m_counter(QLatin1String("/apps/jolla-camera/captureCounter"))
     , m_counterDate(QLatin1String("/apps/jolla-camera/captureCounterDate"))
-    , m_locationWatch(-1)
     , m_locationEnabled(false)
 {
     QDir(photoDirectory()).mkpath(QLatin1String("."));
@@ -31,16 +23,11 @@ DeclarativeSettings::DeclarativeSettings(QObject *parent)
     m_prefix = m_prefixDate.toString(QLatin1String("yyyyMMdd_"));
 
     updateLocation();
-
-    const int fd = socket();
-    if (fd >= 0) {
-        m_locationWatch = inotify_add_watch(fd, "/etc/location/location.conf", IN_MODIFY);
-    }
 }
 
 DeclarativeSettings::~DeclarativeSettings()
 {
-    close(socket());
+
 }
 
 QObject *DeclarativeSettings::factory(QQmlEngine *engine, QJSEngine *)
@@ -139,35 +126,6 @@ QUrl DeclarativeSettings::completeCapture(const QUrl &file)
         QFile::remove(absolutePath);
         return QUrl();
     }
-}
-
-bool DeclarativeSettings::event(QEvent *event)
-{
-    if (event->type() != QEvent::SockAct) {
-        return QSocketNotifier::event(event);
-    }
-
-#define BUFF_SIZE ((sizeof(struct inotify_event)+FILENAME_MAX)*1024)
-
-    bool locationChanged = false;
-
-    char buff[BUFF_SIZE] = {0};
-    ssize_t length = read (socket(), buff, BUFF_SIZE);
-    struct inotify_event *pevent = 0;
-    for (ssize_t i = 0; i < length; i += sizeof(struct inotify_event) + pevent->len) {
-        pevent = (struct inotify_event *)&buff[i];
-
-        if (pevent->wd == m_locationWatch) {
-            locationChanged = true;
-        }
-    }
-
-
-    if (locationChanged) {
-        updateLocation();
-    }
-
-    return true;
 }
 
 static int counterStartValue(const QString &directory, const QString &prefix, int maximum = 0)

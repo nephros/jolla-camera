@@ -39,4 +39,8 @@ ApplicationWindow {
         width: window.width
         height: window.height
     }
+
+    onApplicationActiveChanged:
+        if (applicationActive)
+            Settings.updateLocation()
 }
