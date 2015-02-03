@@ -19,6 +19,7 @@ Item {
         font.pixelSize: Theme.fontSizeMedium
         color: Theme.highlightColor
 
+        textFormat: Text.AutoText
         text: header.highlightItem
               ? header.pressedMenu.title(header.highlightItem.value)
               : ""
