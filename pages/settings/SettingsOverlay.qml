@@ -511,6 +511,7 @@ PinchArea {
             font.pixelSize: Theme.fontSizeExtraLarge
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.Wrap
+            textFormat: Text.AutoText
             color: Theme.highlightColor
 
             text: overlay.isPortrait
