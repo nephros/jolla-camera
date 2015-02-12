@@ -193,5 +193,12 @@ Page {
             switcherView.positionViewAtEnd()
             window.activate()
         }
+
+        signal showFrontViewfinder()
+        onShowFrontViewfinder: {
+            Settings.global.cameraDevice = "secondary"
+            switcherView.positionViewAtEnd()
+            window.activate()
+        }
     }
 }
