@@ -9,7 +9,8 @@ ApplicationWindow {
 
     property QtObject _window
     onWindowChanged: _window = window ? window : null
-    allowedOrientations: Orientation.Portrait | Orientation.Landscape | Orientation.LandscapeInverted
+    allowedOrientations: defaultAllowedOrientations
+    _defaultPageOrientations: Orientation.All
 
     cover: Component{
         CameraCover {

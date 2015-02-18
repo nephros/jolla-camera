@@ -18,13 +18,11 @@ Page {
     property alias viewfinder: captureView.viewfinder
     property bool galleryActive
 
-    allowedOrientations: Orientation.Portrait
-                | Orientation.Landscape
-                | Orientation.LandscapeInverted
+    allowedOrientations: captureView.inButtonLayout ? page.orientation : Orientation.All
 
     orientationTransitions: Transition {
-        to: 'Portrait,Landscape,LandscapeInverted'
-        from: 'Portrait,Landscape,LandscapeInverted'
+        to: 'Portrait,Landscape,PortraitInverted,LandscapeInverted'
+        from: 'Portrait,Landscape,PortraitInverted,LandscapeInverted'
         SequentialAnimation {
             PropertyAction {
                 target: page
@@ -130,13 +128,6 @@ Page {
                     }
                 }
 
-                onInButtonLayoutChanged: {
-                    page.allowedOrientations = inButtonLayout
-                            ? page.orientation
-                            : Orientation.Portrait
-                                | Orientation.Landscape
-                                | Orientation.LandscapeInverted
-                }
                 CameraRollHint {}
             }
         }
