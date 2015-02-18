@@ -25,6 +25,7 @@ Requires:  jolla-settings-accounts >= 0.1.31
 Requires:  sailfishsilica-qt5 >= 0.13.34
 Requires:  mapplauncherd-booster-silica-qt5
 Requires:  qt5-qtdeclarative-import-models2
+Requires:  qt5-qtdeclarative-import-positioning
 Requires: qt5-qtdeclarative-import-multimedia
 Requires: qt5-qtmultimedia-plugin-mediaservice-gstcamerabin >= 5.1.0+git25
 Requires: qt5-qtmultimedia-plugin-mediaservice-gstmediaplayer
