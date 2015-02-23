@@ -55,7 +55,7 @@ ShareMethodList {
         Label {
             //% "Add account"
             text: qsTrId("camera-la-add_account")
-            x: Theme.paddingLarge
+            x: Theme.horizontalPageMargin
             anchors.verticalCenter: parent.verticalCenter
             color: highlighted ? Theme.highlightColor : Theme.primaryColor
         }
