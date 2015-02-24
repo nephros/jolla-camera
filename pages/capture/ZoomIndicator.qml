@@ -10,7 +10,7 @@ Item {
 
     property color color: Theme.highlightColor
 
-    implicitWidth: Screen.width - (2 * Theme.paddingLarge)
+    implicitWidth: Screen.width - (2 * Theme.horizontalPageMargin)
     implicitHeight: Theme.itemSizeSmall
 
     opacity: opacityAnimation.running ? 1 : 0
