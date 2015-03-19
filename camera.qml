@@ -11,6 +11,7 @@ ApplicationWindow {
     onWindowChanged: _window = window ? window : null
     allowedOrientations: defaultAllowedOrientations
     _defaultPageOrientations: Orientation.All
+    _defaultLabelFormat: Text.PlainText
 
     cover: Component{
         CameraCover {
