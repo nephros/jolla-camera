@@ -317,8 +317,11 @@ FocusScope {
             meteringMode: Settings.mode.meteringMode
         }
 
-        viewfinder.resolution: Settings.mode.viewfinderResolution
-
+        viewfinder {
+            resolution: Settings.mode.viewfinderResolution
+            minimumFrameRate: 30
+            maximumFrameRate: 30
+        }
 
         metaData {
             //: Name of camera manufacturer to be written into captured photos
