@@ -583,68 +583,46 @@ FocusScope {
             }
         }
 
-        Label {
-            anchors {
-                top: parent.top
-                left: parent.left
-                right: parent.right
-                margins: Theme.itemSizeMedium
-            }
-
-            //% "Rotate the camera for best ambience results"
-            text: qsTrId("jolla-camera-la-rotate_portrait_for_ambience")
-            visible: grid.landscapeAmbience && camera.cameraStatus == Camera.ActiveStatus
-            horizontalAlignment: Text.AlignHCenter
-            style: Text.Raised
-            styleColor: Theme.highlightBackgroundColor
-        }
-
         // Viewfinder Grid
         Item {
             id: grid
 
             property real gridWidth: extensions.orientation % 180 == 0 ? focusArea.width : focusArea.height
             property real gridHeight: extensions.orientation % 180 == 0 ? focusArea.height : focusArea.width
-            property real ambienceOffset: Settings.mode.viewfinderGrid == "ambience"
-                        ? -5 * gridHeight / 40 // Lockscreen offset is ~3/40 of the ambience height
-                        : 0
-            property bool landscapeAmbience: Settings.mode.viewfinderGrid == "ambience"
-                        && extensions.orientation % 180 == 0
+            property real ambienceScale: Math.min(Screen.width, Screen.height) /
+                                         Math.max(Screen.width, Screen.height)
 
             anchors.centerIn: parent
 
             visible: Settings.mode.viewfinderGrid != "none"
                      && camera.cameraStatus == Camera.ActiveStatus
-                     && !grid.landscapeAmbience
 
             width: Settings.mode.viewfinderGrid == "ambience"
-                   ? gridHeight * Screen.width * 3 / (Screen.height * 5)
+                   ? gridWidth * ambienceScale
                    : gridWidth / 3
             height: Settings.mode.viewfinderGrid == "ambience"
-                    ? gridHeight * 3 / 5
+                    ? gridHeight * ambienceScale
                     : gridHeight / 3
 
             GridLine {
                 anchors {
-                    horizontalCenter: grid.horizontalCenter;
+                    horizontalCenter: grid.horizontalCenter
                     verticalCenter: grid.top
-                    verticalCenterOffset: grid.ambienceOffset
                 }
                 width: grid.gridWidth
             }
 
             GridLine {
                 anchors {
-                    horizontalCenter: grid.horizontalCenter;
+                    horizontalCenter: grid.horizontalCenter
                     verticalCenter: grid.bottom
-                    verticalCenterOffset: grid.ambienceOffset
                 }
                 width: grid.gridWidth
             }
 
             GridLine {
                 anchors {
-                    horizontalCenter: grid.left;
+                    horizontalCenter: grid.left
                     verticalCenter: grid.verticalCenter
                 }
                 width: grid.gridHeight
@@ -653,7 +631,7 @@ FocusScope {
 
             GridLine {
                 anchors {
-                    horizontalCenter: grid.right;
+                    horizontalCenter: grid.right
                     verticalCenter: grid.verticalCenter
                 }
                 width: grid.gridHeight
