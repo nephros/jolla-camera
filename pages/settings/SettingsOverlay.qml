@@ -30,6 +30,7 @@ PinchArea {
 
     property real _progress: (panel.y + panel.height) / panel.height
     property bool _closing
+    property bool _tabletLayout: Screen.sizeCategory >= Screen.Large
 
     property bool interactive: true
 
@@ -41,7 +42,7 @@ PinchArea {
                 ? Qt.AlignRight
                 : Qt.AlignLeft
 
-    readonly property real _menuWidth: isPortrait ? Screen.width / 4 : Screen.height / 8
+    readonly property real _menuWidth: isPortrait ? Screen.width / (_tabletLayout ? 5 : 4) : Screen.height / 8
 
     on_CaptureButtonLocationChanged: inButtonLayout = false
 
@@ -51,12 +52,18 @@ PinchArea {
     }
 
     property list<SettingsMenuItem> _menus
-    _menus: [
-        captureModeMenu.currentItem,
-        flashMenu.currentItem,
-        whiteBalanceMenu.currentItem,
-        focusMenu.currentItem
-    ]
+    _menus: _tabletLayout ? [
+                captureModeMenu.currentItem,
+                isoMenu.currentItem,
+                whiteBalanceMenu.currentItem,
+                focusMenu.currentItem,
+                timerMenu.currentItem
+            ] : [
+                captureModeMenu.currentItem,
+                flashMenu.currentItem,
+                whiteBalanceMenu.currentItem,
+                focusMenu.currentItem
+            ]
 
     signal clicked(var mouse)
 
@@ -303,8 +310,18 @@ PinchArea {
                     iconVisible: !selected
                 }
             }
+
+            Item {
+                id: isoMenuTabletLayoutParent
+
+                width: childrenRect.width
+                height: childrenRect.height
+            }
+
             SettingsMenu {
                 id: flashMenu
+
+                visible: !_tabletLayout //xxx
 
                 width: overlay._menuWidth
                 title: Settings.flashText
@@ -371,6 +388,7 @@ PinchArea {
 
             SettingsMenu {
                 id: cameraDeviceMenu
+
                 width: overlay._menuWidth
                 title: Settings.cameraText
                 header: overlay.isPortrait ? lowerHeader : upperHeader
@@ -385,6 +403,8 @@ PinchArea {
 
             SettingsMenu {
                 id: isoMenu
+
+                parent: _tabletLayout ? isoMenuTabletLayoutParent : leftRow
 
                 width: overlay._menuWidth
                 title: Settings.isoText
@@ -411,6 +431,8 @@ PinchArea {
 
             SettingsMenu {
                 id: timerMenu
+
+                parent: _tabletLayout ? row : rightRow
 
                 width: overlay._menuWidth
                 title: Settings.timerText
