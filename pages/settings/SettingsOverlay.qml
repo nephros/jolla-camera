@@ -370,6 +370,20 @@ PinchArea {
             visible: overlay.expanded
 
             SettingsMenu {
+                id: cameraDeviceMenu
+                width: overlay._menuWidth
+                title: Settings.cameraText
+                header: overlay.isPortrait ? lowerHeader : upperHeader
+                model: [ "primary", "secondary" ]
+                delegate: SettingsMenuItem {
+                    settings: Settings.global
+                    property: "cameraDevice"
+                    value: modelData
+                    icon: Settings.cameraIcon(modelData)
+                }
+            }
+
+            SettingsMenu {
                 id: isoMenu
 
                 width: overlay._menuWidth
@@ -381,20 +395,6 @@ PinchArea {
                     property: "iso"
                     value: modelData
                     icon: Settings.isoIcon(modelData)
-                }
-            }
-            SettingsMenu {
-                id: gridMenu
-
-                width: overlay._menuWidth
-                title: Settings.viewfinderGridText
-                header: overlay.isPortrait ? lowerHeader : upperHeader
-                model: Settings.mode.viewfinderGridValues
-                delegate: SettingsMenuItem {
-                    settings: Settings.mode
-                    property: "viewfinderGrid"
-                    value: modelData
-                    icon: Settings.viewfinderGridIcon(modelData)
                 }
             }
         }
@@ -425,16 +425,17 @@ PinchArea {
             }
 
             SettingsMenu {
-                id: cameraDeviceMenu
+                id: gridMenu
+
                 width: overlay._menuWidth
-                title: Settings.cameraText
+                title: Settings.viewfinderGridText
                 header: overlay.isPortrait ? lowerHeader : upperHeader
-                model: [ "primary", "secondary" ]
+                model: Settings.mode.viewfinderGridValues
                 delegate: SettingsMenuItem {
-                    settings: Settings.global
-                    property: "cameraDevice"
+                    settings: Settings.mode
+                    property: "viewfinderGrid"
                     value: modelData
-                    icon: Settings.cameraIcon(modelData)
+                    icon: Settings.viewfinderGridIcon(modelData)
                 }
             }
         }
