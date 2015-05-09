@@ -16,7 +16,8 @@ Item {
 
         anchors.centerIn: parent
 
-        font.pixelSize: Theme.fontSizeMedium
+        font.pixelSize: Screen.sizeCategory >= Screen.Large ? Theme.fontSizeSmall : Theme.fontSizeExtraSmall
+        font.bold: Screen.sizeCategory < Screen.Large
         color: Theme.highlightColor
 
         textFormat: Text.AutoText

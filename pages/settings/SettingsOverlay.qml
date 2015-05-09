@@ -8,6 +8,7 @@ PinchArea {
     id: overlay
 
     property bool isPortrait
+    property real topButtonRowHeight
     property bool open
     property bool inButtonLayout
     property bool pinchActive
@@ -30,7 +31,19 @@ PinchArea {
 
     property real _progress: (panel.y + panel.height) / panel.height
     property bool _closing
-    property bool _tabletLayout: Screen.sizeCategory >= Screen.Large
+
+    property real _menuItemHorizontalSpacing: Screen.sizeCategory >= Screen.Large
+                                              ? Theme.paddingLarge * 2
+                                              : Theme.paddingLarge + Theme.paddingSmall
+    property real _menuItemVerticalSpacing: Screen.sizeCategory >= Screen.Large
+                                            ? 0
+                                            : Theme.paddingMedium + Theme.paddingSmall
+    property real _headerHeight: Screen.sizeCategory >= Screen.Large
+                                 ? Theme.itemSizeMedium
+                                 : Theme.itemSizeSmall + Theme.paddingMedium
+    property real _headerTopMargin: Screen.sizeCategory >= Screen.Large
+                                    ? Theme.paddingLarge + Theme.paddingSmall
+                                    : 0
 
     property bool interactive: true
 
@@ -42,9 +55,12 @@ PinchArea {
                 ? Qt.AlignRight
                 : Qt.AlignLeft
 
-    readonly property real _menuWidth: isPortrait ? Screen.width / (_tabletLayout ? 5 : 4) : Screen.height / 8
+    readonly property real _menuWidth: Screen.sizeCategory >= Screen.Large
+                                       ? Theme.iconSizeLarge + Theme.paddingMedium*2 // increase icon hitbox
+                                       : Theme.iconSizeMedium
 
     on_CaptureButtonLocationChanged: inButtonLayout = false
+
 
     onIsPortraitChanged: {
         upperHeader.pressedMenu = null
@@ -52,7 +68,7 @@ PinchArea {
     }
 
     property list<SettingsMenuItem> _menus
-    _menus: _tabletLayout ? [
+    _menus: Screen.sizeCategory >= Screen.Large ? [
                 captureModeMenu.currentItem,
                 isoMenu.currentItem,
                 whiteBalanceMenu.currentItem,
@@ -209,11 +225,11 @@ PinchArea {
 
             Rectangle {
                 width: overlay.width
-                height: Theme.itemSizeMedium
+                height: overlay.topButtonRowHeight
 
                 gradient: Gradient {
-                    GradientStop { position: 0.0; color: Theme.rgba(Theme.highlightDimmerColor, 0.6) }
-                    GradientStop { position: 1.0; color: Theme.rgba(Theme.highlightDimmerColor, 0.0) }
+                    GradientStop { position: 0.0; color: Theme.rgba("black", 0.7) }
+                    GradientStop { position: 1.0; color: Theme.rgba("black", 0.0) }
                 }
             }
 
@@ -277,29 +293,25 @@ PinchArea {
             opacity: 0.6 * (1 - container.opacity)
         }
 
-        TitleHighlight {
-            anchors { left: row.left; top: row.top; right: row.right }
-            opacity: row.opacity
-        }
-
         Row {
             id: row
 
-            y: height * panel.y / panel.height
+            y: (height * panel.y / panel.height) + overlay._headerHeight + overlay._headerTopMargin
             anchors.horizontalCenter: parent.horizontalCenter
-
-            height: 6 * Theme.itemSizeSmall
+            height: Screen.height / 2
 
             opacity: 1 - container.opacity
-
             enabled: overlay.expanded
             visible: overlay.expanded
+
+            spacing: overlay._menuItemHorizontalSpacing
 
             SettingsMenu {
                 id: captureModeMenu
 
                 width: overlay._menuWidth
                 title: Settings.captureModeText
+                spacing: overlay._menuItemVerticalSpacing
                 header: upperHeader
                 model: [ "image", "video" ]
                 delegate: SettingsMenuItem {
@@ -321,10 +333,12 @@ PinchArea {
             SettingsMenu {
                 id: flashMenu
 
-                visible: !_tabletLayout //xxx
+                // TODO JB#28702 configure based on hardware availability, not screen size
+                visible: Screen.sizeCategory < Screen.Large
 
                 width: overlay._menuWidth
                 title: Settings.flashText
+                spacing: overlay._menuItemVerticalSpacing
                 header: upperHeader
                 model: Settings.mode.flashValues
                 delegate: SettingsMenuItem {
@@ -340,6 +354,7 @@ PinchArea {
 
                 width: overlay._menuWidth
                 title: Settings.whiteBalanceText
+                spacing: overlay._menuItemVerticalSpacing
                 header: upperHeader
                 model: Settings.mode.whiteBalanceValues
                 delegate: SettingsMenuItem {
@@ -355,6 +370,7 @@ PinchArea {
 
                 width: overlay._menuWidth
                 title: Settings.focusDistanceText
+                spacing: overlay._menuItemVerticalSpacing
                 header: upperHeader
                 model: Settings.mode.focusDistanceValues
                 delegate: SettingsMenuItem {
@@ -367,30 +383,25 @@ PinchArea {
             }
         }
 
-        TitleHighlight {
-            anchors { left: leftRow.left; top: leftRow.top; right: leftRow.right }
-            opacity: row.opacity
-        }
-        TitleHighlight {
-            anchors { left: rightRow.left; top: rightRow.top; right: rightRow.right }
-            opacity: row.opacity
-        }
-
         Row {
             id: leftRow
             anchors {
-                top: overlay.isPortrait ? row.bottom : row.top
+                top: overlay.isPortrait ? lowerHeader.bottom : row.top
                 right: overlay.isPortrait ? row.horizontalCenter : row.left
+                rightMargin: overlay.isPortrait ? overlay._menuItemHorizontalSpacing/2 : overlay._menuItemHorizontalSpacing
             }
 
             opacity: row.opacity
             visible: overlay.expanded
+
+            spacing: overlay._menuItemHorizontalSpacing
 
             SettingsMenu {
                 id: cameraDeviceMenu
 
                 width: overlay._menuWidth
                 title: Settings.cameraText
+                spacing: overlay._menuItemVerticalSpacing
                 header: overlay.isPortrait ? lowerHeader : upperHeader
                 model: [ "primary", "secondary" ]
                 delegate: SettingsMenuItem {
@@ -404,11 +415,12 @@ PinchArea {
             SettingsMenu {
                 id: isoMenu
 
-                parent: _tabletLayout ? isoMenuTabletLayoutParent : leftRow
+                parent: Screen.sizeCategory >= Screen.Large ? isoMenuTabletLayoutParent : leftRow
 
                 width: overlay._menuWidth
                 title: Settings.isoText
-                header: overlay.isPortrait ? lowerHeader : upperHeader
+                spacing: overlay._menuItemVerticalSpacing
+                header: Screen.sizeCategory < Screen.Large && overlay.isPortrait ? lowerHeader : upperHeader
                 model: Settings.mode.isoValues
                 delegate: SettingsMenuItem {
                     settings: Settings.mode
@@ -422,21 +434,25 @@ PinchArea {
         Row {
             id: rightRow
             anchors {
-                top: overlay.isPortrait ? row.bottom : row.top
+                top: leftRow.top
                 left: overlay.isPortrait ? row.horizontalCenter : row.right
+                leftMargin: overlay.isPortrait ? overlay._menuItemHorizontalSpacing/2 : overlay._menuItemHorizontalSpacing
             }
 
             opacity: row.opacity
             visible: overlay.expanded
 
+            spacing: overlay._menuItemHorizontalSpacing
+
             SettingsMenu {
                 id: timerMenu
 
-                parent: _tabletLayout ? row : rightRow
+                parent: Screen.sizeCategory >= Screen.Large ? row : rightRow
 
                 width: overlay._menuWidth
                 title: Settings.timerText
-                header: overlay.isPortrait ? lowerHeader : upperHeader
+                spacing: overlay._menuItemVerticalSpacing
+                header: Screen.sizeCategory < Screen.Large && overlay.isPortrait ? lowerHeader : upperHeader
                 model: Settings.mode.timerValues
                 delegate: SettingsMenuItem {
                     settings: Settings.mode
@@ -451,6 +467,7 @@ PinchArea {
 
                 width: overlay._menuWidth
                 title: Settings.viewfinderGridText
+                spacing: overlay._menuItemVerticalSpacing
                 header: overlay.isPortrait ? lowerHeader : upperHeader
                 model: Settings.mode.viewfinderGridValues
                 delegate: SettingsMenuItem {
@@ -465,20 +482,27 @@ PinchArea {
         HeaderLabel {
             id: upperHeader
 
-            anchors { left: parent.left; top: row.top; right: parent.right }
+            anchors { left: parent.left; bottom: row.top; right: parent.right }
+            height: overlay._headerHeight
             opacity: row.opacity
         }
 
         HeaderLabel {
             id: lowerHeader
 
-            anchors { left: parent.left; top: row.bottom; right: parent.right }
+            anchors { left: parent.left; bottom: row.bottom; right: parent.right }
+            height: overlay._headerHeight
             opacity: row.opacity
         }
     }
 
     Row {
+        id: topRow
+
+        property real _topRowMargin: overlay.topButtonRowHeight/2 - overlay._menuWidth/2
+
         anchors.horizontalCenter: parent.horizontalCenter
+        spacing: row.spacing
 
         Repeater {
             model: overlay._menus
@@ -486,11 +510,11 @@ PinchArea {
                 id: statusItem
 
                 y: model.y != undefined
-                        ? Math.max(0, row.y + model.y + Theme.itemSizeSmall)
-                        : 0
+                        ? Math.max(topRow._topRowMargin, row.y + model.y)
+                        : topRow._topRowMargin
 
                 width: overlay._menuWidth
-                height: Theme.itemSizeSmall
+                height: width
 
                 Image {
                     anchors.centerIn: parent

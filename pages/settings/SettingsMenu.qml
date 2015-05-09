@@ -22,7 +22,6 @@ Column {
         }
     }
 
-    y: Theme.itemSizeSmall
     width: Screen.width / 4
 
     Repeater {

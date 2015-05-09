@@ -425,6 +425,7 @@ FocusScope {
         height: captureView.height
 
         isPortrait: captureView.isPortrait
+        topButtonRowHeight: Screen.sizeCategory >= Screen.Large ? Theme.itemSizeLarge : Theme.itemSizeSmall
 
         onClicked: {
             if (!captureView._captureOnFocus
@@ -724,7 +725,7 @@ FocusScope {
             id: zoomIndicator
             anchors {
                 top: parent.top
-                topMargin: Theme.itemSizeMedium
+                topMargin: settingsOverlay.topButtonRowHeight + Theme.paddingLarge
                 horizontalCenter: parent.horizontalCenter
             }
 
