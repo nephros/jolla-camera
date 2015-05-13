@@ -61,7 +61,6 @@ PinchArea {
 
     on_CaptureButtonLocationChanged: inButtonLayout = false
 
-
     onIsPortraitChanged: {
         upperHeader.pressedMenu = null
         lowerHeader.pressedMenu = null
@@ -229,7 +228,7 @@ PinchArea {
 
                 gradient: Gradient {
                     GradientStop { position: 0.0; color: Theme.rgba("black", 0.7) }
-                    GradientStop { position: 1.0; color: Theme.rgba("black", 0.0) }
+                    GradientStop { position: 1.0; color: "transparent" }
                 }
             }
 
@@ -296,7 +295,7 @@ PinchArea {
         Row {
             id: row
 
-            y: (height * panel.y / panel.height) + overlay._headerHeight + overlay._headerTopMargin
+            y: Math.round(height * panel.y / panel.height) + overlay._headerHeight + overlay._headerTopMargin
             anchors.horizontalCenter: parent.horizontalCenter
             height: Screen.height / 2
 

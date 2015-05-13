@@ -56,8 +56,7 @@ MouseArea {
                 ColorAnimation { duration: 200 }
             }
 
-           opacity: menuItem.highlighted ? 0.2 : 0.4
-           Behavior on opacity { FadeAnimation {} }
+            opacity: 0.4
         }
 
         Image {

@@ -43,7 +43,7 @@ Item {
 
         anchors.centerIn: parent
         width: Screen.width * 0.75  // same length in both portrait and landscape
-        height: Screen.sizeCategory >= Screen.Large ? 3 : 2
+        height: Math.round(2 * Theme.pixelRatio)
         radius: height / 2
 
         color: indicator.color
@@ -59,7 +59,7 @@ Item {
                         : line.width / 2
         }
 
-        width: Screen.sizeCategory >= Screen.Large ? 15 : 10
+        width: Math.round(10 * Theme.pixelRatio)
         height: width
         radius: height / 2
 
