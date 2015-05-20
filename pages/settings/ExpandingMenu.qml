@@ -13,8 +13,9 @@ MouseArea {
     property bool open
     readonly property alias expanded: column.itemsVisible
 
-    width: Theme.itemSizeMedium
-    height: Theme.itemSizeMedium
+    width: Theme.itemSizeSmall
+    height: Theme.itemSizeSmall
+    anchors.centerIn: parent
 
     onClicked: menu.open = true
 
@@ -36,6 +37,7 @@ MouseArea {
 
         anchors.bottom: menu.bottom
         width: menu.width
+        spacing: Theme.paddingMedium + Theme.paddingSmall
 
         Repeater {
             id: repeater
@@ -49,7 +51,7 @@ MouseArea {
 
         anchors {
             horizontalCenter: menu.horizontalCenter
-            horizontalCenterOffset: menu.alignment == Text.AlignRight ? -menu.width : menu.width
+            horizontalCenterOffset: (menu.alignment == Text.AlignRight ? -menu.width : menu.width) + Theme.paddingMedium
             verticalCenter: column.verticalCenter
         }
 
@@ -58,6 +60,7 @@ MouseArea {
         color: Theme.highlightBackgroundColor
         font {
             pixelSize: Theme.fontSizeExtraSmall
+            bold: true
         }
         wrapMode: Text.WordWrap
         horizontalAlignment: Text.AlignHCenter

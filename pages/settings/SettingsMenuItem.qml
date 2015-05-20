@@ -14,7 +14,7 @@ MouseArea {
     property bool selected: settings[property] == value
 
     width: parent.width
-    height: Theme.itemSizeSmall
+    height: width
 
     onSelectedChanged: {
         if (selected) {
@@ -32,14 +32,14 @@ MouseArea {
 
     Rectangle {
         anchors.centerIn: parent
-        width: Theme.iconSizeMedium + Theme.paddingSmall
+        width: Screen.sizeCategory >= Screen.Large
+               ? Theme.iconSizeMedium + Theme.paddingMedium
+               : Theme.iconSizeMedium + Theme.paddingSmall
         height: width
-
         radius: width / 2
-
         color: Theme.highlightBackgroundColor
 
-        opacity: menuItem.selected || menuItem.pressed ? 0.3 : 0.0
+        opacity: menuItem.selected || menuItem.pressed ? 0.2 : 0.0
         Behavior on opacity { FadeAnimation {} }
     }
 

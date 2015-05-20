@@ -425,6 +425,7 @@ FocusScope {
         height: captureView.height
 
         isPortrait: captureView.isPortrait
+        topButtonRowHeight: Screen.sizeCategory >= Screen.Large ? Theme.itemSizeLarge : Theme.itemSizeSmall
 
         onClicked: {
             if (!captureView._captureOnFocus
@@ -683,7 +684,7 @@ FocusScope {
                         opacity: 0.6
                         anchors.centerIn: parent
                         border {
-                            width: Theme.paddingSmall - 2
+                            width: Screen.sizeCategory >= Screen.Large ? Theme.paddingSmall * 0.5 : Theme.paddingSmall * 0.75
                             color: status == Camera.FocusAreaFocused
                                         ? Theme.highlightColor
                                         : Theme.primaryColor
@@ -724,7 +725,7 @@ FocusScope {
             id: zoomIndicator
             anchors {
                 top: parent.top
-                topMargin: Theme.itemSizeMedium
+                topMargin: settingsOverlay.topButtonRowHeight + Theme.paddingLarge
                 horizontalCenter: parent.horizontalCenter
             }
 

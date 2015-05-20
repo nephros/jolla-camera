@@ -51,13 +51,12 @@ MouseArea {
 
             color: menuItem.highlighted
                    ? Theme.highlightColor
-                   : Theme.highlightDimmerColor
+                   : "black"
             Behavior on color {
                 ColorAnimation { duration: 200 }
             }
 
-           opacity: menuItem.highlighted ? 1.0 : 0.6
-           Behavior on opacity { FadeAnimation {} }
+            opacity: 0.4
         }
 
         Image {
