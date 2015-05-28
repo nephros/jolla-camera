@@ -1,6 +1,6 @@
 Name:       jolla-camera
 Summary:    Jolla Camera application
-Version:    0.0.1
+Version:    0.2.2
 Release:    1
 Group:      Applications/Multimedia
 License:    TBD
