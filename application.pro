@@ -12,6 +12,10 @@ OTHER_FILES += \
         settings.qml \
         cover \
         pages \
+        pages/*.qml \
+        pages/capture/*.qml \
+        pages/gallery/*.qml \
+        pages/settings/*.qml \
         dconf/*.qml \
         dconf/jolla-camera.txt
 

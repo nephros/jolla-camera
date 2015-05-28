@@ -10,7 +10,7 @@ Item {
 
     property color color: Theme.highlightColor
 
-    implicitWidth: Screen.width - (2 * Theme.horizontalPageMargin)
+    implicitWidth: line.width + minimumLabel.implicitWidth/2 + maximumLabel.implicitWidth/2
     implicitHeight: Theme.itemSizeSmall
 
     opacity: opacityAnimation.running ? 1 : 0
@@ -26,11 +26,13 @@ Item {
     Label {
         anchors {
             horizontalCenter: dot.horizontalCenter
-            top: indicator.top
+            bottom: line.top
+            bottomMargin: Screen.sizeCategory >= Screen.Large ? Theme.paddingMedium : Theme.paddingSmall
         }
 
         color: indicator.color
-        font.pixelSize: Theme.fontSizeTiny
+        font.pixelSize: minimumLabel.font.pixelSize
+        font.bold: minimumLabel.font.bold
         //: Title for current zoom position
         //% "Zoom"
         text: qsTrId("jolla-camera-la-zoom")
@@ -39,12 +41,9 @@ Item {
     Rectangle {
         id: line
 
-        anchors {
-            verticalCenter: parent.verticalCenter
-            left: minimumLabel.horizontalCenter
-            right: maximumLabel.horizontalCenter
-        }
-        height: Theme.paddingSmall / 2
+        anchors.centerIn: parent
+        width: Screen.width * 0.75  // same length in both portrait and landscape
+        height: Math.round(2 * Theme.pixelRatio)
         radius: height / 2
 
         color: indicator.color
@@ -60,8 +59,8 @@ Item {
                         : line.width / 2
         }
 
-        width: Theme.paddingMedium
-        height: Theme.paddingMedium
+        width: Math.round(10 * Theme.pixelRatio)
+        height: width
         radius: height / 2
 
         color: indicator.color
@@ -71,12 +70,14 @@ Item {
         id: minimumLabel
 
         anchors {
-            left: parent.left
-            bottom: parent.bottom
+            horizontalCenter: line.left
+            top: line.bottom
+            topMargin: Screen.sizeCategory >= Screen.Large ? Theme.paddingLarge : Theme.paddingMedium
         }
 
         color: indicator.color
-        font.pixelSize: Theme.fontSizeTiny
+        font.pixelSize: Theme.fontSizeExtraSmall
+        font.bold: true
         //: Abbreviated text for minimum extent of the zoom indicator
         //% "min"
         text: qsTrId("jolla-camera-la-zoom_min")
@@ -86,12 +87,13 @@ Item {
         id: maximumLabel
 
         anchors {
-            right: parent.right
-            bottom: parent.bottom
+            horizontalCenter: line.right
+            top: minimumLabel.top
         }
 
         color: indicator.color
-        font.pixelSize: Theme.fontSizeTiny
+        font.pixelSize: minimumLabel.font.pixelSize
+        font.bold: minimumLabel.font.bold
         //: Abbreviated text for maximum extent of the zoom indicator
         //% "max"
         text: qsTrId("jolla-camera-la-zoom_max")
