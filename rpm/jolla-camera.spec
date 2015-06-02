@@ -17,7 +17,6 @@ BuildRequires:  pkgconfig(qdeclarative5-boostable)
 BuildRequires:  pkgconfig(mlite5) >= 0.2.5
 BuildRequires:  qt5-qttools
 BuildRequires:  qt5-qttools-linguist
-BuildRequires:  pkgconfig(gstreamer-0.10)
 BuildRequires:  oneshot
 
 Requires:  jolla-ambient >= 0.4.10
@@ -41,8 +40,8 @@ Requires:  sailfish-components-gallery-qt5 >= 0.0.48
 Requires:  libjollasignonuiservice-qt5-plugin >= 0.0.29
 Requires:  libngf-qt5-declarative
 Requires:  ambienced
-Requires:  gst-plugins-good >= 0.10.31+git3
-Requires:  gst-plugins-bad
+Requires:  gstreamer1.0-plugins-good
+Requires:  gstreamer1.0-plugins-bad
 Requires:  dconf
 Requires:  %{name}-settings = %{version}
 %{_oneshot_requires_post}
