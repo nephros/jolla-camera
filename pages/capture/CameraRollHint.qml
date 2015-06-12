@@ -16,8 +16,8 @@ Loader {
 
             anchors.fill: parent
             InteractionHintLabel {
-                //: Flick right to access the Camera Roll
-                //% "Flick right to access the Camera Roll"
+                //: Swipe right to access the Camera Roll
+                //% "Swipe right to access the Camera Roll"
                 text: qsTrId("camera-la-camera_roll_hint")
                 anchors.bottom: parent.bottom
                 opacity: touchInteractionHint.running ? 1.0 : 0.0
