@@ -134,8 +134,6 @@ Drawer {
                     enableZoom: !pageView.moving
 
                     orientation: model.orientation
-                    maximumWidth: model.width
-                    maximumHeight: model.height
 
                     active: galleryItem.active
                 }
