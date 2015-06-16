@@ -6,4 +6,5 @@ Image {
 
     fillMode: Image.PreserveAspectFit
     source: icon + "?" + Theme.highlightColor
+    scale: 0.75
 }

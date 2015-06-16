@@ -2,52 +2,127 @@ import QtQuick 2.0
 import QtMultimedia 5.0
 import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
-import com.jolla.camera 1.0
+import org.nemomobile.thumbnailer 1.0
 
 CoverBackground {
-    Image {
-        id: captureModeIcon
-        y: Theme.paddingLarge + Theme.paddingMedium
-        source: Settings.captureModeCoverIcon(Settings.global.captureMode)
-        anchors.horizontalCenter: parent.horizontalCenter
+    id: cover
+
+    property int coverIndex: galleryActive
+                             ? galleryIndex
+                             : captureModel.count - 1
+
+    onCoverIndexChanged: {
+        repositionTimer.restart()
     }
 
-    CoverIcon {
-        anchors { left: captureModeIcon.left; bottom: focusIcon.top; bottomMargin: Theme.paddingMedium }
-        icon: Settings.flashIcon(Settings.mode.flash)
-    }
-    CoverIcon {
-        anchors { right: captureModeIcon.right; bottom: isoIcon.top; bottomMargin: Theme.paddingMedium }
-        icon: Settings.whiteBalanceIcon(Settings.mode.whiteBalance)
-    }
-    CoverIcon {
-        id: focusIcon
-        anchors { left: captureModeIcon.left; bottom: exposureIcon.top; bottomMargin: Theme.paddingMedium }
-        icon: Settings.focusDistanceIcon(Settings.mode.focusDistance)
-    }
-    CoverIcon {
-        id: isoIcon
-        anchors { right: captureModeIcon.right; bottom: exposureIcon.top; bottomMargin: Theme.paddingMedium }
-        icon: Settings.isoIcon(Settings.mode.iso)
+    Timer {
+        id: repositionTimer
+        interval: 1
+        running: true // for initial positioning
+        onTriggered: {
+            list.positionViewAtIndex(coverIndex, ListView.SnapPosition)
+        }
     }
 
-    CoverIcon {
-        id: exposureIcon
-        icon: {
-            switch (Settings.mode.exposureCompensation) {
-            case -4: return "image://theme/graphics-cover-camera-exposure2m"
-            case -2: return "image://theme/graphics-cover-camera-exposure1m"
-            case  0: return "image://theme/graphics-cover-camera-exposure0"
-            case  2: return "image://theme/graphics-cover-camera-exposure1p"
-            case  4: return "image://theme/graphics-cover-camera-exposure2p"
-            }
+    ListView {
+        id: list
+
+        width: Math.floor(2 * parent.width / 3)
+        height: Math.floor(2 * parent.height / 3)
+        anchors {
+            centerIn: parent
+            // Paddings ignored on purpose from the offset calculation:
+            verticalCenterOffset: galleryActive ? settingsBar.height / 2 : 0
         }
 
-        anchors {
-            horizontalCenter: parent.horizontalCenter
-            bottom: parent.bottom
+        displayMarginBeginning: galleryActive ? width : 0
+        displayMarginEnd: galleryActive ? width : 0
 
-            bottomMargin: Theme.paddingLarge + Theme.paddingMedium
+        interactive: false
+        model: captureModel
+        orientation: ListView.Horizontal
+        snapMode: ListView.SnapOneItem
+
+        delegate: Item {
+            width: list.width
+            height: list.height
+            Thumbnail {
+                source: model.url
+                mimeType: model.mimeType
+                width: galleryActive
+                       ? (index === coverIndex ? parent.width : 0.8 * parent.width)
+                       : cover.width
+                height: galleryActive
+                        ? (index === coverIndex ? parent.height : 0.8 * parent.height)
+                        : cover.height
+                visible: galleryActive || index === coverIndex
+                anchors.centerIn: parent
+                smooth: true
+                sourceSize.width: width
+                sourceSize.height: height
+                clip: true
+            }
+        }
+    }
+
+    Rectangle {
+        width: parent.width
+        height: settingsBar.height + 2 * Theme.paddingMedium
+
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: Theme.rgba("black", 0.7) }
+            GradientStop { position: 1.0; color: "transparent" }
+        }
+    }
+
+    Row {
+        id: settingsBar
+        anchors {
+            top: parent.top
+            topMargin: Theme.paddingMedium
+            horizontalCenter: parent.horizontalCenter
+        }
+
+        CoverIcon {
+            icon: Settings.captureModeIcon(Settings.global.captureMode)
+        }
+        CoverIcon {
+            icon: Settings.flashIcon(Settings.mode.flash)
+        }
+        CoverIcon {
+            icon: Settings.whiteBalanceIcon(Settings.mode.whiteBalance)
+        }
+        CoverIcon {
+            icon: Settings.focusDistanceIcon(Settings.mode.focusDistance)
+        }
+    }
+
+    Item {
+        // "Focus indicator"
+        width: Math.floor(cover.width / 2)
+        height: width
+        anchors.centerIn: parent
+        visible: !galleryActive
+
+        Rectangle {
+            anchors.fill: parent
+            border {
+                width: 2
+                color: "black"
+            }
+            color: "transparent"
+        }
+        Rectangle {
+            anchors {
+                fill: parent
+                margins: 1
+            }
+            opacity: 0.6
+            border {
+                width: 3
+                color: Theme.primaryColor
+            }
+            color: "transparent"
         }
     }
 }
