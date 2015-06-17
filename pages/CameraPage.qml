@@ -18,6 +18,18 @@ Page {
     property alias viewfinder: captureView.viewfinder
     property bool galleryActive
 
+    Binding {
+        target: window
+        property: "galleryActive"
+        value: page.galleryActive
+    }
+
+    Binding {
+        target: window
+        property: "galleryIndex"
+        value: galleryLoader.item ? galleryLoader.item.currentIndex : 0
+    }
+
     allowedOrientations: captureView.inButtonLayout ? page.orientation : Orientation.All
 
     orientationTransitions: Transition {
@@ -152,21 +164,6 @@ Page {
             }
         }
 
-    }
-
-    CaptureModel {
-        id: captureModel
-
-        source: DocumentGalleryModel {
-            rootType: DocumentGallery.File
-            properties: [ "url", "title", "mimeType", "orientation", "duration", "width", "height" ]
-            sortProperties: ["fileName"]
-            autoUpdate: true
-            filter: GalleryFilterUnion {
-                GalleryEqualsFilter { property: "path"; value: Settings.photoDirectory }
-                GalleryEqualsFilter { property: "path"; value: Settings.videoDirectory }
-            }
-        }
     }
 
     ScreenBlank {
