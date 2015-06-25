@@ -70,14 +70,6 @@ SettingsBase {
         }
     }
 
-    function captureModeCoverIcon(mode) {
-        switch (mode) {
-        case "image": return "image://theme/graphics-cover-camera"
-        case "video": return "image://theme/graphics-cover-camcorder"
-        default:  return ""
-        }
-    }
-
     function captureModeIcon(mode) {
         switch (mode) {
         case "image": return "image://theme/icon-camera-camera-mode"
