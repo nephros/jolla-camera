@@ -404,7 +404,7 @@ PinchArea {
                 header: overlay.isPortrait ? lowerHeader : upperHeader
                 model: [ "primary", "secondary" ]
                 delegate: SettingsMenuItem {
-                    settings: Settings.global
+                    settings: Settings
                     property: "cameraDevice"
                     value: modelData
                     icon: Settings.cameraIcon(modelData)

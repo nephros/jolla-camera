@@ -6,6 +6,7 @@ import com.jolla.camera 1.0
 SettingsBase {
     property alias mode: modeSettings
     property alias global: globalSettings
+    property string cameraDevice: global.cameraDevice
 
     property ConfigurationGroup _global: ConfigurationGroup {
         id: globalSettings

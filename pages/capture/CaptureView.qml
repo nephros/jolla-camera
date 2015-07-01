@@ -75,13 +75,15 @@ FocusScope {
     property var _startTime: new Date()
     property var _endTime: _startTime
 
+    property string cameraDevice: Settings.cameraDevice
+
     signal recordingStopped(url url, string mimeType)
     signal loaded
     signal captured
 
     function reload() {
         if (captureView._complete) {
-            captureView._unload = true;
+            captureView._unload = true
         }
     }
 
@@ -154,7 +156,19 @@ FocusScope {
         }
     }
 
-    Component.onCompleted: _complete = true
+    Component.onCompleted: {
+        camera.deviceId = Settings.global.cameraDevice
+        _complete = true
+    }
+
+    onCameraDeviceChanged: {
+        // We must call reload() first so camera reaches UnloadedState
+        // If we switch Camera::deviceId then camera will not start again
+        // which seems to be a bug in QtMultimedia
+        reload()
+        camera.deviceId = Settings.cameraDevice
+        Settings.global.cameraDevice = Settings.cameraDevice
+    }
 
     PositionSource {
         id: positionSource
@@ -265,7 +279,6 @@ FocusScope {
             }
         }
 
-        deviceId: Settings.global.cameraDevice
         captureMode: Settings.mode.captureMode
         cameraState: captureView._complete && captureView.effectiveActive && !captureView._unload
                     ? Camera.ActiveState
