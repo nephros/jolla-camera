@@ -194,6 +194,9 @@ Drawer {
 
         interactive: pageView.count > 1 && !galleryView.positionLocked
 
+        flickDeceleration: Theme.flickDeceleration
+        maximumFlickVelocity: Theme.maximumFlickVelocity 
+
         model: delegateModel
 
         onCountChanged: {
