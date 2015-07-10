@@ -78,6 +78,9 @@ Page {
         currentIndex: 1
         focus: true
 
+        flickDeceleration: Theme.flickDeceleration
+        maximumFlickVelocity: Theme.maximumFlickVelocity 
+
         model: VisualItemModel {
             Item {
                 id: galleryItem
