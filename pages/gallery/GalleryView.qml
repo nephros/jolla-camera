@@ -255,17 +255,27 @@ Drawer {
         ]
 
         contentItem.children: [
-            GStreamerVideoOutput {
-                id: video
-
-                source: MediaPlayer {
-                    id: mediaPlayer
-                }
-
+            Item {
                 visible: mediaPlayer.playbackState != MediaPlayer.StoppedState
                 width: galleryView.width
                 height: galleryView.height
                 anchors.centerIn: galleryView._activeItem
+
+                Rectangle {
+                    anchors.fill: parent
+                    color: 'black'
+                    opacity: mediaPlayer.playbackState == MediaPlayer.PlayingState ? 1 : 0
+                    Behavior on opacity { FadeAnimation {} }
+                }
+
+                GStreamerVideoOutput {
+                    id: video
+
+                    anchors.fill: parent
+                    source: MediaPlayer {
+                        id: mediaPlayer
+                    }
+                }
             }
         ]
 
