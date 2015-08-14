@@ -16,6 +16,7 @@ Drawer {
     readonly property bool windowActive: page.windowVisible
     property Item _activeItem
     property alias _videoActive: permissions.enabled
+    property bool _minimizedPlaying
 
     property alias contentItem: pageView.contentItem
     property alias header: pageView.header
@@ -46,8 +47,14 @@ Drawer {
     }
 
     onWindowActiveChanged: {
-        if (!windowActive && playing) {
-            mediaPlayer.pause()
+        if (!windowActive) {
+            // if we were playing a video when we minimized, store that information.
+            _minimizedPlaying = playing
+            if (_minimizedPlaying) {
+                mediaPlayer.pause() // and automatically pause the video
+            }
+        } else if (_minimizedPlaying) {
+            _play() // restart playback automatically.  will also go fullscreen.
         }
     }
 
@@ -158,10 +165,13 @@ Drawer {
                     duration: model.duration
 
                     onClicked: {
-                        if (mediaPlayer.playbackState == MediaPlayer.PlayingState) {
-                            mediaPlayer.pause()
-                        } else {
-                            galleryView.open = !galleryView.open
+                        galleryView.open = !galleryView.open
+                        if (galleryView.playing) {
+                            // pause and go splitscreen
+                            galleryView._pause()
+                        } else if (!galleryView.open) {
+                            // start playback and go fullscreen
+                            galleryView._play()
                         }
                     }
                 }
@@ -274,6 +284,12 @@ Drawer {
                     anchors.fill: parent
                     source: MediaPlayer {
                         id: mediaPlayer
+                        onPlaybackStateChanged: {
+                            if (playbackState == MediaPlayer.PlayingState && galleryView.open) {
+                                // go fullscreen for playback if triggered via Play icon.
+                                galleryView.open = false
+                            }
+                        }
                     }
                 }
             }
