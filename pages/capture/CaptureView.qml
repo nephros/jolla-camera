@@ -72,8 +72,11 @@ FocusScope {
 
     readonly property bool _mirrorViewfinder: Settings.global.cameraDevice == "secondary"
 
-    property var _startTime: new Date()
-    property var _endTime: _startTime
+    property var _startTime: {
+        _endTime = new Date()
+        return _endTime
+    }
+    property var _endTime
 
     property string cameraDevice: Settings.cameraDevice
 
