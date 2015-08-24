@@ -332,9 +332,7 @@ PinchArea {
             SettingsMenu {
                 id: flashMenu
 
-                // TODO JB#28702 configure based on hardware availability, not screen size
-                visible: Screen.sizeCategory < Screen.Large
-
+                visible: model.length > 1
                 width: overlay._menuWidth
                 title: Settings.flashText
                 spacing: overlay._menuItemVerticalSpacing
