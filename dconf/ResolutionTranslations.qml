@@ -8,6 +8,9 @@ Item {
         //: "8 mega pixel image resolution with 4:3 aspect ratio"
         //% "4:3 (8Mpix)"
         qsTrId("camera_settings-me-4-3-8m"),
+        //: "5 mega pixel image resolution with 4:3 aspect ratio"
+        //% "4:3 (5Mpix)"
+        qsTrId("camera_settings-me-4-3-5m"),
         //: "1 mega pixel image resolution with 16:9 aspect ratio"
         //% "16:9 (1Mpix)"
         qsTrId("camera_settings-me-16-9-1m"),
