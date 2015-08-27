@@ -343,10 +343,6 @@ FocusScope {
         }
 
         metaData {
-            //: Name of camera manufacturer to be written into captured photos
-            //% "Jolla"
-            cameraManufacturer: qsTrId("camera-la-manufacturer")
-
             orientation: captureView.captureOrientation
         }
 
@@ -379,7 +375,10 @@ FocusScope {
     }
 
     DeviceInfo {
-        Component.onCompleted: camera.metaData.cameraModel = model()
+        Component.onCompleted: {
+            camera.metaData.cameraModel = model()
+            camera.metaData.cameraManufacturer = manufacturer()
+        }
     }
 
     CameraExtensions {
