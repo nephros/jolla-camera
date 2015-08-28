@@ -27,6 +27,8 @@ Drawer {
 
     readonly property bool playing: mediaPlayer.playbackState == MediaPlayer.PlayingState
 
+    property int _preOrientationChangeIndex
+
     function positionViewAtBeginning() {
         pageView.currentIndex = pageView.count - 1
         pageView.positionViewAtEnd()
@@ -224,6 +226,12 @@ Drawer {
                 // bit of a battle so as a final safeguard, we force the position to
                 // update if anything other than flicking the list changes the current
                 // index.
+                if (page.orientationTransitionRunning && currentIndex != _preOrientationChangeIndex) {
+                    // Changing the size of the view can cause the currentIndex to change - fix it.
+                    // The recursion doesn't cause any problems. Hurrah.
+                    currentIndex = _preOrientationChangeIndex
+                    return
+                }
                 positionViewAtIndex(currentIndex, ListView.SnapPosition)
             }
         }
@@ -238,6 +246,15 @@ Drawer {
                 galleryView._activeItem = currentItem
                 if (galleryView._activeItem) {
                     galleryView._activeItem.active = true
+                }
+            }
+        }
+
+        Connections {
+            target: page
+            onOrientationTransitionRunningChanged: {
+                if (page.orientationTransitionRunning) {
+                    _preOrientationChangeIndex = pageView.currentIndex
                 }
             }
         }
