@@ -512,6 +512,7 @@ PinchArea {
 
                 width: overlay._menuWidth
                 height: width
+                visible: model.visible
 
                 Image {
                     anchors.centerIn: parent
