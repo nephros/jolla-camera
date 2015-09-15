@@ -8,6 +8,8 @@ import org.nemomobile.time 1.0
 import org.nemomobile.policy 1.0
 import org.nemomobile.ngf 1.0
 import org.nemomobile.configuration 1.0
+import QtSystemInfo 5.0
+
 import "../settings"
 
 FocusScope {
@@ -341,13 +343,6 @@ FocusScope {
         }
 
         metaData {
-            //: Name of camera manufacturer to be written into captured photos
-            //% "Jolla"
-            cameraManufacturer: qsTrId("camera-la-manufacturer")
-            //: Name of camera model to be written into captured photos
-            //% "Jolla"
-            cameraModel: qsTrId("camera-la-model")
-
             orientation: captureView.captureOrientation
         }
 
@@ -377,6 +372,13 @@ FocusScope {
                focusTimer.restart()
            }
        }
+    }
+
+    DeviceInfo {
+        Component.onCompleted: {
+            camera.metaData.cameraModel = model()
+            camera.metaData.cameraManufacturer = manufacturer()
+        }
     }
 
     CameraExtensions {
