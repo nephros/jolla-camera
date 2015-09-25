@@ -67,18 +67,21 @@ PinchArea {
     }
 
     property list<SettingsMenuItem> _menus
-    _menus: Screen.sizeCategory >= Screen.Large ? [
-                captureModeMenu.currentItem,
-                isoMenu.currentItem,
-                whiteBalanceMenu.currentItem,
-                focusMenu.currentItem,
-                timerMenu.currentItem
-            ] : [
-                captureModeMenu.currentItem,
-                flashMenu.currentItem,
-                whiteBalanceMenu.currentItem,
-                focusMenu.currentItem
-            ]
+    _menus: {
+        var menuItems = [ captureModeMenu.currentItem ]
+        if (Screen.sizeCategory >= Screen.Large) {
+            menuItems.push(isoMenu.currentItem)
+        }
+        if (Settings.mode.flashValues.length > 0) {
+            menuItems.push(flashMenu.currentItem)
+        }
+        menuItems.push(whiteBalanceMenu.currentItem)
+        menuItems.push(focusMenu.currentItem)
+        if (Screen.sizeCategory >= Screen.Large) {
+            menuItems.push(timerMenu.currentItem)
+        }
+        return menuItems
+    }
 
     signal clicked(var mouse)
 
@@ -332,7 +335,7 @@ PinchArea {
             SettingsMenu {
                 id: flashMenu
 
-                visible: model.length > 1
+                visible: model.length > 0
                 width: overlay._menuWidth
                 title: Settings.flashText
                 spacing: overlay._menuItemVerticalSpacing
