@@ -87,7 +87,7 @@ CoverBackground {
             icon: Settings.captureModeIcon(Settings.global.captureMode)
         }
         CoverIcon {
-            icon: Settings.mode.flashValues.length > 1
+            icon: Settings.mode.flashValues.length > 0
                   ? Settings.flashIcon(Settings.mode.flash)
                   : Settings.isoIcon(Settings.mode.iso)
         }
