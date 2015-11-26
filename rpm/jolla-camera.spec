@@ -3,7 +3,7 @@ Summary:    Jolla Camera application
 Version:    0.2.19
 Release:    1
 Group:      Applications/Multimedia
-License:    TBD
+License:    Proprietary
 URL:        https://bitbucket.org/jolla/ui-jolla-camera
 Source0:    %{name}-%{version}.tar.bz2
 BuildRequires:  pkgconfig(Qt5Core)
@@ -53,7 +53,6 @@ The Jolla Camera application.
 
 %package ts-devel
 Summary:   Translation source for Jolla Camera
-License:   TBD
 Group:     Applications/Multimedia
 
 %description ts-devel
@@ -61,7 +60,6 @@ Translation source for Jolla Camera
 
 %package settings
 Summary:   Setting page for jolla-camera
-License:   TBD
 Group:     System/Applications
 Requires:   %{name} = %{version}-%{release}
 Requires:  jolla-settings
