@@ -216,9 +216,13 @@ SettingsBase {
     function focusDistanceIcon(focusDistance) {
         switch (focusDistance) {
         case Camera.FocusAuto:       return "image://theme/icon-camera-focus"
+        case Camera.FocusHyperfocal:
         case Camera.FocusInfinity:   return "image://theme/icon-camera-focus-infinity"
         case Camera.FocusMacro:      return "image://theme/icon-camera-focus-macro"
         case Camera.FocusContinuous: return "image://theme/icon-camera-focus-auto"
+        default:
+            console.warning("Unhandled mapping from focus distance to icon", focusDistance)
+            return ""
         }
     }
 
@@ -228,6 +232,7 @@ SettingsBase {
         case Camera.FocusAuto:       return qsTrId("camera_settings-la-focus-auto")
         //: "Infinite focus distance"
         //% "Infinity focus"
+        case Camera.FocusHyperfocal:
         case Camera.FocusInfinity:   return qsTrId("camera_settings-la-focus-infinity")
         //: "Macro/close up focus distance"
         //% "Macro focus"
@@ -235,6 +240,9 @@ SettingsBase {
         //: "Continuous auto focus"
         //% "Continuous"
         case Camera.FocusContinuous: return qsTrId("camera_settings-la-focus-continuous")
+        default:
+            console.warning("Unhandled mapping from focus distance to text", focusDistance)
+            return ""
         }
     }
 
