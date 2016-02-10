@@ -74,7 +74,7 @@ ShareMethodList {
 
     AccountCreationManager {
         id: accountCreator
-        serviceFilter: ["sharing"]
+        serviceFilter: ["sharing", "e-mail"]
         endDestination: menuList.page
         endDestinationAction: PageStackAction.Pop
     }
