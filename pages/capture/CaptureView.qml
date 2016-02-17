@@ -805,14 +805,20 @@ FocusScope {
                     && !captureView._captureOnFocus
         key: Qt.Key_VolumeUp
         onPressed: camera.autoFocus()
-        onReleased: captureView._triggerCapture()
+        onReleased: {
+            if (enabled)
+                captureView._triggerCapture()
+        }
     }
     MediaKey {
         id: volumeDown
         enabled: volumeUp.enabled
         key: Qt.Key_VolumeDown
         onPressed: camera.autoFocus()
-        onReleased: captureView._triggerCapture()
+        onReleased: {
+            if (enabled)
+                captureView._triggerCapture()
+        }
     }
 
     Permissions {
