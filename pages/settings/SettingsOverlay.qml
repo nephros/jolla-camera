@@ -50,6 +50,8 @@ PinchArea {
     property alias shutter: shutterContainer.children
     property alias timer: timerContainer.children
     property alias exposure: exposureMenu.children
+    property alias anchorContainer: anchorContainer
+    property alias container: container
 
     readonly property int exposureAlignment: shutterContainer.parent == timerAnchorBR
                 ? Qt.AlignRight
