@@ -2,9 +2,7 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 import Sailfish.Media 1.0
 import com.jolla.camera 1.0
-import com.jolla.camera 1.0
 import org.nemomobile.dbus 1.0
-import QtDocGallery 5.0
 import QtMultimedia 5.4
 import "capture"
 import "settings"
@@ -28,6 +26,12 @@ Page {
         target: window
         property: "galleryIndex"
         value: galleryLoader.item ? galleryLoader.item.currentIndex : 0
+    }
+
+    Binding {
+        target: window
+        property: "captureModel"
+        value: galleryLoader.item ? galleryLoader.item.captureModel : null
     }
 
     allowedOrientations: captureView.inButtonLayout ? page.orientation : Orientation.All
@@ -139,7 +143,7 @@ Page {
 
                 onLoaded: {
                     if (galleryLoader.source == "") {
-                        galleryLoader.setSource("gallery/GalleryView.qml", { page: page, model: captureModel })
+                        galleryLoader.setSource("gallery/GalleryView.qml", { page: page })
                     }
                 }
 
@@ -160,7 +164,7 @@ Page {
                 captureView.active = captureView.ListView.isCurrentItem
             } else if (captureView.active) {
                 if (galleryLoader.source == "") {
-                    galleryLoader.setSource("gallery/GalleryView.qml", { page: page, model: captureModel })
+                    galleryLoader.setSource("gallery/GalleryView.qml", { page: page })
                 } else if (galleryLoader.item) {
                     galleryLoader.item.positionViewAtBeginning()
                 }

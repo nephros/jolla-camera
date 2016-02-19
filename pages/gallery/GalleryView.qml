@@ -4,6 +4,7 @@ import Sailfish.Silica 1.0
 import Sailfish.Media 1.0
 import Sailfish.Gallery 1.0
 import QtMultimedia 5.0
+import QtDocGallery 5.0
 import com.jolla.camera 1.0
 import org.nemomobile.policy 1.0
 import ".."
@@ -23,6 +24,8 @@ Drawer {
     property alias currentIndex: pageView.currentIndex
 
     property alias model: delegateModel.model
+
+    property alias captureModel: captureModelItem
 
     property CameraPage page
 
@@ -89,6 +92,21 @@ Drawer {
         mediaPlayer.stop()
     }
 
+    CaptureModel {
+        id: captureModelItem
+
+        source: DocumentGalleryModel {
+            rootType: DocumentGallery.File
+            properties: [ "url", "title", "mimeType", "orientation", "duration", "width", "height" ]
+            sortProperties: ["fileName"]
+            autoUpdate: true
+            filter: GalleryFilterUnion {
+                GalleryEqualsFilter { property: "path"; value: Settings.photoDirectory }
+                GalleryEqualsFilter { property: "path"; value: Settings.videoDirectory }
+            }
+        }
+    }
+
     MediaKey { enabled: keysResource.acquired; key: Qt.Key_MediaTogglePlayPause; onPressed: galleryView._togglePlay() }
     MediaKey { enabled: keysResource.acquired; key: Qt.Key_MediaPlay; onPressed: galleryView._play() }
     MediaKey { enabled: keysResource.acquired; key: Qt.Key_MediaPause; onPressed: galleryView._pause() }
@@ -110,6 +128,8 @@ Drawer {
 
     DelegateModel {
         id: delegateModel
+
+        model: captureModel
 
         delegate: Item {
             id: galleryItem

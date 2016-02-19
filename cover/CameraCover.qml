@@ -9,7 +9,7 @@ CoverBackground {
 
     property int coverIndex: galleryActive
                              ? galleryIndex
-                             : captureModel.count - 1
+                             : (captureModel != null ? captureModel.count - 1 : 0)
 
     onCoverIndexChanged: {
         repositionTimer.restart()
