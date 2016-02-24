@@ -5,7 +5,7 @@ TARGET = $$qtLibraryTarget($$TARGET)
 MODULENAME = com/jolla/camera
 TARGETPATH = $$[QT_INSTALL_QML]/$$MODULENAME
 
-QT += gui-private qml quick multimedia multimedia-private
+QT += gui-private qml quick multimedia
 CONFIG += plugin link_pkgconfig
 
 PKGCONFIG += mlite5
