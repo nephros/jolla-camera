@@ -117,6 +117,39 @@ PinchArea {
         enabled: !overlay.open && !overlay.inButtonLayout
     }
 
+    ButtonAnchor {
+        id: resetButton
+        parent: overlay
+        anchors {
+            right: parent.right
+            bottom: parent.bottom
+        }
+
+        opacity: !Settings.defaultSettings ? row.opacity : 0.0
+        visible: overlay.expanded
+
+        Behavior on opacity {
+            enabled: overlay.expanded
+            FadeAnimation {}
+        }
+
+        CameraButton {
+            background.visible: false
+            enabled: !Settings.defaultSettings
+
+            icon {
+                opacity: pressed ? 0.5 : 1.0
+                source: "image://theme/icon-camera-reset?" + (pressed ? Theme.highlightColor : Theme.primaryColor)
+            }
+
+            onClicked: {
+                upperHeader.pressedMenu = null
+                lowerHeader.pressedMenu = null
+                Settings.reset()
+            }
+        }
+    }
+
     ExposureMenu {
         id: exposureMenu
 
