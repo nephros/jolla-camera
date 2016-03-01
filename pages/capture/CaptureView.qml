@@ -478,6 +478,7 @@ FocusScope {
 
         rotation: -captureView.viewfinderOrientation
         anchors.centerIn: parent
+        opacity: captureOverlay ? 1.0 - captureOverlay.settingsOpacity : 1.0
 
         Repeater {
             model: camera.focus.focusZones
