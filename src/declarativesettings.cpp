@@ -9,6 +9,7 @@
 #include <QQmlEngine>
 #include <QSettings>
 #include <QStandardPaths>
+#include <QLocale>
 
 DeclarativeSettings::DeclarativeSettings(QObject *parent)
     : QObject(parent)
@@ -20,7 +21,7 @@ DeclarativeSettings::DeclarativeSettings(QObject *parent)
     QDir(videoDirectory()).mkpath(QLatin1String(".recording"));
 
     m_prefixDate = QDate::fromString(m_counterDate.value().toString(), Qt::ISODate);
-    m_prefix = m_prefixDate.toString(QLatin1String("yyyyMMdd_"));
+    m_prefix = QLocale::c().toString(m_prefixDate, QLatin1String("yyyyMMdd_"));
 
     updateLocation();
 }
@@ -145,7 +146,7 @@ void DeclarativeSettings::verifyCapturePrefix()
     const QDate currentDate = QDate::currentDate();
     if (m_prefixDate != currentDate) {
         m_prefixDate = currentDate;
-        m_prefix = currentDate.toString(QLatin1String("yyyyMMdd_"));
+        m_prefix = QLocale::c().toString(currentDate, QLatin1String("yyyyMMdd_"));
         int counter = counterStartValue(photoDirectory(), m_prefix);
         counter = counterStartValue(videoDirectory(), m_prefix, counter);
 
