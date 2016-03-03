@@ -8,6 +8,35 @@ SettingsBase {
     property alias global: globalSettings
     property string cameraDevice: global.cameraDevice
 
+    readonly property var settingsDefaults: ({
+                                                 "iso": 0,
+                                                 "timer": 0,
+                                                 "viewfinderGrid": "none",
+                                                 "whiteBalance": CameraImageProcessing.WhiteBalanceAuto,
+                                                 "focusDistance": ((globalSettings.cameraDevice === "primary") ?
+                                                                       Camera.FocusContinuous : Camera.FocusHyperfocal),
+                                                 "flash": ((modeSettings.captureMode == Camera.CaptureStillImage) &&
+                                                           (globalSettings.cameraDevice === "primary") ?
+                                                               Camera.FlashAuto : Camera.FlashOff)
+                                             })
+
+    readonly property bool defaultSettings: modeSettings.iso === settingsDefaults["iso"] &&
+                                            modeSettings.timer === settingsDefaults["timer"] &&
+                                            modeSettings.viewfinderGrid === settingsDefaults["viewfinderGrid"] &&
+                                            modeSettings.whiteBalance == settingsDefaults["whiteBalance"] &&
+                                            modeSettings.focusDistance == settingsDefaults["focusDistance"] &&
+                                            modeSettings.flash == settingsDefaults["flash"]
+
+    function reset() {
+        var basePath = globalSettings.path + "/" + modeSettings.path
+        for (var i in settingsDefaults) {
+            _singleValue.key = basePath + "/" + i
+            _singleValue.value = settingsDefaults[i]
+        }
+    }
+
+    property ConfigurationValue _singleValue: ConfigurationValue {}
+
     property ConfigurationGroup _global: ConfigurationGroup {
         id: globalSettings
 

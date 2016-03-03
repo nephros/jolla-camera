@@ -129,11 +129,8 @@ SettingsOverlay {
         }
     }
 
-    shutter: MouseArea {
+    shutter: CameraButton {
         id: captureButton
-
-        width: Theme.itemSizeExtraLarge
-        height: Theme.itemSizeExtraLarge
 
         z: settingsOverlay.inButtonLayout ? 1 : 0
 
@@ -142,28 +139,10 @@ SettingsOverlay {
                     && !volumeDown.pressed
                     && !volumeUp.pressed
 
-        anchors.centerIn: parent
-
         onPressed: camera.autoFocus()
-
         onClicked: captureView._triggerCapture()
 
-        Rectangle {
-            radius: Theme.itemSizeSmall / 2
-            width: Theme.itemSizeSmall
-            height: Theme.itemSizeSmall
-
-            anchors.centerIn: parent
-
-            opacity: 0.6
-            color: Theme.highlightDimmerColor
-        }
-
-        Image {
-            id: shutterImage
-
-            anchors.centerIn: parent
-
+        icon {
             opacity: {
                 if (captureTimer.running) {
                     return 0.1

@@ -1,6 +1,6 @@
 Name:       jolla-camera
 Summary:    Jolla Camera application
-Version:    0.3.7
+Version:    0.3.9
 Release:    1
 Group:      Applications/Multimedia
 License:    Proprietary
@@ -19,7 +19,6 @@ BuildRequires:  qt5-qttools
 BuildRequires:  qt5-qttools-linguist
 BuildRequires:  oneshot
 
-Requires:  jolla-ambient >= 0.4.10
 Requires:  jolla-settings-accounts >= 0.1.31
 Requires:  sailfishsilica-qt5 >= 0.13.44
 Requires:  mapplauncherd >= 4.1.17
@@ -36,6 +35,7 @@ Requires:  nemo-qml-plugin-dbus-qt5
 Requires:  nemo-qml-plugin-policy-qt5
 Requires:  nemo-qml-plugin-time-qt5
 Requires:  nemo-qml-plugin-configuration-qt5
+Requires:  sailfish-content-graphics-default-base >= 0.7.47
 Requires:  sailfish-components-media-qt5 >= 0.0.18
 Requires:  sailfish-components-gallery-qt5 >= 0.0.48
 Requires:  libjollasignonuiservice-qt5-plugin >= 0.0.29

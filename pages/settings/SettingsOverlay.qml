@@ -2,7 +2,6 @@ import QtQuick 2.0
 import QtMultimedia 5.0
 import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
-import com.jolla.camera 1.0
 
 PinchArea {
     id: overlay
@@ -52,6 +51,7 @@ PinchArea {
     property alias exposure: exposureMenu.children
     property alias anchorContainer: anchorContainer
     property alias container: container
+    readonly property alias settingsOpacity: row.opacity
 
     readonly property int exposureAlignment: shutterContainer.parent == timerAnchorBR
                 ? Qt.AlignRight
@@ -115,6 +115,39 @@ PinchArea {
         parent: overlay._buttonAnchors[overlay._captureButtonLocation]
         anchors.fill: parent
         enabled: !overlay.open && !overlay.inButtonLayout
+    }
+
+    ButtonAnchor {
+        id: resetButton
+        parent: overlay
+        anchors {
+            right: parent.right
+            bottom: parent.bottom
+        }
+
+        opacity: !Settings.defaultSettings ? row.opacity : 0.0
+        visible: overlay.expanded
+
+        Behavior on opacity {
+            enabled: overlay.expanded
+            FadeAnimation {}
+        }
+
+        CameraButton {
+            background.visible: false
+            enabled: !Settings.defaultSettings
+
+            icon {
+                opacity: pressed ? 0.5 : 1.0
+                source: "image://theme/icon-camera-reset?" + (pressed ? Theme.highlightColor : Theme.primaryColor)
+            }
+
+            onClicked: {
+                upperHeader.pressedMenu = null
+                lowerHeader.pressedMenu = null
+                Settings.reset()
+            }
+        }
     }
 
     ExposureMenu {
