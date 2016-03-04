@@ -13,8 +13,9 @@ SettingsBase {
                                                  "timer": 0,
                                                  "viewfinderGrid": "none",
                                                  "whiteBalance": CameraImageProcessing.WhiteBalanceAuto,
-                                                 "focusDistance": ((globalSettings.cameraDevice === "primary") ?
-                                                                       Camera.FocusContinuous : Camera.FocusHyperfocal),
+                                                 "focusDistance": (modeSettings.focusDistanceValues.length == 1
+                                                                   ? modeSettings.focusDistanceValues[0]
+                                                                   : Camera.FocusContinuous),
                                                  "flash": ((modeSettings.captureMode == Camera.CaptureStillImage) &&
                                                            (globalSettings.cameraDevice === "primary") ?
                                                                Camera.FlashAuto : Camera.FlashOff)
