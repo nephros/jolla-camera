@@ -198,6 +198,9 @@ SettingsBase {
         //: "Camera flash enabled"
         //% "Flash enabled"
         case Camera.FlashOn:      return qsTrId("camera_settings-la-flash-on")
+        //: "Camera flash torch"
+        //% "Flash torch"
+        case Camera.FlashTorch:   return qsTrId("camera_settings-la-flash-torch")
         //: "Camera flash with red eye reduction"
         //% "Flash red eye"
         case Camera.FlashRedEyeReduction: return qsTrId("camera_settings-la-flash-redeye")
