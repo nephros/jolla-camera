@@ -181,7 +181,7 @@ SettingsBase {
         switch (flash) {
         case Camera.FlashAuto:              return "image://theme/icon-camera-flash-automatic"
         case Camera.FlashOff:               return "image://theme/icon-camera-flash-off"
-	case Camera.FlashTorch:
+        case Camera.FlashTorch:
         case Camera.FlashOn:                return "image://theme/icon-camera-flash-on"
         case Camera.FlashRedEyeReduction:   return "image://theme/icon-camera-flash-redeye"
         }
