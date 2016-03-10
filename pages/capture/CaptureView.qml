@@ -3,10 +3,8 @@ import QtMultimedia 5.4
 import Sailfish.Silica 1.0
 import Sailfish.Media 1.0
 import com.jolla.camera 1.0
-import org.nemomobile.time 1.0
 import org.nemomobile.policy 1.0
 import org.nemomobile.ngf 1.0
-import org.nemomobile.configuration 1.0
 import org.nemomobile.dbus 2.0
 import QtSystemInfo 5.0
 
@@ -54,8 +52,6 @@ FocusScope {
                 ? parent.x + x + _shutterOffset
                 : -parent.x - x - _shutterOffset
 
-    property int _recordingDuration: ((clock.enabled ? clock.time : captureView._endTime) - captureView._startTime) / 1000
-
     readonly property bool isPortrait: orientation == Orientation.Portrait
                 || orientation == Orientation.PortraitInverted
     readonly property bool effectiveActive: (activeFocus && active) || (windowVisible && recording)
@@ -77,12 +73,6 @@ FocusScope {
 
     readonly property bool _applicationActive: Qt.application.state == Qt.ApplicationActive
     on_ApplicationActiveChanged: if (_applicationActive) flashlightServiceProbe.checkFlashlightServiceStatus()
-
-    property var _startTime: {
-        _endTime = new Date()
-        return _endTime
-    }
-    property var _endTime
 
     property string cameraDevice: Settings.cameraDevice
 
@@ -555,20 +545,6 @@ FocusScope {
 
         interval: 15000
         onTriggered: captureView._resetFocus()
-    }
-
-    WallClock {
-        id: clock
-        updateFrequency: WallClock.Second
-        enabled: camera.videoRecorder.recorderState == CameraRecorder.RecordingState
-        onEnabledChanged: {
-            if (enabled) {
-                captureView._startTime = clock.time
-                captureView._endTime = captureView._startTime
-            } else {
-                captureView._endTime = captureView._startTime
-            }
-        }
     }
 
     MediaKey {

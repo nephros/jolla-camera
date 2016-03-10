@@ -21,6 +21,14 @@ SettingsOverlay {
     property Item focusArea
     property alias captureButtonPressed: captureButton.pressed
 
+    property int _recordingDuration: ((clock.enabled ? clock.time : _endTime) - _startTime) / 1000
+
+    property var _startTime: {
+        _endTime = new Date()
+        return _endTime
+    }
+    property var _endTime
+
     width: captureView.width
     height: captureView.height
 
@@ -198,10 +206,24 @@ SettingsOverlay {
             anchors.centerIn: parent
 
             text: Format.formatDuration(
-                      captureView._recordingDuration,
-                      captureView._recordingDuration >= 3600 ? Formatter.DurationLong : Formatter.DurationShort)
+                      _recordingDuration,
+                      _recordingDuration >= 3600 ? Formatter.DurationLong : Formatter.DurationShort)
             font.pixelSize: Theme.fontSizeMedium
 
+        }
+    }
+
+    WallClock {
+        id: clock
+        updateFrequency: WallClock.Second
+        enabled: camera.videoRecorder.recorderState == CameraRecorder.RecordingState
+        onEnabledChanged: {
+            if (enabled) {
+                _startTime = clock.time
+                _endTime = _startTime
+            } else {
+                _endTime = _startTime
+            }
         }
     }
 
