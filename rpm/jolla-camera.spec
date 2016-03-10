@@ -22,7 +22,7 @@ BuildRequires:  oneshot
 Requires:  jolla-ambient >= 0.4.10
 Requires:  jolla-settings-accounts >= 0.1.31
 Requires:  sailfishsilica-qt5 >= 0.13.44
-Requires:  mapplauncherd >= 4.1.17
+Requires:  mapplauncherd >= 4.1.22
 Requires:  mapplauncherd-booster-silica-qt5
 Requires:  qt5-qtdeclarative-import-models2
 Requires:  qt5-qtdeclarative-import-positioning
