@@ -181,6 +181,7 @@ SettingsBase {
         switch (flash) {
         case Camera.FlashAuto:              return "image://theme/icon-camera-flash-automatic"
         case Camera.FlashOff:               return "image://theme/icon-camera-flash-off"
+        case Camera.FlashTorch:
         case Camera.FlashOn:                return "image://theme/icon-camera-flash-on"
         case Camera.FlashRedEyeReduction:   return "image://theme/icon-camera-flash-redeye"
         }
@@ -197,6 +198,9 @@ SettingsBase {
         //: "Camera flash enabled"
         //% "Flash enabled"
         case Camera.FlashOn:      return qsTrId("camera_settings-la-flash-on")
+        //: "Camera flash in torch mode"
+        //% "Flash on"
+        case Camera.FlashTorch:   return qsTrId("camera_settings-la-flash-torch")
         //: "Camera flash with red eye reduction"
         //% "Flash red eye"
         case Camera.FlashRedEyeReduction: return qsTrId("camera_settings-la-flash-redeye")
