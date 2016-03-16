@@ -166,6 +166,8 @@ SettingsBase {
         case 200: return qsTrId("camera_settings-la-light-sensitivity-200")
         //% "Light sensitivity • ISO 400"
         case 400: return qsTrId("camera_settings-la-light-sensitivity-400")
+        //% "Light sensitivity • ISO 800"
+        case 800: return qsTrId("camera_settings-la-light-sensitivity-800")
         }
     }
 
