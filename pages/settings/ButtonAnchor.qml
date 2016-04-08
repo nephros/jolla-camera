@@ -19,10 +19,12 @@ MouseArea {
     enabled: !anchorContainer.visible || overlay._captureButtonLocation != index
 
     onClicked: {
-        if (overlay.isPortrait) {
-            Settings.global.portraitCaptureButtonLocation = index
-        } else {
-            Settings.global.landscapeCaptureButtonLocation = index
+        if (index >= 0) {
+            if (overlay.isPortrait) {
+                Settings.global.portraitCaptureButtonLocation = index
+            } else {
+                Settings.global.landscapeCaptureButtonLocation = index
+            }
         }
     }
 

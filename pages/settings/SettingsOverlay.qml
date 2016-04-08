@@ -117,16 +117,19 @@ PinchArea {
         enabled: !overlay.open && !overlay.inButtonLayout
     }
 
-    ButtonAnchor {
-        id: resetButton
+    Item {
         parent: overlay
         anchors {
             right: parent.right
             bottom: parent.bottom
+            margins: Theme.paddingLarge
         }
 
+        width: Theme.itemSizeMedium
+        height: Theme.itemSizeMedium
         opacity: !Settings.defaultSettings ? row.opacity : 0.0
         visible: overlay.expanded
+        z: 1
 
         Behavior on opacity {
             enabled: overlay.expanded
@@ -135,7 +138,7 @@ PinchArea {
 
         CameraButton {
             background.visible: false
-            enabled: !Settings.defaultSettings
+            enabled: !Settings.defaultSettings && parent.opacity > 0.0
 
             icon {
                 opacity: pressed ? 0.5 : 1.0
