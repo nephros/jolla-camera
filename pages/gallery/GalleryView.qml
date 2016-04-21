@@ -63,8 +63,6 @@ Drawer {
         }
     }
 
-    Component.onCompleted: positionViewAtBeginning()
-
     function _play() {
         if (_videoActive) {
             mediaPlayer.source = galleryView._activeItem.url
@@ -96,6 +94,10 @@ Drawer {
         id: captureModelItem
 
         source: DocumentGalleryModel {
+            id: galleryModel
+
+            property bool populated
+
             rootType: DocumentGallery.File
             properties: [ "url", "title", "mimeType", "orientation", "duration", "width", "height" ]
             sortProperties: ["fileName"]
@@ -103,6 +105,12 @@ Drawer {
             filter: GalleryFilterUnion {
                 GalleryEqualsFilter { property: "path"; value: Settings.photoDirectory }
                 GalleryEqualsFilter { property: "path"; value: Settings.videoDirectory }
+            }
+            onStatusChanged: {
+                if (status === DocumentGalleryModel.Finished) {
+                    populated = true
+                    positionViewAtBeginning()
+                }
             }
         }
     }
@@ -336,7 +344,7 @@ Drawer {
             //: Placeholder text for an empty camera reel view
             //% "Captured photos and videos will appear here when you take some"
             text: qsTrId("camera-la-no-photos")
-            enabled: pageView.count == 0
+            enabled: pageView.count == 0 && galleryModel.populated
         }
     }
 
