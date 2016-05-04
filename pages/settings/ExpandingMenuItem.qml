@@ -5,7 +5,7 @@ MouseArea {
     id: menuItem
 
     property url icon
-    property variant value
+    property var value
 
     property string property
     property QtObject settings

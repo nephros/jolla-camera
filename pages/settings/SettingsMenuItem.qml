@@ -5,7 +5,7 @@ MouseArea {
     id: menuItem
 
     property url icon
-    property variant value
+    property var value
     property alias iconVisible: image.visible
 
     property string property
