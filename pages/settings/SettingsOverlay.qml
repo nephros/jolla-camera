@@ -33,16 +33,16 @@ PinchArea {
 
     property real _menuItemHorizontalSpacing: Screen.sizeCategory >= Screen.Large
                                               ? Theme.paddingLarge * 2
-                                              : Theme.paddingLarge + Theme.paddingSmall
-    property real _menuItemVerticalSpacing: Screen.sizeCategory >= Screen.Large
-                                            ? 0
-                                            : Theme.paddingMedium + Theme.paddingSmall
+                                              : Theme.paddingMedium
     property real _headerHeight: Screen.sizeCategory >= Screen.Large
                                  ? Theme.itemSizeMedium
                                  : Theme.itemSizeSmall + Theme.paddingMedium
     property real _headerTopMargin: Screen.sizeCategory >= Screen.Large
                                     ? Theme.paddingLarge + Theme.paddingSmall
-                                    : 0
+                                    : -((Theme.paddingMedium + Theme.paddingSmall) / 2) // first button reactive area overlapping slightly
+    readonly property real _menuWidth: Screen.sizeCategory >= Screen.Large
+                                       ? Theme.iconSizeLarge + Theme.paddingMedium*2 // increase icon hitbox
+                                       : Theme.iconSizeMedium + Theme.paddingMedium + Theme.paddingSmall
 
     property bool interactive: true
 
@@ -56,10 +56,6 @@ PinchArea {
     readonly property int exposureAlignment: shutterContainer.parent == timerAnchorBR
                 ? Qt.AlignRight
                 : Qt.AlignLeft
-
-    readonly property real _menuWidth: Screen.sizeCategory >= Screen.Large
-                                       ? Theme.iconSizeLarge + Theme.paddingMedium*2 // increase icon hitbox
-                                       : Theme.iconSizeMedium
 
     on_CaptureButtonLocationChanged: inButtonLayout = false
 
@@ -351,7 +347,6 @@ PinchArea {
 
                 width: overlay._menuWidth
                 title: Settings.captureModeText
-                spacing: overlay._menuItemVerticalSpacing
                 header: upperHeader
                 model: [ "image", "video" ]
                 delegate: SettingsMenuItem {
@@ -376,7 +371,6 @@ PinchArea {
                 visible: model.length > 0
                 width: overlay._menuWidth
                 title: Settings.flashText
-                spacing: overlay._menuItemVerticalSpacing
                 header: upperHeader
                 model: Settings.mode.flashValues
                 delegate: SettingsMenuItem {
@@ -392,7 +386,6 @@ PinchArea {
 
                 width: overlay._menuWidth
                 title: Settings.whiteBalanceText
-                spacing: overlay._menuItemVerticalSpacing
                 header: upperHeader
                 model: Settings.mode.whiteBalanceValues
                 delegate: SettingsMenuItem {
@@ -408,7 +401,6 @@ PinchArea {
 
                 width: overlay._menuWidth
                 title: Settings.focusDistanceText
-                spacing: overlay._menuItemVerticalSpacing
                 header: upperHeader
                 model: Settings.mode.focusDistanceValues
                 delegate: SettingsMenuItem {
@@ -422,7 +414,7 @@ PinchArea {
         }
 
         Row {
-            id: leftRow
+            id: leftRow // bottom left or single row left side
             anchors {
                 top: overlay.isPortrait ? lowerHeader.bottom : row.top
                 right: overlay.isPortrait ? row.horizontalCenter : row.left
@@ -439,7 +431,6 @@ PinchArea {
 
                 width: overlay._menuWidth
                 title: Settings.cameraText
-                spacing: overlay._menuItemVerticalSpacing
                 header: overlay.isPortrait ? lowerHeader : upperHeader
                 model: [ "primary", "secondary" ]
                 delegate: SettingsMenuItem {
@@ -457,7 +448,6 @@ PinchArea {
 
                 width: overlay._menuWidth
                 title: Settings.isoText
-                spacing: overlay._menuItemVerticalSpacing
                 header: Screen.sizeCategory < Screen.Large && overlay.isPortrait ? lowerHeader : upperHeader
                 model: Settings.mode.isoValues
                 delegate: SettingsMenuItem {
@@ -470,7 +460,7 @@ PinchArea {
         }
 
         Row {
-            id: rightRow
+            id: rightRow // bottom right or single row right side
             anchors {
                 top: leftRow.top
                 left: overlay.isPortrait ? row.horizontalCenter : row.right
@@ -489,7 +479,6 @@ PinchArea {
 
                 width: overlay._menuWidth
                 title: Settings.timerText
-                spacing: overlay._menuItemVerticalSpacing
                 header: Screen.sizeCategory < Screen.Large && overlay.isPortrait ? lowerHeader : upperHeader
                 model: Settings.mode.timerValues
                 delegate: SettingsMenuItem {
@@ -505,7 +494,6 @@ PinchArea {
 
                 width: overlay._menuWidth
                 title: Settings.viewfinderGridText
-                spacing: overlay._menuItemVerticalSpacing
                 header: overlay.isPortrait ? lowerHeader : upperHeader
                 model: Settings.mode.viewfinderGridValues
                 delegate: SettingsMenuItem {
