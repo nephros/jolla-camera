@@ -143,7 +143,7 @@ Drawer {
             id: galleryItem
 
             property bool active
-            readonly property variant itemId: model.itemId
+            readonly property var itemId: model.itemId
             readonly property int index: model.index
             readonly property string title: model.title
             readonly property string mimeType: model.mimeType
