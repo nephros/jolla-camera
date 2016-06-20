@@ -54,7 +54,7 @@ FocusScope {
 
     readonly property bool isPortrait: orientation == Orientation.Portrait
                 || orientation == Orientation.PortraitInverted
-    readonly property bool effectiveActive: (activeFocus && active) || (windowVisible && recording)
+    readonly property bool effectiveActive: ((activeFocus && active) || (windowVisible && recording)) && _applicationActive
 
     readonly property bool _canCapture: (camera.captureMode == Camera.CaptureStillImage && camera.imageCapture.ready)
                 || (camera.captureMode == Camera.CaptureVideo && camera.videoRecorder.recorderStatus >= CameraRecorder.LoadedStatus)
@@ -146,10 +146,20 @@ FocusScope {
 
     Timer {
         id: reloadTimer
-        interval: 10
+        interval: 100
         running: captureView._unload && camera.cameraStatus == Camera.UnloadedStatus
         onTriggered: {
             captureView._unload = false
+        }
+    }
+
+    Timer {
+        id: startFailedTimer
+        interval: 800
+        onTriggered: {
+            if (camera.cameraStatus === Camera.StartingStatus) {
+                captureView.reload()
+            }
         }
     }
 
@@ -256,6 +266,15 @@ FocusScope {
         onCameraStateChanged: {
             if (cameraState == Camera.ActiveState && captureOverlay) {
                 captureView.loaded()
+            }
+        }
+
+
+        onCameraStatusChanged: {
+            if (camera.cameraStatus == Camera.StartingStatus) {
+                startFailedTimer.restart()
+            } else {
+                startFailedTimer.stop()
             }
         }
 
