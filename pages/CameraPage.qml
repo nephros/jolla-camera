@@ -67,6 +67,14 @@ Page {
         }
     }
 
+    Timer {
+        running: Qt.application.state != Qt.ApplicationActive && switcherView.currentIndex != 1
+        interval: 15*60*1000
+        onTriggered: {
+            switcherView.currentIndex = 1
+        }
+    }
+
     ListView {
         id: switcherView
 
