@@ -568,7 +568,8 @@ FocusScope {
 
     MediaKey {
         id: volumeUp
-        enabled: keysResource.acquired
+        enabled: camera.imageCapture.ready
+                    && keysResource.acquired
                     && camera.captureMode == Camera.CaptureStillImage
                     && !captureButtonPressed
                     && !captureView._captureOnFocus
