@@ -155,7 +155,7 @@ FocusScope {
 
     Timer {
         id: startFailedTimer
-        interval: 1200
+        interval: 2000
         onTriggered: {
             if (camera.cameraStatus === Camera.StartingStatus) {
                 captureView.reload()
