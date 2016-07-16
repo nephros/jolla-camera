@@ -12,11 +12,15 @@ class QQmlEngine;
 class QJSEngine;
 QT_END_NAMESPACE
 
+class PartitionManager;
+
 class DeclarativeSettings : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString photoDirectory READ photoDirectory CONSTANT)
-    Q_PROPERTY(QString videoDirectory READ videoDirectory CONSTANT)
+    Q_PROPERTY(QString photoDirectory READ photoDirectory NOTIFY photoDirectoryChanged)
+    Q_PROPERTY(QString videoDirectory READ videoDirectory NOTIFY videoDirectoryChanged)
+    Q_PROPERTY(QString storagePath READ storagePath WRITE setStoragePath NOTIFY storagePathChanged)
+    Q_PROPERTY(bool storagePathValid READ storagePathValid NOTIFY storagePathValidChanged)
     Q_PROPERTY(bool locationEnabled READ locationEnabled NOTIFY locationEnabledChanged)
 public:
     DeclarativeSettings(QObject *parent = 0);
@@ -29,6 +33,10 @@ public:
     QString photoDirectory() const;
     QString videoDirectory() const;
 
+    QString storagePath() const;
+    void setStoragePath(const QString &path);
+    bool storagePathValid() const;
+
     Q_INVOKABLE QString photoCapturePath(const QString &extension);
     Q_INVOKABLE QString videoCapturePath(const QString &extension);
 
@@ -39,17 +47,29 @@ public slots:
 
 signals:
     void locationEnabledChanged();
+    void photoDirectoryChanged();
+    void videoDirectoryChanged();
+    void storagePathChanged();
+    void storagePathValidChanged();
+
+private slots:
+    void verifyStoragePath();
 
 private:
+    bool verifyWritable(const QString &path);
     void verifyCapturePrefix();
+
+    PartitionManager *m_partitionManager;
 
     MGConfItem m_counter;
     MGConfItem m_counterDate;
+    MGConfItem m_storagePath;
 
     QString m_prefix;
     QDate m_prefixDate;
 
     bool m_locationEnabled;
+    bool m_storagePathValid;
 };
 
 #endif

@@ -6,9 +6,9 @@ MODULENAME = com/jolla/camera
 TARGETPATH = $$[QT_INSTALL_QML]/$$MODULENAME
 
 QT += gui-private qml quick multimedia
-CONFIG += plugin link_pkgconfig
+CONFIG += plugin link_pkgconfig c++11
 
-PKGCONFIG += mlite5
+PKGCONFIG += mlite5 systemsettings
 
 SOURCES += \
         cameraplugin.cpp \
