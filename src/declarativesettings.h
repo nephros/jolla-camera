@@ -20,8 +20,9 @@ class DeclarativeSettings : public QObject
     Q_PROPERTY(QString photoDirectory READ photoDirectory NOTIFY photoDirectoryChanged)
     Q_PROPERTY(QString videoDirectory READ videoDirectory NOTIFY videoDirectoryChanged)
     Q_PROPERTY(QString storagePath READ storagePath WRITE setStoragePath NOTIFY storagePathChanged)
-    Q_PROPERTY(bool storagePathValid READ storagePathValid NOTIFY storagePathValidChanged)
+    Q_PROPERTY(StoragePathStatus storagePathStatus READ storagePathStatus NOTIFY storagePathStatusChanged)
     Q_PROPERTY(bool locationEnabled READ locationEnabled NOTIFY locationEnabledChanged)
+    Q_ENUMS(StoragePathStatus)
 public:
     DeclarativeSettings(QObject *parent = 0);
     ~DeclarativeSettings();
@@ -33,9 +34,15 @@ public:
     QString photoDirectory() const;
     QString videoDirectory() const;
 
+    enum StoragePathStatus {
+        Unavailable,
+        Mounting,
+        Available
+    };
+
     QString storagePath() const;
     void setStoragePath(const QString &path);
-    bool storagePathValid() const;
+    StoragePathStatus storagePathStatus() const;
 
     Q_INVOKABLE QString photoCapturePath(const QString &extension);
     Q_INVOKABLE QString videoCapturePath(const QString &extension);
@@ -50,7 +57,7 @@ signals:
     void photoDirectoryChanged();
     void videoDirectoryChanged();
     void storagePathChanged();
-    void storagePathValidChanged();
+    void storagePathStatusChanged();
 
 private slots:
     void verifyStoragePath();
@@ -69,7 +76,7 @@ private:
     QDate m_prefixDate;
 
     bool m_locationEnabled;
-    bool m_storagePathValid;
+    StoragePathStatus m_storagePathStatus;
 };
 
 #endif

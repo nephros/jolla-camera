@@ -20,7 +20,7 @@ DeclarativeSettings::DeclarativeSettings(QObject *parent)
     , m_counterDate(QLatin1String("/apps/jolla-camera/captureCounterDate"))
     , m_storagePath(QStringLiteral("/apps/jolla-camera/storagePath"))
     , m_locationEnabled(false)
-    , m_storagePathValid(true)
+    , m_storagePathStatus(Unavailable)
 {
     m_prefixDate = QDate::fromString(m_counterDate.value().toString(), Qt::ISODate);
     m_prefix = QLocale::c().toString(m_prefixDate, QLatin1String("yyyyMMdd_"));
@@ -71,16 +71,16 @@ void DeclarativeSettings::updateLocation()
 
 QString DeclarativeSettings::photoDirectory() const
 {
-    if (m_storagePathValid && !storagePath().isEmpty())
-        return storagePath() + QStringLiteral("/Sailfish/Pictures");
+    if (m_storagePathStatus == Available && !storagePath().isEmpty())
+        return storagePath() + QStringLiteral("/Pictures/Camera");
 
     return QStandardPaths::writableLocation(QStandardPaths::PicturesLocation) + QLatin1String("/Camera");
 }
 
 QString DeclarativeSettings::videoDirectory() const
 {
-    if (m_storagePathValid && !storagePath().isEmpty())
-        return storagePath() + QStringLiteral("/Sailfish/Movies");
+    if (m_storagePathStatus == Available && !storagePath().isEmpty())
+        return storagePath() + QStringLiteral("/Videos/Camera");
 
     return QStandardPaths::writableLocation(QStandardPaths::MoviesLocation) + QLatin1String("/Camera");
 }
@@ -104,9 +104,9 @@ void DeclarativeSettings::setStoragePath(const QString &path)
     // notifiers will be handled by the MGConfItem change signal connection
 }
 
-bool DeclarativeSettings::storagePathValid() const
+DeclarativeSettings::StoragePathStatus DeclarativeSettings::storagePathStatus() const
 {
-    return m_storagePathValid;
+    return m_storagePathStatus;
 }
 
 bool DeclarativeSettings::verifyWritable(const QString &path)
@@ -120,18 +120,21 @@ void DeclarativeSettings::verifyStoragePath()
 {
     QString prevPhotoPath = photoDirectory();
     QString path = storagePath();
-    bool wasValid = m_storagePathValid;
+    StoragePathStatus oldStatus = m_storagePathStatus;
+
+    m_storagePathStatus = Unavailable;
 
     if (!path.isEmpty()) {
         QVector<Partition> partitions = m_partitionManager->partitions(Partition::External | Partition::ExcludeParents);
         auto it = std::find_if(partitions.begin(), partitions.end(), [path](const Partition &partition) { return partition.mountPath() == path; });
-        if (it != partitions.end() && (*it).status() == Partition::Mounted) {
-            m_storagePathValid = verifyWritable(storagePath());
-        } else {
-            m_storagePathValid = false;
+        if (it != partitions.end()) {
+            const Partition &partition = *it;
+            if (partition.status() == Partition::Mounted) {
+                m_storagePathStatus = verifyWritable(storagePath()) ? Available : Unavailable;
+            } else if(partition.status() == Partition::Mounting) {
+                m_storagePathStatus = Mounting;
+            }
         }
-    } else {
-        m_storagePathValid = true;
     }
 
     QDir(photoDirectory()).mkpath(QLatin1String("."));
@@ -141,8 +144,8 @@ void DeclarativeSettings::verifyStoragePath()
         emit photoDirectoryChanged();
         emit videoDirectoryChanged();
     }
-    if (wasValid != m_storagePathValid)
-        emit storagePathValidChanged();
+    if (oldStatus != m_storagePathStatus)
+        emit storagePathStatusChanged();
 }
 
 QString DeclarativeSettings::photoCapturePath(const QString &extension)

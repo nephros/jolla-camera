@@ -8,6 +8,7 @@ import org.nemomobile.time 1.0
 import org.nemomobile.policy 1.0
 import org.nemomobile.ngf 1.0
 import org.nemomobile.configuration 1.0
+import org.nemomobile.notifications 1.0
 import QtSystemInfo 5.0
 import QtPositioning 5.1
 
@@ -308,4 +309,24 @@ SettingsOverlay {
         Behavior on opacity { FadeAnimation {} }
     }
 
+    Notification {
+        id: notification
+
+        function publishMessage(msg) {
+            notification.previewBody = msg
+            notification.publish()
+        }
+
+        category: "x-jolla.settings.camera"
+    }
+
+    Component.onCompleted: {
+        if (Settings.storagePathStatus == Settings.Unavailable) {
+            //% "The selected storage is not available. Device memory will be used instead."
+            notification.publishMessage(qsTrId("camera-me-storage-unavailable"))
+        } else if (Settings.storagePathStatus == Settings.Mounting) {
+            //% "Busy mounting the memory card. Device memory will be used instead."
+            notification.publishMessage(qsTrId("camera-me-storage-mounting"))
+        }
+    }
 }

@@ -86,7 +86,7 @@ Page {
 
             ComboBox {
                 id: storageCombo
-                property bool valid: Settings.storagePathValid
+                property int storageStatus: Settings.storagePathStatus
                 property string storagePath: Settings.storagePath
 
                 function updateCurrentIndex() {
@@ -100,7 +100,7 @@ Page {
                     currentIndex = -1
                 }
 
-                onValidChanged: updateCurrentIndex()
+                onStorageStatusChanged: updateCurrentIndex()
                 onStoragePathChanged: updateCurrentIndex()
                 Component.onCompleted: updateCurrentIndex()
 
@@ -144,9 +144,9 @@ Page {
             }
 
             Label {
-                //% "The selected storage is not available. Using Device memory."
+                //% "The selected storage is not available. Device memory will be used instead."
                 text: qsTrId("camera_settings-la-unwritable")
-                visible: !Settings.storagePathValid
+                visible: Settings.storagePathStatus == Settings.Unavailable
                 x: Theme.horizontalPageMargin
                 width: parent.width - x*2
                 color: Theme.secondaryColor
