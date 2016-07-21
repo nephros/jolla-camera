@@ -129,10 +129,10 @@ Page {
                             onMountPathChanged: storageCombo.updateCurrentIndex()
                             text: model.status == PartitionModel.Mounted
                                     //: the parameter is the capacity of the memory card, e.g. "4.2 GB"
-                                    //% "Memory card - %1"
+                                    //% "Memory card %1"
                                   ? qsTrId("camera_settings-la-memory_card").arg(Format.formatFileSize(model.bytesTotal))
                                   : model.devicePath !== ""
-                                        //% "Unmounted memory card"
+                                        //% "Memory card not mounted"
                                       ? qsTrId("camera_settings-la-unmounted_memory_card")
                                         //% "Memory card not inserted"
                                       : qsTrId("camera_settings-la-memory_card_not_inserted")
