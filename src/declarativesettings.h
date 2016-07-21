@@ -35,6 +35,7 @@ public:
     QString videoDirectory() const;
 
     enum StoragePathStatus {
+        NotSet,
         Unavailable,
         Mounting,
         Available

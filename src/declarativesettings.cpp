@@ -20,7 +20,7 @@ DeclarativeSettings::DeclarativeSettings(QObject *parent)
     , m_counterDate(QLatin1String("/apps/jolla-camera/captureCounterDate"))
     , m_storagePath(QStringLiteral("/apps/jolla-camera/storagePath"))
     , m_locationEnabled(false)
-    , m_storagePathStatus(Unavailable)
+    , m_storagePathStatus(NotSet)
 {
     m_prefixDate = QDate::fromString(m_counterDate.value().toString(), Qt::ISODate);
     m_prefix = QLocale::c().toString(m_prefixDate, QLatin1String("yyyyMMdd_"));
@@ -97,6 +97,7 @@ void DeclarativeSettings::setStoragePath(const QString &path)
 
     if (path.isEmpty()) {
         m_storagePath.unset();
+        m_storagePathStatus = NotSet;
     } else {
         m_storagePath.set(path);
     }
@@ -122,7 +123,7 @@ void DeclarativeSettings::verifyStoragePath()
     QString path = storagePath();
     StoragePathStatus oldStatus = m_storagePathStatus;
 
-    m_storagePathStatus = Unavailable;
+    m_storagePathStatus = path.isEmpty() ? NotSet : Unavailable;
 
     if (!path.isEmpty()) {
         QVector<Partition> partitions = m_partitionManager->partitions(Partition::External | Partition::ExcludeParents);
