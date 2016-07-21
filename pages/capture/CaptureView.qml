@@ -439,8 +439,12 @@ FocusScope {
             } else if (overlayComponent.status === Component.Loading) {
                 overlayComponent.statusChanged.connect(
                     function(status) {
-                        if (overlayComponent && status == Component.Ready) {
-                            incubateOverlay()
+                        if (overlayComponent) {
+                            if (status == Component.Ready) {
+                                incubateOverlay()
+                            } else if (status == Component.Error) {
+                                console.warn(overlayComponent.errorString())
+                            }
                         }
                     })
             } else {
