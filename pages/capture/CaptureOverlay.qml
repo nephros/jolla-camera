@@ -56,6 +56,41 @@ SettingsOverlay {
         }
     }
 
+    readonly property int storagePathStatus: Settings.storagePathStatus
+    onStoragePathStatusChanged: checkStorage()
+
+    readonly property bool _applicationActive: Qt.application.state == Qt.ApplicationActive
+    on_ApplicationActiveChanged: if (_applicationActive) checkStorage()
+
+    Component.onCompleted: checkStorage()
+
+    function checkStorage() {
+        if (Qt.application.state != Qt.ApplicationActive) {
+            // We don't want to show notification when we're in the background
+            return
+        }
+
+        var prevStatus = previousStoragePathStatus.value
+        if (Settings.storagePathStatus == Settings.Unavailable) {
+            if (prevStatus != Settings.storagePathStatus) {
+                notification.close()
+                //% "The selected storage is unavailable. Device memory will be used instead"
+                notification.publishMessage(qsTrId("camera-me-storage-unavailable"))
+            }
+        } else if (Settings.storagePathStatus == Settings.Available) {
+            if (prevStatus == Settings.Unavailable || prevStatus == Settings.Mounting) {
+                notification.close()
+                //% "Using memory card"
+                notification.publishMessage(qsTrId("camera-me-using-memory-card"))
+            }
+        } else if (Settings.storagePathStatus == Settings.Mounting) {
+            notification.close()
+            //% "Busy mounting the memory card. Device memory will be used instead"
+            notification.publishMessage(qsTrId("camera-me-storage-mounting"))
+        }
+        previousStoragePathStatus.value = Settings.storagePathStatus
+    }
+
     PositionSource {
         id: positionSource
         active: captureView.effectiveActive && Settings.locationEnabled && Settings.global.saveLocationInfo
@@ -320,13 +355,8 @@ SettingsOverlay {
         category: "x-jolla.settings.camera"
     }
 
-    Component.onCompleted: {
-        if (Settings.storagePathStatus == Settings.Unavailable) {
-            //% "The selected storage is not available. Device memory will be used instead."
-            notification.publishMessage(qsTrId("camera-me-storage-unavailable"))
-        } else if (Settings.storagePathStatus == Settings.Mounting) {
-            //% "Busy mounting the memory card. Device memory will be used instead."
-            notification.publishMessage(qsTrId("camera-me-storage-mounting"))
-        }
+    ConfigurationValue {
+        id: previousStoragePathStatus
+        key: "/apps/jolla-camera/previousStoragePathStatus"
     }
 }
