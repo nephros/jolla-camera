@@ -8,6 +8,7 @@ import org.nemomobile.time 1.0
 import org.nemomobile.policy 1.0
 import org.nemomobile.ngf 1.0
 import org.nemomobile.configuration 1.0
+import org.nemomobile.notifications 1.0
 import QtSystemInfo 5.0
 import QtPositioning 5.1
 
@@ -53,6 +54,41 @@ SettingsOverlay {
             camera.metaData.gpsLongitude = undefined
             camera.metaData.gpsAltitude = undefined
         }
+    }
+
+    readonly property int storagePathStatus: Settings.storagePathStatus
+    onStoragePathStatusChanged: checkStorage()
+
+    readonly property bool _applicationActive: Qt.application.state == Qt.ApplicationActive
+    on_ApplicationActiveChanged: if (_applicationActive) checkStorage()
+
+    Component.onCompleted: checkStorage()
+
+    function checkStorage() {
+        if (Qt.application.state != Qt.ApplicationActive) {
+            // We don't want to show notification when we're in the background
+            return
+        }
+
+        var prevStatus = previousStoragePathStatus.value
+        if (Settings.storagePathStatus == Settings.Unavailable) {
+            if (prevStatus != Settings.storagePathStatus) {
+                notification.close()
+                //% "The selected storage is unavailable. Device memory will be used instead"
+                notification.publishMessage(qsTrId("camera-me-storage-unavailable"))
+            }
+        } else if (Settings.storagePathStatus == Settings.Available) {
+            if (prevStatus == Settings.Unavailable || prevStatus == Settings.Mounting) {
+                notification.close()
+                //% "Using memory card"
+                notification.publishMessage(qsTrId("camera-me-using-memory-card"))
+            }
+        } else if (Settings.storagePathStatus == Settings.Mounting) {
+            notification.close()
+            //% "Busy mounting the memory card. Device memory will be used instead"
+            notification.publishMessage(qsTrId("camera-me-storage-mounting"))
+        }
+        previousStoragePathStatus.value = Settings.storagePathStatus
     }
 
     PositionSource {
@@ -308,4 +344,19 @@ SettingsOverlay {
         Behavior on opacity { FadeAnimation {} }
     }
 
+    Notification {
+        id: notification
+
+        function publishMessage(msg) {
+            notification.previewBody = msg
+            notification.publish()
+        }
+
+        category: "x-jolla.settings.camera"
+    }
+
+    ConfigurationValue {
+        id: previousStoragePathStatus
+        key: "/apps/jolla-camera/previousStoragePathStatus"
+    }
 }

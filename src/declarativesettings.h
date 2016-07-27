@@ -12,12 +12,17 @@ class QQmlEngine;
 class QJSEngine;
 QT_END_NAMESPACE
 
+class PartitionManager;
+
 class DeclarativeSettings : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString photoDirectory READ photoDirectory CONSTANT)
-    Q_PROPERTY(QString videoDirectory READ videoDirectory CONSTANT)
+    Q_PROPERTY(QString photoDirectory READ photoDirectory NOTIFY photoDirectoryChanged)
+    Q_PROPERTY(QString videoDirectory READ videoDirectory NOTIFY videoDirectoryChanged)
+    Q_PROPERTY(QString storagePath READ storagePath WRITE setStoragePath NOTIFY storagePathChanged)
+    Q_PROPERTY(StoragePathStatus storagePathStatus READ storagePathStatus NOTIFY storagePathStatusChanged)
     Q_PROPERTY(bool locationEnabled READ locationEnabled NOTIFY locationEnabledChanged)
+    Q_ENUMS(StoragePathStatus)
 public:
     DeclarativeSettings(QObject *parent = 0);
     ~DeclarativeSettings();
@@ -29,6 +34,17 @@ public:
     QString photoDirectory() const;
     QString videoDirectory() const;
 
+    enum StoragePathStatus {
+        NotSet,
+        Unavailable,
+        Mounting,
+        Available
+    };
+
+    QString storagePath() const;
+    void setStoragePath(const QString &path);
+    StoragePathStatus storagePathStatus() const;
+
     Q_INVOKABLE QString photoCapturePath(const QString &extension);
     Q_INVOKABLE QString videoCapturePath(const QString &extension);
 
@@ -39,17 +55,29 @@ public slots:
 
 signals:
     void locationEnabledChanged();
+    void photoDirectoryChanged();
+    void videoDirectoryChanged();
+    void storagePathChanged();
+    void storagePathStatusChanged();
+
+private slots:
+    void verifyStoragePath();
 
 private:
+    bool verifyWritable(const QString &path);
     void verifyCapturePrefix();
+
+    PartitionManager *m_partitionManager;
 
     MGConfItem m_counter;
     MGConfItem m_counterDate;
+    MGConfItem m_storagePath;
 
     QString m_prefix;
     QDate m_prefixDate;
 
     bool m_locationEnabled;
+    StoragePathStatus m_storagePathStatus;
 };
 
 #endif

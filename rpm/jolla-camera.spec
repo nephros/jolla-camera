@@ -15,6 +15,7 @@ BuildRequires:  pkgconfig(Qt5Multimedia)
 BuildRequires:  desktop-file-utils
 BuildRequires:  pkgconfig(qdeclarative5-boostable)
 BuildRequires:  pkgconfig(mlite5) >= 0.2.5
+BuildRequires:  pkgconfig(systemsettings) >= 0.2.13
 BuildRequires:  qt5-qttools
 BuildRequires:  qt5-qttools-linguist
 BuildRequires:  oneshot
