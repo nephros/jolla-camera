@@ -23,5 +23,8 @@ Item {
         //: "1 mega pixel image resolution with 4:3 aspect ratio"
         //% "4:3 (1Mpix)"
         qsTrId("camera_settings-me-4-3-1m"),
+        //: 13 mega pixel image resolution with 4:3 aspect ratio
+        //% "4:3 (13Mpix)"
+        qsTrId("camera_settings-me-4-3-13m"),
     ]
 }
