@@ -1,0 +1,4 @@
+#!/bin/sh
+# Add here deprecated / removed dconf keys
+/usr/bin/dconf reset /apps/jolla-camera/captureCounter
+/usr/bin/dconf reset /apps/jolla-camera/captureCounterDate
