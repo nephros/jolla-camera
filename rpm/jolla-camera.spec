@@ -110,7 +110,7 @@ chmod +x %{buildroot}/%{_oneshotdir}/*
 %{_libdir}/qt5/qml/com/jolla/camera/qmldir
 %{_libdir}/qt5/qml/com/jolla/camera/settings.qml
 %{_sysconfdir}/dconf/db/vendor.d/jolla-camera.txt
-%{_oneshotdir}/enable-camera-hints
+%{_oneshotdir}/camera-enable-hints
 
 %files ts-devel
 %defattr(-,root,root,-)
@@ -128,7 +128,7 @@ chmod +x %{buildroot}/%{_oneshotdir}/*
 %post
 %{_bindir}/add-oneshot dconf-update
 if [ "$1" -eq 1 ]; then
-%{_bindir}/add-oneshot --user --now enable-camera-hints
+%{_bindir}/add-oneshot --user --now camera-enable-hints
 fi
 
 
