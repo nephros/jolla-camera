@@ -16,15 +16,10 @@
 DeclarativeSettings::DeclarativeSettings(QObject *parent)
     : QObject(parent)
     , m_partitionManager(new PartitionManager(this))
-    , m_counter(QLatin1String("/apps/jolla-camera/captureCounter"))
-    , m_counterDate(QLatin1String("/apps/jolla-camera/captureCounterDate"))
     , m_storagePath(QStringLiteral("/apps/jolla-camera/storagePath"))
     , m_locationEnabled(false)
     , m_storagePathStatus(NotSet)
 {
-    m_prefixDate = QDate::fromString(m_counterDate.value().toString(), Qt::ISODate);
-    m_prefix = QLocale::c().toString(m_prefixDate, QLatin1String("yyyyMMdd_"));
-
     connect(&m_storagePath, SIGNAL(valueChanged()), this, SLOT(verifyStoragePath()));
     connect(m_partitionManager, SIGNAL(partitionRemoved(const Partition&)), this, SLOT(verifyStoragePath()));
     connect(m_partitionManager, SIGNAL(partitionAdded(const Partition&)), this, SLOT(verifyStoragePath()));
@@ -153,37 +148,16 @@ QString DeclarativeSettings::photoCapturePath(const QString &extension)
 {
     verifyCapturePrefix();
 
-    for (;;) {
-        const int counter = m_counter.value().toInt() + 1;
-        m_counter.set(counter);
-
-        const QString path = photoDirectory()
-                    + QLatin1Char('/')
-                    + m_prefix
-                    + QString(QStringLiteral("%1.")).arg(counter, 3, 10, QLatin1Char('0'))
-                    + extension;
-        if (!QFile::exists(path))
-            return path;
-    }
+    QString fileFormat(photoDirectory() + QLatin1Char('/') + m_prefix + QLatin1String("%1.") + extension);
+    return capturePath(fileFormat);
 }
 
 QString DeclarativeSettings::videoCapturePath(const QString &extension)
 {
     verifyCapturePrefix();
 
-    for (;;) {
-        const int counter = m_counter.value().toInt() + 1;
-        m_counter.set(counter);
-
-        const QString path = videoDirectory()
-                  + QLatin1String("/.recording/")
-                  + m_prefix
-                  + QString(QStringLiteral("%1.")).arg(counter, 3, 10, QLatin1Char('0'))
-                + extension;
-
-        if (!QFile::exists(path))
-            return path;
-    }
+    QString fileFormat(videoDirectory() + QLatin1String("/.recording/") + m_prefix + QLatin1String("%1.") + extension);
+    return capturePath(fileFormat);
 }
 
 QUrl DeclarativeSettings::completeCapture(const QUrl &file)
@@ -206,28 +180,27 @@ QUrl DeclarativeSettings::completeCapture(const QUrl &file)
     }
 }
 
-static int counterStartValue(const QString &directory, const QString &prefix, int maximum = 0)
-{
-    QDirIterator iterator(directory, QStringList() << prefix + QLatin1Char('*'), QDir::Files);
-    while (iterator.hasNext()) {
-        iterator.next();
-        const QString fileName = iterator.fileName();
-        const int length = fileName.indexOf(QLatin1Char('.'), prefix.length()) - prefix.length();
-        maximum = qMax(maximum, fileName.mid(prefix.length(), length).toInt());
-    }
-    return maximum;
-}
-
 void DeclarativeSettings::verifyCapturePrefix()
 {
-    const QDate currentDate = QDate::currentDate();
+    const QDateTime currentDate = QDateTime::currentDateTime();
     if (m_prefixDate != currentDate) {
         m_prefixDate = currentDate;
-        m_prefix = QLocale::c().toString(currentDate, QLatin1String("yyyyMMdd_"));
-        int counter = counterStartValue(photoDirectory(), m_prefix);
-        counter = counterStartValue(videoDirectory(), m_prefix, counter);
+        m_prefix = QLocale::c().toString(currentDate, QLatin1String("yyyyMMdd_HHmmss"));
+    }
+}
 
-        m_counter.set(counter);
-        m_counterDate.set(m_prefixDate.toString(Qt::ISODate));
+QString DeclarativeSettings::capturePath(const QString &format)
+{
+    QString path = format.arg(QString(""));
+    if (!QFile::exists(path)) {
+        return path;
+    }
+
+    int counter = 1;
+    for (;;) {
+        path = format.arg(QString(QStringLiteral("_%1")).arg(counter, 3, 10, QLatin1Char('0')));
+        if (!QFile::exists(path))
+            return path;
+        ++counter;
     }
 }

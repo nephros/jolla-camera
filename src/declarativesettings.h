@@ -2,7 +2,7 @@
 #define DECLARATIVESETTINGS_H
 
 #include <QObject>
-#include <QDate>
+#include <QDateTime>
 
 #include <QUrl>
 #include <MGConfItem>
@@ -66,15 +66,13 @@ private slots:
 private:
     bool verifyWritable(const QString &path);
     void verifyCapturePrefix();
+    QString capturePath(const QString &format);
 
     PartitionManager *m_partitionManager;
-
-    MGConfItem m_counter;
-    MGConfItem m_counterDate;
     MGConfItem m_storagePath;
 
     QString m_prefix;
-    QDate m_prefixDate;
+    QDateTime m_prefixDate;
 
     bool m_locationEnabled;
     StoragePathStatus m_storagePathStatus;
