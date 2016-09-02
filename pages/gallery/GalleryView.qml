@@ -100,7 +100,7 @@ Drawer {
 
             rootType: DocumentGallery.File
             properties: [ "url", "title", "mimeType", "orientation", "duration", "width", "height" ]
-            sortProperties: ["fileName"]
+            sortProperties: ["lastModified"]
             autoUpdate: true
             filter: GalleryFilterUnion {
                 GalleryEqualsFilter { property: "path"; value: Settings.photoDirectory }
