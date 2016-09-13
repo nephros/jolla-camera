@@ -35,7 +35,9 @@ SettingsOverlay {
 
     function writeMetaData() {
         captureView.captureOrientation = captureView.viewfinderOrientation
-        camera.metaData.dateTimeOriginal = new Date()
+        // Camera documentation says dateTimeOriginal should be used but at the moment CameraBinMetaData uses only
+        // date property (which the documentation doesn't even list)
+        camera.metaData.date = new Date()
 
         if (positionSource.active) {
             var coordinate = positionSource.position.coordinate
