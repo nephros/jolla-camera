@@ -69,6 +69,15 @@ FocusScope {
                 || volumeDown.pressed
                 || captureButtonPressed
 
+    property bool _captureQueued
+    property bool captureBusy
+    onCaptureBusyChanged: {
+        if (!captureBusy && _captureQueued) {
+            _captureQueued = false
+            camera.captureImage()
+        }
+    }
+
     readonly property bool _mirrorViewfinder: Settings.global.cameraDevice == "secondary"
 
     readonly property bool _applicationActive: Qt.application.state == Qt.ApplicationActive
@@ -215,6 +224,15 @@ FocusScope {
         event: "video_record_stop"
     }
 
+    onRecordingStopped: {
+        captureModel.appendCapture(
+                    url,
+                    mimeType,
+                    captureOrientation,
+                    camera.videoRecorder.duration / 1000,
+                    camera.videoRecorder.resolution)
+    }
+
     Camera {
         id: camera
 
@@ -242,6 +260,12 @@ FocusScope {
         }
 
         function _completeCapture() {
+            if (captureBusy) {
+                _captureQueued = true
+                return
+            }
+
+            captureBusy = true
             captureOverlay.writeMetaData()
             camera.imageCapture.captureToLocation(Settings.photoCapturePath('jpg'))
         }
@@ -287,8 +311,19 @@ FocusScope {
                 captureView._resetFocus()
 
                 captureAnimation.start()
+
+                captureModel.appendCapture(
+                            path,
+                            "image/jpeg",
+                            captureOrientation,
+                            0,
+                            camera.imageCapture.resolution)
+                captureBusy = false
             }
-            onCaptureFailed: captureView._resetFocus()
+            onCaptureFailed: {
+                captureView._resetFocus()
+                captureBusy = false
+            }
         }
         videoRecorder{
             resolution: Settings.mode.videoResolution

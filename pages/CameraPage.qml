@@ -131,24 +131,6 @@ Page {
 
                 visible: switcherView.moving || captureView.active
 
-                camera.imageCapture.onImageSaved: {
-                    captureModel.appendCapture(
-                                path,
-                                "image/jpeg",
-                                captureOrientation,
-                                0,
-                                camera.imageCapture.resolution)
-                }
-
-                onRecordingStopped: {
-                    captureModel.appendCapture(
-                                url,
-                                mimeType,
-                                captureOrientation,
-                                camera.videoRecorder.duration / 1000,
-                                camera.videoRecorder.resolution)
-                }
-
                 onLoaded: {
                     if (galleryLoader.source == "") {
                         galleryLoader.setSource("gallery/GalleryView.qml", { page: page })
