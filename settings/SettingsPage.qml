@@ -130,7 +130,7 @@ Page {
                             text: model.status == PartitionModel.Mounted
                                     //: the parameter is the capacity of the memory card, e.g. "4.2 GB"
                                     //% "Memory card %1"
-                                  ? qsTrId("camera_settings-la-memory_card").arg(Format.formatFileSize(model.bytesTotal))
+                                  ? qsTrId("camera_settings-la-memory_card").arg(Format.formatFileSize(model.bytesAvailable))
                                   : model.devicePath !== ""
                                         //% "Memory card not mounted"
                                       ? qsTrId("camera_settings-la-unmounted_memory_card")
