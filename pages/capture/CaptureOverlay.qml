@@ -22,13 +22,8 @@ SettingsOverlay {
     property Item focusArea
     property alias captureButtonPressed: captureButton.pressed
 
-    property int _recordingDuration: ((clock.enabled ? clock.time : _endTime) - _startTime) / 1000
-
-    property var _startTime: {
-        _endTime = new Date()
-        return _endTime
-    }
-    property var _endTime
+    property int _recordingDuration: clock.enabled ? ((clock.time - _startTime) / 1000) : 0
+    property var _startTime: new Date()
 
     width: captureView.width
     height: captureView.height
@@ -243,9 +238,8 @@ SettingsOverlay {
 
             anchors.centerIn: parent
 
-            text: Format.formatDuration(
-                      _recordingDuration,
-                      _recordingDuration >= 3600 ? Formatter.DurationLong : Formatter.DurationShort)
+            text: Format.formatDuration(_recordingDuration,
+                                        _recordingDuration >= 3600 ? Formatter.DurationLong : Formatter.DurationShort)
             font.pixelSize: Theme.fontSizeMedium
 
         }
@@ -258,9 +252,6 @@ SettingsOverlay {
         onEnabledChanged: {
             if (enabled) {
                 _startTime = clock.time
-                _endTime = _startTime
-            } else {
-                _endTime = _startTime
             }
         }
     }
