@@ -324,19 +324,6 @@ SettingsOverlay {
         maximumZoom: camera.maximumDigitalZoom
     }
 
-    Rectangle {
-        width: 24
-        height: 24
-
-        radius: 2
-        anchors.centerIn: parent
-        color: Theme.primaryColor
-
-        visible: camera.captureMode == Camera.CaptureStillImage
-        opacity: Settings.mode.meteringMode == Camera.MeteringSpot ? 1 : 0
-        Behavior on opacity { FadeAnimation {} }
-    }
-
     Notification {
         id: notification
 
