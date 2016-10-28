@@ -211,10 +211,10 @@ FocusScope {
         ScriptAction {
             script: {
                 if (camera.captureMode == Camera.CaptureStillImage) {
-                     camera.captureImage()
-                 } else {
-                     camera.record()
-                 }
+                    camera.captureImage()
+                } else {
+                    camera.record()
+                }
             }
         }
     }
@@ -293,7 +293,6 @@ FocusScope {
             }
         }
 
-
         onCameraStatusChanged: {
             if (camera.cameraStatus == Camera.StartingStatus) {
                 startFailedTimer.restart()
@@ -325,7 +324,7 @@ FocusScope {
                 captureBusy = false
             }
         }
-        videoRecorder{
+        videoRecorder {
             resolution: Settings.mode.videoResolution
             onResolutionChanged: reload()
             frameRate: 30
@@ -532,8 +531,8 @@ FocusScope {
             model: camera.focus.focusZones
             delegate: Item {
                 x: focusArea.width * (captureView._mirrorViewfinder
-                            ? 1 - area.x - area.width
-                            : area.x)
+                                      ? 1 - area.x - area.width
+                                      : area.x)
                 y: focusArea.height * area.y
                 width: focusArea.width * area.width
                 height: focusArea.height * area.height
