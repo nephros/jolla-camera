@@ -67,14 +67,11 @@ PinchArea {
     property list<SettingsMenuItem> _menus
     _menus: {
         var menuItems = [ captureModeMenu.currentItem ]
-        if (Screen.sizeCategory >= Screen.Large) {
-            menuItems.push(isoMenu.currentItem)
-        }
         if (Settings.mode.flashValues.length > 0) {
             menuItems.push(flashMenu.currentItem)
         }
         menuItems.push(whiteBalanceMenu.currentItem)
-        menuItems.push(focusMenu.currentItem)
+        menuItems.push(isoMenu.currentItem)
         if (Screen.sizeCategory >= Screen.Large) {
             menuItems.push(timerMenu.currentItem)
         }
@@ -358,13 +355,6 @@ PinchArea {
                 }
             }
 
-            Item {
-                id: isoMenuTabletLayoutParent
-
-                width: childrenRect.width
-                height: childrenRect.height
-            }
-
             SettingsMenu {
                 id: flashMenu
 
@@ -396,19 +386,19 @@ PinchArea {
                     iconVisible: !selected
                 }
             }
+
             SettingsMenu {
-                id: focusMenu
+                id: isoMenu
 
                 width: overlay._menuWidth
-                title: Settings.focusDistanceText
+                title: Settings.isoText
                 header: upperHeader
-                model: Settings.mode.focusDistanceValues
+                model: Settings.mode.isoValues
                 delegate: SettingsMenuItem {
                     settings: Settings.mode
-                    property: "focusDistance"
+                    property: "iso"
                     value: modelData
-                    icon: Settings.focusDistanceIcon(modelData)
-                    iconVisible: !selected
+                    icon: Settings.isoIcon(modelData)
                 }
             }
         }
@@ -438,23 +428,6 @@ PinchArea {
                     property: "cameraDevice"
                     value: modelData
                     icon: Settings.cameraIcon(modelData)
-                }
-            }
-
-            SettingsMenu {
-                id: isoMenu
-
-                parent: Screen.sizeCategory >= Screen.Large ? isoMenuTabletLayoutParent : leftRow
-
-                width: overlay._menuWidth
-                title: Settings.isoText
-                header: Screen.sizeCategory < Screen.Large && overlay.isPortrait ? lowerHeader : upperHeader
-                model: Settings.mode.isoValues
-                delegate: SettingsMenuItem {
-                    settings: Settings.mode
-                    property: "iso"
-                    value: modelData
-                    icon: Settings.isoIcon(modelData)
                 }
             }
         }

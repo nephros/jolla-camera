@@ -123,50 +123,45 @@ SettingsOverlay {
     }
 
     onClicked: {
-        if (!captureView._captureOnFocus
-                && Settings.mode.focusDistance != Camera.FocusInfinity) {
-            captureView._touchFocus = true
+        if (!captureView._captureOnFocus && captureView.touchFocusSupported) {
+            // Translate and rotate the touch point into focusArea's space.
+            var focusPoint
+            switch ((360 - captureView.viewfinderOrientation) % 360) {
 
-            if (Settings.mode.focusDistance == Camera.FocusAuto) {
-                // Translate and rotate the touch point into focusArea's space.
-                var focusPoint
-                switch ((360 - captureView.viewfinderOrientation) % 360) {
-
-                case 90:
-                    focusPoint = Qt.point(
-                                mouse.y - ((height - focusArea.width) / 2),
-                                width - mouse.x);
-                    break;
-                case 180:
-                    focusPoint = Qt.point(
-                                width - mouse.x - ((width - focusArea.width) / 2),
-                                height - mouse.y);
-                    break;
-                case 270:
-                    focusPoint = Qt.point(
-                                height - mouse.y - ((height - focusArea.width) / 2),
-                                mouse.x);
-                    break;
-                default:
-                    focusPoint = Qt.point(
-                                mouse.x - ((width - focusArea.width) / 2),
-                                mouse.y);
-                    break;
-                }
-
-                // Normalize the focus point.
-                focusPoint.x = focusPoint.x / focusArea.width
-                focusPoint.y = focusPoint.y / focusArea.height
-
-                // Mirror the point if the viewfinder is mirrored.
-                if (captureView._mirrorViewfinder) {
-                    focusPoint.x = 1 - focusPoint.x
-                }
-
-                camera.focus.customFocusPoint = focusPoint
+            case 90:
+                focusPoint = Qt.point(
+                            mouse.y - ((height - focusArea.width) / 2),
+                            width - mouse.x);
+                break;
+            case 180:
+                focusPoint = Qt.point(
+                            width - mouse.x - ((width - focusArea.width) / 2),
+                            height - mouse.y);
+                break;
+            case 270:
+                focusPoint = Qt.point(
+                            height - mouse.y - ((height - focusArea.width) / 2),
+                            mouse.x);
+                break;
+            default:
+                focusPoint = Qt.point(
+                            mouse.x - ((width - focusArea.width) / 2),
+                            mouse.y);
+                break;
             }
 
-            camera.searchAndLock()
+            // Normalize the focus point.
+            focusPoint.x = focusPoint.x / focusArea.width
+            focusPoint.y = focusPoint.y / focusArea.height
+
+            // Mirror the point if the viewfinder is mirrored.
+            if (captureView._mirrorViewfinder) {
+                focusPoint.x = 1 - focusPoint.x
+            }
+
+            if (focusPoint.x >= 0.0 && focusPoint.x <= 1.0 && focusPoint.y >= 0.0 && focusPoint.y <= 1.0) {
+                captureView.setFocusPoint(focusPoint)
+            }
         }
     }
 
