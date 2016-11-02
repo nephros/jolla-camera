@@ -13,9 +13,6 @@ SettingsBase {
                                                  "timer": 0,
                                                  "viewfinderGrid": "none",
                                                  "whiteBalance": CameraImageProcessing.WhiteBalanceAuto,
-                                                 "focusDistance": (modeSettings.focusDistanceValues.length == 1
-                                                                   ? modeSettings.focusDistanceValues[0]
-                                                                   : Camera.FocusContinuous),
                                                  "flash": ((modeSettings.captureMode == Camera.CaptureStillImage) &&
                                                            (globalSettings.cameraDevice === "primary") ?
                                                                Camera.FlashAuto : Camera.FlashOff)
@@ -25,7 +22,6 @@ SettingsBase {
                                             modeSettings.timer === settingsDefaults["timer"] &&
                                             modeSettings.viewfinderGrid === settingsDefaults["viewfinderGrid"] &&
                                             modeSettings.whiteBalance == settingsDefaults["whiteBalance"] &&
-                                            modeSettings.focusDistance == settingsDefaults["focusDistance"] &&
                                             modeSettings.flash == settingsDefaults["flash"]
 
     function reset() {
@@ -67,7 +63,6 @@ SettingsBase {
 
             property int iso: 0
             property int whiteBalance: CameraImageProcessing.WhiteBalanceAuto
-            property int focusDistance: Camera.FocusInfinity
             property int flash: Camera.FlashOff
             property int exposureCompensation: 0
             property int exposureMode: 0
@@ -246,39 +241,6 @@ SettingsBase {
         //% "Tungsten"
         case CameraImageProcessing.WhiteBalanceTungsten:    return qsTrId("camera_settings-la-wb-tungsten")
         default: return ""
-        }
-    }
-
-    function focusDistanceIcon(focusDistance) {
-        switch (focusDistance) {
-        case Camera.FocusAuto:       return "image://theme/icon-camera-focus"
-        case Camera.FocusHyperfocal:
-        case Camera.FocusInfinity:   return "image://theme/icon-camera-focus-infinity"
-        case Camera.FocusMacro:      return "image://theme/icon-camera-focus-macro"
-        case Camera.FocusContinuous: return "image://theme/icon-camera-focus-auto"
-        default:
-            console.warning("Unhandled mapping from focus distance to icon", focusDistance)
-            return ""
-        }
-    }
-
-    function focusDistanceText(focusDistance) {
-        switch (focusDistance) {
-        //% "Tap to focus"
-        case Camera.FocusAuto:       return qsTrId("camera_settings-la-focus-auto")
-        //: "Infinite focus distance"
-        //% "Infinity focus"
-        case Camera.FocusHyperfocal:
-        case Camera.FocusInfinity:   return qsTrId("camera_settings-la-focus-infinity")
-        //: "Macro/close up focus distance"
-        //% "Macro focus"
-        case Camera.FocusMacro:      return qsTrId("camera_settings-la-focus-macro")
-        //: "Continuous auto focus"
-        //% "Continuous"
-        case Camera.FocusContinuous: return qsTrId("camera_settings-la-focus-continuous")
-        default:
-            console.warning("Unhandled mapping from focus distance to text", focusDistance)
-            return ""
         }
     }
 

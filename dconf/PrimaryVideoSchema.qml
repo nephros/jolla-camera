@@ -5,7 +5,6 @@ ModeSchema {
     path: "primary/video"
 
     captureMode: Camera.CaptureVideo
-    focusDistance: Camera.FocusContinuous
     flash: Camera.FlashOff
     focusDistanceValues: [
         Camera.FocusInfinity,

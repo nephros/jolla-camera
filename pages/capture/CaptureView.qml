@@ -35,16 +35,15 @@ FocusScope {
     property alias camera: camera
     property QtObject viewfinder
 
-    readonly property bool recording: active
-                && camera.videoRecorder.recorderState == CameraRecorder.RecordingState
+    readonly property bool recording: active && camera.videoRecorder.recorderState == CameraRecorder.RecordingState
 
     property bool _complete
     property bool _unload
 
-    property bool _touchFocus
-    property bool _captureOnFocus
+    property bool touchFocusSupported: (camera.focus.focusMode == Camera.FocusAuto || camera.focus.focusMode == Camera.FocusContinuous)
+                                       && camera.captureMode != Camera.CaptureVideo
 
-    property bool _focusFailed
+    property bool _captureOnFocus
     property real _captureCountdown
 
     property real _shutterOffset
@@ -59,15 +58,8 @@ FocusScope {
     readonly property bool _canCapture: (camera.captureMode == Camera.CaptureStillImage && camera.imageCapture.ready)
                 || (camera.captureMode == Camera.CaptureVideo && camera.videoRecorder.recorderStatus >= CameraRecorder.LoadedStatus)
 
-    readonly property int _stillFocus: !_touchFocus || Settings.mode.focusDistance != Camera.FocusContinuous
-                ? Settings.mode.focusDistance
-                : Camera.FocusAuto
-
     property bool captureButtonPressed: !!captureOverlay && captureOverlay.captureButtonPressed
-    readonly property bool _capturePending: _captureOnFocus
-                || volumeUp.pressed
-                || volumeDown.pressed
-                || captureButtonPressed
+    readonly property bool _capturePending: volumeUp.pressed || volumeDown.pressed || captureButtonPressed
 
     property bool _captureQueued
     property bool captureBusy
@@ -97,17 +89,20 @@ FocusScope {
         }
     }
 
+    function setFocusPoint(point) {
+        focusTimer.restart()
+        camera.unlock()
+        camera.focus.customFocusPoint = point
+    }
+
     function _resetFocus() {
         focusTimer.running = false
-        _touchFocus = false
-        _focusFailed = false
-        camera.focus.customFocusPoint = Qt.point(0.5, 0.5)
         camera.unlock()
     }
 
     function _triggerCapture() {
         if (captureTimer.running) {
-            captureView._resetFocus()
+            camera.unlock()
             captureTimer.running = false
         } else if (startRecordTimer.running) {
             startRecordTimer.running = false
@@ -149,8 +144,15 @@ FocusScope {
         // which seems to be a bug in QtMultimedia
         // Qt bug: https://bugreports.qt.io/browse/QTBUG-46995
         reload()
+        _resetFocus()
         camera.deviceId = Settings.cameraDevice
         Settings.global.cameraDevice = Settings.cameraDevice
+    }
+
+    onActiveChanged: {
+        if (!active) {
+            _resetFocus()
+        }
     }
 
     Timer {
@@ -211,10 +213,10 @@ FocusScope {
         ScriptAction {
             script: {
                 if (camera.captureMode == Camera.CaptureStillImage) {
-                     camera.captureImage()
-                 } else {
-                     camera.record()
-                 }
+                    camera.captureImage()
+                } else {
+                    camera.record()
+                }
             }
         }
     }
@@ -239,7 +241,8 @@ FocusScope {
         function autoFocus() {
             captureOverlay.close()
             if (camera.captureMode == Camera.CaptureStillImage
-                    && Settings.mode.focusDistance != Camera.FocusInfinity
+                    && focus.focusMode != Camera.FocusInfinity
+                    && focus.focusMode != Camera.FocusHyperfocal
                     && camera.lockStatus == Camera.Unlocked) {
                 camera.searchAndLock()
             }
@@ -268,6 +271,13 @@ FocusScope {
             captureBusy = true
             captureOverlay.writeMetaData()
             camera.imageCapture.captureToLocation(Settings.photoCapturePath('jpg'))
+
+            if (focusTimer.running) {
+                // Changing focus mode will reset focus point, make sure it stays same
+                var focusPoint = Qt.point(camera.focus.customFocusPoint.x, camera.focus.customFocusPoint.y)
+                focusTimer.restart()
+                camera.focus.customFocusPoint = focusPoint
+            }
         }
 
         function _finishRecording() {
@@ -283,6 +293,9 @@ FocusScope {
         }
 
         captureMode: Settings.mode.captureMode
+
+        onCaptureModeChanged: captureView._resetFocus()
+
         cameraState: captureView._complete && captureView.effectiveActive && !captureView._unload
                     ? Camera.ActiveState
                     : Camera.UnloadedState
@@ -292,7 +305,6 @@ FocusScope {
                 captureView.loaded()
             }
         }
-
 
         onCameraStatusChanged: {
             if (camera.cameraStatus == Camera.StartingStatus) {
@@ -308,7 +320,7 @@ FocusScope {
 
             onImageSaved: {
                 shutterEvent.play()
-                captureView._resetFocus()
+                camera.unlock()
 
                 captureAnimation.start()
 
@@ -321,11 +333,11 @@ FocusScope {
                 captureBusy = false
             }
             onCaptureFailed: {
-                captureView._resetFocus()
+                camera.unlock()
                 captureBusy = false
             }
         }
-        videoRecorder{
+        videoRecorder {
             resolution: Settings.mode.videoResolution
             onResolutionChanged: reload()
             frameRate: 30
@@ -339,10 +351,9 @@ FocusScope {
             videoBitRate: Settings.global.videoBitRate
         }
         focus {
-            focusMode: captureView._stillFocus
-            focusPointMode: focus.focusMode != Camera.FocusAuto
-                    ? Camera.FocusPointAuto
-                    : Camera.FocusPointCustom
+            focusMode: Settings.mode.focusDistanceValues.indexOf(Camera.FocusContinuous) >= 0
+                       ? Camera.FocusContinuous : Settings.mode.focusDistanceValues[0]
+            focusPointMode: focusTimer.running ? Camera.FocusPointCustom : Camera.FocusPointAuto
         }
         flash.mode: Settings.mode.flash
         imageProcessing.whiteBalanceMode: Settings.mode.whiteBalance
@@ -368,27 +379,11 @@ FocusScope {
         focus.onFocusModeChanged: camera.unlock()
 
         onLockStatusChanged: {
-           if (lockStatus == Camera.Unlocked) {
-               if (camera.focus.focusMode == Camera.FocusContinuous && captureView._capturePending) {
-                   captureView._touchFocus = true
-                   camera.searchAndLock()
-                   return
-               } else if (captureView._touchFocus || captureView._capturePending) {
-                   captureView._focusFailed = true
-                   focusTimer.restart()
-               }
-               captureView._touchFocus = false
-           } else {
-               captureView._focusFailed = false
-           }
-
-           if (lockStatus != Camera.Searching && captureView._captureOnFocus) {
-               captureView._captureOnFocus = false
-               camera._completeCapture()
-           } else if (lockStatus == Camera.Locked && !captureTimer.running) {
-               focusTimer.restart()
-           }
-       }
+            if (lockStatus != Camera.Searching && captureView._captureOnFocus) {
+                captureView._captureOnFocus = false
+                camera._completeCapture()
+            }
+        }
     }
 
     DeviceInfo {
@@ -532,67 +527,26 @@ FocusScope {
             model: camera.focus.focusZones
             delegate: Item {
                 x: focusArea.width * (captureView._mirrorViewfinder
-                            ? 1 - area.x - area.width
-                            : area.x)
+                                      ? 1 - area.x - area.width
+                                      : area.x)
                 y: focusArea.height * area.y
                 width: focusArea.width * area.width
                 height: focusArea.height * area.height
 
-                visible: status != Camera.FocusAreaUnused
-
-                Rectangle {
-                    anchors {
-                        fill: focusRectangle
-                        margins: -1
-                    }
-                    border {
-                        width: Theme.paddingSmall
-                        color: "black"
-                    }
-                    color: "#00000000"
-                }
+                visible: status != Camera.FocusAreaUnused && camera.focus.focusPointMode == Camera.FocusPointCustom
 
                 Rectangle {
                     id: focusRectangle
 
                     width: Math.min(parent.width, parent.height)
                     height: width
-
-                    opacity: 0.6
                     anchors.centerIn: parent
+                    radius: width / 2
                     border {
-                        width: Screen.sizeCategory >= Screen.Large ? Theme.paddingSmall * 0.5 : Theme.paddingSmall * 0.75
-                        color: status == Camera.FocusAreaFocused
-                                    ? Theme.highlightColor
-                                    : Theme.primaryColor
+                        width: Math.round(Theme.pixelRatio * 2)
+                        color: status == Camera.FocusAreaFocused ? Theme.highlightColor : "white"
                     }
                     color: "#00000000"
-                }
-                Image {
-                    anchors {
-                        horizontalCenter: focusRectangle.right
-                        verticalCenter: captureView.isPortrait
-                                    ? focusRectangle.top
-                                    : focusRectangle.bottom
-                    }
-
-                    source: "image://theme/icon-system-warning?" + Theme.highlightColor
-                    visible: captureView._focusFailed
-                                && camera.focus.focusMode != Camera.FocusInfinity
-                    rotation: -focusArea.rotation
-                }
-
-                Image {
-                    anchors {
-                        horizontalCenter: focusRectangle.right
-                        verticalCenter: captureView.isPortrait
-                                    ? focusRectangle.top
-                                    : focusRectangle.bottom
-                    }
-
-                    source: "image://theme/icon-camera-focus-infinity?" + Theme.highlightColor
-                    visible: camera.focus.focusMode == Camera.FocusInfinity
-                    rotation: -focusArea.rotation
                 }
             }
         }
@@ -601,7 +555,7 @@ FocusScope {
     Timer {
         id: focusTimer
 
-        interval: 15000
+        interval: 10000
         onTriggered: captureView._resetFocus()
     }
 

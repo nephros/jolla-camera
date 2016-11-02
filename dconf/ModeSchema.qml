@@ -7,7 +7,6 @@ QtObject {
     property int captureMode: Camera.CaptureStillImage
     property int iso: 0
     property int whiteBalance: CameraImageProcessing.WhiteBalanceAuto
-    property int focusDistance: Camera.FocusInfinity
     property int flash: Camera.FlashOff
     property int exposureCompensation: 0
     property int exposureMode: Camera.ExposureAuto

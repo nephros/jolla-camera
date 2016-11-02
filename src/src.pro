@@ -32,3 +32,5 @@ import.path = $$TARGETPATH
 target.path = $$TARGETPATH
 
 INSTALLS += target import
+
+OTHER_FILES = settings.qml

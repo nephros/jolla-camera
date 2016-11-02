@@ -212,7 +212,7 @@ Drawer {
 
                 anchors.centerIn: galleryItem
 
-                sourceComponent: galleryItem.isImage ? imageComponent: videoComponent
+                sourceComponent: galleryItem.isImage ? imageComponent : videoComponent
             }
         }
     }

@@ -4,7 +4,6 @@ import QtMultimedia 5.0
 ImageSchema {
     path: "primary/image"
     captureMode: Camera.CaptureStillImage
-    focusDistance: Camera.FocusContinuous
     flash: Camera.FlashAuto
 
     focusDistanceValues: [

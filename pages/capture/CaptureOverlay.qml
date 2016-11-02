@@ -22,13 +22,8 @@ SettingsOverlay {
     property Item focusArea
     property alias captureButtonPressed: captureButton.pressed
 
-    property int _recordingDuration: ((clock.enabled ? clock.time : _endTime) - _startTime) / 1000
-
-    property var _startTime: {
-        _endTime = new Date()
-        return _endTime
-    }
-    property var _endTime
+    property int _recordingDuration: clock.enabled ? ((clock.time - _startTime) / 1000) : 0
+    property var _startTime: new Date()
 
     width: captureView.width
     height: captureView.height
@@ -128,50 +123,45 @@ SettingsOverlay {
     }
 
     onClicked: {
-        if (!captureView._captureOnFocus
-                && Settings.mode.focusDistance != Camera.FocusInfinity) {
-            captureView._touchFocus = true
+        if (!captureView._captureOnFocus && captureView.touchFocusSupported) {
+            // Translate and rotate the touch point into focusArea's space.
+            var focusPoint
+            switch ((360 - captureView.viewfinderOrientation) % 360) {
 
-            if (Settings.mode.focusDistance == Camera.FocusAuto) {
-                // Translate and rotate the touch point into focusArea's space.
-                var focusPoint
-                switch ((360 - captureView.viewfinderOrientation) % 360) {
-
-                case 90:
-                    focusPoint = Qt.point(
-                                mouse.y - ((height - focusArea.width) / 2),
-                                width - mouse.x);
-                    break;
-                case 180:
-                    focusPoint = Qt.point(
-                                width - mouse.x - ((width - focusArea.width) / 2),
-                                height - mouse.y);
-                    break;
-                case 270:
-                    focusPoint = Qt.point(
-                                height - mouse.y - ((height - focusArea.width) / 2),
-                                mouse.x);
-                    break;
-                default:
-                    focusPoint = Qt.point(
-                                mouse.x - ((width - focusArea.width) / 2),
-                                mouse.y);
-                    break;
-                }
-
-                // Normalize the focus point.
-                focusPoint.x = focusPoint.x / focusArea.width
-                focusPoint.y = focusPoint.y / focusArea.height
-
-                // Mirror the point if the viewfinder is mirrored.
-                if (captureView._mirrorViewfinder) {
-                    focusPoint.x = 1 - focusPoint.x
-                }
-
-                camera.focus.customFocusPoint = focusPoint
+            case 90:
+                focusPoint = Qt.point(
+                            mouse.y - ((height - focusArea.width) / 2),
+                            width - mouse.x);
+                break;
+            case 180:
+                focusPoint = Qt.point(
+                            width - mouse.x - ((width - focusArea.width) / 2),
+                            height - mouse.y);
+                break;
+            case 270:
+                focusPoint = Qt.point(
+                            height - mouse.y - ((height - focusArea.width) / 2),
+                            mouse.x);
+                break;
+            default:
+                focusPoint = Qt.point(
+                            mouse.x - ((width - focusArea.width) / 2),
+                            mouse.y);
+                break;
             }
 
-            camera.searchAndLock()
+            // Normalize the focus point.
+            focusPoint.x = focusPoint.x / focusArea.width
+            focusPoint.y = focusPoint.y / focusArea.height
+
+            // Mirror the point if the viewfinder is mirrored.
+            if (captureView._mirrorViewfinder) {
+                focusPoint.x = 1 - focusPoint.x
+            }
+
+            if (focusPoint.x >= 0.0 && focusPoint.x <= 1.0 && focusPoint.y >= 0.0 && focusPoint.y <= 1.0) {
+                captureView.setFocusPoint(focusPoint)
+            }
         }
     }
 
@@ -243,9 +233,8 @@ SettingsOverlay {
 
             anchors.centerIn: parent
 
-            text: Format.formatDuration(
-                      _recordingDuration,
-                      _recordingDuration >= 3600 ? Formatter.DurationLong : Formatter.DurationShort)
+            text: Format.formatDuration(_recordingDuration,
+                                        _recordingDuration >= 3600 ? Formatter.DurationLong : Formatter.DurationShort)
             font.pixelSize: Theme.fontSizeMedium
 
         }
@@ -258,9 +247,6 @@ SettingsOverlay {
         onEnabledChanged: {
             if (enabled) {
                 _startTime = clock.time
-                _endTime = _startTime
-            } else {
-                _endTime = _startTime
             }
         }
     }
@@ -331,19 +317,6 @@ SettingsOverlay {
 
         zoom: camera.digitalZoom
         maximumZoom: camera.maximumDigitalZoom
-    }
-
-    Rectangle {
-        width: 24
-        height: 24
-
-        radius: 2
-        anchors.centerIn: parent
-        color: Theme.primaryColor
-
-        visible: camera.captureMode == Camera.CaptureStillImage
-        opacity: Settings.mode.meteringMode == Camera.MeteringSpot ? 1 : 0
-        Behavior on opacity { FadeAnimation {} }
     }
 
     Notification {

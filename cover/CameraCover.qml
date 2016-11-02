@@ -87,15 +87,21 @@ CoverBackground {
             icon: Settings.captureModeIcon(Settings.global.captureMode)
         }
         CoverIcon {
+            id: flashIcon
+            visible: icon != ""
             icon: Settings.mode.flashValues.length > 0
                   ? Settings.flashIcon(Settings.mode.flash)
-                  : Settings.isoIcon(Settings.mode.iso)
+                  : ""
         }
         CoverIcon {
             icon: Settings.whiteBalanceIcon(Settings.mode.whiteBalance)
         }
         CoverIcon {
-            icon: Settings.focusDistanceIcon(Settings.mode.focusDistance)
+            icon: Settings.isoIcon(Settings.mode.iso)
+        }
+        CoverIcon {
+            visible: !flashIcon.visible
+            icon: Settings.timerIcon(Settings.mode.timer)
         }
     }
 
@@ -108,21 +114,10 @@ CoverBackground {
 
         Rectangle {
             anchors.fill: parent
+            radius: width / 2
             border {
-                width: 2
-                color: "black"
-            }
-            color: "transparent"
-        }
-        Rectangle {
-            anchors {
-                fill: parent
-                margins: 1
-            }
-            opacity: 0.6
-            border {
-                width: 3
-                color: Theme.primaryColor
+                width: Math.round(Theme.pixelRatio * 2)
+                color: "white"
             }
             color: "transparent"
         }
