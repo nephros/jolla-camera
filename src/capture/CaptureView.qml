@@ -691,6 +691,8 @@ FocusScope {
 
     CameraExtensions {
         id: extensions
+        camera: camera
+        fastCapture: true
     }
 
     Binding {
