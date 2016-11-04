@@ -32,7 +32,6 @@ MouseArea {
 
     onClicked: {
         settings[property] = value
-        menuItem.parent.open = false
     }
 
     Item {
