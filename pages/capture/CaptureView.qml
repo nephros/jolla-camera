@@ -286,6 +286,10 @@ FocusScope {
 
             captureBusy = true
             captureOverlay.writeMetaData()
+
+            shutterEvent.play()
+            captureAnimation.start()
+
             camera.imageCapture.captureToLocation(Settings.photoCapturePath('jpg'))
 
             if (focusTimer.running) {
@@ -335,10 +339,8 @@ FocusScope {
             onResolutionChanged: reload()
 
             onImageSaved: {
-                shutterEvent.play()
                 camera.unlock()
-
-                captureAnimation.start()
+                captureBusy = false
 
                 captureModel.appendCapture(
                             path,
@@ -346,7 +348,6 @@ FocusScope {
                             captureOrientation,
                             0,
                             camera.imageCapture.resolution)
-                captureBusy = false
             }
             onCaptureFailed: {
                 camera.unlock()
