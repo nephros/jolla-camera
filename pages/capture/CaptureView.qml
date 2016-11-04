@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.4
 import QtMultimedia 5.4
 import Sailfish.Silica 1.0
 import Sailfish.Media 1.0
@@ -46,10 +46,9 @@ FocusScope {
     property bool _captureOnFocus
     property real _captureCountdown
 
-    property real _shutterOffset
     readonly property real _viewfinderPosition: orientation == Orientation.Portrait || orientation == Orientation.Landscape
-                ? parent.x + x + _shutterOffset
-                : -parent.x - x - _shutterOffset
+                                                ? parent.x + x
+                                                : -parent.x - x
 
     readonly property bool isPortrait: orientation == Orientation.Portrait
                 || orientation == Orientation.PortraitInverted
@@ -82,6 +81,23 @@ FocusScope {
     signal recordingStopped(url url, string mimeType)
     signal loaded
     signal captured
+
+    Item {
+        id: captureSnapshot
+        property alias sourceItem: captureSnapshotEffect.sourceItem
+        visible: false
+        width: parent.width
+        height: parent.height
+        ShaderEffectSource {
+            id: captureSnapshotEffect
+            hideSource: false
+            live: false
+            anchors.centerIn: parent
+            width: isPortrait ? parent.width : parent.height
+            height: isPortrait ? parent.height : parent.width
+            rotation: -page.rotation
+        }
+    }
 
     function reload() {
         if (captureView._complete) {
@@ -429,29 +445,45 @@ FocusScope {
     SequentialAnimation {
         id: captureAnimation
 
-        NumberAnimation {
-            target: captureView
-            property: "_shutterOffset"
-            from: 0
-            to: captureView.isPortrait ? -captureView.height : -captureView.width
-            duration: 200
+        PropertyAction {
+            target: captureSnapshot
+            property: "sourceItem"
+            value: viewfinder
+        }
+        ScriptAction {
+            script: captureSnapshotEffect.scheduleUpdate()
+        }
+        PropertyAction {
+            target: captureSnapshot
+            property: "visible"
+            value: true
+        }
+        ParallelAnimation {
+            XAnimator {
+                target: captureSnapshot
+                from: 0
+                to: captureView.isPortrait ? -captureView.height : -captureView.width
+                duration: 250
+                easing.type: Easing.InQuad
+            }
+            ScaleAnimator {
+                target: captureSnapshotEffect
+                from: 1.0
+                to: 0.6
+                duration: 250
+                easing.type: Easing.InOutQuad
+            }
         }
 
         PropertyAction {
-            target: viewfinder
-            property: "opacity"
-            value: 0
+            target: captureSnapshot
+            property: "visible"
+            value: false
         }
-
         PropertyAction {
-            target: captureView
-            property: "_shutterOffset"
-            value: 0
-        }
-        FadeAnimation {
-            target: viewfinder
-            from: 0
-            to: 1
+            target: captureSnapshot
+            property: "sourceItem"
+            value: null
         }
         ScriptAction {
             script: captureView.captured()
