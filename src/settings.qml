@@ -6,6 +6,7 @@ import com.jolla.camera 1.0
 SettingsBase {
     property alias mode: modeSettings
     property alias global: globalSettings
+    // mode change goes here, CaptureView updates to global.cameraDevice
     property string cameraDevice: global.cameraDevice
 
     readonly property var settingsDefaults: ({

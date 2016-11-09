@@ -181,7 +181,7 @@ Page {
 
         signal showFrontViewfinder()
         onShowFrontViewfinder: {
-            Settings.global.cameraDevice = "secondary"
+            Settings.cameraDevice = "secondary"
             switcherView.positionViewAtEnd()
             window.activate()
         }
