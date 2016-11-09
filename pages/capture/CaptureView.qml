@@ -213,6 +213,7 @@ FocusScope {
         ScriptAction {
             script: {
                 if (camera.captureMode == Camera.CaptureStillImage) {
+                    camera.searchAndLock()
                     camera.captureImage()
                 } else {
                     camera.record()
@@ -243,7 +244,8 @@ FocusScope {
             if (camera.captureMode == Camera.CaptureStillImage
                     && focus.focusMode != Camera.FocusInfinity
                     && focus.focusMode != Camera.FocusHyperfocal
-                    && camera.lockStatus == Camera.Unlocked) {
+                    && camera.lockStatus == Camera.Unlocked
+                    && Settings.mode.timer == 0) {
                 camera.searchAndLock()
             }
         }
