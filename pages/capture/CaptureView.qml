@@ -86,15 +86,17 @@ FocusScope {
         id: captureSnapshot
         property alias sourceItem: captureSnapshotEffect.sourceItem
         visible: false
-        width: parent.width
-        height: parent.height
+        anchors.verticalCenter: parent.verticalCenter
+        width: parent.width*captureSnapshotEffect.scale
+        height: parent.height*captureSnapshotEffect.scale
         ShaderEffectSource {
             id: captureSnapshotEffect
             hideSource: false
             live: false
+            scale: 0.4
             anchors.centerIn: parent
-            width: isPortrait ? parent.width : parent.height
-            height: isPortrait ? parent.height : parent.width
+            width: isPortrait ? captureView.width : captureView.height
+            height: isPortrait ? captureView.height : captureView.width
             rotation: -page.rotation
         }
     }
@@ -456,26 +458,36 @@ FocusScope {
         }
         PropertyAction {
             target: captureSnapshot
+            property: "x"
+            value: 0
+        }
+        PropertyAction {
+            target: captureSnapshot
             property: "visible"
             value: true
+        }
+        PropertyAction {
+            target: viewfinder
+            property: "opacity"
+            value: 0
+        }
+        PauseAnimation {
+            duration: 100
         }
         ParallelAnimation {
             XAnimator {
                 target: captureSnapshot
                 from: 0
                 to: captureView.isPortrait ? -captureView.height : -captureView.width
-                duration: 250
+                duration: 300
                 easing.type: Easing.InQuad
             }
-            ScaleAnimator {
-                target: captureSnapshotEffect
-                from: 1.0
-                to: 0.6
-                duration: 250
-                easing.type: Easing.InOutQuad
+            OpacityAnimator {
+                target: viewfinder
+                to: 1
+                duration: 300
             }
         }
-
         PropertyAction {
             target: captureSnapshot
             property: "visible"
