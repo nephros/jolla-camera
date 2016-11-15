@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.4
 import QtMultimedia 5.4
 import Sailfish.Silica 1.0
 import Sailfish.Media 1.0
@@ -46,10 +46,9 @@ FocusScope {
     property bool _captureOnFocus
     property real _captureCountdown
 
-    property real _shutterOffset
     readonly property real _viewfinderPosition: orientation == Orientation.Portrait || orientation == Orientation.Landscape
-                ? parent.x + x + _shutterOffset
-                : -parent.x - x - _shutterOffset
+                                                ? parent.x + x
+                                                : -parent.x - x
 
     readonly property bool isPortrait: orientation == Orientation.Portrait
                 || orientation == Orientation.PortraitInverted
@@ -82,6 +81,25 @@ FocusScope {
     signal recordingStopped(url url, string mimeType)
     signal loaded
     signal captured
+
+    Item {
+        id: captureSnapshot
+        property alias sourceItem: captureSnapshotEffect.sourceItem
+        visible: false
+        anchors.verticalCenter: parent.verticalCenter
+        width: parent.width*captureSnapshotEffect.scale
+        height: parent.height*captureSnapshotEffect.scale
+        ShaderEffectSource {
+            id: captureSnapshotEffect
+            hideSource: false
+            live: false
+            scale: 0.4
+            anchors.centerIn: parent
+            width: isPortrait ? captureView.width : captureView.height
+            height: isPortrait ? captureView.height : captureView.width
+            rotation: -page.rotation
+        }
+    }
 
     function reload() {
         if (captureView._complete) {
@@ -272,6 +290,10 @@ FocusScope {
 
             captureBusy = true
             captureOverlay.writeMetaData()
+
+            shutterEvent.play()
+            captureAnimation.start()
+
             camera.imageCapture.captureToLocation(Settings.photoCapturePath('jpg'))
 
             if (focusTimer.running) {
@@ -321,10 +343,8 @@ FocusScope {
             onResolutionChanged: reload()
 
             onImageSaved: {
-                shutterEvent.play()
                 camera.unlock()
-
-                captureAnimation.start()
+                captureBusy = false
 
                 captureModel.appendCapture(
                             path,
@@ -332,7 +352,6 @@ FocusScope {
                             captureOrientation,
                             0,
                             camera.imageCapture.resolution)
-                captureBusy = false
             }
             onCaptureFailed: {
                 camera.unlock()
@@ -431,29 +450,55 @@ FocusScope {
     SequentialAnimation {
         id: captureAnimation
 
-        NumberAnimation {
-            target: captureView
-            property: "_shutterOffset"
-            from: 0
-            to: captureView.isPortrait ? -captureView.height : -captureView.width
-            duration: 200
+        PropertyAction {
+            target: captureSnapshot
+            property: "sourceItem"
+            value: viewfinder
         }
-
+        ScriptAction {
+            script: captureSnapshotEffect.scheduleUpdate()
+        }
+        PropertyAction {
+            target: captureSnapshot
+            property: "x"
+            value: 0
+        }
+        PropertyAction {
+            target: captureSnapshot
+            property: "visible"
+            value: true
+        }
         PropertyAction {
             target: viewfinder
             property: "opacity"
             value: 0
         }
-
-        PropertyAction {
-            target: captureView
-            property: "_shutterOffset"
-            value: 0
+        PauseAnimation {
+            duration: 100
         }
-        FadeAnimation {
-            target: viewfinder
-            from: 0
-            to: 1
+        ParallelAnimation {
+            XAnimator {
+                target: captureSnapshot
+                from: 0
+                to: captureView.isPortrait ? -captureView.height : -captureView.width
+                duration: 300
+                easing.type: Easing.InQuad
+            }
+            OpacityAnimator {
+                target: viewfinder
+                to: 1
+                duration: 300
+            }
+        }
+        PropertyAction {
+            target: captureSnapshot
+            property: "visible"
+            value: false
+        }
+        PropertyAction {
+            target: captureSnapshot
+            property: "sourceItem"
+            value: null
         }
         ScriptAction {
             script: captureView.captured()
