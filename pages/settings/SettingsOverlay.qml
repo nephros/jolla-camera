@@ -21,10 +21,6 @@ PinchArea {
                 ? Settings.global.portraitCaptureButtonLocation
                 : Settings.global.landscapeCaptureButtonLocation
 
-    readonly property int timerAlignment: timerContainer.parent == timerAnchorBL
-                ? Qt.AlignLeft
-                : Qt.AlignRight
-
     property real _lastPos
     property real _direction
 
@@ -47,15 +43,10 @@ PinchArea {
     property bool interactive: true
 
     property alias shutter: shutterContainer.children
-    property alias timer: timerContainer.children
     property alias exposure: exposureMenu.children
     property alias anchorContainer: anchorContainer
     property alias container: container
     readonly property alias settingsOpacity: row.opacity
-
-    readonly property int exposureAlignment: shutterContainer.parent == timerAnchorBR
-                ? Qt.AlignRight
-                : Qt.AlignLeft
 
     on_CaptureButtonLocationChanged: inButtonLayout = false
 
@@ -66,7 +57,7 @@ PinchArea {
 
     property list<SettingsMenuItem> _menus
     _menus: {
-        var menuItems = [ captureModeMenu.currentItem ]
+        var menuItems = [ ]
         if (Settings.mode.flashValues.length > 0) {
             menuItems.push(flashMenu.currentItem)
         }
@@ -82,7 +73,6 @@ PinchArea {
 
     function close() {
         _closing = true
-        exposureMenu.open = false
         open = false
         inButtonLayout = false
         _closing = false
@@ -100,6 +90,26 @@ PinchArea {
         ButtonAnchor { id: buttonAnchorBR; index: 4; anchors { right: parent.right; bottom: parent.bottom } },
         ButtonAnchor { id: buttonAnchorCR; index: 5; anchors { right: parent.right; verticalCenter: parent.verticalCenter } },
         ButtonAnchor { id: buttonAnchorTR; index: 6; anchors { right: parent.right; top: parent.top } visible: !overlay.isPortrait }
+    ]
+
+    // Position of other elements given the capture button position
+    property var _portraitPositions: [
+        { "captureMode": overlayAnchorBL, "timer": overlayAnchorBR, "exposure": Text.AlignRight }, // buttonAnchorTL
+        { "captureMode": overlayAnchorBL, "timer": overlayAnchorBC, "exposure": Text.AlignRight }, // buttonAnchorCL
+        { "captureMode": overlayAnchorBR, "timer": overlayAnchorBC, "exposure": Text.AlignRight }, // buttonAnchorBL
+        { "captureMode": overlayAnchorBL, "timer": overlayAnchorBR, "exposure": Text.AlignRight }, // buttonAnchorBC
+        { "captureMode": overlayAnchorBL, "timer": overlayAnchorBC, "exposure": Text.AlignRight }, // buttonAnchorBR
+        { "captureMode": overlayAnchorBL, "timer": overlayAnchorBC, "exposure": Text.AlignLeft  }, // buttonAnchorCR
+        { "captureMode": overlayAnchorBL, "timer": overlayAnchorBR, "exposure": Text.AlignLeft  }, // buttonAnchorTR
+    ]
+    property var _landscapePositions: [
+        { "captureMode": overlayAnchorBL, "timer": overlayAnchorCL, "exposure": Text.AlignRight }, // buttonAnchorTL
+        { "captureMode": overlayAnchorBL, "timer": overlayAnchorTL, "exposure": Text.AlignRight }, // buttonAnchorCL
+        { "captureMode": overlayAnchorCL, "timer": overlayAnchorTL, "exposure": Text.AlignRight }, // buttonAnchorBL
+        { "captureMode": overlayAnchorBL, "timer": overlayAnchorTL, "exposure": Text.AlignRight }, // buttonAnchorBC
+        { "captureMode": overlayAnchorCR, "timer": overlayAnchorTR, "exposure": Text.AlignLeft  }, // buttonAnchorBR
+        { "captureMode": overlayAnchorBR, "timer": overlayAnchorTR, "exposure": Text.AlignLeft  }, // buttonAnchorCR
+        { "captureMode": overlayAnchorBR, "timer": overlayAnchorCR, "exposure": Text.AlignLeft  }, // buttonAnchorTR
     ]
 
     Item {
@@ -146,44 +156,28 @@ PinchArea {
         }
     }
 
-    ExposureMenu {
+    CaptureModeMenu {
         id: exposureMenu
 
-        parent: shutterContainer.parent == buttonAnchorBL
-                    || shutterContainer.parent == buttonAnchorCL
-                    || shutterContainer.parent == buttonAnchorTL
-                ? timerAnchorBR
-                : timerAnchorBL
-        alignment: parent == timerAnchorBR ? Qt.AlignRight : Qt.AlignLeft
+        parent: overlay.isPortrait ? _portraitPositions[overlay._captureButtonLocation].captureMode
+                                   : _landscapePositions[overlay._captureButtonLocation].captureMode
+        anchors.verticalCenterOffset: Theme.paddingMedium
+        alignment: parent.anchors.left !== null ? Qt.AlignRight : Qt.AlignLeft
+        open: true
     }
 
     Item {
-        id: timerContainer
-
-        parent: {
-            if (overlay.isPortrait) {
-                if (exposureMenu.parent == timerAnchorBR
-                        && shutterContainer.parent != buttonAnchorBL) {
-                    return timerAnchorBL
-                } else if (exposureMenu.parent == timerAnchorBL
-                            && shutterContainer.parent != buttonAnchorBR) {
-                    return timerAnchorBR
-                } else {
-                    return timerAnchorBC
-                }
-            } else {
-                if (exposureMenu.parent == timerAnchorBR) {
-                    return shutterContainer.parent == buttonAnchorTL
-                            ? timerAnchorBL
-                            : timerAnchorTL
-                } else if (shutterContainer.parent == buttonAnchorTR) {
-                    return timerAnchorBR
-                } else {
-                    return timerAnchorTR
-                }
-            }
+        parent: overlay.isPortrait ? _portraitPositions[overlay._captureButtonLocation].timer
+                                   : _landscapePositions[overlay._captureButtonLocation].timer
+        anchors.centerIn: parent
+        width: Theme.itemSizeSmall
+        height: Theme.itemSizeSmall
+        opacity: Settings.mode.timer == 0 ? 0.0 : 1.0
+        Behavior on opacity { FadeAnimation {} }
+        Image {
+            anchors.centerIn: parent
+            source: "image://theme/icon-m-timer"
         }
-        anchors.fill: parent
     }
 
     MouseArea {
@@ -234,9 +228,7 @@ PinchArea {
             }
 
             onClicked: {
-                if (exposureMenu.expanded) {
-                    exposureMenu.open = false
-                } else if (overlay.expanded) {
+                if (overlay.expanded) {
                     overlay.open = false
                 } else if (overlay.inButtonLayout) {
                     overlay.inButtonLayout = false
@@ -277,21 +269,13 @@ PinchArea {
                 onPressAndHold: container.pressAndHold(mouse)
             }
 
-            TimerAnchor { id: timerAnchorBL; anchors { left: parent.left; bottom: parent.bottom } }
-            TimerAnchor { id: timerAnchorBC; anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom } }
-            TimerAnchor { id: timerAnchorBR; anchors { right: parent.right; bottom: parent.bottom } }
-            Item {
-                id: timerAnchorTL
-                width: Theme.itemSizeMedium
-                height: Theme.itemSizeSmall
-                anchors { left: parent.left; top: parent.top; leftMargin: Theme.paddingLarge }
-            }
-            Item {
-                id: timerAnchorTR
-                width: Theme.itemSizeMedium
-                height: Theme.itemSizeSmall
-                anchors { right: parent.right; top: parent.top; rightMargin: Theme.paddingLarge }
-            }
+            OverlayAnchor { id: overlayAnchorBL; anchors { left: parent.left; bottom: parent.bottom } }
+            OverlayAnchor { id: overlayAnchorBC; anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom } }
+            OverlayAnchor { id: overlayAnchorBR; anchors { right: parent.right; bottom: parent.bottom } }
+            OverlayAnchor { id: overlayAnchorCL; anchors { left: parent.left; verticalCenter: parent.verticalCenter } }
+            OverlayAnchor { id: overlayAnchorCR; anchors { right: parent.right; verticalCenter: parent.verticalCenter } }
+            OverlayAnchor { id: overlayAnchorTL; anchors { left: parent.left; top: parent.top; leftMargin: Theme.paddingLarge } }
+            OverlayAnchor { id: overlayAnchorTR; anchors { right: parent.right; top: parent.top; rightMargin: Theme.paddingLarge } }
         }
 
         Item {
@@ -330,7 +314,11 @@ PinchArea {
             id: row
 
             y: Math.round(height * panel.y / panel.height) + overlay._headerHeight + overlay._headerTopMargin
-            anchors.horizontalCenter: parent.horizontalCenter
+            anchors {
+                horizontalCenter: parent.horizontalCenter
+                horizontalCenterOffset: overlay.isPortrait ? 0 : -width/2
+            }
+
             height: Screen.height / 2
 
             opacity: 1 - container.opacity
@@ -338,22 +326,6 @@ PinchArea {
             visible: overlay.expanded
 
             spacing: overlay._menuItemHorizontalSpacing
-
-            SettingsMenu {
-                id: captureModeMenu
-
-                width: overlay._menuWidth
-                title: Settings.captureModeText
-                header: upperHeader
-                model: [ "image", "video" ]
-                delegate: SettingsMenuItem {
-                    property: "captureMode"
-                    settings: Settings.global
-                    value: modelData
-                    icon: Settings.captureModeIcon(modelData)
-                    iconVisible: !selected
-                }
-            }
 
             SettingsMenu {
                 id: flashMenu
@@ -399,16 +371,17 @@ PinchArea {
                     property: "iso"
                     value: modelData
                     icon: Settings.isoIcon(modelData)
+                    iconVisible: !selected
                 }
             }
         }
 
         Row {
-            id: leftRow // bottom left or single row left side
+            id: rightRow // bottom right or single row right side
             anchors {
                 top: overlay.isPortrait ? lowerHeader.bottom : row.top
-                right: overlay.isPortrait ? row.horizontalCenter : row.left
-                rightMargin: overlay.isPortrait ? overlay._menuItemHorizontalSpacing/2 : overlay._menuItemHorizontalSpacing
+                left: overlay.isPortrait ? row.left : row.right
+                leftMargin: overlay.isPortrait ? 0 : overlay._menuItemHorizontalSpacing
             }
 
             opacity: row.opacity
@@ -430,20 +403,6 @@ PinchArea {
                     icon: Settings.cameraIcon(modelData)
                 }
             }
-        }
-
-        Row {
-            id: rightRow // bottom right or single row right side
-            anchors {
-                top: leftRow.top
-                left: overlay.isPortrait ? row.horizontalCenter : row.right
-                leftMargin: overlay.isPortrait ? overlay._menuItemHorizontalSpacing/2 : overlay._menuItemHorizontalSpacing
-            }
-
-            opacity: row.opacity
-            visible: overlay.expanded
-
-            spacing: overlay._menuItemHorizontalSpacing
 
             SettingsMenu {
                 id: timerMenu
@@ -500,7 +459,10 @@ PinchArea {
 
         property real _topRowMargin: overlay.topButtonRowHeight/2 - overlay._menuWidth/2
 
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            horizontalCenterOffset: overlay.isPortrait ? 0 : -width/2
+        }
         spacing: row.spacing
 
         Repeater {
@@ -517,13 +479,22 @@ PinchArea {
 
                 Image {
                     anchors.centerIn: parent
-                    source: model.icon != undefined && model.icon != ""
-                            ? model.icon + "?" + Theme.highlightColor
-                            : ""
+                    source: model.icon != undefined ? model.icon : ""
                     smooth: true
                 }
             }
         }
+    }
+
+    ExposureSlider {
+        id: exposureSlider
+        alignment: overlay.isPortrait ? _portraitPositions[overlay._captureButtonLocation].exposure
+                                      : _landscapePositions[overlay._captureButtonLocation].exposure
+        x: alignment == Text.AlignLeft ? (isPortrait ? 0 : Theme.paddingLarge)
+                                       : parent.width - width - (isPortrait ? 0 : Theme.paddingLarge)
+        anchors.verticalCenter: parent.verticalCenter
+        enabled: !overlay.open && !overlay.inButtonLayout
+        opacity: 1.0 - settingsOpacity
     }
 
     Item {

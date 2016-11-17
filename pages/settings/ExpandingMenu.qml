@@ -37,7 +37,6 @@ MouseArea {
 
         anchors.bottom: menu.bottom
         width: menu.width
-        spacing: Theme.paddingMedium + Theme.paddingSmall
 
         Repeater {
             id: repeater

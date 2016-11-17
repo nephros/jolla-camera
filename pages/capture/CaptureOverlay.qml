@@ -196,11 +196,12 @@ SettingsOverlay {
                 }
             }
 
+            // TODO: Get proper video mode button icons
             source: startRecordTimer.running || camera.videoRecorder.recorderState == CameraRecorder.RecordingState
-                    ? "image://theme/icon-camera-stop?" + Theme.highlightColor
-                    : "image://theme/icon-camera-shutter-release?" + (captureView._canCapture
-                            ? Theme.highlightColor
-                            : Theme.highlightDimmerColor)
+                    ? "image://theme/icon-camera-stop"
+                    : (camera.captureMode == Camera.CaptureVideo
+                       ? "image://theme/icon-m-call-recording-on"
+                       : "image://theme/icon-camera-shutter-release")
         }
 
         Label {
@@ -216,35 +217,19 @@ SettingsOverlay {
         }
     }
 
-    timer: Item {
-        anchors {
-            centerIn: parent
-            horizontalCenterOffset: settingsOverlay.timerAlignment == Qt.AlignLeft
-                    ? -(timerLabel.width + Theme.paddingMedium - Theme.itemSizeMedium) / 2
-                    : (timerLabel.width + Theme.paddingMedium - Theme.itemSizeMedium) / 2
-        }
-        width: timerLabel.implicitWidth + (2 * Theme.paddingMedium)
-        height: timerLabel.implicitHeight + (2 * Theme.paddingSmall)
+    Label {
+        id: timerLabel
+
+        y: Theme.itemSizeMedium
+        anchors.horizontalCenter: parent.horizontalCenter
         opacity: camera.captureMode == Camera.CaptureVideo ? 1 : 0
-        Behavior on opacity { FadeAnimation {} }
+        Behavior on opacity { FadeAnimator {} }
 
-        Rectangle {
-            radius: Theme.paddingSmall / 2
-
-            anchors.fill: parent
-            color: Theme.highlightBackgroundColor
-            opacity: 0.6
-        }
-        Label {
-            id: timerLabel
-
-            anchors.centerIn: parent
-
-            text: Format.formatDuration(_recordingDuration,
-                                        _recordingDuration >= 3600 ? Formatter.DurationLong : Formatter.DurationShort)
-            font.pixelSize: Theme.fontSizeMedium
-
-        }
+        text: Format.formatDuration(_recordingDuration,
+                                    _recordingDuration >= 3600 ? Formatter.DurationLong : Formatter.DurationShort)
+        font.pixelSize: Theme.fontSizeHuge * 1.5
+        style: Text.Outline
+        styleColor: "#20000000"
     }
 
     WallClock {

@@ -5,7 +5,7 @@ import com.jolla.camera 1.0
 MouseArea {
     property int index
 
-    anchors.margins: Theme.paddingLarge
+    anchors.margins: Theme.paddingLarge + Theme.paddingMedium
 
     width: Theme.itemSizeMedium
     height: Theme.itemSizeMedium
