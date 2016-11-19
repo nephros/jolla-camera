@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.4
 import QtMultimedia 5.0
 import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
@@ -43,7 +43,7 @@ PinchArea {
     property bool interactive: true
 
     property alias shutter: shutterContainer.children
-    property alias exposure: exposureMenu.children
+    property alias exposure: captureModeMenu.children
     property alias anchorContainer: anchorContainer
     property alias container: container
     readonly property alias settingsOpacity: row.opacity
@@ -156,16 +156,6 @@ PinchArea {
         }
     }
 
-    CaptureModeMenu {
-        id: exposureMenu
-
-        parent: overlay.isPortrait ? _portraitPositions[overlay._captureButtonLocation].captureMode
-                                   : _landscapePositions[overlay._captureButtonLocation].captureMode
-        anchors.verticalCenterOffset: Theme.paddingMedium
-        alignment: parent.anchors.left !== null ? Qt.AlignRight : Qt.AlignLeft
-        open: true
-    }
-
     Item {
         parent: overlay.isPortrait ? _portraitPositions[overlay._captureButtonLocation].timer
                                    : _landscapePositions[overlay._captureButtonLocation].timer
@@ -180,277 +170,328 @@ PinchArea {
         }
     }
 
+    CaptureModeMenu {
+        id: captureModeMenu
+
+        parent: overlay.isPortrait ? _portraitPositions[overlay._captureButtonLocation].captureMode
+                                   : _landscapePositions[overlay._captureButtonLocation].captureMode
+        anchors.verticalCenterOffset: Theme.paddingMedium
+        alignment: parent.anchors.left !== null ? Qt.AlignRight : Qt.AlignLeft
+        open: true
+
+        onCurrentItemChanged: {
+            if (currentItem) {
+                captureModeHighlight.y = currentItem.y - Theme.itemSizeExtraSmall - Theme.paddingSmall
+            }
+        }
+
+        Rectangle {
+            id: captureModeHighlight
+            z: -1
+            width: Theme.itemSizeExtraSmall
+            height: Theme.itemSizeExtraSmall
+            anchors.horizontalCenter: parent.horizontalCenter
+            radius: width / 2
+            color: Theme.rgba(Theme.highlightColor, 0.4)
+            Behavior on y { YAnimator { duration: 200; easing.type: Easing.OutQuad } }
+        }
+    }
+
     MouseArea {
-        id: dragArea
+        id: captureModeDragArea
 
         width: overlay.width
         height: overlay.height
+        enabled: !overlay.open
 
         drag {
-            target: overlay.interactive && !overlay.inButtonLayout ? panel : undefined
-            minimumY: -panel.height
+            target: overlay.interactive && !overlay.inButtonLayout ? captureModeHighlight : undefined
+            minimumY: -Theme.itemSizeExtraSmall - Theme.paddingSmall
             maximumY: 0
             axis: Drag.YAxis
             filterChildren: true
             onActiveChanged: {
-                if (!drag.active && panel.y < -(panel.height / 3) && overlay._direction <= 0) {
-                    overlay.open = false
-                } else if (!drag.active && panel.y > (-panel.height * 2 / 3) && overlay._direction >= 0) {
-                    overlay.open = true
+                if (!drag.active) {
+                    var index = Math.round((captureModeHighlight.y - drag.minimumY) / Theme.itemSizeExtraSmall)
+                    captureModeMenu.selectItem(index)
+                    captureModeHighlight.y = captureModeMenu.currentItem.y - Theme.itemSizeExtraSmall - Theme.paddingSmall
                 }
             }
-        }
-
-        onPressed: {
-            overlay._direction = 0
-            overlay._lastPos = panel.y
-        }
-        onPositionChanged: {
-            var pos = panel.y
-            overlay._direction = (overlay._direction + pos - _lastPos) / 2
-            overlay._lastPos = panel.y
         }
 
         MouseArea {
-            id: container
-
-            property real pressX
-            property real pressY
+            id: dragArea
 
             width: overlay.width
             height: overlay.height
-            opacity: Math.min(1 - overlay._progress, 1 - anchorContainer.opacity)
-            enabled: !overlay.pinchActive
+            enabled: overlay.open
 
-            onPressed: {
-                pressX = mouseX
-                pressY = mouseY
-            }
-
-            onClicked: {
-                if (overlay.expanded) {
-                    overlay.open = false
-                } else if (overlay.inButtonLayout) {
-                    overlay.inButtonLayout = false
-                } else {
-                    overlay.clicked(mouse)
-                }
-            }
-
-            onPressAndHold: {
-                if (!overlay.open) {
-                    var dragDistance = Math.max(Math.abs(mouseX - pressX),
-                                                Math.abs(mouseY - pressY))
-                    if (dragDistance < Theme.startDragDistance) {
-
-                        overlay.inButtonLayout = true
+            drag {
+                target: overlay.interactive && !overlay.inButtonLayout ? panel : undefined
+                minimumY: -panel.height
+                maximumY: 0
+                axis: Drag.YAxis
+                filterChildren: true
+                onActiveChanged: {
+                    if (!drag.active && panel.y < -(panel.height / 3) && overlay._direction <= 0) {
+                        overlay.open = false
+                    } else if (!drag.active && panel.y > (-panel.height * 2 / 3) && overlay._direction >= 0) {
+                        overlay.open = true
                     }
                 }
             }
 
-            Rectangle {
-                width: overlay.width
-                height: overlay.topButtonRowHeight
-
-                gradient: Gradient {
-                    GradientStop { position: 0.0; color: Theme.rgba("black", 0.7) }
-                    GradientStop { position: 1.0; color: "transparent" }
-                }
+            onPressed: {
+                overlay._direction = 0
+                overlay._lastPos = panel.y
+            }
+            onPositionChanged: {
+                var pos = panel.y
+                overlay._direction = (overlay._direction + pos - _lastPos) / 2
+                overlay._lastPos = panel.y
             }
 
             MouseArea {
-                anchors.horizontalCenter: parent.horizontalCenter
-                width: row.width
-                height: Theme.itemSizeLarge
-                enabled: !overlay.expanded && !overlay.inButtonLayout
+                id: container
 
-                onClicked: overlay.open = true
+                property real pressX
+                property real pressY
 
-                onPressAndHold: container.pressAndHold(mouse)
+                width: overlay.width
+                height: overlay.height
+                opacity: Math.min(1 - overlay._progress, 1 - anchorContainer.opacity)
+                enabled: !overlay.pinchActive
+
+                onPressed: {
+                    pressX = mouseX
+                    pressY = mouseY
+                }
+
+                onClicked: {
+                    if (overlay.expanded) {
+                        overlay.open = false
+                    } else if (overlay.inButtonLayout) {
+                        overlay.inButtonLayout = false
+                    } else {
+                        overlay.clicked(mouse)
+                    }
+                }
+
+                onPressAndHold: {
+                    if (!overlay.open) {
+                        var dragDistance = Math.max(Math.abs(mouseX - pressX),
+                                                    Math.abs(mouseY - pressY))
+                        if (dragDistance < Theme.startDragDistance) {
+
+                            overlay.inButtonLayout = true
+                        }
+                    }
+                }
+
+                Rectangle {
+                    width: overlay.width
+                    height: overlay.topButtonRowHeight
+
+                    gradient: Gradient {
+                        GradientStop { position: 0.0; color: Theme.rgba("black", 0.7) }
+                        GradientStop { position: 1.0; color: "transparent" }
+                    }
+                }
+
+                MouseArea {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: row.width
+                    height: Theme.itemSizeLarge
+                    enabled: !overlay.expanded && !overlay.inButtonLayout
+
+                    onClicked: overlay.open = true
+
+                    onPressAndHold: container.pressAndHold(mouse)
+                }
+
+                OverlayAnchor { id: overlayAnchorBL; anchors { left: parent.left; bottom: parent.bottom } }
+                OverlayAnchor { id: overlayAnchorBC; anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom } }
+                OverlayAnchor { id: overlayAnchorBR; anchors { right: parent.right; bottom: parent.bottom } }
+                OverlayAnchor { id: overlayAnchorCL; anchors { left: parent.left; verticalCenter: parent.verticalCenter } }
+                OverlayAnchor { id: overlayAnchorCR; anchors { right: parent.right; verticalCenter: parent.verticalCenter } }
+                OverlayAnchor { id: overlayAnchorTL; anchors { left: parent.left; top: parent.top; leftMargin: Theme.paddingLarge } }
+                OverlayAnchor { id: overlayAnchorTR; anchors { right: parent.right; top: parent.top; rightMargin: Theme.paddingLarge } }
             }
 
-            OverlayAnchor { id: overlayAnchorBL; anchors { left: parent.left; bottom: parent.bottom } }
-            OverlayAnchor { id: overlayAnchorBC; anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom } }
-            OverlayAnchor { id: overlayAnchorBR; anchors { right: parent.right; bottom: parent.bottom } }
-            OverlayAnchor { id: overlayAnchorCL; anchors { left: parent.left; verticalCenter: parent.verticalCenter } }
-            OverlayAnchor { id: overlayAnchorCR; anchors { right: parent.right; verticalCenter: parent.verticalCenter } }
-            OverlayAnchor { id: overlayAnchorTL; anchors { left: parent.left; top: parent.top; leftMargin: Theme.paddingLarge } }
-            OverlayAnchor { id: overlayAnchorTR; anchors { right: parent.right; top: parent.top; rightMargin: Theme.paddingLarge } }
-        }
+            Item {
+                id: panel
 
-        Item {
-            id: panel
+                Binding {
+                    target: panel
+                    property: "y"
+                    value: open ? 0 : -panel.height
+                    when: expandBehavior.enabled
+                }
+                Behavior on y {
+                    id: expandBehavior
+                    enabled: !dragArea.drag.active
+                    NumberAnimation {
+                        id: verticalAnimation
+                        duration: 200; easing.type: Easing.InOutQuad
+                    }
+                }
 
-            Binding {
-                target: panel
-                property: "y"
-                value: open ? 0 : -panel.height
-                when: expandBehavior.enabled
+                width: overlay.width
+                height: Screen.width / 2
             }
-            Behavior on y {
-                id: expandBehavior
-                enabled: !dragArea.drag.active
-                NumberAnimation {
-                    id: verticalAnimation
-                    duration: 200; easing.type: Easing.InOutQuad
+
+            Rectangle {
+                id: highlight
+                width: overlay.width
+                height: overlay.height
+
+                visible: overlay.expanded
+                color: Theme.highlightDimmerColor
+                opacity: 0.6 * (1 - container.opacity)
+            }
+
+            Row {
+                id: row
+
+                y: Math.round(height * panel.y / panel.height) + overlay._headerHeight + overlay._headerTopMargin
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                    horizontalCenterOffset: overlay.isPortrait ? 0 : -width/2
+                }
+
+                height: Screen.height / 2
+
+                opacity: 1 - container.opacity
+                enabled: overlay.expanded
+                visible: overlay.expanded
+
+                spacing: overlay._menuItemHorizontalSpacing
+
+                SettingsMenu {
+                    id: flashMenu
+
+                    visible: model.length > 0
+                    width: overlay._menuWidth
+                    title: Settings.flashText
+                    header: upperHeader
+                    model: Settings.mode.flashValues
+                    delegate: SettingsMenuItem {
+                        settings: Settings.mode
+                        property: "flash"
+                        value: modelData
+                        icon: Settings.flashIcon(modelData)
+                        iconVisible: !selected
+                    }
+                }
+                SettingsMenu {
+                    id: whiteBalanceMenu
+
+                    width: overlay._menuWidth
+                    title: Settings.whiteBalanceText
+                    header: upperHeader
+                    model: Settings.mode.whiteBalanceValues
+                    delegate: SettingsMenuItem {
+                        settings: Settings.mode
+                        property: "whiteBalance"
+                        value: modelData
+                        icon: Settings.whiteBalanceIcon(modelData)
+                        iconVisible: !selected
+                    }
+                }
+
+                SettingsMenu {
+                    id: isoMenu
+
+                    width: overlay._menuWidth
+                    title: Settings.isoText
+                    header: upperHeader
+                    model: Settings.mode.isoValues
+                    delegate: SettingsMenuItem {
+                        settings: Settings.mode
+                        property: "iso"
+                        value: modelData
+                        icon: Settings.isoIcon(modelData)
+                        iconVisible: !selected
+                    }
                 }
             }
 
-            width: overlay.width
-            height: Screen.width / 2
-        }
-
-        Rectangle {
-            id: highlight
-            width: overlay.width
-            height: overlay.height
-
-            visible: overlay.expanded
-            color: Theme.highlightDimmerColor
-            opacity: 0.6 * (1 - container.opacity)
-        }
-
-        Row {
-            id: row
-
-            y: Math.round(height * panel.y / panel.height) + overlay._headerHeight + overlay._headerTopMargin
-            anchors {
-                horizontalCenter: parent.horizontalCenter
-                horizontalCenterOffset: overlay.isPortrait ? 0 : -width/2
-            }
-
-            height: Screen.height / 2
-
-            opacity: 1 - container.opacity
-            enabled: overlay.expanded
-            visible: overlay.expanded
-
-            spacing: overlay._menuItemHorizontalSpacing
-
-            SettingsMenu {
-                id: flashMenu
-
-                visible: model.length > 0
-                width: overlay._menuWidth
-                title: Settings.flashText
-                header: upperHeader
-                model: Settings.mode.flashValues
-                delegate: SettingsMenuItem {
-                    settings: Settings.mode
-                    property: "flash"
-                    value: modelData
-                    icon: Settings.flashIcon(modelData)
-                    iconVisible: !selected
+            Row {
+                id: rightRow // bottom right or single row right side
+                anchors {
+                    top: overlay.isPortrait ? lowerHeader.bottom : row.top
+                    left: overlay.isPortrait ? row.left : row.right
+                    leftMargin: overlay.isPortrait ? 0 : overlay._menuItemHorizontalSpacing
                 }
-            }
-            SettingsMenu {
-                id: whiteBalanceMenu
 
-                width: overlay._menuWidth
-                title: Settings.whiteBalanceText
-                header: upperHeader
-                model: Settings.mode.whiteBalanceValues
-                delegate: SettingsMenuItem {
-                    settings: Settings.mode
-                    property: "whiteBalance"
-                    value: modelData
-                    icon: Settings.whiteBalanceIcon(modelData)
-                    iconVisible: !selected
+                opacity: row.opacity
+                visible: overlay.expanded
+
+                spacing: overlay._menuItemHorizontalSpacing
+
+                SettingsMenu {
+                    id: cameraDeviceMenu
+
+                    width: overlay._menuWidth
+                    title: Settings.cameraText
+                    header: overlay.isPortrait ? lowerHeader : upperHeader
+                    model: [ "primary", "secondary" ]
+                    delegate: SettingsMenuItem {
+                        settings: Settings
+                        property: "cameraDevice"
+                        value: modelData
+                        icon: Settings.cameraIcon(modelData)
+                    }
                 }
-            }
 
-            SettingsMenu {
-                id: isoMenu
+                SettingsMenu {
+                    id: timerMenu
 
-                width: overlay._menuWidth
-                title: Settings.isoText
-                header: upperHeader
-                model: Settings.mode.isoValues
-                delegate: SettingsMenuItem {
-                    settings: Settings.mode
-                    property: "iso"
-                    value: modelData
-                    icon: Settings.isoIcon(modelData)
-                    iconVisible: !selected
+                    parent: Screen.sizeCategory >= Screen.Large ? row : rightRow
+
+                    width: overlay._menuWidth
+                    title: Settings.timerText
+                    header: Screen.sizeCategory < Screen.Large && overlay.isPortrait ? lowerHeader : upperHeader
+                    model: Settings.mode.timerValues
+                    delegate: SettingsMenuItem {
+                        settings: Settings.mode
+                        property: "timer"
+                        value: modelData
+                        icon: Settings.timerIcon(modelData)
+                    }
                 }
-            }
-        }
 
-        Row {
-            id: rightRow // bottom right or single row right side
-            anchors {
-                top: overlay.isPortrait ? lowerHeader.bottom : row.top
-                left: overlay.isPortrait ? row.left : row.right
-                leftMargin: overlay.isPortrait ? 0 : overlay._menuItemHorizontalSpacing
-            }
+                SettingsMenu {
+                    id: gridMenu
 
-            opacity: row.opacity
-            visible: overlay.expanded
-
-            spacing: overlay._menuItemHorizontalSpacing
-
-            SettingsMenu {
-                id: cameraDeviceMenu
-
-                width: overlay._menuWidth
-                title: Settings.cameraText
-                header: overlay.isPortrait ? lowerHeader : upperHeader
-                model: [ "primary", "secondary" ]
-                delegate: SettingsMenuItem {
-                    settings: Settings
-                    property: "cameraDevice"
-                    value: modelData
-                    icon: Settings.cameraIcon(modelData)
+                    width: overlay._menuWidth
+                    title: Settings.viewfinderGridText
+                    header: overlay.isPortrait ? lowerHeader : upperHeader
+                    model: Settings.mode.viewfinderGridValues
+                    delegate: SettingsMenuItem {
+                        settings: Settings.mode
+                        property: "viewfinderGrid"
+                        value: modelData
+                        icon: Settings.viewfinderGridIcon(modelData)
+                    }
                 }
             }
 
-            SettingsMenu {
-                id: timerMenu
+            HeaderLabel {
+                id: upperHeader
 
-                parent: Screen.sizeCategory >= Screen.Large ? row : rightRow
-
-                width: overlay._menuWidth
-                title: Settings.timerText
-                header: Screen.sizeCategory < Screen.Large && overlay.isPortrait ? lowerHeader : upperHeader
-                model: Settings.mode.timerValues
-                delegate: SettingsMenuItem {
-                    settings: Settings.mode
-                    property: "timer"
-                    value: modelData
-                    icon: Settings.timerIcon(modelData)
-                }
+                anchors { left: parent.left; bottom: row.top; right: parent.right }
+                height: overlay._headerHeight
+                opacity: row.opacity
             }
 
-            SettingsMenu {
-                id: gridMenu
+            HeaderLabel {
+                id: lowerHeader
 
-                width: overlay._menuWidth
-                title: Settings.viewfinderGridText
-                header: overlay.isPortrait ? lowerHeader : upperHeader
-                model: Settings.mode.viewfinderGridValues
-                delegate: SettingsMenuItem {
-                    settings: Settings.mode
-                    property: "viewfinderGrid"
-                    value: modelData
-                    icon: Settings.viewfinderGridIcon(modelData)
-                }
+                anchors { left: parent.left; bottom: row.bottom; right: parent.right }
+                height: overlay._headerHeight
+                opacity: row.opacity
             }
-        }
-
-        HeaderLabel {
-            id: upperHeader
-
-            anchors { left: parent.left; bottom: row.top; right: parent.right }
-            height: overlay._headerHeight
-            opacity: row.opacity
-        }
-
-        HeaderLabel {
-            id: lowerHeader
-
-            anchors { left: parent.left; bottom: row.bottom; right: parent.right }
-            height: overlay._headerHeight
-            opacity: row.opacity
         }
     }
 

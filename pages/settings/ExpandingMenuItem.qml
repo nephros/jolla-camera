@@ -12,8 +12,9 @@ MouseArea {
 
     property QtObject menu
 
+    property bool persistentHighlight
     readonly property bool selected: settings[property] == value
-    readonly property bool highlighted: (parent.open || parent.pressed) && (selected || menuItem.pressed)
+    readonly property bool highlighted: (parent.open || parent.pressed) && ((persistentHighlight && selected) || menuItem.pressed)
 
     width: parent.width
     height: selected ? parent.width : parent.itemHeight

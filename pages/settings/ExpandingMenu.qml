@@ -13,8 +13,13 @@ MouseArea {
     property bool open
     readonly property alias expanded: column.itemsVisible
 
-    width: Theme.itemSizeSmall
-    height: Theme.itemSizeSmall
+    function selectItem(index) {
+        var item = repeater.itemAt(index)
+        item.settings[item.property] = item.value
+    }
+
+    width: Theme.itemSizeExtraSmall
+    height: Theme.itemSizeExtraSmall
     anchors.centerIn: parent
 
     onClicked: menu.open = true
@@ -37,6 +42,7 @@ MouseArea {
 
         anchors.bottom: menu.bottom
         width: menu.width
+        spacing: Theme.paddingSmall
 
         Repeater {
             id: repeater
