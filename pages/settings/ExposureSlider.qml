@@ -94,7 +94,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         width: Theme.itemSizeSmall
 
-        color: Theme.highlightBackgroundColor
+        color: Theme.highlightColor
         font {
             pixelSize: Theme.fontSizeExtraSmall
             bold: true
