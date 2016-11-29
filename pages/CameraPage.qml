@@ -5,7 +5,6 @@ import com.jolla.camera 1.0
 import org.nemomobile.dbus 2.0
 import QtMultimedia 5.4
 import "capture"
-import "settings"
 import "gallery"
 
 Page {
@@ -127,6 +126,9 @@ Page {
             CaptureView {
                 id: captureView
 
+                readonly property real _viewfinderPosition: orientation == Orientation.Portrait || orientation == Orientation.Landscape
+                                                            ? parent.x + x
+                                                            : -parent.x - x
                 width: page.width
                 height: page.height
 
@@ -134,6 +136,7 @@ Page {
 
                 orientation: page.orientation
                 windowVisible: page.windowVisible
+                pageRotation: page.rotation
 
                 visible: switcherView.moving || captureView.active
 
@@ -145,6 +148,22 @@ Page {
 
                 CameraRollHint { z: 2 }
                 CameraModeHint { z: 2 }
+
+                Binding {
+                    target: captureView.viewfinder
+                    property: "x"
+                    value: captureView.isPortrait
+                           ? captureView._viewfinderPosition
+                           : 0
+                }
+
+                Binding {
+                    target: captureView.viewfinder
+                    property: "y"
+                    value: !captureView.isPortrait
+                            ? captureView._viewfinderPosition + (page.orientation == Orientation.Landscape ? captureView.viewfinderOffset : -captureView.viewfinderOffset)
+                            : captureView.viewfinderOffset
+                }
             }
         }
 
