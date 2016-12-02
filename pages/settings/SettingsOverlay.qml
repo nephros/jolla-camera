@@ -61,9 +61,6 @@ PinchArea {
             menuItems.push(flashMenu.currentItem)
         }
         menuItems.push(isoMenu.currentItem)
-        if (Screen.sizeCategory >= Screen.Large) {
-            menuItems.push(timerMenu.currentItem)
-        }
         return menuItems
     }
 

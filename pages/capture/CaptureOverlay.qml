@@ -130,22 +130,22 @@ SettingsOverlay {
 
             case 90:
                 focusPoint = Qt.point(
-                            mouse.y - ((height - focusArea.width) / 2),
+                            mouse.y - ((height - focusArea.width) / 2) - captureView.viewfinderOffset,
                             width - mouse.x);
                 break;
             case 180:
                 focusPoint = Qt.point(
-                            width - mouse.x - ((width - focusArea.width) / 2),
+                            width - mouse.x - ((width - focusArea.width) / 2) + captureView.viewfinderOffset,
                             height - mouse.y);
                 break;
             case 270:
                 focusPoint = Qt.point(
-                            height - mouse.y - ((height - focusArea.width) / 2),
+                            height - mouse.y - ((height - focusArea.width) / 2) + captureView.viewfinderOffset,
                             mouse.x);
                 break;
             default:
                 focusPoint = Qt.point(
-                            mouse.x - ((width - focusArea.width) / 2),
+                            mouse.x - ((width - focusArea.width) / 2) - captureView.viewfinderOffset,
                             mouse.y);
                 break;
             }

@@ -50,6 +50,8 @@ FocusScope {
                                                 ? parent.x + x
                                                 : -parent.x - x
 
+    readonly property real viewfinderOffset: Math.min(0, isPortrait ? (focusArea.width - height)/2 : (focusArea.width - width)/2)
+
     readonly property bool isPortrait: orientation == Orientation.Portrait
                 || orientation == Orientation.PortraitInverted
     readonly property bool effectiveActive: ((activeFocus && active) || (windowVisible && recording)) && _applicationActive
@@ -430,8 +432,8 @@ FocusScope {
         target: captureView.viewfinder
         property: "y"
         value: !captureView.isPortrait
-                ? captureView._viewfinderPosition
-                : 0
+                ? captureView._viewfinderPosition + (page.orientation == Orientation.Landscape ? viewfinderOffset : -viewfinderOffset)
+                : viewfinderOffset
     }
 
     Binding {
@@ -567,7 +569,11 @@ FocusScope {
         height: Screen.width
 
         rotation: -captureView.viewfinderOrientation
-        anchors.centerIn: parent
+        anchors {
+            centerIn: parent
+            verticalCenterOffset: isPortrait ? viewfinderOffset : 0
+            horizontalCenterOffset: isPortrait ? 0 : viewfinderOffset
+        }
         opacity: captureOverlay ? 1.0 - captureOverlay.settingsOpacity : 1.0
 
         Repeater {

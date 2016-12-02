@@ -24,6 +24,12 @@ Page {
 
     Binding {
         target: window
+        property: "galleryVisible"
+        value: page.galleryActive || switcherView.moving
+    }
+
+    Binding {
+        target: window
         property: "galleryIndex"
         value: galleryLoader.item ? galleryLoader.item.currentIndex : 0
     }
