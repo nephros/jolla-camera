@@ -490,7 +490,7 @@ PinchArea {
             height: overlay.height
 
             opacity: 0.8
-            color: Theme.highlightDimmerColor
+            color: "black"
         }
 
         Label {
