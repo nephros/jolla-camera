@@ -196,6 +196,8 @@ SettingsOverlay {
                 }
             }
 
+            scale: 1.5 // TODO: Need larger capture icon instead of scaling
+
             // TODO: Get proper video mode button icons
             source: startRecordTimer.running || camera.videoRecorder.recorderState == CameraRecorder.RecordingState
                     ? "image://theme/icon-camera-stop"
@@ -206,13 +208,16 @@ SettingsOverlay {
 
         Label {
             anchors.centerIn: parent
-            text: Math.floor(captureView._captureCountdown + 1)
-            visible: captureTimer.running
-            opacity: captureView._captureCountdown % 1
+            text: captureTimer.running ? Math.floor(captureView._captureCountdown + 1) : Settings.mode.timer
+            visible: Settings.mode.timer != 0
+            opacity: captureTimer.running ? captureView._captureCountdown % 1 : 1.0
             color: Theme.primaryColor
             font {
-                pixelSize: Theme.fontSizeHuge
+                pixelSize: captureTimer.running ? Theme.fontSizeHuge : Theme.fontSizeSmall
                 weight: Font.Light
+            }
+            Behavior on font.pixelSize {
+                NumberAnimation { easing.type: Easing.InOutQuad; duration: 150 }
             }
         }
     }
