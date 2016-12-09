@@ -450,27 +450,28 @@ PinchArea {
         }
     }
 
-    WhiteBalanceMenu {
-        id: whiteBalanceMenu
-        anchors {
-            horizontalCenter: exposureSlider.horizontalCenter
-            bottom: exposureSlider.top
-            bottomMargin: -Theme.paddingSmall
-            centerIn: null
-        }
-        alignment: exposureSlider.alignment
-        opacity: 1.0 - settingsOpacity
-        spacing: Theme.paddingMedium
-    }
-
-    ExposureSlider {
-        id: exposureSlider
-        alignment: _overlayPosition.exposure
-        x: alignment == Text.AlignLeft ? (isPortrait ? 0 : Theme.paddingLarge)
-                                       : parent.width - width - (isPortrait ? 0 : Theme.paddingLarge)
+    Column {
+        x: exposureSlider.alignment == Text.AlignLeft ? (isPortrait ? 0 : Theme.paddingLarge)
+                                                      : parent.width - width - (isPortrait ? 0 : Theme.paddingLarge)
         anchors.verticalCenter: parent.verticalCenter
-        enabled: !overlay.open && !overlay.inButtonLayout && !whiteBalanceMenu.open
-        opacity: (1.0 - settingsOpacity) * (1.0 - whiteBalanceMenu.openProgress)
+        spacing: -Theme.paddingSmall
+        WhiteBalanceMenu {
+            id: whiteBalanceMenu
+            anchors {
+                horizontalCenter: exposureSlider.horizontalCenter
+                centerIn: null
+            }
+            alignment: exposureSlider.alignment
+            opacity: 1.0 - settingsOpacity
+            spacing: Theme.paddingMedium
+        }
+
+        ExposureSlider {
+            id: exposureSlider
+            alignment: _overlayPosition.exposure
+            enabled: !overlay.open && !overlay.inButtonLayout && !whiteBalanceMenu.open
+            opacity: (1.0 - settingsOpacity) * (1.0 - whiteBalanceMenu.openProgress)
+        }
     }
 
     Item {
