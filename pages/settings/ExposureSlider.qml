@@ -7,7 +7,7 @@ Item {
 
     property int alignment: Text.AlignRight
     property int valueCount_: Settings.global.exposureCompensationValues.length
-    property real divisionSize_: height/valueCount_
+    property real divisionSize_: (height - handle.height)/(valueCount_-1)
     property int value: Settings.global.exposureCompensation
 
     onValueChanged: {
@@ -28,8 +28,8 @@ Item {
     Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         width: 2
-        y: divisionSize_/2
-        height: parent.height-divisionSize_
+        y: handle.height/2
+        height: parent.height-handle.height
     }
 
     Rectangle {
@@ -52,7 +52,7 @@ Item {
 
         onYChanged: {
             if (mouseArea.drag.active) {
-                var index = Math.floor((y - mouseArea.drag.minimumY - 1)/(mouseArea.drag.maximumY-mouseArea.drag.minimumY) * valueCount_)
+                var index = Math.round((y - mouseArea.drag.minimumY)/(mouseArea.drag.maximumY-mouseArea.drag.minimumY) * (valueCount_-1))
                 if (index >= 0) {
                     Settings.global.exposureCompensation = Settings.global.exposureCompensationValues[index]
                 }
@@ -68,8 +68,8 @@ Item {
             drag {
                 target: handle
                 axis: Drag.YAxis
-                minimumY: (divisionSize_-handle.height)/2
-                maximumY: slider.height-(divisionSize_-handle.height/2)
+                minimumY: 0
+                maximumY: slider.height-handle.height
                 threshold: Theme.startDragDistance/2
 
                 onActiveChanged: {
