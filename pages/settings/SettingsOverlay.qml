@@ -165,6 +165,8 @@ PinchArea {
     CaptureModeMenu {
         id: captureModeMenu
 
+        property real itemStep: Theme.itemSizeExtraSmall + spacing
+
         parent: _overlayPosition.captureMode
         anchors.verticalCenterOffset: Theme.paddingMedium
         alignment: (parent.anchors.left == container.left ? Qt.AlignRight : Qt.AlignLeft) | Qt.AlignBottom
@@ -172,7 +174,7 @@ PinchArea {
 
         onCurrentItemChanged: {
             if (currentItem) {
-                captureModeHighlight.y = currentItem.y - Theme.itemSizeExtraSmall - Theme.paddingSmall
+                captureModeDragTarget.y = currentItem.y - captureModeMenu.itemStep
             }
         }
 
@@ -184,7 +186,8 @@ PinchArea {
             anchors.horizontalCenter: parent.horizontalCenter
             radius: width / 2
             color: Theme.rgba(Theme.highlightColor, 0.4)
-            Behavior on y { YAnimator { duration: 200; easing.type: Easing.OutQuad } }
+            y: Math.max(Math.min(0, captureModeDragTarget.y), -captureModeMenu.itemStep)
+            Behavior on y { id: captureModeBehavior; YAnimator { duration: 200; easing.type: Easing.OutQuad } }
         }
     }
 
@@ -193,19 +196,25 @@ PinchArea {
 
         width: overlay.width
         height: overlay.height
-        enabled: !overlay.open
+        enabled: !overlay.open && overlay.interactive && !overlay.inButtonLayout
+
+        Item { id: captureModeDragTarget }
 
         drag {
-            target: overlay.interactive && !overlay.inButtonLayout ? captureModeHighlight : undefined
-            minimumY: -Theme.itemSizeExtraSmall - Theme.paddingSmall
-            maximumY: 0
+            target: captureModeDragTarget
+            // Extend the range beyond the allowed range so that a vertical drag is always grabbed.
+            // This prevents a drag in the wrong vertical direction from being handled by the
+            // gallery ListView due to a large enough horizontal movement.
+            minimumY: -captureModeMenu.itemStep - drag.threshold - 1
+            maximumY: drag.threshold + 1
             axis: Drag.YAxis
             filterChildren: true
             onActiveChanged: {
+                captureModeBehavior.enabled = !drag.active
                 if (!drag.active) {
-                    var index = Math.round((captureModeHighlight.y - drag.minimumY) / Theme.itemSizeExtraSmall)
+                    var index = Math.round((captureModeHighlight.y + captureModeMenu.itemStep) / captureModeMenu.itemStep)
+                    captureModeDragTarget.y = index * captureModeMenu.itemStep - captureModeMenu.itemStep
                     captureModeMenu.selectItem(index)
-                    captureModeHighlight.y = captureModeMenu.currentItem.y - Theme.itemSizeExtraSmall - Theme.paddingSmall
                 }
             }
         }
