@@ -16,7 +16,7 @@ FocusScope {
     property bool active
     property bool windowVisible
     property int orientation
-    property int effectiveIso: Settings.mode.iso
+    property int effectiveIso: Settings.global.iso
     property bool inButtonLayout: captureOverlay == null || captureOverlay.inButtonLayout
 
     readonly property int viewfinderOrientation: {
@@ -141,7 +141,7 @@ FocusScope {
         if (effectiveIso == 0) {
             camera.exposure.setAutoIsoSensitivity()
         } else {
-            camera.exposure.manualIso = Settings.mode.iso
+            camera.exposure.manualIso = Settings.global.iso
         }
     }
 
@@ -379,11 +379,11 @@ FocusScope {
             focusPointMode: focusTimer.running ? Camera.FocusPointCustom : Camera.FocusPointAuto
         }
         flash.mode: Settings.mode.flash
-        imageProcessing.whiteBalanceMode: Settings.mode.whiteBalance
+        imageProcessing.whiteBalanceMode: Settings.global.whiteBalance
 
         exposure {
             exposureMode: Settings.mode.exposureMode
-            exposureCompensation: Settings.mode.exposureCompensation / 2.0
+            exposureCompensation: Settings.global.exposureCompensation / 2.0
             meteringMode: Settings.mode.meteringMode
         }
 

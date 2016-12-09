@@ -385,9 +385,9 @@ PinchArea {
                     width: overlay._menuWidth
                     title: Settings.isoText
                     header: upperHeader
-                    model: Settings.mode.isoValues
+                    model: Settings.global.isoValues
                     delegate: SettingsMenuItem {
-                        settings: Settings.mode
+                        settings: Settings.global
                         property: "iso"
                         value: modelData
                         icon: Settings.isoIcon(modelData)
@@ -471,6 +471,7 @@ PinchArea {
             alignment: _overlayPosition.exposure
             enabled: !overlay.open && !overlay.inButtonLayout && !whiteBalanceMenu.open
             opacity: (1.0 - settingsOpacity) * (1.0 - whiteBalanceMenu.openProgress)
+            height: Theme.itemSizeSmall * 5
         }
     }
 

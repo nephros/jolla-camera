@@ -19,10 +19,10 @@ SettingsBase {
                                                                Camera.FlashAuto : Camera.FlashOff)
                                              })
 
-    readonly property bool defaultSettings: modeSettings.iso === settingsDefaults["iso"] &&
+    readonly property bool defaultSettings: globalSettings.iso === settingsDefaults["iso"] &&
                                             modeSettings.timer === settingsDefaults["timer"] &&
                                             modeSettings.viewfinderGrid === settingsDefaults["viewfinderGrid"] &&
-                                            modeSettings.whiteBalance == settingsDefaults["whiteBalance"] &&
+                                            globalSettings.whiteBalance == settingsDefaults["whiteBalance"] &&
                                             modeSettings.flash == settingsDefaults["flash"]
 
     function reset() {
@@ -56,16 +56,27 @@ SettingsBase {
 
         property bool saveLocationInfo
 
+        property int iso: 0
+        property int exposureCompensation: 0
+        property int whiteBalance: CameraImageProcessing.WhiteBalanceAuto
+
+        property var isoValues: [ 0, 100, 200, 400 ]
+        property var exposureCompensationValues: [ -4, -3, -2, -1, 0, 1, 2, 3, 4 ]
+        property var whiteBalanceValues: [
+            CameraImageProcessing.WhiteBalanceAuto,
+            CameraImageProcessing.WhiteBalanceCloudy,
+            CameraImageProcessing.WhiteBalanceSunlight,
+            CameraImageProcessing.WhiteBalanceFluorescent,
+            CameraImageProcessing.WhiteBalanceTungsten
+        ]
+
         ConfigurationGroup {
             id: modeSettings
             path: globalSettings.cameraDevice + "/" + globalSettings.captureMode
 
             property int captureMode: Camera.CaptureStillImage
 
-            property int iso: 0
-            property int whiteBalance: CameraImageProcessing.WhiteBalanceAuto
             property int flash: Camera.FlashOff
-            property int exposureCompensation: 0
             property int exposureMode: 0
             property int meteringMode: Camera.MeteringMatrix
             property int timer: 0
@@ -75,17 +86,8 @@ SettingsBase {
             property string videoResolution: "1280x720"
             property string viewfinderResolution: "1280x720"
 
-            property var isoValues: [ 0, 100, 200, 400 ]
-            property var whiteBalanceValues: [
-                CameraImageProcessing.WhiteBalanceAuto,
-                CameraImageProcessing.WhiteBalanceCloudy,
-                CameraImageProcessing.WhiteBalanceSunlight,
-                CameraImageProcessing.WhiteBalanceFluorescent,
-                CameraImageProcessing.WhiteBalanceTungsten
-            ]
             property var focusDistanceValues: [ Camera.FocusInfinity ]
             property var flashValues: [ Camera.FlashOff ]
-            property var exposureCompensationValues: [ -4, -2, 0, 2, 4 ]
             property var exposureModeValues: [ Camera.ExposureAuto ]
             property var meteringModeValues: [
                 Camera.MeteringMatrix,

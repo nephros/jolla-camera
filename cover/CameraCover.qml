@@ -94,10 +94,10 @@ CoverBackground {
                   : ""
         }
         CoverIcon {
-            icon: Settings.whiteBalanceIcon(Settings.mode.whiteBalance)
+            icon: Settings.whiteBalanceIcon(Settings.global.whiteBalance)
         }
         CoverIcon {
-            icon: Settings.isoIcon(Settings.mode.iso)
+            icon: Settings.isoIcon(Settings.global.iso)
         }
         CoverIcon {
             visible: !flashIcon.visible

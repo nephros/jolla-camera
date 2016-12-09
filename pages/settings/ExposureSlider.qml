@@ -6,9 +6,9 @@ Item {
     id: slider
 
     property int alignment: Text.AlignRight
-    property int valueCount_: Settings.mode.exposureCompensationValues.length
+    property int valueCount_: Settings.global.exposureCompensationValues.length
     property real divisionSize_: height/valueCount_
-    property int value: Settings.mode.exposureCompensation
+    property int value: Settings.global.exposureCompensation
 
     onValueChanged: {
         if (!mouseArea.drag.active) {
@@ -19,11 +19,10 @@ Item {
     Component.onCompleted: updateHandlePosition()
 
     function updateHandlePosition() {
-        var index = Settings.mode.exposureCompensationValues.indexOf(value)
+        var index = Settings.global.exposureCompensationValues.indexOf(value)
         handle.y = index * divisionSize_ + mouseArea.drag.minimumY
     }
 
-    height: valueCount_ * (Theme.itemSizeSmall + Theme.paddingSmall)
     width: Theme.itemSizeMedium
 
     Rectangle {
@@ -55,7 +54,7 @@ Item {
             if (mouseArea.drag.active) {
                 var index = Math.floor((y - mouseArea.drag.minimumY - 1)/(mouseArea.drag.maximumY-mouseArea.drag.minimumY) * valueCount_)
                 if (index >= 0) {
-                    Settings.mode.exposureCompensation = Settings.mode.exposureCompensationValues[index]
+                    Settings.global.exposureCompensation = Settings.global.exposureCompensationValues[index]
                 }
             }
         }
@@ -114,23 +113,16 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         height: parent.height
         Repeater {
-            model: Settings.mode.exposureCompensationValues
+            model: Settings.global.exposureCompensationValues
             delegate: Item {
-                property bool selected: Settings.mode.exposureCompensation == modelData
+                property bool selected: Settings.global.exposureCompensation == modelData
                 height: divisionSize_
                 width: Theme.itemSizeSmall
-                opacity: (mouseArea.drag.active || handleAnimation.running) && Settings.mode.exposureCompensation != 0 && selected ? 1.0 : 0.0
+                opacity: (mouseArea.drag.active || handleAnimation.running) && Settings.global.exposureCompensation != 0 && selected ? 1.0 : 0.0
                 Behavior on opacity { FadeAnimation {} }
-                Rectangle {
-                    width: Theme.itemSizeSmall
-                    height: Theme.itemSizeSmall
-                    radius: width/2
+                Image {
                     anchors.centerIn: parent
-                    color: Theme.rgba(Theme.highlightDimmerColor, 0.4)
-                    Image {
-                        anchors.centerIn: parent
-                        source: Settings.exposureIcon(modelData)
-                    }
+                    source: Settings.exposureIcon(modelData)
                 }
             }
         }
