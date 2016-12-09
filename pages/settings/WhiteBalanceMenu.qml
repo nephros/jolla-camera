@@ -10,6 +10,5 @@ ExpandingMenu {
         property: "whiteBalance"
         value: modelData
         icon: Settings.whiteBalanceIcon(modelData)
-        onClicked: parent.open = false
     }
 }
