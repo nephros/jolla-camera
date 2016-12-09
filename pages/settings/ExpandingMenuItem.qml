@@ -56,7 +56,7 @@ MouseArea {
 
         Image {
             anchors.centerIn: parent
-            source: menuItem.pressed
+            source: menuItem.highlighted
                     ? menuItem.icon + "?" + Theme.highlightColor
                     : menuItem.icon
         }
