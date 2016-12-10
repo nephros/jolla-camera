@@ -48,6 +48,8 @@ PinchArea {
     property alias container: container
     readonly property alias settingsOpacity: row.opacity
 
+    readonly property bool verticalDragging: captureModeDragArea.drag.active
+
     on_CaptureButtonLocationChanged: inButtonLayout = false
 
     onIsPortraitChanged: {

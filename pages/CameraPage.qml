@@ -143,7 +143,8 @@ Page {
                     }
                 }
 
-                CameraRollHint {}
+                CameraRollHint { z: 2 }
+                CameraModeHint { z: 2 }
             }
         }
 
