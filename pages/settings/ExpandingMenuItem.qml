@@ -21,12 +21,14 @@ MouseArea {
 
     onSelectedChanged: {
         if (selected && parent) {
+            parent.currentIndex = index
             parent.currentItem = menuItem
         }
     }
 
     onParentChanged: {
         if (selected && parent) {
+            parent.currentIndex = index
             parent.currentItem = menuItem
         }
     }

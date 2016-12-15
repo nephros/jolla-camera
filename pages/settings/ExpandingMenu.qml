@@ -8,6 +8,7 @@ MouseArea {
     property alias model: repeater.model
     property alias delegate: repeater.delegate
     property alias currentItem: column.currentItem
+    property alias currentIndex: column.currentIndex
     property alias openProgress: titleText.opacity
     property alias spacing: column.spacing
     property int alignment
@@ -30,6 +31,7 @@ MouseArea {
         id: column
 
         property Item currentItem
+        property int currentIndex
         readonly property alias itemOpacity: titleText.opacity
         readonly property bool itemsVisible: menu.open || fadeAnimation.running
         readonly property alias pressed: menu.pressed

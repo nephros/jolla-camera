@@ -174,12 +174,6 @@ PinchArea {
         alignment: (parent.anchors.left == container.left ? Qt.AlignRight : Qt.AlignLeft) | Qt.AlignBottom
         open: true
 
-        onCurrentItemChanged: {
-            if (currentItem) {
-                captureModeDragTarget.y = currentItem.y - captureModeMenu.itemStep
-            }
-        }
-
         Rectangle {
             id: captureModeHighlight
             z: -1
@@ -188,7 +182,25 @@ PinchArea {
             anchors.horizontalCenter: parent.horizontalCenter
             radius: width / 2
             color: Theme.rgba(Theme.highlightColor, 0.4)
-            y: Math.max(Math.min(0, captureModeDragTarget.y), -captureModeMenu.itemStep)
+            opacity: y < -captureModeMenu.itemStep ? 1.0 - (captureModeMenu.itemStep + y) / (-captureModeMenu.itemStep/2)
+                                                   : (y > 0 ? 1.0 - y/(captureModeMenu.itemStep/2) : 1.0)
+            y: {
+                var val = captureModeDragTarget.y
+                if (captureModeMenu.currentIndex == 0) {
+                    if (val < -captureModeMenu.itemStep*1.5) {
+                        val += captureModeMenu.itemStep*2
+                    } else {
+                        val = Math.min(val, 0)
+                    }
+                } else if (captureModeMenu.currentIndex == 1) {
+                    if (val > captureModeMenu.itemStep*0.5) {
+                        val -= captureModeMenu.itemStep*2
+                    } else {
+                        val = Math.max(val, -captureModeMenu.itemStep)
+                    }
+                }
+                return val
+            }
             Behavior on y { id: captureModeBehavior; YAnimator { duration: 200; easing.type: Easing.OutQuad } }
         }
     }
@@ -200,22 +212,27 @@ PinchArea {
         height: overlay.height
         enabled: !overlay.open && overlay.interactive && !overlay.inButtonLayout
 
-        Item { id: captureModeDragTarget }
+        Item {
+            id: captureModeDragTarget
+
+            Binding on y {
+                when: !captureModeDragArea.drag.active
+                value: (captureModeMenu.currentIndex - 1) * captureModeMenu.itemStep
+            }
+        }
 
         drag {
             target: captureModeDragTarget
-            // Extend the range beyond the allowed range so that a vertical drag is always grabbed.
-            // This prevents a drag in the wrong vertical direction from being handled by the
-            // gallery ListView due to a large enough horizontal movement.
-            minimumY: -captureModeMenu.itemStep - drag.threshold - 1
-            maximumY: drag.threshold + 1
+            // Extend the range beyond the allowed range so that a vertical drag always
+            // changes the current mode, wrapping around at the ends
+            minimumY: -captureModeMenu.itemStep * 2
+            maximumY: captureModeMenu.itemStep
             axis: Drag.YAxis
             filterChildren: true
             onActiveChanged: {
                 captureModeBehavior.enabled = !drag.active
                 if (!drag.active) {
-                    var index = Math.round((captureModeHighlight.y + captureModeMenu.itemStep) / captureModeMenu.itemStep)
-                    captureModeDragTarget.y = index * captureModeMenu.itemStep - captureModeMenu.itemStep
+                    var index = Math.round((captureModeHighlight.y + captureModeMenu.itemStep) / captureModeMenu.itemStep) % 2
                     captureModeMenu.selectItem(index)
                 }
             }
