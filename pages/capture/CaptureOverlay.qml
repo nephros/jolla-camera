@@ -258,6 +258,8 @@ SettingsOverlay {
                                      Math.max(Screen.width, Screen.height)
 
         anchors.centerIn: parent
+        anchors.verticalCenterOffset: isPortrait ? captureView.viewfinderOffset : 0
+        anchors.horizontalCenterOffset: isPortrait ? 0 : captureView.viewfinderOffset
 
         visible: Settings.mode.viewfinderGrid != "none"
                  && camera.cameraStatus == Camera.ActiveStatus
