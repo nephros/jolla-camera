@@ -61,7 +61,7 @@ SettingsBase {
         property int whiteBalance: CameraImageProcessing.WhiteBalanceAuto
 
         property var isoValues: [ 0, 100, 200, 400 ]
-        property var exposureCompensationValues: [ -4, -3, -2, -1, 0, 1, 2, 3, 4 ]
+        property var exposureCompensationValues: [ 4, 3, 2, 1, 0, -1, -2, -3, -4 ]
         property var whiteBalanceValues: [
             CameraImageProcessing.WhiteBalanceAuto,
             CameraImageProcessing.WhiteBalanceCloudy,
