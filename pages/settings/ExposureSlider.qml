@@ -83,7 +83,7 @@ Item {
         Image {
             id: icon
             anchors.centerIn: parent
-            source: "image://theme/icon-camera-exposure-compensation"
+            source: "image://theme/icon-camera-exposure-compensation" + (mouseArea.pressed ? "?" + Theme.highlightColor : "")
         }
     }
 
