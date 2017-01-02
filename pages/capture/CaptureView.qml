@@ -16,7 +16,7 @@ FocusScope {
     property bool active
     property bool windowVisible
     property int orientation
-    property int effectiveIso: Settings.mode.iso
+    property int effectiveIso: Settings.global.iso
     property bool inButtonLayout: captureOverlay == null || captureOverlay.inButtonLayout
 
     readonly property int viewfinderOrientation: {
@@ -49,6 +49,8 @@ FocusScope {
     readonly property real _viewfinderPosition: orientation == Orientation.Portrait || orientation == Orientation.Landscape
                                                 ? parent.x + x
                                                 : -parent.x - x
+
+    readonly property real viewfinderOffset: Math.min(0, isPortrait ? (focusArea.width - height)/2 : (focusArea.width - width)/2)
 
     readonly property bool isPortrait: orientation == Orientation.Portrait
                 || orientation == Orientation.PortraitInverted
@@ -139,7 +141,7 @@ FocusScope {
         if (effectiveIso == 0) {
             camera.exposure.setAutoIsoSensitivity()
         } else {
-            camera.exposure.manualIso = Settings.mode.iso
+            camera.exposure.manualIso = Settings.global.iso
         }
     }
 
@@ -377,11 +379,11 @@ FocusScope {
             focusPointMode: focusTimer.running ? Camera.FocusPointCustom : Camera.FocusPointAuto
         }
         flash.mode: Settings.mode.flash
-        imageProcessing.whiteBalanceMode: Settings.mode.whiteBalance
+        imageProcessing.whiteBalanceMode: Settings.global.whiteBalance
 
         exposure {
             exposureMode: Settings.mode.exposureMode
-            exposureCompensation: Settings.mode.exposureCompensation / 2.0
+            exposureCompensation: Settings.global.exposureCompensation / 2.0
             meteringMode: Settings.mode.meteringMode
         }
 
@@ -430,8 +432,8 @@ FocusScope {
         target: captureView.viewfinder
         property: "y"
         value: !captureView.isPortrait
-                ? captureView._viewfinderPosition
-                : 0
+                ? captureView._viewfinderPosition + (page.orientation == Orientation.Landscape ? viewfinderOffset : -viewfinderOffset)
+                : viewfinderOffset
     }
 
     Binding {
@@ -567,7 +569,11 @@ FocusScope {
         height: Screen.width
 
         rotation: -captureView.viewfinderOrientation
-        anchors.centerIn: parent
+        anchors {
+            centerIn: parent
+            verticalCenterOffset: isPortrait ? viewfinderOffset : 0
+            horizontalCenterOffset: isPortrait ? 0 : viewfinderOffset
+        }
         opacity: captureOverlay ? 1.0 - captureOverlay.settingsOpacity : 1.0
 
         Repeater {

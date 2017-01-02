@@ -11,6 +11,18 @@ QtObject {
     property int portraitCaptureButtonLocation: 3
     property int landscapeCaptureButtonLocation: 4
     property bool saveLocationInfo: false
+    property int iso: 0
+    property int exposureCompensation: 0
+    property int whiteBalance: CameraImageProcessing.WhiteBalanceAuto
+    property var isoValues: [ 0, 100, 200, 400 ]
+    property var exposureCompensationValues: [ 4, 3, 2, 1, 0, -1, -2, -3, -4 ]
+    property var whiteBalanceValues: [
+        CameraImageProcessing.WhiteBalanceAuto,
+        CameraImageProcessing.WhiteBalanceCloudy,
+        CameraImageProcessing.WhiteBalanceSunlight,
+        CameraImageProcessing.WhiteBalanceFluorescent,
+        CameraImageProcessing.WhiteBalanceTungsten
+    ]
 
     property list<QtObject> _modes
     default property alias modes: schema._modes

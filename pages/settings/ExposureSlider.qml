@@ -1,0 +1,130 @@
+import QtQuick 2.0
+import Sailfish.Silica 1.0
+import com.jolla.camera 1.0
+
+Item {
+    id: slider
+
+    property int alignment: Text.AlignRight
+    property int valueCount_: Settings.global.exposureCompensationValues.length
+    property real divisionSize_: (height - handle.height)/(valueCount_-1)
+    property int value: Settings.global.exposureCompensation
+
+    onValueChanged: {
+        if (!mouseArea.drag.active) {
+            updateHandlePosition()
+        }
+    }
+
+    Component.onCompleted: updateHandlePosition()
+
+    function updateHandlePosition() {
+        var index = Settings.global.exposureCompensationValues.indexOf(value)
+        handle.y = index * divisionSize_ + mouseArea.drag.minimumY
+    }
+
+    width: Theme.itemSizeMedium
+
+    Rectangle {
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: 2
+        y: handle.height/2
+        height: parent.height-handle.height
+    }
+
+    Rectangle {
+        id: handle
+        color: "black"
+        width: icon.width*0.8
+        height: icon.height*0.8
+        radius: Theme.paddingSmall/2
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        Behavior on y {
+            id: handleBehavior
+            enabled: false
+            NumberAnimation {
+                id: handleAnimation
+                duration: 200
+                easing.type: Easing.InOutQuad
+            }
+        }
+
+        onYChanged: {
+            if (mouseArea.drag.active) {
+                var index = Math.round((y - mouseArea.drag.minimumY)/(mouseArea.drag.maximumY-mouseArea.drag.minimumY) * (valueCount_-1))
+                if (index >= 0) {
+                    Settings.global.exposureCompensation = Settings.global.exposureCompensationValues[index]
+                }
+            }
+        }
+
+        MouseArea {
+            id: mouseArea
+            width: Theme.itemSizeMedium
+            height: Theme.itemSizeMedium
+            anchors.centerIn: icon
+
+            drag {
+                target: handle
+                axis: Drag.YAxis
+                minimumY: 0
+                maximumY: slider.height-handle.height
+                threshold: Theme.startDragDistance/2
+
+                onActiveChanged: {
+                    handleBehavior.enabled = !drag.active
+                    if (!drag.active) {
+                        updateHandlePosition()
+                    }
+                }
+            }
+        }
+        Image {
+            id: icon
+            anchors.centerIn: parent
+            source: "image://theme/icon-camera-exposure-compensation" + (mouseArea.pressed ? "?" + Theme.highlightColor : "")
+        }
+    }
+
+    Label {
+        id: title
+        x: alignment == Text.AlignRight ? -width+Theme.paddingSmall : parent.width-Theme.paddingSmall
+        anchors.verticalCenter: parent.verticalCenter
+        width: Theme.itemSizeSmall
+
+        color: Theme.highlightColor
+        font {
+            pixelSize: Theme.fontSizeExtraSmall
+            bold: true
+        }
+        wrapMode: Text.WordWrap
+        horizontalAlignment: alignment
+
+        //% "Exposure compensation"
+        text: qsTrId("jolla-camera-la-exposure_compensation")
+
+        opacity: (mouseArea.drag.active || handleAnimation.running) ? 1.0 : 0.0
+        Behavior on opacity { FadeAnimation {} }
+    }
+
+    Column {
+        x: title.x
+        anchors.verticalCenter: parent.verticalCenter
+        height: parent.height
+        Repeater {
+            model: Settings.global.exposureCompensationValues
+            delegate: Item {
+                property bool selected: Settings.global.exposureCompensation == modelData
+                height: divisionSize_
+                width: Theme.itemSizeSmall
+                opacity: (mouseArea.drag.active || handleAnimation.running) && Settings.global.exposureCompensation != 0 && selected ? 1.0 : 0.0
+                Behavior on opacity { FadeAnimation {} }
+                Image {
+                    anchors.centerIn: parent
+                    source: Settings.exposureIcon(modelData)
+                }
+            }
+        }
+    }
+}

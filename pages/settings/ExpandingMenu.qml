@@ -8,13 +8,21 @@ MouseArea {
     property alias model: repeater.model
     property alias delegate: repeater.delegate
     property alias currentItem: column.currentItem
-    property alias alignment: titleText.horizontalAlignment
+    property alias currentIndex: column.currentIndex
+    property alias openProgress: titleText.opacity
+    property alias spacing: column.spacing
+    property int alignment
 
     property bool open
     readonly property alias expanded: column.itemsVisible
 
-    width: Theme.itemSizeSmall
-    height: Theme.itemSizeSmall
+    function selectItem(index) {
+        var item = repeater.itemAt(index)
+        item.settings[item.property] = item.value
+    }
+
+    width: Theme.itemSizeExtraSmall
+    height: Theme.itemSizeExtraSmall
     anchors.centerIn: parent
 
     onClicked: menu.open = true
@@ -23,6 +31,7 @@ MouseArea {
         id: column
 
         property Item currentItem
+        property int currentIndex
         readonly property alias itemOpacity: titleText.opacity
         readonly property bool itemsVisible: menu.open || fadeAnimation.running
         readonly property alias pressed: menu.pressed
@@ -35,9 +44,9 @@ MouseArea {
             }
         }
 
-        anchors.bottom: menu.bottom
+        anchors.bottom: alignment & Qt.AlignBottom ? menu.bottom : undefined
         width: menu.width
-        spacing: Theme.paddingMedium + Theme.paddingSmall
+        spacing: Theme.paddingSmall
 
         Repeater {
             id: repeater
@@ -51,7 +60,7 @@ MouseArea {
 
         anchors {
             horizontalCenter: menu.horizontalCenter
-            horizontalCenterOffset: (menu.alignment == Text.AlignRight ? -menu.width : menu.width) + Theme.paddingMedium
+            horizontalCenterOffset: (horizontalAlignment == Text.AlignRight ? -menu.width : menu.width) + Theme.paddingMedium
             verticalCenter: column.verticalCenter
         }
 
@@ -63,7 +72,7 @@ MouseArea {
             bold: true
         }
         wrapMode: Text.WordWrap
-        horizontalAlignment: Text.AlignHCenter
+        horizontalAlignment: alignment & Qt.AlignLeft ? Text.AlignLeft : Text.AlignRight
 
         opacity: menu.open ? 1.0 : 0.0
 

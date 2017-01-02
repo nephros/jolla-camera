@@ -12,20 +12,23 @@ MouseArea {
 
     property QtObject menu
 
+    property bool persistentHighlight
     readonly property bool selected: settings[property] == value
-    readonly property bool highlighted: (parent.open || parent.pressed) && (selected || menuItem.pressed)
+    readonly property bool highlighted: (parent.open || parent.pressed) && ((persistentHighlight && selected) || menuItem.pressed)
 
     width: parent.width
     height: selected ? parent.width : parent.itemHeight
 
     onSelectedChanged: {
         if (selected && parent) {
+            parent.currentIndex = index
             parent.currentItem = menuItem
         }
     }
 
     onParentChanged: {
         if (selected && parent) {
+            parent.currentIndex = index
             parent.currentItem = menuItem
         }
     }
@@ -43,26 +46,21 @@ MouseArea {
         Rectangle {
             anchors.centerIn: parent
 
-            width: Theme.itemSizeSmall
-            height: Theme.itemSizeSmall
+            width: Theme.itemSizeExtraSmall
+            height: Theme.itemSizeExtraSmall
 
             radius: width / 2
 
-            color: menuItem.highlighted
-                   ? Theme.highlightColor
-                   : "black"
-            Behavior on color {
-                ColorAnimation { duration: 200 }
-            }
-
-            opacity: 0.4
+            color: Theme.highlightColor
+            opacity: menuItem.highlighted ? 0.4 : 0.0
+            Behavior on opacity { FadeAnimation {} }
         }
 
         Image {
             anchors.centerIn: parent
             source: menuItem.highlighted
-                    ? menuItem.icon
-                    : menuItem.icon + "?" + Theme.highlightColor
+                    ? menuItem.icon + "?" + Theme.highlightColor
+                    : menuItem.icon
         }
     }
 }

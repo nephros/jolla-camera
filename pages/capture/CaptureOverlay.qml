@@ -130,22 +130,22 @@ SettingsOverlay {
 
             case 90:
                 focusPoint = Qt.point(
-                            mouse.y - ((height - focusArea.width) / 2),
+                            mouse.y - ((height - focusArea.width) / 2) - captureView.viewfinderOffset,
                             width - mouse.x);
                 break;
             case 180:
                 focusPoint = Qt.point(
-                            width - mouse.x - ((width - focusArea.width) / 2),
+                            width - mouse.x - ((width - focusArea.width) / 2) + captureView.viewfinderOffset,
                             height - mouse.y);
                 break;
             case 270:
                 focusPoint = Qt.point(
-                            height - mouse.y - ((height - focusArea.width) / 2),
+                            height - mouse.y - ((height - focusArea.width) / 2) + captureView.viewfinderOffset,
                             mouse.x);
                 break;
             default:
                 focusPoint = Qt.point(
-                            mouse.x - ((width - focusArea.width) / 2),
+                            mouse.x - ((width - focusArea.width) / 2) - captureView.viewfinderOffset,
                             mouse.y);
                 break;
             }
@@ -196,55 +196,45 @@ SettingsOverlay {
                 }
             }
 
+            scale: 1.5 // TODO: Need larger capture icon instead of scaling
+
+            // TODO: Get proper video mode button icons
             source: startRecordTimer.running || camera.videoRecorder.recorderState == CameraRecorder.RecordingState
-                    ? "image://theme/icon-camera-stop?" + Theme.highlightColor
-                    : "image://theme/icon-camera-shutter-release?" + (captureView._canCapture
-                            ? Theme.highlightColor
-                            : Theme.highlightDimmerColor)
+                    ? "image://theme/icon-camera-stop"
+                    : (camera.captureMode == Camera.CaptureVideo
+                       ? "image://theme/icon-m-call-recording-on"
+                       : "image://theme/icon-camera-shutter-release")
         }
 
         Label {
             anchors.centerIn: parent
-            text: Math.floor(captureView._captureCountdown + 1)
-            visible: captureTimer.running
-            opacity: captureView._captureCountdown % 1
+            text: captureTimer.running ? Math.floor(captureView._captureCountdown + 1) : Settings.mode.timer
+            visible: Settings.mode.timer != 0
+            opacity: captureTimer.running ? captureView._captureCountdown % 1 : 1.0
             color: Theme.primaryColor
             font {
-                pixelSize: Theme.fontSizeHuge
+                pixelSize: captureTimer.running ? Theme.fontSizeHuge : Theme.fontSizeSmall
                 weight: Font.Light
+            }
+            Behavior on font.pixelSize {
+                NumberAnimation { easing.type: Easing.InOutQuad; duration: 150 }
             }
         }
     }
 
-    timer: Item {
-        anchors {
-            centerIn: parent
-            horizontalCenterOffset: settingsOverlay.timerAlignment == Qt.AlignLeft
-                    ? -(timerLabel.width + Theme.paddingMedium - Theme.itemSizeMedium) / 2
-                    : (timerLabel.width + Theme.paddingMedium - Theme.itemSizeMedium) / 2
-        }
-        width: timerLabel.implicitWidth + (2 * Theme.paddingMedium)
-        height: timerLabel.implicitHeight + (2 * Theme.paddingSmall)
+    Label {
+        id: timerLabel
+
+        y: Theme.itemSizeMedium
+        anchors.horizontalCenter: parent.horizontalCenter
         opacity: camera.captureMode == Camera.CaptureVideo ? 1 : 0
-        Behavior on opacity { FadeAnimation {} }
+        Behavior on opacity { FadeAnimator {} }
 
-        Rectangle {
-            radius: Theme.paddingSmall / 2
-
-            anchors.fill: parent
-            color: Theme.highlightBackgroundColor
-            opacity: 0.6
-        }
-        Label {
-            id: timerLabel
-
-            anchors.centerIn: parent
-
-            text: Format.formatDuration(_recordingDuration,
-                                        _recordingDuration >= 3600 ? Formatter.DurationLong : Formatter.DurationShort)
-            font.pixelSize: Theme.fontSizeMedium
-
-        }
+        text: Format.formatDuration(_recordingDuration,
+                                    _recordingDuration >= 3600 ? Formatter.DurationLong : Formatter.DurationShort)
+        font.pixelSize: Theme.fontSizeHuge * 1.5
+        style: Text.Outline
+        styleColor: "#20000000"
     }
 
     WallClock {
@@ -268,6 +258,8 @@ SettingsOverlay {
                                      Math.max(Screen.width, Screen.height)
 
         anchors.centerIn: parent
+        anchors.verticalCenterOffset: isPortrait ? captureView.viewfinderOffset : 0
+        anchors.horizontalCenterOffset: isPortrait ? 0 : captureView.viewfinderOffset
 
         visible: Settings.mode.viewfinderGrid != "none"
                  && camera.cameraStatus == Camera.ActiveStatus

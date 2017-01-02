@@ -10,6 +10,7 @@ ApplicationWindow {
     property QtObject _window
     property var captureModel: null
     property bool galleryActive
+    property bool galleryVisible
     property int galleryIndex
 
     onWindowChanged: _window = window ? window : null
@@ -30,7 +31,8 @@ ApplicationWindow {
     }
 
     Rectangle {
-        anchors.fill: videoOutput
+        parent: window
+        anchors.fill: parent
         z: -1
         color: "black"
     }
@@ -41,6 +43,11 @@ ApplicationWindow {
         z: -1
         width: window.width
         height: window.height
+
+        Behavior on y {
+            enabled: !galleryVisible
+            NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
+        }
     }
 
     onApplicationActiveChanged:
