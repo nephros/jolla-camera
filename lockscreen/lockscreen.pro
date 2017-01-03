@@ -1,0 +1,29 @@
+TEMPLATE = app
+TARGET = jolla-camera-lockscreen
+TARGETPATH = /usr/bin
+
+QT += qml quick
+CONFIG += link_pkgconfig
+
+SOURCES += main.cpp
+
+OTHER_FILES += \
+        lockscreen.qml
+
+target.path = $$TARGETPATH
+
+DEPLOYMENT_PATH = /usr/share/jolla-camera
+DEFINES *= DEPLOYMENT_PATH=\"\\\"\"$${DEPLOYMENT_PATH}/\"\\\"\"
+qml.path = $$DEPLOYMENT_PATH
+qml.files = *.qml
+
+INSTALLS += target qml
+
+packagesExist(qdeclarative5-boostable) {
+    message("Building with qdeclarative-boostable support")
+    DEFINES += HAS_BOOSTER
+    PKGCONFIG += qdeclarative5-boostable
+} else {
+    warning("qdeclarative-boostable not available; startup times will be slower")
+}
+

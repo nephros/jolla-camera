@@ -31,6 +31,7 @@ FocusScope {
                 : (720 + camera.orientation + rotation) % 360
     }
     property int captureOrientation
+    property int pageRotation
 
     property alias camera: camera
     property QtObject viewfinder
@@ -99,7 +100,7 @@ FocusScope {
             anchors.centerIn: parent
             width: isPortrait ? captureView.width : captureView.height
             height: isPortrait ? captureView.height : captureView.width
-            rotation: -page.rotation
+            rotation: -captureView.pageRotation
         }
     }
 
@@ -422,26 +423,9 @@ FocusScope {
 
     Binding {
         target: captureView.viewfinder
-        property: "x"
-        value: captureView.isPortrait
-               ? captureView._viewfinderPosition
-               : 0
-    }
-
-    Binding {
-        target: captureView.viewfinder
-        property: "y"
-        value: !captureView.isPortrait
-                ? captureView._viewfinderPosition + (page.orientation == Orientation.Landscape ? viewfinderOffset : -viewfinderOffset)
-                : viewfinderOffset
-    }
-
-    Binding {
-        target: captureView.viewfinder
         property: "source"
         value: camera
     }
-
 
     Binding {
         target: captureView.viewfinder

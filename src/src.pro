@@ -25,7 +25,9 @@ DEFINES += \
         DEPLOYMENT_PATH=\"\\\"\"$${TARGETPATH}/\"\\\"\"
 
 import.files = \
+        capture \
         qmldir \
+        settings \
         settings.qml
 
 import.path = $$TARGETPATH
@@ -33,4 +35,7 @@ target.path = $$TARGETPATH
 
 INSTALLS += target import
 
-OTHER_FILES = settings.qml
+OTHER_FILES = \
+        capture/*.qml \
+        settings/*.qml \
+        settings.qml

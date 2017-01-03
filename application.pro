@@ -13,9 +13,7 @@ OTHER_FILES += \
         cover \
         pages \
         pages/*.qml \
-        pages/capture/*.qml \
         pages/gallery/*.qml \
-        pages/settings/*.qml \
         dconf/*.qml \
         dconf/jolla-camera.txt
 
@@ -24,6 +22,7 @@ target.path = $$TARGETPATH
 desktop.path = /usr/share/applications
 desktop.files = \
             jolla-camera.desktop \
+            jolla-camera-lockscreen.desktop \
             jolla-camera-viewfinder.desktop
 
 DEPLOYMENT_PATH = /usr/share/$$TARGET

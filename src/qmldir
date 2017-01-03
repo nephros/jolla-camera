@@ -1,2 +1,3 @@
 module com.jolla.camera
 plugin jollacameraplugin
+CaptureView 1.0 capture/CaptureView.qml

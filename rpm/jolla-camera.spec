@@ -46,6 +46,7 @@ Requires:  gstreamer1.0-plugins-good
 Requires:  gstreamer1.0-plugins-bad
 Requires:  dconf
 Requires:  qt5-qtdeclarative-systeminfo
+Requires:  %{name}-lockscreen = %{version}
 Requires:  %{name}-settings = %{version}
 %{_oneshot_requires_post}
 
@@ -59,6 +60,14 @@ Group:     Applications/Multimedia
 %description ts-devel
 Translation source for Jolla Camera
 
+%package lockscreen
+Summary:   Quick capture viewfinder for the lockscreen.
+Group:     System/Applications
+Requires:   %{name} = %{version}-%{release}
+
+%description lockscreen
+%{summary}
+
 %package settings
 Summary:   Setting page for jolla-camera
 Group:     System/Applications
@@ -66,7 +75,8 @@ Requires:   %{name} = %{version}-%{release}
 Requires:  jolla-settings
 
 %description settings
-Settings page for jolla-contacts
+%{summary}
+
 %package tests
 Summary:    Unit tests for Jolla Camera
 Group:      Applications/Multimedia
@@ -101,13 +111,18 @@ chmod +x %{buildroot}/%{_oneshotdir}/*
 
 %files
 %defattr(-,root,root,-)
-%{_datadir}/applications/*.desktop
-%{_datadir}/jolla-camera/*
+%{_datadir}/applications/jolla-camera.desktop
+%{_datadir}/applications/jolla-camera-viewfinder.desktop
+%{_datadir}/jolla-camera/camera.qml
+%{_datadir}/jolla-camera/pages/*
+%{_datadir}/jolla-camera/cover/*
 %{_bindir}/jolla-camera
 %{_datadir}/translations/jolla-camera_eng_en.qm
 %{_datadir}/dbus-1/services/com.jolla.camera.service
 %{_libdir}/qt5/qml/com/jolla/camera/libjollacameraplugin.so
+%{_libdir}/qt5/qml/com/jolla/camera/capture/*
 %{_libdir}/qt5/qml/com/jolla/camera/qmldir
+%{_libdir}/qt5/qml/com/jolla/camera/settings/*
 %{_libdir}/qt5/qml/com/jolla/camera/settings.qml
 %{_sysconfdir}/dconf/db/vendor.d/jolla-camera.txt
 %{_oneshotdir}/camera-enable-hints
@@ -116,6 +131,11 @@ chmod +x %{buildroot}/%{_oneshotdir}/*
 %files ts-devel
 %defattr(-,root,root,-)
 %{_datadir}/translations/source/jolla-camera.ts
+
+%files lockscreen
+%{_bindir}/jolla-camera-lockscreen
+%{_datadir}/applications/jolla-camera-lockscreen.desktop
+%{_datadir}/jolla-camera/lockscreen.qml
 
 %files settings
 %{_datadir}/jolla-settings/*
