@@ -482,7 +482,10 @@ PinchArea {
     Column {
         x: exposureSlider.alignment == Text.AlignLeft ? (isPortrait ? 0 : Theme.paddingLarge)
                                                       : parent.width - width - (isPortrait ? 0 : Theme.paddingLarge)
-        anchors.verticalCenter: parent.verticalCenter
+        anchors {
+            verticalCenter: parent.verticalCenter
+            verticalCenterOffset: isPortrait ? Theme.paddingMedium : 0
+        }
         spacing: Theme.paddingSmall
         WhiteBalanceMenu {
             id: whiteBalanceMenu

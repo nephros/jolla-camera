@@ -225,7 +225,7 @@ SettingsOverlay {
     Label {
         id: timerLabel
 
-        y: Theme.itemSizeMedium
+        y: settingsOverlay.topButtonRowHeight
         anchors.horizontalCenter: parent.horizontalCenter
         opacity: camera.captureMode == Camera.CaptureVideo ? 1 : 0
         Behavior on opacity { FadeAnimator {} }
@@ -309,8 +309,7 @@ SettingsOverlay {
     ZoomIndicator {
         id: zoomIndicator
         anchors {
-            top: parent.top
-            topMargin: settingsOverlay.topButtonRowHeight + Theme.paddingLarge
+            top: timerLabel.bottom
             horizontalCenter: parent.horizontalCenter
         }
 
