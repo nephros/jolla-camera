@@ -158,6 +158,7 @@ PinchArea {
 
     ToggleButton {
         parent: _overlayPosition.cameraDevice
+        anchors.centerIn: parent
         model: [ "primary", "secondary" ]
         settings: Settings.global
         property: "cameraDevice"
@@ -170,7 +171,7 @@ PinchArea {
         property real itemStep: Theme.itemSizeExtraSmall + spacing
 
         parent: _overlayPosition.captureMode
-        anchors.verticalCenterOffset: Theme.paddingMedium
+        anchors.verticalCenterOffset: Theme.paddingLarge
         alignment: (parent.anchors.left == container.left ? Qt.AlignRight : Qt.AlignLeft) | Qt.AlignBottom
         open: true
 
@@ -325,8 +326,8 @@ PinchArea {
                 OverlayAnchor { id: overlayAnchorBR; anchors { right: parent.right; bottom: parent.bottom } }
                 OverlayAnchor { id: overlayAnchorCL; anchors { left: parent.left; verticalCenter: parent.verticalCenter } }
                 OverlayAnchor { id: overlayAnchorCR; anchors { right: parent.right; verticalCenter: parent.verticalCenter } }
-                OverlayAnchor { id: overlayAnchorTL; anchors { left: parent.left; top: parent.top; leftMargin: Theme.paddingLarge } }
-                OverlayAnchor { id: overlayAnchorTR; anchors { right: parent.right; top: parent.top; rightMargin: Theme.paddingLarge } }
+                OverlayAnchor { id: overlayAnchorTL; anchors { left: parent.left; top: parent.top } }
+                OverlayAnchor { id: overlayAnchorTR; anchors { right: parent.right; top: parent.top } }
             }
 
             Item {
