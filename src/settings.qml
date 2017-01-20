@@ -267,8 +267,8 @@ SettingsBase {
 
     function cameraIcon(device) {
         return device == "primary"
-                ? "image://theme/icon-camera-backcamera"
-                : "image://theme/icon-camera-front-camera"
+                ? "image://theme/icon-camera-switch"
+                : "image://theme/icon-camera-switch"
     }
 
     function cameraText(device) {
