@@ -117,6 +117,7 @@ Item {
                     anchors {
                         verticalCenter: parent.verticalCenter
                         right: parent.right
+                        rightMargin: Theme.paddingMedium
                     }
                     color: Theme.highlightColor
                     text: Settings.exposureText(modelData)

@@ -15,7 +15,7 @@ ExpandingMenu {
             anchors {
                 verticalCenter: parent.verticalCenter
                 right: parent.left
-                rightMargin: Theme.paddingMedium
+                rightMargin: Theme.paddingLarge
             }
             color: Theme.highlightColor
             text: Settings.whiteBalanceText(modelData)
