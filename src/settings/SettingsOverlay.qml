@@ -171,7 +171,7 @@ PinchArea {
         property real itemStep: Theme.itemSizeExtraSmall + spacing
 
         parent: _overlayPosition.captureMode
-        anchors.verticalCenterOffset: Theme.paddingLarge
+        anchors.verticalCenterOffset: height/2
         alignment: (parent.anchors.left == container.left ? Qt.AlignRight : Qt.AlignLeft) | Qt.AlignBottom
         open: true
 
