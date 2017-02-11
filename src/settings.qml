@@ -134,6 +134,20 @@ SettingsBase {
         }
     }
 
+    function exposureText(exposure) {
+        switch (exposure) {
+        case -4: return "-2"
+        case -3: return "-1.5"
+        case -2: return "-1"
+        case -1: return "-0.5"
+        case 0:  return ""
+        case 1:  return "+0.5"
+        case 2:  return "+1"
+        case 3:  return "+1.5"
+        case 4:  return "+2"
+        }
+    }
+
     function timerIcon(timer) {
         return timer > 0
                 ? "image://theme/icon-camera-timer-" + timer + "s"
@@ -267,8 +281,8 @@ SettingsBase {
 
     function cameraIcon(device) {
         return device == "primary"
-                ? "image://theme/icon-camera-backcamera"
-                : "image://theme/icon-camera-front-camera"
+                ? "image://theme/icon-camera-switch"
+                : "image://theme/icon-camera-switch"
     }
 
     function cameraText(device) {

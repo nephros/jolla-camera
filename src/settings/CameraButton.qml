@@ -4,6 +4,7 @@ import Sailfish.Silica 1.0
 MouseArea {
     property alias icon: image
     property alias background: backgroundCircle
+    property real size: Theme.itemSizeSmall
 
     width: Theme.itemSizeExtraLarge
     height: Theme.itemSizeExtraLarge
@@ -13,14 +14,14 @@ MouseArea {
     Rectangle {
         id: backgroundCircle
 
-        radius: Theme.itemSizeSmall / 2
-        width: Theme.itemSizeSmall
-        height: Theme.itemSizeSmall
+        radius: size / 2
+        width: size
+        height: size
 
         anchors.centerIn: parent
 
         opacity: 0.6
-        color: Theme.highlightDimmerColor
+        color: Theme.highlightColor
     }
 
     Image {

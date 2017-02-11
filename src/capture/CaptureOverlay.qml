@@ -169,6 +169,7 @@ SettingsOverlay {
         id: captureButton
 
         z: settingsOverlay.inButtonLayout ? 1 : 0
+        size: Theme.iconSizeMedium
 
         enabled: captureView._canCapture
                     && !captureView._captureOnFocus
@@ -188,7 +189,7 @@ SettingsOverlay {
         icon {
             opacity: {
                 if (captureTimer.running) {
-                    return 0.1
+                    return 0.2
                 } else if (captureButton.pressed) {
                     return 0.5
                 } else {
@@ -196,14 +197,11 @@ SettingsOverlay {
                 }
             }
 
-            scale: 1.5 // TODO: Need larger capture icon instead of scaling
-
-            // TODO: Get proper video mode button icons
             source: startRecordTimer.running || camera.videoRecorder.recorderState == CameraRecorder.RecordingState
-                    ? "image://theme/icon-camera-stop"
+                    ? "image://theme/icon-camera-video-shutter-off"
                     : (camera.captureMode == Camera.CaptureVideo
-                       ? "image://theme/icon-m-call-recording-on"
-                       : "image://theme/icon-camera-shutter-release")
+                       ? "image://theme/icon-camera-video-shutter-on"
+                       : "image://theme/icon-camera-shutter")
         }
 
         Label {
@@ -211,9 +209,9 @@ SettingsOverlay {
             text: captureTimer.running ? Math.floor(captureView._captureCountdown + 1) : Settings.mode.timer
             visible: Settings.mode.timer != 0
             opacity: captureTimer.running ? captureView._captureCountdown % 1 : 1.0
-            color: Theme.primaryColor
+            color: captureTimer.running ? Theme.primaryColor : Theme.highlightDimmerColor
             font {
-                pixelSize: captureTimer.running ? Theme.fontSizeHuge : Theme.fontSizeSmall
+                pixelSize: captureTimer.running ? Theme.fontSizeHuge : Theme.fontSizeTiny
                 weight: Font.Light
             }
             Behavior on font.pixelSize {
@@ -225,7 +223,7 @@ SettingsOverlay {
     Label {
         id: timerLabel
 
-        y: Theme.itemSizeMedium
+        y: settingsOverlay.topButtonRowHeight
         anchors.horizontalCenter: parent.horizontalCenter
         opacity: camera.captureMode == Camera.CaptureVideo ? 1 : 0
         Behavior on opacity { FadeAnimator {} }
@@ -309,8 +307,7 @@ SettingsOverlay {
     ZoomIndicator {
         id: zoomIndicator
         anchors {
-            top: parent.top
-            topMargin: settingsOverlay.topButtonRowHeight + Theme.paddingLarge
+            top: timerLabel.bottom
             horizontalCenter: parent.horizontalCenter
         }
 

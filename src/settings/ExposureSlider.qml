@@ -30,6 +30,11 @@ Item {
         width: 2
         y: handle.height/2
         height: parent.height-handle.height
+        Rectangle {
+            anchors.centerIn: parent
+            height: 2
+            width: Theme.paddingLarge
+        }
     }
 
     Rectangle {
@@ -79,6 +84,12 @@ Item {
                     }
                 }
             }
+
+            onReleased: releaseTimer.restart()
+            Timer {
+                id: releaseTimer
+                interval: 2000
+            }
         }
         Image {
             id: icon
@@ -87,30 +98,12 @@ Item {
         }
     }
 
-    Label {
-        id: title
-        x: alignment == Text.AlignRight ? -width+Theme.paddingSmall : parent.width-Theme.paddingSmall
-        anchors.verticalCenter: parent.verticalCenter
-        width: Theme.itemSizeSmall
-
-        color: Theme.highlightColor
-        font {
-            pixelSize: Theme.fontSizeExtraSmall
-            bold: true
-        }
-        wrapMode: Text.WordWrap
-        horizontalAlignment: alignment
-
-        //% "Exposure compensation"
-        text: qsTrId("jolla-camera-la-exposure_compensation")
-
-        opacity: (mouseArea.drag.active || handleAnimation.running) ? 1.0 : 0.0
-        Behavior on opacity { FadeAnimation {} }
-    }
-
     Column {
-        x: title.x
-        anchors.verticalCenter: parent.verticalCenter
+        anchors {
+            verticalCenter: parent.verticalCenter
+            right: handle.left
+            rightMargin: Theme.paddingSmall
+        }
         height: parent.height
         Repeater {
             model: Settings.global.exposureCompensationValues
@@ -118,11 +111,17 @@ Item {
                 property bool selected: Settings.global.exposureCompensation == modelData
                 height: divisionSize_
                 width: Theme.itemSizeSmall
-                opacity: (mouseArea.drag.active || handleAnimation.running) && Settings.global.exposureCompensation != 0 && selected ? 1.0 : 0.0
+                opacity: (mouseArea.pressed || handleAnimation.running || releaseTimer.running) && selected ? 1.0 : 0.0
                 Behavior on opacity { FadeAnimation {} }
-                Image {
-                    anchors.centerIn: parent
-                    source: Settings.exposureIcon(modelData)
+                Label {
+                    anchors {
+                        verticalCenter: parent.verticalCenter
+                        right: parent.right
+                        rightMargin: Theme.paddingMedium
+                    }
+                    color: Theme.highlightColor
+                    text: Settings.exposureText(modelData)
+                    font.bold: true
                 }
             }
         }
