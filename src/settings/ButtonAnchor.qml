@@ -2,28 +2,25 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
 
-MouseArea {
+OverlayAnchor {
     property int index
-
-    anchors.margins: Theme.paddingLarge + Theme.paddingMedium
-
-    width: Theme.itemSizeMedium
-    height: Theme.itemSizeMedium
 
     z: 1
 
+    enabled: !anchorContainer.visible || overlay._captureButtonLocation != index
     parent: overlay._captureButtonLocation == index
                 ? (anchorContainer.visible ? settingsOverlay : container)
                 : anchorContainer
 
-    enabled: !anchorContainer.visible || overlay._captureButtonLocation != index
-
-    onClicked: {
-        if (index >= 0) {
-            if (overlay.isPortrait) {
-                Settings.global.portraitCaptureButtonLocation = index
-            } else {
-                Settings.global.landscapeCaptureButtonLocation = index
+    MouseArea {
+        anchors.fill: parent
+        onClicked: {
+            if (index >= 0) {
+                if (overlay.isPortrait) {
+                    Settings.global.portraitCaptureButtonLocation = index
+                } else {
+                    Settings.global.landscapeCaptureButtonLocation = index
+                }
             }
         }
     }
