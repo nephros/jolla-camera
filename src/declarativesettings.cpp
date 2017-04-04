@@ -26,6 +26,12 @@ DeclarativeSettings::DeclarativeSettings(QObject *parent)
     connect(m_partitionManager, SIGNAL(partitionChanged(const Partition&)), this, SLOT(verifyStoragePath()));
 
     verifyStoragePath();
+
+    // protect against camera crashes leaving files in the hidden directory
+    for (const QFileInfo &info : QDir(videoDirectory() + QLatin1String("/.recording")).entryInfoList(QDir::Files)) {
+        QFile(info.absoluteFilePath()).rename(videoDirectory() + info.fileName());
+    }
+
     updateLocation();
 }
 

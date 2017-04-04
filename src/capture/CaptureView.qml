@@ -177,6 +177,13 @@ FocusScope {
     }
 
     Timer {
+        // prevent video recording continuing forever in the background
+        running: recording && !effectiveActive
+        interval: 60*1000
+        onTriggered: camera.videoRecorder.stop()
+    }
+
+    Timer {
         id: reloadTimer
         interval: 100
         running: captureView._unload && camera.cameraStatus == Camera.UnloadedStatus
