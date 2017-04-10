@@ -7,3 +7,5 @@ SUBDIRS = \
         settings \
         translations \
         tests
+
+OTHER_FILES = rpm/*.spec
