@@ -4,6 +4,8 @@ import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
 import org.nemomobile.configuration 1.0
 import org.nemomobile.systemsettings 1.0
+import com.jolla.settings.system 1.0
+import Sailfish.Policy 1.0
 
 Page {
     onStatusChanged: {
@@ -67,6 +69,10 @@ Page {
             id: column
             width: parent.width
 
+            DisabledByMdmBanner {
+                active: !AccessPolicy.cameraEnabled
+            }
+
             IconTextSwitch {
                 automaticCheck: false
                 icon.source: "image://theme/icon-m-gps"
@@ -79,7 +85,7 @@ Page {
                             //% "Positioning is turned off.  Enable it in Settings | System | Location"
                             : qsTrId("camera_settings-la-enable_location")
 
-                enabled: Settings.locationEnabled
+                enabled: Settings.locationEnabled && AccessPolicy.cameraEnabled
                 checked: Settings.global.saveLocationInfo && Settings.locationEnabled
                 onClicked: Settings.global.saveLocationInfo = !Settings.global.saveLocationInfo
             }
@@ -106,6 +112,7 @@ Page {
 
                 //% "Storage"
                 label: qsTrId("camera_settings-cb-storage")
+                enabled: AccessPolicy.cameraEnabled
                 menu: ContextMenu {
                     MenuItem {
                         property string mountPath: ""
@@ -157,6 +164,7 @@ Page {
             SectionHeader {
                 //% "Back camera"
                 text: qsTrId("camera-ph-back-camera")
+                opacity: AccessPolicy.cameraEnabled ? 1.0 : 0.4
             }
 
             ResolutionComboBox {
@@ -164,6 +172,7 @@ Page {
 
                 //% "Photo resolution"
                 label: qsTrId("camera_settings-cb-photo-resolution")
+                enabled: AccessPolicy.cameraEnabled
                 menu: ContextMenu {
                     ResolutionComboItem {
                         text: qsTrId(primaryImageSettings.resolutionText_16_9)
@@ -182,12 +191,14 @@ Page {
             SectionHeader {
                 //% "Front camera"
                 text: qsTrId("camera-ph-front-camera")
+                opacity: AccessPolicy.cameraEnabled ? 1.0 : 0.4
             }
 
             ResolutionComboBox {
                 settings: secondaryImageSettings
 
                 label: qsTrId("camera_settings-cb-photo-resolution")
+                enabled: AccessPolicy.cameraEnabled
                 menu: ContextMenu {
                     ResolutionComboItem {
                         text: qsTrId(secondaryImageSettings.resolutionText_16_9)

@@ -73,6 +73,8 @@ Summary:   Setting page for jolla-camera
 Group:     System/Applications
 Requires:   %{name} = %{version}-%{release}
 Requires:  jolla-settings
+Requires:  jolla-settings-system >= 0.11.37
+Requires:  sailfish-policy
 
 %description settings
 %{summary}
