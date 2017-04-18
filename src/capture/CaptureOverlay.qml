@@ -10,7 +10,6 @@ import org.nemomobile.ngf 1.0
 import org.nemomobile.configuration 1.0
 import org.nemomobile.notifications 1.0
 import QtSystemInfo 5.0
-import QtPositioning 5.1
 
 import "../settings"
 
@@ -90,7 +89,11 @@ SettingsOverlay {
 
     PositionSource {
         id: positionSource
-        active: captureView.effectiveActive && Settings.locationEnabled && Settings.global.saveLocationInfo
+        // QDeclarativePositionSource::active property is not well behaved.
+        // The internal position source may not be initialised until the component completes,
+        // and in that instance the active property may be reset.
+        // So, initialise the property after component completion to ensure correct behaviour.
+        Component.onCompleted: positionSource.active = Qt.binding(function() { return captureView.effectiveActive && Settings.locationEnabled && Settings.global.saveLocationInfo })
     }
 
     opacity: 0.0
