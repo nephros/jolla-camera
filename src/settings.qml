@@ -40,6 +40,7 @@ SettingsBase {
 
         path: "/apps/jolla-camera"
 
+        // Note! don't touch this for changing between cameras, see cameraDevice on root
         property string cameraDevice: "primary"
         property string captureMode: "image"
 

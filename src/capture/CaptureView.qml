@@ -77,7 +77,7 @@ FocusScope {
     readonly property bool _applicationActive: Qt.application.state == Qt.ApplicationActive
     on_ApplicationActiveChanged: if (_applicationActive) flashlightServiceProbe.checkFlashlightServiceStatus()
 
-    property string cameraDevice: Settings.cameraDevice
+    readonly property string cameraDevice: Settings.cameraDevice
 
     property var captureOverlay: null
 
