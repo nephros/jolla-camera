@@ -2,6 +2,9 @@ import QtQml 2.0
 
 Item {
     property var text: [
+        //: "8 mega pixel image resolution with 16:9 aspect ratio"
+        //% "16:9 (8Mpix)"
+        qsTrId("camera_settings-me-16-9-8m"),    
         //: "6 mega pixel image resolution with 16:9 aspect ratio"
         //% "16:9 (6Mpix)"
         qsTrId("camera_settings-me-16-9-6m"),
