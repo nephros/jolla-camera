@@ -160,7 +160,7 @@ PinchArea {
         parent: _overlayPosition.cameraDevice
         anchors.centerIn: parent
         model: [ "primary", "secondary" ]
-        settings: Settings.global
+        settings: Settings
         property: "cameraDevice"
         icon: Settings.cameraIcon(Settings.global.cameraDevice)
     }
