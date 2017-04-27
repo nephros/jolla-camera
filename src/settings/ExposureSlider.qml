@@ -99,11 +99,8 @@ Item {
     }
 
     Column {
-        anchors {
-            verticalCenter: parent.verticalCenter
-            right: handle.left
-            rightMargin: Theme.paddingSmall
-        }
+        anchors.verticalCenter: parent.verticalCenter
+        x: alignment === Text.AlignLeft ? parent.width + Theme.paddingSmall : -width - Theme.paddingSmall
         height: parent.height
         Repeater {
             model: Settings.global.exposureCompensationValues
@@ -114,11 +111,8 @@ Item {
                 opacity: (mouseArea.pressed || handleAnimation.running || releaseTimer.running) && selected ? 1.0 : 0.0
                 Behavior on opacity { FadeAnimation {} }
                 Label {
-                    anchors {
-                        verticalCenter: parent.verticalCenter
-                        right: parent.right
-                        rightMargin: Theme.paddingMedium
-                    }
+                    anchors.verticalCenter: parent.verticalCenter
+                    x: alignment === Text.AlignLeft ? 0 : parent.width - width
                     color: Theme.highlightColor
                     text: Settings.exposureText(modelData)
                     font.bold: true
