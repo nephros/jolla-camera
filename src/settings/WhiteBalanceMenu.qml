@@ -12,11 +12,8 @@ ExpandingMenu {
         value: modelData
         icon: Settings.whiteBalanceIcon(modelData)
         Label {
-            anchors {
-                verticalCenter: parent.verticalCenter
-                right: parent.left
-                rightMargin: Theme.paddingLarge
-            }
+            anchors.verticalCenter: parent.verticalCenter
+            x: alignment === Qt.AlignLeft ? parent.width + Theme.paddingLarge : -width - Theme.paddingLarge
             color: Theme.highlightColor
             text: Settings.whiteBalanceText(modelData)
             font.bold: true
