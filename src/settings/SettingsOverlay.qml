@@ -92,22 +92,22 @@ PinchArea {
 
     // Position of other elements given the capture button position
     property var _portraitPositions: [
-        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBR, "exposure": Text.AlignRight }, // buttonAnchorTL
-        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBR, "exposure": Text.AlignRight }, // buttonAnchorCL
-        { "captureMode": overlayAnchorBR, "cameraDevice": overlayAnchorBC, "exposure": Text.AlignRight }, // buttonAnchorBL
-        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBR, "exposure": Text.AlignRight }, // buttonAnchorBC
-        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBC, "exposure": Text.AlignRight }, // buttonAnchorBR
-        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBR, "exposure": Text.AlignLeft  }, // buttonAnchorCR
-        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBR, "exposure": Text.AlignLeft  }, // buttonAnchorTR
+        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBR, "exposure": Qt.AlignRight }, // buttonAnchorTL
+        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBR, "exposure": Qt.AlignRight }, // buttonAnchorCL
+        { "captureMode": overlayAnchorBR, "cameraDevice": overlayAnchorBC, "exposure": Qt.AlignRight }, // buttonAnchorBL
+        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBR, "exposure": Qt.AlignRight }, // buttonAnchorBC
+        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBC, "exposure": Qt.AlignRight }, // buttonAnchorBR
+        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBR, "exposure": Qt.AlignLeft  }, // buttonAnchorCR
+        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBR, "exposure": Qt.AlignLeft  }, // buttonAnchorTR
     ]
     property var _landscapePositions: [
-        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorCL, "exposure": Text.AlignRight }, // buttonAnchorTL
-        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorTL, "exposure": Text.AlignRight }, // buttonAnchorCL
-        { "captureMode": overlayAnchorCL, "cameraDevice": overlayAnchorTL, "exposure": Text.AlignRight }, // buttonAnchorBL
-        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorTL, "exposure": Text.AlignRight }, // buttonAnchorBC
-        { "captureMode": overlayAnchorCR, "cameraDevice": overlayAnchorBC, "exposure": Text.AlignLeft  }, // buttonAnchorBR
-        { "captureMode": overlayAnchorBR, "cameraDevice": overlayAnchorTR, "exposure": Text.AlignLeft  }, // buttonAnchorCR
-        { "captureMode": overlayAnchorBR, "cameraDevice": overlayAnchorCR, "exposure": Text.AlignLeft  }, // buttonAnchorTR
+        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorCL, "exposure": Qt.AlignRight }, // buttonAnchorTL
+        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorTL, "exposure": Qt.AlignRight }, // buttonAnchorCL
+        { "captureMode": overlayAnchorCL, "cameraDevice": overlayAnchorTL, "exposure": Qt.AlignRight }, // buttonAnchorBL
+        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorTL, "exposure": Qt.AlignRight }, // buttonAnchorBC
+        { "captureMode": overlayAnchorCR, "cameraDevice": overlayAnchorBC, "exposure": Qt.AlignLeft  }, // buttonAnchorBR
+        { "captureMode": overlayAnchorBR, "cameraDevice": overlayAnchorTR, "exposure": Qt.AlignLeft  }, // buttonAnchorCR
+        { "captureMode": overlayAnchorBR, "cameraDevice": overlayAnchorCR, "exposure": Qt.AlignLeft  }, // buttonAnchorTR
     ]
 
     property var _overlayPosition: overlay.isPortrait ? _portraitPositions[overlay._captureButtonLocation]
@@ -480,8 +480,8 @@ PinchArea {
     }
 
     Column {
-        x: exposureSlider.alignment == Text.AlignLeft ? (isPortrait ? 0 : Theme.paddingLarge)
-                                                      : parent.width - width - (isPortrait ? 0 : Theme.paddingLarge)
+        x: exposureSlider.alignment == Qt.AlignLeft ? (isPortrait ? 0 : Theme.paddingLarge)
+                                                    : parent.width - width - (isPortrait ? 0 : Theme.paddingLarge)
         anchors {
             verticalCenter: parent.verticalCenter
             verticalCenterOffset: isPortrait ? Theme.paddingMedium : 0
