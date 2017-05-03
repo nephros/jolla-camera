@@ -103,7 +103,7 @@ PinchArea {
         { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorCL, "exposure": Qt.AlignRight }, // buttonAnchorTL
         { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorTL, "exposure": Qt.AlignRight }, // buttonAnchorCL
         { "captureMode": overlayAnchorCL, "cameraDevice": overlayAnchorTL, "exposure": Qt.AlignRight }, // buttonAnchorBL
-        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorTL, "exposure": Qt.AlignRight }, // buttonAnchorBC
+        { "captureMode": overlayAnchorBR, "cameraDevice": overlayAnchorTR, "exposure": Qt.AlignLeft  }, // buttonAnchorBC
         { "captureMode": overlayAnchorCR, "cameraDevice": overlayAnchorTR, "exposure": Qt.AlignLeft  }, // buttonAnchorBR
         { "captureMode": overlayAnchorBR, "cameraDevice": overlayAnchorTR, "exposure": Qt.AlignLeft  }, // buttonAnchorCR
         { "captureMode": overlayAnchorBR, "cameraDevice": overlayAnchorCR, "exposure": Qt.AlignLeft  }, // buttonAnchorTR
