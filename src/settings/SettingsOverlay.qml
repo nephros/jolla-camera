@@ -43,7 +43,6 @@ PinchArea {
     property bool interactive: true
 
     property alias shutter: shutterContainer.children
-    property alias exposure: captureModeMenu.children
     property alias anchorContainer: anchorContainer
     property alias container: container
     readonly property alias settingsOpacity: row.opacity
@@ -105,13 +104,13 @@ PinchArea {
         { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorTL, "exposure": Qt.AlignRight }, // buttonAnchorCL
         { "captureMode": overlayAnchorCL, "cameraDevice": overlayAnchorTL, "exposure": Qt.AlignRight }, // buttonAnchorBL
         { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorTL, "exposure": Qt.AlignRight }, // buttonAnchorBC
-        { "captureMode": overlayAnchorCR, "cameraDevice": overlayAnchorBC, "exposure": Qt.AlignLeft  }, // buttonAnchorBR
+        { "captureMode": overlayAnchorCR, "cameraDevice": overlayAnchorTR, "exposure": Qt.AlignLeft  }, // buttonAnchorBR
         { "captureMode": overlayAnchorBR, "cameraDevice": overlayAnchorTR, "exposure": Qt.AlignLeft  }, // buttonAnchorCR
         { "captureMode": overlayAnchorBR, "cameraDevice": overlayAnchorCR, "exposure": Qt.AlignLeft  }, // buttonAnchorTR
     ]
 
     property var _overlayPosition: overlay.isPortrait ? _portraitPositions[overlay._captureButtonLocation]
-                                                     : _landscapePositions[overlay._captureButtonLocation]
+                                                      : _landscapePositions[overlay._captureButtonLocation]
 
     Item {
         id: shutterContainer
