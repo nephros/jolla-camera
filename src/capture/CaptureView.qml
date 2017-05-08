@@ -599,7 +599,7 @@ FocusScope {
     Timer {
         id: focusTimer
 
-        interval: 10000
+        interval: 5000
         onTriggered: captureView._resetFocus()
     }
 
