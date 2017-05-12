@@ -47,8 +47,6 @@ PinchArea {
     property alias container: container
     readonly property alias settingsOpacity: row.opacity
 
-    readonly property bool verticalDragging: captureModeDragArea.drag.active
-
     on_CaptureButtonLocationChanged: inButtonLayout = false
 
     onIsPortraitChanged: {
@@ -186,16 +184,30 @@ PinchArea {
                                                    : (y > 0 ? 1.0 - y/(captureModeMenu.itemStep/2) : 1.0)
             y: {
                 var val = captureModeDragTarget.y
+                if (!captureModeDragArea.drag.active) {
+                    return val
+                }
+
                 if (captureModeMenu.currentIndex == 0) {
                     if (val < -captureModeMenu.itemStep*1.5) {
+                        // if drag is clearly started up or down, canceling it shouldn't require moving finger back
+                        // to initial y -> enter one way mode
+                        captureModeDragArea.drag.maximumY = -captureModeMenu.itemStep
                         val += captureModeMenu.itemStep*2
                     } else {
+                        if (val > (-0.5 * captureModeMenu.itemStep)) {
+                            captureModeDragArea.drag.minimumY = -captureModeMenu.itemStep
+                        }
                         val = Math.min(val, 0)
                     }
                 } else if (captureModeMenu.currentIndex == 1) {
                     if (val > captureModeMenu.itemStep*0.5) {
                         val -= captureModeMenu.itemStep*2
+                        captureModeDragArea.drag.minimumY = 0
                     } else {
+                        if (val < -0.5 * captureModeMenu.itemStep) {
+                            captureModeDragArea.drag.maximumY = 0
+                        }
                         val = Math.max(val, -captureModeMenu.itemStep)
                     }
                 }
@@ -234,6 +246,8 @@ PinchArea {
                 if (!drag.active) {
                     var index = Math.round((captureModeHighlight.y + captureModeMenu.itemStep) / captureModeMenu.itemStep) % 2
                     captureModeMenu.selectItem(index)
+                    drag.minimumY = -captureModeMenu.itemStep * 2
+                    drag.maximumY = captureModeMenu.itemStep
                 }
             }
         }
