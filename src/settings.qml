@@ -9,11 +9,13 @@ SettingsBase {
     // mode change goes here, CaptureView updates to global.cameraDevice
     property string cameraDevice: global.cameraDevice
 
+    readonly property var globalDefaults: ({
+                                               "iso": 0
+                                           })
+
     readonly property var settingsDefaults: ({
-                                                 "iso": 0,
                                                  "timer": 0,
                                                  "viewfinderGrid": "none",
-                                                 "whiteBalance": CameraImageProcessing.WhiteBalanceAuto,
                                                  "flash": ((modeSettings.captureMode == Camera.CaptureStillImage) &&
                                                            (globalSettings.cameraDevice === "primary") ?
                                                                Camera.FlashAuto : Camera.FlashOff)
@@ -22,14 +24,20 @@ SettingsBase {
     readonly property bool defaultSettings: globalSettings.iso === settingsDefaults["iso"] &&
                                             modeSettings.timer === settingsDefaults["timer"] &&
                                             modeSettings.viewfinderGrid === settingsDefaults["viewfinderGrid"] &&
-                                            globalSettings.whiteBalance == settingsDefaults["whiteBalance"] &&
                                             modeSettings.flash == settingsDefaults["flash"]
 
     function reset() {
         var basePath = globalSettings.path + "/" + modeSettings.path
-        for (var i in settingsDefaults) {
+        var i
+        for (i in settingsDefaults) {
             _singleValue.key = basePath + "/" + i
             _singleValue.value = settingsDefaults[i]
+        }
+
+        basePath = globalSettings.path
+        for (i in globalDefaults) {
+            _singleValue.key = basePath + "/" + i
+            _singleValue.value = globalDefaults[i]
         }
     }
 
@@ -115,7 +123,7 @@ SettingsBase {
         case "image": return qsTrId("camera_settings-la-camera-mode")
         //: "Video recording mode"
         //% "Video mode"
-        case "video":      return qsTrId("camera_settings-la-video-mode")
+        case "video": return qsTrId("camera_settings-la-video-mode")
         default:  return ""
         }
     }
