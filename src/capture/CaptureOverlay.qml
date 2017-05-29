@@ -69,18 +69,15 @@ SettingsOverlay {
         var prevStatus = previousStoragePathStatus.value
         if (Settings.storagePathStatus == Settings.Unavailable) {
             if (prevStatus != Settings.storagePathStatus) {
-                notification.close()
                 //% "The selected storage is unavailable. Device memory will be used instead"
                 notification.publishMessage(qsTrId("camera-me-storage-unavailable"))
             }
         } else if (Settings.storagePathStatus == Settings.Available) {
             if (prevStatus == Settings.Unavailable || prevStatus == Settings.Mounting) {
-                notification.close()
                 //% "Using memory card"
                 notification.publishMessage(qsTrId("camera-me-using-memory-card"))
             }
         } else if (Settings.storagePathStatus == Settings.Mounting) {
-            notification.close()
             //% "Busy mounting the memory card. Device memory will be used instead"
             notification.publishMessage(qsTrId("camera-me-storage-mounting"))
         }
