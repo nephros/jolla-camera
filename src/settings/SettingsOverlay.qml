@@ -159,7 +159,7 @@ PinchArea {
         model: [ "primary", "secondary" ]
         settings: Settings
         property: "cameraDevice"
-        icon: Settings.cameraIcon(Settings.global.cameraDevice)
+        icon: "image://theme/icon-camera-switch"
     }
 
     CaptureModeMenu {

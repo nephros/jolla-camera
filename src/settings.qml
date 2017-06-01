@@ -116,33 +116,6 @@ SettingsBase {
         }
     }
 
-    function captureModeText(mode) {
-        switch (mode) {
-        //: "Still image capture mode"
-        //% "Camera mode"
-        case "image": return qsTrId("camera_settings-la-camera-mode")
-        //: "Video recording mode"
-        //% "Video mode"
-        case "video": return qsTrId("camera_settings-la-video-mode")
-        default:  return ""
-        }
-    }
-
-    function exposureIcon(exposure) {
-        // Exposure is value * 2 so it can be stored as an integer
-        switch (exposure) {
-        case -4: return "image://theme/icon-camera-ec-minus2"
-        case -3: return "image://theme/icon-camera-ec-minus15"
-        case -2: return "image://theme/icon-camera-ec-minus1"
-        case -1: return "image://theme/icon-camera-ec-minus05"
-        case 0:  return "image://theme/icon-camera-exposure-compensation"
-        case 1:  return "image://theme/icon-camera-ec-plus05"
-        case 2:  return "image://theme/icon-camera-ec-plus1"
-        case 3:  return "image://theme/icon-camera-ec-plus15"
-        case 4:  return "image://theme/icon-camera-ec-plus2"
-        }
-    }
-
     function exposureText(exposure) {
         switch (exposure) {
         case -4: return "-2"
@@ -286,19 +259,5 @@ SettingsBase {
         case "ambience": return qsTrId("Ambience grid")
         default: return ""
         }
-    }
-
-    function cameraIcon(device) {
-        return device == "primary"
-                ? "image://theme/icon-camera-switch"
-                : "image://theme/icon-camera-switch"
-    }
-
-    function cameraText(device) {
-        return device == "primary"
-                //% "Main camera"
-                ? qsTrId("camera-la-main-camera")
-                //% "Front camera"
-                : qsTrId("camera-la-front-camera")
     }
 }
