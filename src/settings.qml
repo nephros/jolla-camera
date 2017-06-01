@@ -103,7 +103,6 @@ SettingsBase {
                 Camera.MeteringAverage,
                 Camera.MeteringSpot
             ]
-            property var timerValues: [ 0, 3, 5, 10, 15 ]
             property var viewfinderGridValues: [ "none", "thirds", "ambience" ]
         }
     }
