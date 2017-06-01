@@ -2,7 +2,7 @@
 cameraDevice='primary'
 captureMode='image'
 portraitCaptureButtonLocation=3
-landscapeCaptureButtonLocation=4
+landscapeCaptureButtonLocation=5
 saveLocationInfo=false
 iso=0
 exposureCompensation=0
