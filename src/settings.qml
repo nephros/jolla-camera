@@ -254,9 +254,15 @@ SettingsBase {
 
     function viewfinderGridText(grid) {
         switch (grid) {
-        case "none": return qsTrId("No grid")
-        case "thirds": return qsTrId("Thirds grid")
-        case "ambience": return qsTrId("Ambience grid")
+        case "none":
+            //% "No grid"
+            return qsTrId("camera_settings-la-no_grid")
+        case "thirds":
+            //% "Thirds grid"
+            return qsTrId("camera_settings-la-thirds_grid")
+        case "ambience":
+            //% "Ambience grid"
+            return qsTrId("camera_settings-la-ambience_grid")
         default: return ""
         }
     }
