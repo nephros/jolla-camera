@@ -114,6 +114,7 @@ FocusScope {
         focusTimer.restart()
         camera.unlock()
         camera.focus.customFocusPoint = point
+        camera.searchAndLock()
     }
 
     function _resetFocus() {
@@ -123,7 +124,6 @@ FocusScope {
 
     function _triggerCapture() {
         if (captureTimer.running) {
-            camera.unlock()
             captureTimer.running = false
         } else if (startRecordTimer.running) {
             startRecordTimer.running = false
@@ -241,7 +241,9 @@ FocusScope {
         ScriptAction {
             script: {
                 if (camera.captureMode == Camera.CaptureStillImage) {
-                    camera.searchAndLock()
+                    if (camera.focusPointMode == Camera.FocusPointAuto) {
+                        camera.searchAndLock()
+                    }
                     camera.captureImage()
                 } else {
                     camera.record()
@@ -267,14 +269,25 @@ FocusScope {
     Camera {
         id: camera
 
-        function autoFocus() {
+        function lockAutoFocus() {
             captureOverlay.close()
+            // timed capture locks when timer triggers
             if (camera.captureMode == Camera.CaptureStillImage
                     && focus.focusMode != Camera.FocusInfinity
                     && focus.focusMode != Camera.FocusHyperfocal
                     && camera.lockStatus == Camera.Unlocked
+                    && focus.focusPointMode == Camera.FocusPointAuto
                     && Settings.mode.timer == 0) {
                 camera.searchAndLock()
+            }
+        }
+
+        function unlockAutoFocus() {
+            if (camera.captureMode == Camera.CaptureStillImage
+                    && focus.focusMode != Camera.FocusInfinity
+                    && focus.focusMode != Camera.FocusHyperfocal
+                    && focus.focusPointMode == Camera.FocusPointAuto) {
+                camera.unlock()
             }
         }
 
@@ -353,7 +366,7 @@ FocusScope {
             onResolutionChanged: reload()
 
             onImageSaved: {
-                camera.unlock()
+                camera.unlockAutoFocus()
                 captureBusy = false
 
                 captureModel.appendCapture(
@@ -364,7 +377,7 @@ FocusScope {
                             camera.imageCapture.resolution)
             }
             onCaptureFailed: {
-                camera.unlock()
+                camera.unlockAutoFocus()
                 captureBusy = false
             }
         }
@@ -382,8 +395,17 @@ FocusScope {
             videoBitRate: Settings.global.videoBitRate
         }
         focus {
-            focusMode: Settings.mode.focusDistanceValues.indexOf(Camera.FocusContinuous) >= 0
-                       ? Camera.FocusContinuous : Settings.mode.focusDistanceValues[0]
+            // could expect that locking focus on auto or continous behaves the same, but
+            // continuous doesn't work as well
+            focusMode: {
+                if (focusTimer.running) {
+                    return Camera.FocusAuto
+                } else if (Settings.mode.focusDistanceValues.indexOf(Camera.FocusContinuous) >= 0) {
+                    return Camera.FocusContinuous
+                } else {
+                    return Settings.mode.focusDistanceValues[0]
+                }
+            }
             focusPointMode: focusTimer.running ? Camera.FocusPointCustom : Camera.FocusPointAuto
         }
         flash.mode: Settings.mode.flash
@@ -611,7 +633,7 @@ FocusScope {
                     && !captureButtonPressed
                     && !captureView._captureOnFocus
         key: Qt.Key_VolumeUp
-        onPressed: camera.autoFocus()
+        onPressed: camera.lockAutoFocus()
         onReleased: {
             if (enabled)
                 captureView._triggerCapture()
@@ -621,7 +643,7 @@ FocusScope {
         id: volumeDown
         enabled: volumeUp.enabled
         key: Qt.Key_VolumeDown
-        onPressed: camera.autoFocus()
+        onPressed: camera.lockAutoFocus()
         onReleased: {
             if (enabled)
                 captureView._triggerCapture()
