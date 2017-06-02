@@ -95,6 +95,7 @@ SettingsOverlay {
 
     opacity: 0.0
 
+    showCommonControls: !captureView.recording
     isPortrait: captureView.isPortrait
     topButtonRowHeight: Screen.sizeCategory >= Screen.Large ? Theme.itemSizeLarge : Theme.itemSizeSmall
 
@@ -223,14 +224,14 @@ SettingsOverlay {
     Label {
         id: timerLabel
 
-        y: settingsOverlay.topButtonRowHeight
+        y: Theme.paddingMedium
         anchors.horizontalCenter: parent.horizontalCenter
-        opacity: camera.captureMode == Camera.CaptureVideo ? 1 : 0
+        opacity: captureView.recording ? 1.0 : 0.0
         Behavior on opacity { FadeAnimator {} }
 
         text: Format.formatDuration(_recordingDuration,
                                     _recordingDuration >= 3600 ? Formatter.DurationLong : Formatter.DurationShort)
-        font.pixelSize: Theme.fontSizeHuge * 1.5
+        font.pixelSize: Theme.fontSizeLarge
         style: Text.Outline
         styleColor: "#20000000"
     }

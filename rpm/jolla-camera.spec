@@ -26,9 +26,9 @@ Requires:  mapplauncherd >= 4.1.22
 Requires:  mapplauncherd-booster-silica-qt5
 Requires:  qt5-qtdeclarative-import-models2
 Requires:  qt5-qtdeclarative-import-positioning
-Requires: qt5-qtdeclarative-import-multimedia
-Requires: qt5-qtmultimedia-plugin-mediaservice-gstcamerabin >= 5.1.0+git25
-Requires: qt5-qtmultimedia-plugin-mediaservice-gstmediaplayer
+Requires:  qt5-qtdeclarative-import-multimedia
+Requires:  qt5-qtmultimedia-plugin-mediaservice-gstcamerabin >= 5.1.0+git25
+Requires:  qt5-qtmultimedia-plugin-mediaservice-gstmediaplayer
 Requires:  declarative-transferengine-qt5 >= 0.0.49
 Requires:  nemo-qml-plugin-thumbnailer-qt5-video
 Requires:  nemo-qml-plugin-thumbnailer-qt5
@@ -42,6 +42,7 @@ Requires:  sailfish-components-gallery-qt5 >= 0.0.48
 Requires:  libjollasignonuiservice-qt5-plugin >= 0.0.29
 Requires:  libngf-qt5-declarative
 Requires:  ambienced
+Requires:  jolla-theme >= 0.9.2
 Requires:  gstreamer1.0-plugins-good
 Requires:  gstreamer1.0-plugins-bad
 Requires:  dconf
