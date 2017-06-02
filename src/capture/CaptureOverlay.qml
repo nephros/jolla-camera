@@ -287,7 +287,7 @@ SettingsOverlay {
             opacity: captureTimer.running ? captureView._captureCountdown % 1 : 1.0
             color: captureTimer.running ? Theme.lightPrimaryColor : Theme.darkPrimaryColor
             font {
-                pixelSize: captureTimer.running ? Theme.fontSizeHuge : Theme.fontSizeTiny
+                pixelSize: captureTimer.running ? Theme.fontSizeHugeBase : Theme.fontSizeTiny
                 weight: Font.Light
             }
             Behavior on font.pixelSize {
