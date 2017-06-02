@@ -14,9 +14,9 @@ MouseArea {
     Rectangle {
         id: backgroundCircle
 
-        radius: size / 2
-        width: size
-        height: size
+        radius: width / 2
+        width: image.width
+        height: width
 
         anchors.centerIn: parent
 

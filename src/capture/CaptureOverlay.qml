@@ -171,7 +171,7 @@ SettingsOverlay {
 
         z: settingsOverlay.inButtonLayout ? 1 : 0
         size: Theme.iconSizeMedium
-
+        background.visible: icon.opacity < 1.0
         enabled: captureView._canCapture
                     && !captureView._captureOnFocus
                     && !volumeDown.pressed
