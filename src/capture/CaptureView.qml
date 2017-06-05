@@ -44,6 +44,8 @@ FocusScope {
     property bool touchFocusSupported: (camera.focus.focusMode == Camera.FocusAuto || camera.focus.focusMode == Camera.FocusContinuous)
                                        && camera.captureMode != Camera.CaptureVideo
 
+    // not bound to focusTimer.running, restarting timer shouldn't exit tap focus mode temporarily and lose focus state
+    property bool tapFocusActive
     property bool _captureOnFocus
     property real _captureCountdown
 
@@ -113,18 +115,20 @@ FocusScope {
     function setFocusPoint(point) {
         focusTimer.restart()
         camera.unlock()
+        tapFocusActive = true
         camera.focus.customFocusPoint = point
         camera.searchAndLock()
     }
 
     function _resetFocus() {
         focusTimer.running = false
+        tapFocusActive = false
         camera.unlock()
     }
 
     function _triggerCapture() {
         if (captureTimer.running) {
-            captureTimer.running = false
+            captureTimer.reset()
         } else if (startRecordTimer.running) {
             startRecordTimer.running = false
         } else if (camera.videoRecorder.recorderState == CameraRecorder.RecordingState) {
@@ -166,13 +170,15 @@ FocusScope {
         // Qt bug: https://bugreports.qt.io/browse/QTBUG-46995
         reload()
         _resetFocus()
+        captureTimer.reset()
         camera.deviceId = Settings.cameraDevice
         Settings.global.cameraDevice = Settings.cameraDevice
     }
 
-    onActiveChanged: {
-        if (!active) {
+    onEffectiveActiveChanged: {
+        if (!effectiveActive) {
             _resetFocus()
+            captureTimer.reset()
         }
     }
 
@@ -229,8 +235,17 @@ FocusScope {
     SequentialAnimation {
         id: captureTimer
 
+        property bool resetCameraOnStop
+
+        function reset() {
+            if (resetCameraOnStop) {
+                _resetFocus()
+                resetCameraOnStop = false
+            }
+            stop()
+        }
+
         NumberAnimation {
-            id: timerAnimation
             duration: Settings.mode.timer * 1000
             from: Settings.mode.timer
             to: 0
@@ -247,6 +262,11 @@ FocusScope {
                     camera.captureImage()
                 } else {
                     camera.record()
+                }
+
+                if (captureTimer.resetCameraOnStop) {
+                    _resetFocus()
+                    captureTimer.resetCameraOnStop = false
                 }
             }
         }
@@ -320,10 +340,7 @@ FocusScope {
             camera.imageCapture.captureToLocation(Settings.photoCapturePath('jpg'))
 
             if (focusTimer.running) {
-                // Changing focus mode will reset focus point, make sure it stays same
-                var focusPoint = Qt.point(camera.focus.customFocusPoint.x, camera.focus.customFocusPoint.y)
                 focusTimer.restart()
-                camera.focus.customFocusPoint = focusPoint
             }
         }
 
@@ -398,7 +415,7 @@ FocusScope {
             // could expect that locking focus on auto or continous behaves the same, but
             // continuous doesn't work as well
             focusMode: {
-                if (focusTimer.running) {
+                if (tapFocusActive) {
                     return Camera.FocusAuto
                 } else if (Settings.mode.focusDistanceValues.indexOf(Camera.FocusContinuous) >= 0) {
                     return Camera.FocusContinuous
@@ -406,7 +423,7 @@ FocusScope {
                     return Settings.mode.focusDistanceValues[0]
                 }
             }
-            focusPointMode: focusTimer.running ? Camera.FocusPointCustom : Camera.FocusPointAuto
+            focusPointMode: tapFocusActive ? Camera.FocusPointCustom : Camera.FocusPointAuto
         }
         flash.mode: Settings.mode.flash
         imageProcessing.whiteBalanceMode: Settings.global.whiteBalance
@@ -622,7 +639,13 @@ FocusScope {
         id: focusTimer
 
         interval: 5000
-        onTriggered: captureView._resetFocus()
+        onTriggered: {
+            if (!captureTimer.running) {
+                captureView._resetFocus()
+            } else {
+                captureTimer.resetCameraOnStop = true
+            }
+        }
     }
 
     MediaKey {
