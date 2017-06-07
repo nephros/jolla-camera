@@ -159,7 +159,7 @@ PinchArea {
         model: [ "primary", "secondary" ]
         settings: Settings
         property: "cameraDevice"
-        icon: Settings.cameraIcon(Settings.global.cameraDevice)
+        icon: "image://theme/icon-camera-switch"
     }
 
     CaptureModeMenu {
@@ -395,7 +395,7 @@ PinchArea {
                     width: overlay._menuWidth
                     title: Settings.timerText
                     header: upperHeader
-                    model: Settings.mode.timerValues
+                    model: [ 0, 3, 10, 15 ]
                     delegate: SettingsMenuItem {
                         settings: Settings.mode
                         property: "timer"

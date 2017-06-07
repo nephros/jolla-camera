@@ -176,15 +176,15 @@ SettingsOverlay {
                     && !volumeDown.pressed
                     && !volumeUp.pressed
 
-        onPressed: camera.autoFocus()
+        onPressed: camera.lockAutoFocus()
         onReleased: {
             if (containsMouse) {
                 captureView._triggerCapture()
             } else {
-                camera.unlock()
+                camera.unlockAutoFocus()
             }
         }
-        onCanceled: camera.unlock()
+        onCanceled: camera.unlockAutoFocus()
 
         icon {
             opacity: {
