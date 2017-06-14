@@ -47,6 +47,10 @@ PinchArea {
     property alias container: container
     readonly property alias settingsOpacity: row.opacity
 
+    property bool showCommonControls: true
+    property real _commonControlOpacity: showCommonControls ? 1.0 : 0.0
+    Behavior on _commonControlOpacity { FadeAnimation {} }
+
     on_CaptureButtonLocationChanged: inButtonLayout = false
 
     onIsPortraitChanged: {
@@ -160,6 +164,8 @@ PinchArea {
         settings: Settings
         property: "cameraDevice"
         icon: "image://theme/icon-camera-switch"
+        opacity: _commonControlOpacity
+        visible: opacity > 0.0
     }
 
     CaptureModeMenu {
@@ -171,6 +177,8 @@ PinchArea {
         anchors.verticalCenterOffset: height/2
         alignment: (parent.anchors.left == container.left ? Qt.AlignRight : Qt.AlignLeft) | Qt.AlignBottom
         open: true
+        opacity: _commonControlOpacity
+        visible: opacity > 0.0
 
         Rectangle {
             id: captureModeHighlight
@@ -222,7 +230,7 @@ PinchArea {
 
         width: overlay.width
         height: overlay.height
-        enabled: !overlay.open && overlay.interactive && !overlay.inButtonLayout
+        enabled: !overlay.open && overlay.interactive && !overlay.inButtonLayout && showCommonControls
 
         Item {
             id: captureModeDragTarget
@@ -293,7 +301,7 @@ PinchArea {
                 width: overlay.width
                 height: overlay.height
                 opacity: Math.min(1 - overlay._progress, 1 - anchorContainer.opacity)
-                enabled: !overlay.pinchActive
+                enabled: !overlay.pinchActive && showCommonControls
 
                 onPressed: {
                     pressX = mouseX
@@ -327,7 +335,7 @@ PinchArea {
                     anchors.horizontalCenter: parent.horizontalCenter
                     width: row.width
                     height: Theme.itemSizeLarge
-                    enabled: !overlay.expanded && !overlay.inButtonLayout
+                    enabled: !overlay.expanded && !overlay.inButtonLayout && showCommonControls
 
                     onClicked: overlay.open = true
 
@@ -470,6 +478,8 @@ PinchArea {
 
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: row.spacing
+        opacity: _commonControlOpacity
+        visible: opacity > 0.0
 
         Repeater {
             model: overlay._menus
@@ -500,6 +510,9 @@ PinchArea {
             verticalCenterOffset: isPortrait ? Theme.paddingMedium : 0
         }
         spacing: Theme.paddingSmall
+        opacity: _commonControlOpacity
+        visible: opacity > 0.0
+
         WhiteBalanceMenu {
             id: whiteBalanceMenu
             anchors {
