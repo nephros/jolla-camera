@@ -5,7 +5,7 @@ import com.jolla.camera 1.0
 Item {
     id: slider
 
-    property int alignment: Text.AlignRight
+    property int alignment: Qt.AlignRight
     property int valueCount_: Settings.global.exposureCompensationValues.length
     property real divisionSize_: (height - handle.height)/(valueCount_-1)
     property int value: Settings.global.exposureCompensation
@@ -100,7 +100,7 @@ Item {
 
     Column {
         anchors.verticalCenter: parent.verticalCenter
-        x: alignment === Text.AlignLeft ? parent.width + Theme.paddingSmall : -width - Theme.paddingSmall
+        x: alignment === Qt.AlignLeft ? parent.width + Theme.paddingSmall : -width - Theme.paddingSmall
         height: parent.height
         Repeater {
             model: Settings.global.exposureCompensationValues
@@ -112,7 +112,7 @@ Item {
                 Behavior on opacity { FadeAnimation {} }
                 Label {
                     anchors.verticalCenter: parent.verticalCenter
-                    x: alignment === Text.AlignLeft ? 0 : parent.width - width
+                    x: alignment === Qt.AlignLeft ? 0 : parent.width - width
                     color: Theme.highlightColor
                     text: Settings.exposureText(modelData)
                     font.bold: true

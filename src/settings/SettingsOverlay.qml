@@ -43,12 +43,9 @@ PinchArea {
     property bool interactive: true
 
     property alias shutter: shutterContainer.children
-    property alias exposure: captureModeMenu.children
     property alias anchorContainer: anchorContainer
     property alias container: container
     readonly property alias settingsOpacity: row.opacity
-
-    readonly property bool verticalDragging: captureModeDragArea.drag.active
 
     on_CaptureButtonLocationChanged: inButtonLayout = false
 
@@ -92,26 +89,26 @@ PinchArea {
 
     // Position of other elements given the capture button position
     property var _portraitPositions: [
-        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBR, "exposure": Text.AlignRight }, // buttonAnchorTL
-        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBR, "exposure": Text.AlignRight }, // buttonAnchorCL
-        { "captureMode": overlayAnchorBR, "cameraDevice": overlayAnchorBC, "exposure": Text.AlignRight }, // buttonAnchorBL
-        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBR, "exposure": Text.AlignRight }, // buttonAnchorBC
-        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBC, "exposure": Text.AlignRight }, // buttonAnchorBR
-        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBR, "exposure": Text.AlignLeft  }, // buttonAnchorCR
-        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBR, "exposure": Text.AlignLeft  }, // buttonAnchorTR
+        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBR, "exposure": Qt.AlignRight }, // buttonAnchorTL
+        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBR, "exposure": Qt.AlignRight }, // buttonAnchorCL
+        { "captureMode": overlayAnchorBR, "cameraDevice": overlayAnchorBC, "exposure": Qt.AlignRight }, // buttonAnchorBL
+        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBR, "exposure": Qt.AlignRight }, // buttonAnchorBC
+        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBC, "exposure": Qt.AlignRight }, // buttonAnchorBR
+        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBR, "exposure": Qt.AlignLeft  }, // buttonAnchorCR
+        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBR, "exposure": Qt.AlignLeft  }, // buttonAnchorTR
     ]
     property var _landscapePositions: [
-        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorCL, "exposure": Text.AlignRight }, // buttonAnchorTL
-        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorTL, "exposure": Text.AlignRight }, // buttonAnchorCL
-        { "captureMode": overlayAnchorCL, "cameraDevice": overlayAnchorTL, "exposure": Text.AlignRight }, // buttonAnchorBL
-        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorTL, "exposure": Text.AlignRight }, // buttonAnchorBC
-        { "captureMode": overlayAnchorCR, "cameraDevice": overlayAnchorBC, "exposure": Text.AlignLeft  }, // buttonAnchorBR
-        { "captureMode": overlayAnchorBR, "cameraDevice": overlayAnchorTR, "exposure": Text.AlignLeft  }, // buttonAnchorCR
-        { "captureMode": overlayAnchorBR, "cameraDevice": overlayAnchorCR, "exposure": Text.AlignLeft  }, // buttonAnchorTR
+        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorCL, "exposure": Qt.AlignRight }, // buttonAnchorTL
+        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorTL, "exposure": Qt.AlignRight }, // buttonAnchorCL
+        { "captureMode": overlayAnchorCL, "cameraDevice": overlayAnchorTL, "exposure": Qt.AlignRight }, // buttonAnchorBL
+        { "captureMode": overlayAnchorBR, "cameraDevice": overlayAnchorTR, "exposure": Qt.AlignLeft  }, // buttonAnchorBC
+        { "captureMode": overlayAnchorCR, "cameraDevice": overlayAnchorTR, "exposure": Qt.AlignLeft  }, // buttonAnchorBR
+        { "captureMode": overlayAnchorBR, "cameraDevice": overlayAnchorTR, "exposure": Qt.AlignLeft  }, // buttonAnchorCR
+        { "captureMode": overlayAnchorBR, "cameraDevice": overlayAnchorCR, "exposure": Qt.AlignLeft  }, // buttonAnchorTR
     ]
 
     property var _overlayPosition: overlay.isPortrait ? _portraitPositions[overlay._captureButtonLocation]
-                                                     : _landscapePositions[overlay._captureButtonLocation]
+                                                      : _landscapePositions[overlay._captureButtonLocation]
 
     Item {
         id: shutterContainer
@@ -187,16 +184,30 @@ PinchArea {
                                                    : (y > 0 ? 1.0 - y/(captureModeMenu.itemStep/2) : 1.0)
             y: {
                 var val = captureModeDragTarget.y
+                if (!captureModeDragArea.drag.active) {
+                    return val
+                }
+
                 if (captureModeMenu.currentIndex == 0) {
                     if (val < -captureModeMenu.itemStep*1.5) {
+                        // if drag is clearly started up or down, canceling it shouldn't require moving finger back
+                        // to initial y -> enter one way mode
+                        captureModeDragArea.drag.maximumY = -captureModeMenu.itemStep
                         val += captureModeMenu.itemStep*2
                     } else {
+                        if (val > (-0.5 * captureModeMenu.itemStep)) {
+                            captureModeDragArea.drag.minimumY = -captureModeMenu.itemStep
+                        }
                         val = Math.min(val, 0)
                     }
                 } else if (captureModeMenu.currentIndex == 1) {
                     if (val > captureModeMenu.itemStep*0.5) {
                         val -= captureModeMenu.itemStep*2
+                        captureModeDragArea.drag.minimumY = 0
                     } else {
+                        if (val < -0.5 * captureModeMenu.itemStep) {
+                            captureModeDragArea.drag.maximumY = 0
+                        }
                         val = Math.max(val, -captureModeMenu.itemStep)
                     }
                 }
@@ -235,6 +246,8 @@ PinchArea {
                 if (!drag.active) {
                     var index = Math.round((captureModeHighlight.y + captureModeMenu.itemStep) / captureModeMenu.itemStep) % 2
                     captureModeMenu.selectItem(index)
+                    drag.minimumY = -captureModeMenu.itemStep * 2
+                    drag.maximumY = captureModeMenu.itemStep
                 }
             }
         }
@@ -480,8 +493,8 @@ PinchArea {
     }
 
     Column {
-        x: exposureSlider.alignment == Text.AlignLeft ? (isPortrait ? 0 : Theme.paddingLarge)
-                                                      : parent.width - width - (isPortrait ? 0 : Theme.paddingLarge)
+        x: exposureSlider.alignment == Qt.AlignLeft ? (isPortrait ? 0 : Theme.paddingLarge)
+                                                    : parent.width - width - (isPortrait ? 0 : Theme.paddingLarge)
         anchors {
             verticalCenter: parent.verticalCenter
             verticalCenterOffset: isPortrait ? Theme.paddingMedium : 0
