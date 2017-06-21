@@ -246,7 +246,6 @@ void CaptureModel::appendCapture(
 {
     QUrl resolvedUrl = m_fileUrl.resolved(url);
 
-
     for (int i = 0; i < m_model->rowCount(); ++i) {
         if (m_model->index(i, 0).data(m_roles[Url]).toUrl() == resolvedUrl) {
             return;

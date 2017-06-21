@@ -6,8 +6,6 @@ ModeSchema {
     property string imageResolution_16_9
     property string viewfinderResolution_4_3
     property string viewfinderResolution_16_9
-    property string resolutionText_4_3
-    property string resolutionText_16_9
 
     captureMode: Camera.CaptureStillImage
     imageResolution: imageResolution_16_9
