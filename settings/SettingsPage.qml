@@ -28,10 +28,8 @@ Page {
             property string viewfinderResolution
             property string imageResolution_16_9
             property string viewfinderResolution_16_9
-            property string resolutionText_16_9
             property string imageResolution_4_3
             property string viewfinderResolution_4_3
-            property string resolutionText_4_3
         }
 
         ConfigurationGroup {
@@ -43,11 +41,18 @@ Page {
             property string viewfinderResolution
             property string imageResolution_16_9
             property string viewfinderResolution_16_9
-            property string resolutionText_16_9
             property string imageResolution_4_3
             property string viewfinderResolution_4_3
-            property string resolutionText_4_3
         }
+    }
+
+    function resolutionText(ratioHorizontal, ratioVertical, resolution) {
+        var dimensions = resolution.split("x")
+        var megaPixels = dimensions.length == 2 ? (Math.round((dimensions[0] * dimensions[1]) / 1000000))
+                                                : "?"
+        //: template for resolution text, %1 and %2 are aspect ratio, %3 is megapixel value. e.g. 16:9 (2Mpix)"
+        //% "%1:%2 (%3Mpix)"
+        return qsTrId("camera_settings-me-resolution_template").arg(ratioHorizontal).arg(ratioVertical).arg(megaPixels)
     }
 
     SilicaFlickable {
@@ -175,13 +180,13 @@ Page {
                 enabled: AccessPolicy.cameraEnabled
                 menu: ContextMenu {
                     ResolutionComboItem {
-                        text: qsTrId(primaryImageSettings.resolutionText_16_9)
+                        text: resolutionText(16, 9, imageResolution)
                         imageResolution: primaryImageSettings.imageResolution_16_9
                         viewfinderResolution: primaryImageSettings.viewfinderResolution_16_9
 
                     }
                     ResolutionComboItem {
-                        text: qsTrId(primaryImageSettings.resolutionText_4_3)
+                        text: resolutionText(4, 3, imageResolution)
                         imageResolution: primaryImageSettings.imageResolution_4_3
                         viewfinderResolution: primaryImageSettings.viewfinderResolution_4_3
                     }
@@ -201,12 +206,12 @@ Page {
                 enabled: AccessPolicy.cameraEnabled
                 menu: ContextMenu {
                     ResolutionComboItem {
-                        text: qsTrId(secondaryImageSettings.resolutionText_16_9)
+                        text: resolutionText(16, 9, imageResolution)
                         imageResolution: secondaryImageSettings.imageResolution_16_9
                         viewfinderResolution: secondaryImageSettings.viewfinderResolution_16_9
                     }
                     ResolutionComboItem {
-                        text: qsTrId(secondaryImageSettings.resolutionText_4_3)
+                        text: resolutionText(4, 3, imageResolution)
                         imageResolution: secondaryImageSettings.imageResolution_4_3
                         viewfinderResolution: secondaryImageSettings.viewfinderResolution_4_3
                     }
