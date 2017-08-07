@@ -36,6 +36,7 @@ Requires:  nemo-qml-plugin-dbus-qt5
 Requires:  nemo-qml-plugin-policy-qt5
 Requires:  nemo-qml-plugin-time-qt5
 Requires:  nemo-qml-plugin-configuration-qt5
+Requires:  nemo-qml-plugin-notifications-qt5 >= 1.1.2
 Requires:  sailfish-content-graphics-default-base >= 0.7.47
 Requires:  sailfish-components-media-qt5 >= 0.0.18
 Requires:  sailfish-components-gallery-qt5 >= 0.0.48

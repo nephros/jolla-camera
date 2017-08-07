@@ -324,7 +324,8 @@ SettingsOverlay {
             notification.publish()
         }
 
-        category: "x-jolla.settings.camera"
+        isTransient: true
+        urgency: Notification.Critical
     }
 
     ConfigurationValue {
