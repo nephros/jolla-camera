@@ -40,10 +40,7 @@ oneshot.path  = /usr/lib/oneshot.d
 schema.files = dconf/jolla-camera.txt
 schema.path  = /etc/dconf/db/vendor.d/
 
-notification_types.path  = /usr/share/lipstick/notificationcategories
-notification_types.files = x-jolla.settings.camera.conf
-
-INSTALLS += target desktop qml service schema oneshot notification_types
+INSTALLS += target desktop qml service schema oneshot
 
 packagesExist(qdeclarative5-boostable) {
     message("Building with qdeclarative-boostable support")
@@ -52,4 +49,3 @@ packagesExist(qdeclarative5-boostable) {
 } else {
     warning("qdeclarative-boostable not available; startup times will be slower")
 }
-
