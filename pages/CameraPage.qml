@@ -189,6 +189,9 @@ Page {
 
     }
 
+
+    DisabledByMdmView {}
+
     ScreenBlank {
         suspend: (galleryLoader.item && galleryLoader.item.playing)
                     || captureView.camera.videoRecorder.recorderState == CameraRecorder.RecordingState

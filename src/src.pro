@@ -25,6 +25,7 @@ DEFINES += \
         DEPLOYMENT_PATH=\"\\\"\"$${TARGETPATH}/\"\\\"\"
 
 import.files = \
+        DisabledByMdmView.qml \
         capture \
         qmldir \
         settings \
@@ -36,6 +37,7 @@ target.path = $$TARGETPATH
 INSTALLS += target import
 
 OTHER_FILES = \
+        DisabledByMdmView.qml \
         capture/*.qml \
         settings/*.qml \
         settings.qml

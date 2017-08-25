@@ -87,6 +87,7 @@ ApplicationWindow {
                 suspend: captureView.camera.videoRecorder.recorderState == CameraRecorder.RecordingState
             }
 
+            DisabledByMdmView {}
         }
     }
 
