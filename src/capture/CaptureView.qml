@@ -2,10 +2,12 @@ import QtQuick 2.4
 import QtMultimedia 5.4
 import Sailfish.Silica 1.0
 import Sailfish.Media 1.0
+import Sailfish.Policy 1.0
 import com.jolla.camera 1.0
 import org.nemomobile.policy 1.0
 import org.nemomobile.ngf 1.0
 import org.nemomobile.dbus 2.0
+import org.nemomobile.notifications 1.0
 import QtSystemInfo 5.0
 
 import "../settings"
@@ -134,12 +136,29 @@ FocusScope {
         } else if (camera.videoRecorder.recorderState == CameraRecorder.RecordingState) {
             camera.videoRecorder.stop()
         } else if (Settings.mode.timer != 0) {
+            microphoneWarningNotification.publishIfNeeded()
             captureTimer.restart()
         } else if (camera.captureMode == Camera.CaptureStillImage) {
             camera.captureImage()
         } else {
+            microphoneWarningNotification.publishIfNeeded()
             camera.record()
         }
+    }
+
+    Notification {
+        id: microphoneWarningNotification
+
+        function publishIfNeeded() {
+            if (camera.captureMode == Camera.CaptureVideo && !AccessPolicy.microphoneEnabled) {
+                microphoneWarningNotification.publish()
+            }
+        }
+
+        category: "x-nemo.general.warning"
+        //: Camera audio won't be recorded, microphone disabled by Sailfish Device Manager (could be shorter translation).
+        //% "Camera audio won't be recorded, microphone disabled by Sailfish Device Manager"
+        previewBody: qsTrId("jolla-camera-la-microphone_disallowed_by_policy")
     }
 
     onEffectiveIsoChanged: {
