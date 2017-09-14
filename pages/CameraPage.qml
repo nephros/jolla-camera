@@ -98,6 +98,10 @@ Page {
         flickDeceleration: Theme.flickDeceleration
         maximumFlickVelocity: Theme.maximumFlickVelocity 
 
+        // Normally transition is handled through a different path when flicking,
+        // avoid slow transition if triggered by ListView for some reason
+        highlightMoveDuration: 300
+
         model: VisualItemModel {
             Item {
                 id: galleryItem
