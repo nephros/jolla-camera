@@ -65,7 +65,6 @@ FocusScope {
                 || (camera.captureMode == Camera.CaptureVideo && camera.videoRecorder.recorderStatus >= CameraRecorder.LoadedStatus)
 
     property bool captureButtonPressed: !!captureOverlay && captureOverlay.captureButtonPressed
-    readonly property bool _capturePending: volumeUp.pressed || volumeDown.pressed || captureButtonPressed
 
     property bool _captureQueued
     property bool captureBusy
@@ -667,6 +666,8 @@ FocusScope {
         }
     }
 
+    // TODO: camera shouldn't commonly really use MediaKeys with GRABBED_KEYS, no need for global filtering,
+    // enough if only filtering inside the application
     MediaKey {
         id: volumeUp
         enabled: camera.imageCapture.ready
@@ -690,6 +691,19 @@ FocusScope {
             if (enabled)
                 captureView._triggerCapture()
         }
+    }
+    MediaKey {
+        enabled: volumeUp.enabled
+        key: Qt.Key_CameraFocus
+        onPressed: camera.lockAutoFocus()
+        onReleased: camera.unlockAutoFocus()
+    }
+    MediaKey {
+        enabled: volumeUp.enabled || (captureView.activeFocus && camera.captureMode == Camera.CaptureVideo)
+        key: Qt.Key_Camera
+        // compared to volume keys, this captures already on press.
+        // can be done because there's half pressed state too.
+        onPressed: captureView._triggerCapture()
     }
 
     Permissions {
