@@ -174,7 +174,7 @@ SettingsOverlay {
         background.visible: icon.opacity < 1.0
         enabled: captureView._canCapture
                     && !captureView._captureOnFocus
-                    && !volumeDown.pressed
+                    && !volumeDown.pressed // avoid click + volume key release taking two pictures
                     && !volumeUp.pressed
 
         onPressed: camera.lockAutoFocus()
