@@ -19,7 +19,6 @@ SettingsOverlay {
     property var captureView
     property var camera
     property Item focusArea
-    property alias captureButtonPressed: captureButton.pressed
 
     property int _recordingDuration: clock.enabled ? ((clock.time - _startTime) / 1000) : 0
     property var _startTime: new Date()
@@ -174,8 +173,6 @@ SettingsOverlay {
         background.visible: icon.opacity < 1.0
         enabled: captureView._canCapture
                     && !captureView._captureOnFocus
-                    && !volumeDown.pressed // avoid click + volume key release taking two pictures
-                    && !volumeUp.pressed
 
         onPressed: camera.lockAutoFocus()
         onReleased: {
