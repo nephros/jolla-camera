@@ -15,6 +15,8 @@ QtObject {
     property string videoResolution
     property string viewfinderResolution
 
+    property int iso: 0
+    property var isoValues: [ 0, 100, 200, 400 ]
     property var focusDistanceValues: [ Camera.FocusInfinity ]
     property var flashValues: [ Camera.FlashOff ]
     property var exposureModeValues: [ Camera.ExposureAuto ]
