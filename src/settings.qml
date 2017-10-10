@@ -150,17 +150,13 @@ SettingsBase {
     }
 
     function isoText(iso) {
-        switch (iso) {
-        //% "Light sensitivity • Automatic"
-        case 0: return qsTrId("camera_settings-la-light-sensitivity-auto")
-        //% "Light sensitivity • ISO 100"
-        case 100: return qsTrId("camera_settings-la-light-sensitivity-100")
-        //% "Light sensitivity • ISO 200"
-        case 200: return qsTrId("camera_settings-la-light-sensitivity-200")
-        //% "Light sensitivity • ISO 400"
-        case 400: return qsTrId("camera_settings-la-light-sensitivity-400")
-        //% "Light sensitivity • ISO 800"
-        case 800: return qsTrId("camera_settings-la-light-sensitivity-800")
+        if (iso == 0) {
+            //% "Light sensitivity • Automatic"
+            return qsTrId("camera_settings-la-light-sensitivity-auto")
+        } else {
+            //: %1 replaced with iso value
+            //% "Light sensitivity • ISO %1"
+            return qsTrId("camera_settings-la-light-sensitivity-iso_value").arg(iso)
         }
     }
 
