@@ -97,7 +97,7 @@ CoverBackground {
             icon: Settings.whiteBalanceIcon(Settings.global.whiteBalance)
         }
         CoverIcon {
-            icon: Settings.isoIcon(Settings.global.iso)
+            icon: Settings.isoIcon(Settings.mode.iso)
         }
         CoverIcon {
             visible: !flashIcon.visible

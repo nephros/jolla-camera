@@ -435,9 +435,9 @@ PinchArea {
                     width: overlay._menuWidth
                     title: Settings.isoText
                     header: upperHeader
-                    model: Settings.global.isoValues
+                    model: Settings.mode.isoValues
                     delegate: SettingsMenuItem {
-                        settings: Settings.global
+                        settings: Settings.mode
                         property: "iso"
                         value: modelData
                         icon: Settings.isoIcon(modelData)
