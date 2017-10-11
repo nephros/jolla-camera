@@ -102,6 +102,12 @@ Page {
         // avoid slow transition if triggered by ListView for some reason
         highlightMoveDuration: 300
 
+        Keys.onPressed: {
+            if (!event.isAutoRepeat && event.key == Qt.Key_Camera) {
+                switcherView.currentIndex = 1 // switch to capture mode
+            }
+        }
+
         model: VisualItemModel {
             Item {
                 id: galleryItem
