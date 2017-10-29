@@ -15,7 +15,6 @@ FocusScope {
     id: captureView
 
     property bool active
-    property bool windowVisible
     property int orientation
     property int effectiveIso: Settings.mode.iso
     property bool inButtonLayout: captureOverlay == null || captureOverlay.inButtonLayout
@@ -59,7 +58,7 @@ FocusScope {
 
     readonly property bool isPortrait: orientation == Orientation.Portrait
                 || orientation == Orientation.PortraitInverted
-    readonly property bool effectiveActive: ((activeFocus && active) || (windowVisible && recording)) && _applicationActive
+    readonly property bool effectiveActive: (active || recording) && _applicationActive
 
     readonly property bool _canCapture: (camera.captureMode == Camera.CaptureStillImage && camera.imageCapture.ready)
                 || (camera.captureMode == Camera.CaptureVideo && camera.videoRecorder.recorderStatus >= CameraRecorder.LoadedStatus)

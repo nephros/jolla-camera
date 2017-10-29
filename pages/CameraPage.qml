@@ -10,8 +10,6 @@ import "gallery"
 Page {
     id: page
 
-    property bool windowVisible
-    property Item pageStack
     property alias viewfinder: captureView.viewfinder
     property bool galleryActive
 
@@ -24,7 +22,7 @@ Page {
     Binding {
         target: window
         property: "galleryVisible"
-        value: page.galleryActive || switcherView.moving
+        value: galleryLoader.visible
     }
 
     Binding {
@@ -51,7 +49,7 @@ Page {
                 value: true
             }
             FadeAnimation {
-                target: page.pageStack
+                target: pageStack
                 to: 0
                 duration: 150
             }
@@ -60,7 +58,7 @@ Page {
                 properties: 'width,height,rotation,orientation'
             }
             FadeAnimation {
-                target: page.pageStack
+                target: pageStack
                 to: 1
                 duration: 150
             }
@@ -83,9 +81,20 @@ Page {
     ListView {
         id: switcherView
 
+        readonly property bool transitioning: moving || returnToCaptureModeTimeout.running
+
+        function returnToCaptureMode() {
+            returnToCaptureModeTimeout.restart()
+            currentIndex = 1 // switch to capture mode
+        }
+
+        Timer {
+            id: returnToCaptureModeTimeout
+            interval: switcherView.highlightMoveDuration
+        }
+
         width: page.width
         height: page.height
-
         orientation: ListView.Horizontal
         snapMode: ListView.SnapOneItem
         boundsBehavior: Flickable.StopAtBounds
@@ -104,7 +113,7 @@ Page {
 
         Keys.onPressed: {
             if (!event.isAutoRepeat && event.key == Qt.Key_Camera) {
-                switcherView.currentIndex = 1 // switch to capture mode
+                switcherView.returnToCaptureMode()
             }
         }
 
@@ -121,7 +130,7 @@ Page {
                     anchors.fill: parent
 
                     asynchronous: true
-                    visible: switcherView.moving || page.galleryActive
+                    visible: switcherView.moving || page.galleryActive || returnToCaptureModeTimeout.running
                 }
 
                 BusyIndicator {
@@ -145,7 +154,6 @@ Page {
                 active: true
 
                 orientation: page.orientation
-                windowVisible: page.windowVisible
                 pageRotation: page.rotation
                 captureModel: window.captureModel
 
@@ -179,21 +187,21 @@ Page {
         }
 
         onCurrentItemChanged: {
-            if (!moving) {
+            if (!transitioning) {
                 page.galleryActive = galleryItem.ListView.isCurrentItem
                 captureView.active = captureView.ListView.isCurrentItem
             }
         }
 
-        onMovingChanged: {
-            if (!moving) {
+        onTransitioningChanged: {
+            if (!transitioning) {
                 page.galleryActive = galleryItem.ListView.isCurrentItem
                 captureView.active = captureView.ListView.isCurrentItem
             } else if (captureView.active) {
                 if (galleryLoader.source == "") {
                     galleryLoader.setSource("gallery/GalleryView.qml", { page: page })
                 } else if (galleryLoader.item) {
-                    galleryLoader.item.positionViewAtBeginning()
+                    galleryLoader.item._positionViewAtBeginning()
                 }
             }
         }

@@ -1,94 +1,83 @@
 import QtQuick 2.1
 import QtQml.Models 2.1
 import Sailfish.Silica 1.0
-import Sailfish.Media 1.0
 import Sailfish.Gallery 1.0
-import QtMultimedia 5.0
+import Sailfish.Media 1.0
 import QtDocGallery 5.0
 import com.jolla.camera 1.0
 import org.nemomobile.policy 1.0
 import ".."
 
-Drawer {
-    id: galleryView
+ListView {
+    id: root
 
-    readonly property bool positionLocked: active && _activeItem && _activeItem.scaled
+    readonly property bool positionLocked: (active && currentItem && currentItem.scaled) || (!overlay.active && playing)
+
     readonly property bool active: page.galleryActive
-    readonly property bool windowActive: page.windowVisible
-    property Item _activeItem
-    property alias _videoActive: permissions.enabled
-    property bool _minimizedPlaying
-
-    property alias contentItem: pageView.contentItem
-    property alias header: pageView.header
-    property alias currentIndex: pageView.currentIndex
-
-    property alias model: delegateModel.model
-
     property alias captureModel: captureModelItem
 
     property CameraPage page
 
-    readonly property bool playing: mediaPlayer.playbackState == MediaPlayer.PlayingState
-
+    readonly property QtObject player: playerLoader.item ? playerLoader.item.player : null
+    readonly property bool playing: player && player.playing
     property int _preOrientationChangeIndex
+    property Item _remorsePopup
 
-    function positionViewAtBeginning() {
-        pageView.currentIndex = pageView.count - 1
-        pageView.positionViewAtEnd()
+    function _positionViewAtBeginning() {
+        currentIndex = count - 1
+        positionViewAtEnd()
     }
 
-    dock: page.isPortrait ? Dock.Top : Dock.Left
+    model: delegateModel
+    boundsBehavior: Flickable.StopAtBounds
+    cacheBuffer: width
 
-    onActiveChanged: {
-        if (!active) {
-            mediaPlayer.stop()
-            mediaPlayer.source = ""
-            open = false
-        }
-        if (_activeItem) {
-            _activeItem.active = active
-        }
-    }
+    snapMode: ListView.SnapOneItem
+    highlightRangeMode: ListView.StrictlyEnforceRange
+    // Normally transition is handled through a different path when flicking,
+    // avoid slow transition if triggered by ListView for some reason
+    highlightMoveDuration: 300
 
-    onWindowActiveChanged: {
-        if (!windowActive) {
-            // if we were playing a video when we minimized, store that information.
-            _minimizedPlaying = playing
-            if (_minimizedPlaying) {
-                mediaPlayer.pause() // and automatically pause the video
+    orientation: ListView.Horizontal
+    currentIndex: count - 1
+    pressDelay: 0
+
+    clip: true
+    interactive: count > 1 && !positionLocked
+    flickDeceleration: Theme.flickDeceleration
+    maximumFlickVelocity: Theme.maximumFlickVelocity
+
+    onCurrentIndexChanged: {
+        if (!moving) {
+            // ListView's item positioning and currentIndex can get out of sync
+            // when items are removed from and possibly when inserted into the
+            // model.  Finding and fixing all the corner cases in ListView is a
+            // bit of a battle so as a final safeguard, we force the position to
+            // update if anything other than flicking the list changes the current
+            // index.
+            if (page.orientationTransitionRunning && currentIndex != _preOrientationChangeIndex) {
+                // Changing the size of the view can cause the currentIndex to change - fix it.
+                // The recursion doesn't cause any problems. Hurrah.
+                currentIndex = _preOrientationChangeIndex
+                return
             }
-        } else if (_minimizedPlaying) {
-            _play() // restart playback automatically.  will also go fullscreen.
+            positionViewAtIndex(currentIndex, ListView.SnapPosition)
+        }
+        if (_remorsePopup && _remorsePopup.active) {
+            _remorsePopup.trigger()
+        }
+    }
+    onActiveChanged: if (!active) overlay.active = true
+
+    property Item previousItem
+    onMovingChanged: {
+        if (moving) {
+            previousItem = currentItem
+        } else if (player && previousItem != currentItem) {
+            player.reset()
         }
     }
 
-    function _play() {
-        if (_videoActive) {
-            mediaPlayer.source = galleryView._activeItem.url
-            mediaPlayer.play()
-        }
-    }
-
-    function _togglePlay() {
-        if (mediaPlayer.playbackState == MediaPlayer.PlayingState) {
-            mediaPlayer.pause()
-        } else if (_videoActive) {
-            mediaPlayer.source = galleryView._activeItem.url
-            mediaPlayer.play()
-        }
-    }
-
-    function _pause() {
-        if (_videoActive) {
-            mediaPlayer.source = galleryView._activeItem.url
-            mediaPlayer.pause()
-        }
-    }
-
-    function _stop() {
-        mediaPlayer.stop()
-    }
 
     CaptureModel {
         id: captureModelItem
@@ -99,7 +88,7 @@ Drawer {
             property bool populated
 
             rootType: DocumentGallery.File
-            properties: [ "url", "title", "mimeType", "orientation", "duration", "width", "height" ]
+            properties: [ "url", "mimeType", "orientation", "duration", "width", "height" ]
             sortProperties: ["lastModified"]
             autoUpdate: true
             filter: GalleryFilterUnion {
@@ -109,28 +98,9 @@ Drawer {
             onStatusChanged: {
                 if (status === DocumentGalleryModel.Finished) {
                     populated = true
-                    positionViewAtBeginning()
+                    _positionViewAtBeginning()
                 }
             }
-        }
-    }
-
-    MediaKey { enabled: keysResource.acquired; key: Qt.Key_MediaTogglePlayPause; onPressed: galleryView._togglePlay() }
-    MediaKey { enabled: keysResource.acquired; key: Qt.Key_MediaPlay; onPressed: galleryView._play() }
-    MediaKey { enabled: keysResource.acquired; key: Qt.Key_MediaPause; onPressed: galleryView._pause() }
-    MediaKey { enabled: keysResource.acquired; key: Qt.Key_MediaStop; onPressed: galleryView._stop() }
-    MediaKey { enabled: keysResource.acquired; key: Qt.Key_ToggleCallHangup; onPressed: galleryView._togglePlay() }
-
-    Permissions {
-        id: permissions
-
-        enabled: galleryView.active && galleryView._activeItem && !galleryView._activeItem.isImage
-        applicationClass: "player"
-
-        Resource {
-            id: keysResource
-            type: Resource.HeadsetButtons
-            optional: true
         }
     }
 
@@ -139,40 +109,37 @@ Drawer {
 
         model: captureModel
 
-        delegate: Item {
-            id: galleryItem
-
-            property bool active
+        delegate: Loader {
             readonly property var itemId: model.itemId
             readonly property int index: model.index
-            readonly property string title: model.title
             readonly property string mimeType: model.mimeType
-            readonly property url url: model.url
+            readonly property url source: model.url
             readonly property bool resolved: model.resolved
+            readonly property int duration: model.duration
 
             readonly property bool isImage: mimeType.indexOf("image/") == 0
-            readonly property bool scaled: loader.item && loader.item.scaled
+            readonly property bool scaled: item && item.scaled
 
-            width: pageView.width
-            height: pageView.height
-            clip: true
+            readonly property bool isCurrentItem: PathView.isCurrentItem
+
+            width: root.width
+            height: root.height
+            sourceComponent: isImage ? imageComponent: videoComponent
+            asynchronous: !isCurrentItem
 
             Component {
                 id: imageComponent
 
                 ImageViewer {
-                    width: galleryView.width
-                    height: galleryView.height
 
-                    source: url
-                    onClicked: galleryView.open = !galleryView.open
-                    fit: galleryView.page.isPortrait ? Fit.Width : Fit.Height
-                    menuOpen: galleryView.open
-                    enableZoom: !pageView.moving
+                    onClicked: overlay.active = !overlay.active
+                    source: parent.source
 
+                    active: isCurrentItem
                     orientation: model.orientation
+                    enableZoom: !moving && !overlay.active
+                    interactive: scaled && !overlay.active
 
-                    active: galleryItem.active
                 }
             }
 
@@ -180,261 +147,111 @@ Drawer {
                 id: videoComponent
 
                 VideoPoster {
-                    property bool scaled: false
+                    onClicked: overlay.active = !overlay.active
+                    onTogglePlay: {
+                        playerLoader.active = true
+                        player.togglePlay()
+                    }
 
-                    width: galleryItem.width
-                    height: galleryItem.height
+                    contentWidth: root.width
+                    contentHeight: root.height
 
-                    contentWidth: galleryView.width
-                    contentHeight: galleryView.height
-
-                    player: mediaPlayer
-                    active: galleryItem.active
-                    source: url
+                    source: parent.source
                     mimeType: model.mimeType
-                    duration: model.duration
-
-                    onClicked: {
-                        galleryView.open = !galleryView.open
-                        if (galleryView.playing) {
-                            // pause and go splitscreen
-                            galleryView._pause()
-                        } else if (!galleryView.open) {
-                            // start playback and go fullscreen
-                            galleryView._play()
-                        }
-                    }
+                    playing: player && player.playing
+                    loaded: player && player.loaded
+                    overlayMode: overlay.active
                 }
-            }
-
-            Loader {
-                id: loader
-
-                anchors.centerIn: galleryItem
-
-                sourceComponent: galleryItem.isImage ? imageComponent : videoComponent
             }
         }
     }
 
-    ListView {
-        id: pageView
-
-        anchors.fill: parent
-
-        boundsBehavior: Flickable.StopAtBounds
-        cacheBuffer: width
-
-        snapMode: ListView.SnapOneItem
-        highlightRangeMode: ListView.StrictlyEnforceRange
-
-        // Normally transition is handled through a different path when flicking,
-        // avoid slow transition if triggered by ListView for some reason
-        highlightMoveDuration: 300
-
-        orientation: ListView.Horizontal
-        currentIndex: count - 1
-        pressDelay: 0
-
-        interactive: pageView.count > 1 && !galleryView.positionLocked
-
-        flickDeceleration: Theme.flickDeceleration
-        maximumFlickVelocity: Theme.maximumFlickVelocity 
-
-        model: delegateModel
-
-        onCountChanged: {
-            if (count == 0) {
-                galleryView.open = false
+    Connections {
+        target: page
+        onOrientationTransitionRunningChanged: {
+            if (page.orientationTransitionRunning) {
+                _preOrientationChangeIndex = root.currentIndex
             }
-        }
-
-        onCurrentItemChanged: {
-            if (!moving && currentItem) {
-                if (galleryView._activeItem) {
-                    galleryView._activeItem.active = false
-                }
-
-                galleryView._activeItem = currentItem
-                galleryView._activeItem.active = true
-            }
-        }
-
-        onCurrentIndexChanged: {
-            if (!moving) {
-                // ListView's item positioning and currentIndex can get out of sync
-                // when items are removed from and possibly when inserted into the
-                // model.  Finding and fixing all the corner cases in ListView is a
-                // bit of a battle so as a final safeguard, we force the position to
-                // update if anything other than flicking the list changes the current
-                // index.
-                if (page.orientationTransitionRunning && currentIndex != _preOrientationChangeIndex) {
-                    // Changing the size of the view can cause the currentIndex to change - fix it.
-                    // The recursion doesn't cause any problems. Hurrah.
-                    currentIndex = _preOrientationChangeIndex
-                    return
-                }
-                positionViewAtIndex(currentIndex, ListView.SnapPosition)
-            }
-        }
-
-        onMovingChanged: {
-            if (!moving && galleryView._activeItem != currentItem) {
-                if (galleryView._activeItem) {
-                    galleryView._activeItem.active = false
-                }
-                mediaPlayer.stop()
-                mediaPlayer.source = ""
-                galleryView._activeItem = currentItem
-                if (galleryView._activeItem) {
-                    galleryView._activeItem.active = true
-                }
-            }
-        }
-
-        Connections {
-            target: page
-            onOrientationTransitionRunningChanged: {
-                if (page.orientationTransitionRunning) {
-                    _preOrientationChangeIndex = pageView.currentIndex
-                }
-            }
-        }
-
-        children: [
-            MouseArea {
-                z: -1
-                width: galleryView.width
-                height: galleryView.height
-
-                enabled: pageView.count > 0
-
-                onClicked: galleryView.open = !galleryView.open
-            }
-        ]
-
-        contentItem.children: [
-            Item {
-                visible: mediaPlayer.playbackState != MediaPlayer.StoppedState
-                width: galleryView.width
-                height: galleryView.height
-                anchors.centerIn: galleryView._activeItem
-
-                Rectangle {
-                    anchors.fill: parent
-                    color: 'black'
-                    opacity: mediaPlayer.playbackState == MediaPlayer.PlayingState ? 1 : 0
-                    Behavior on opacity { FadeAnimation {} }
-                }
-
-                GStreamerVideoOutput {
-                    id: video
-
-                    anchors.fill: parent
-                    source: MediaPlayer {
-                        id: mediaPlayer
-                        onPlaybackStateChanged: {
-                            if (playbackState == MediaPlayer.PlayingState && galleryView.open) {
-                                // go fullscreen for playback if triggered via Play icon.
-                                galleryView.open = false
-                            }
-                        }
-                    }
-                }
-            }
-        ]
-
-        ViewPlaceholder {
-            //: Placeholder text for an empty camera reel view
-            //% "Captured photos and videos will appear here when you take some"
-            text: qsTrId("camera-la-no-photos")
-            enabled: pageView.count == 0 && galleryModel.populated
         }
     }
 
-    background: [
-        ShareMenu {
-            page: galleryView.page
+    ViewPlaceholder {
+        //: Placeholder text for an empty camera reel view
+        //% "Captured photos and videos will appear here when you take some"
+        text: qsTrId("camera-la-no-photos")
+        enabled: count == 0 && galleryModel.populated
+    }
 
-            width: galleryView.backgroundItem.width
-            height: galleryView.backgroundItem.height
+    contentItem.children: [
+        FadeBlocker {
+            z: -1
+            anchors.fill: parent
+        },
+        Loader {
+            id: playerLoader
 
-            title: pageView.currentItem ? pageView.currentItem.title : ""
-            filter: pageView.currentItem ? pageView.currentItem.mimeType : ""
-            isImage: pageView.currentItem ? pageView.currentItem.isImage : false
-            source: pageView.currentItem ? pageView.currentItem.url : ""
-            resolved: pageView.currentItem ? pageView.currentItem.resolved : false
-
-            onDeleteFile: {
-                var remorse = remorseComponent.createObject(galleryView)
-                var item = pageView.currentItem
-                item.ListView.delayRemove = true
-                //: Deleting photo or video in 5 seconds
-                //% "Deleting"
-                remorse.execute(item, qsTrId("camera-la-deleting"), function() {
-                    delegateModel.items.remove(item.DelegateModel.itemsIndex, 1)
-                    galleryView.model.deleteFile(item.index)
-                    remorse.destroy(1)
-                    item.ListView.delayRemove = false
-                })
-            }
-
-            onShowDetails: {
-                page.pageStack.push(detailsPage, {modelItem: pageView.currentItem.itemId} )
+            active: false
+            width: root.width
+            height: root.height
+            sourceComponent: GStreamerVideoOutput {
+                property alias player: mediaPlayer
+                visible: player.playbackState != MediaPlayer.StoppedState
+                source: GalleryMediaPlayer {
+                    id: mediaPlayer
+                    active: currentItem && !currentItem.isImage && Qt.application.active
+                    source: active ? currentItem.source : ""
+                    onPlayingChanged: {
+                        if (playing && overlay.active) {
+                            // go fullscreen for playback if triggered via Play icon.
+                            overlay.active = false
+                        }
+                    }
+                    onLoadedChanged: if (loaded) playerLoader.anchors.centerIn = currentItem
+                }
             }
         }
     ]
 
-    Component {
-        id: detailsPage
-        DetailsPage {}
-    }
+    GalleryOverlay {
+        id: overlay
 
-    Component {
-        id: remorseComponent
-
-        Item {
-            id: wrapper
-
-            readonly property bool isActiveItem: parent && parent.active
-            onIsActiveItemChanged: {
-                if (parent && !parent.active) {
-                    remorse.cancel()
-                    delegateModel.items.remove(parent.DelegateModel.itemsIndex, 1)
-                    galleryView.model.deleteFile(parent.index)
-                    wrapper.destroy(1)
-                    parent.ListView.delayRemove = false
-                }
+        onRemove: {
+            if (!_remorsePopup) {
+                _remorsePopup = remorsePopupComponent.createObject(root)
             }
-
-            x: -pageView.x
-            y: -pageView.y
-            width: galleryView.foregroundItem.width
-            height: Theme.itemSizeSmall
-
-            function execute(item, label, callback) {
-                parent = item
-                remorse.execute(positioner, label, callback)
-            }
-
-            Rectangle {
-                color: Theme.highlightDimmerColor
-                opacity: 0.6
-                anchors.fill: parent
-            }
-
-            Item {
-                id: positioner
-                anchors.fill: parent
-            }
-
-            RemorseItem {
-                id: remorse
-
-                onCanceled: {
-                    wrapper.destroy(1)
-                }
+            if (!_remorsePopup.active && currentItem) {
+                var item = currentItem
+                //: Delete an image
+                //% "Deleting"
+                _remorsePopup.execute( qsTrId("gallery-la-deleting"), function() {
+                    delegateModel.items.remove(item.DelegateModel.itemsIndex, 1)
+                    delegateModel.model.deleteFile(item.index)
+                    item.ListView.delayRemove = false
+                })
             }
         }
+        onCreatePlayer: playerLoader.active = true
+
+        anchors.fill: parent
+        player: root.player
+        source: currentItem ? currentItem.source : ""
+        itemId: currentItem ? currentItem.itemId : ""
+        isImage: currentItem ? currentItem.isImage : true
+        duration: currentItem ? currentItem.duration : 1
+        editingAllowed: false
+
+        IconButton {
+            y: Theme.paddingLarge
+            anchors {
+                right: parent.right
+                rightMargin: Theme.horizontalPageMargin
+            }
+            icon.source: "image://theme/icon-m-dismiss"
+            onClicked: switcherView.returnToCaptureMode()
+        }
+    }
+    Component {
+        id: remorsePopupComponent
+        RemorsePopup {}
     }
 }
