@@ -7,13 +7,11 @@ import "pages"
 ApplicationWindow {
     id: window
 
-    property QtObject _window
     property var captureModel: null
     property bool galleryActive
     property bool galleryVisible
     property int galleryIndex
 
-    onWindowChanged: _window = window ? window : null
     allowedOrientations: defaultAllowedOrientations
     _defaultPageOrientations: Orientation.All
     _defaultLabelFormat: Text.PlainText
@@ -22,10 +20,6 @@ ApplicationWindow {
 
     initialPage: Component {
         CameraPage {
-            id: cameraPage
-
-            pageStack: window.pageStack
-            windowVisible: window._window && window._window.visible
             viewfinder: videoOutput
         }
     }

@@ -71,7 +71,6 @@ ApplicationWindow {
 
                 viewfinder: videoOutput
                 orientation: cameraPage.orientation
-                windowVisible: window.Window.visibility === Window.FullScreen
                 pageRotation: cameraPage.rotation
 
                 Binding {
