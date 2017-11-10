@@ -722,6 +722,7 @@ FocusScope {
         }
 
         if (event.key == Qt.Key_CameraFocus) {
+            // note: forces capture if it was still pending. debatable if that should be allowed to finish.
             camera.unlockAutoFocus()
         } else if ((event.key == Qt.Key_VolumeDown || event.key == Qt.Key_VolumeUp)
                    && captureOnVolumeRelease && handleVolumeKeys) {
