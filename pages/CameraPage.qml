@@ -147,6 +147,7 @@ Page {
                 orientation: page.orientation
                 windowVisible: page.windowVisible
                 pageRotation: page.rotation
+                captureModel: window.captureModel
 
                 visible: switcherView.moving || captureView.active
 

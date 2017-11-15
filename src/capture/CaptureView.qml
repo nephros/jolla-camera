@@ -19,6 +19,7 @@ FocusScope {
     property int orientation
     property int effectiveIso: Settings.mode.iso
     property bool inButtonLayout: captureOverlay == null || captureOverlay.inButtonLayout
+    property QtObject captureModel
 
     readonly property int viewfinderOrientation: {
         var rotation = 0
@@ -306,12 +307,14 @@ FocusScope {
     }
 
     onRecordingStopped: {
-        captureModel.appendCapture(
-                    url,
-                    mimeType,
-                    captureOrientation,
-                    camera.videoRecorder.duration / 1000,
-                    camera.videoRecorder.resolution)
+        if (captureModel) {
+            captureModel.appendCapture(
+                        url,
+                        mimeType,
+                        captureOrientation,
+                        camera.videoRecorder.duration / 1000,
+                        camera.videoRecorder.resolution)
+        }
     }
 
     Camera {
@@ -414,12 +417,14 @@ FocusScope {
                 camera.unlockAutoFocus()
                 captureBusy = false
 
-                captureModel.appendCapture(
-                            path,
-                            "image/jpeg",
-                            captureOrientation,
-                            0,
-                            camera.imageCapture.resolution)
+                if (captureModel) {
+                    captureModel.appendCapture(
+                                path,
+                                "image/jpeg",
+                                captureOrientation,
+                                0,
+                                camera.imageCapture.resolution)
+                }
             }
             onCaptureFailed: {
                 camera.unlockAutoFocus()
