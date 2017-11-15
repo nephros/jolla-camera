@@ -748,6 +748,17 @@ FocusScope {
         }
     }
 
+    Permissions {
+        enabled: Qt.application.state == Qt.ApplicationActive
+        autoRelease: true
+        applicationClass: "camera"
+
+        Resource {
+            type: Resource.SnapButton
+            optional: true
+        }
+    }
+
     DBusInterface {
         id: flashlightServiceProbe
         service: "org.freedesktop.DBus"
