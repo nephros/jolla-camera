@@ -72,6 +72,8 @@ private:
     MGConfItem m_storagePath;
 
     QString m_prefix;
+    QString m_photoDirectory;
+    QString m_videoDirectory;
     QDateTime m_prefixDate;
 
     bool m_locationEnabled;

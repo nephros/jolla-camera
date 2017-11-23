@@ -72,18 +72,12 @@ void DeclarativeSettings::updateLocation()
 
 QString DeclarativeSettings::photoDirectory() const
 {
-    if (m_storagePathStatus == Available && !storagePath().isEmpty())
-        return storagePath() + QStringLiteral("/Pictures/Camera");
-
-    return QStandardPaths::writableLocation(QStandardPaths::PicturesLocation) + QLatin1String("/Camera");
+    return m_photoDirectory;
 }
 
 QString DeclarativeSettings::videoDirectory() const
 {
-    if (m_storagePathStatus == Available && !storagePath().isEmpty())
-        return storagePath() + QStringLiteral("/Videos/Camera");
-
-    return QStandardPaths::writableLocation(QStandardPaths::MoviesLocation) + QLatin1String("/Camera");
+    return m_videoDirectory;
 }
 
 QString DeclarativeSettings::storagePath() const
@@ -120,7 +114,9 @@ bool DeclarativeSettings::verifyWritable(const QString &path)
 
 void DeclarativeSettings::verifyStoragePath()
 {
-    QString prevPhotoPath = photoDirectory();
+    const QString prevPhotoPath = m_photoDirectory;
+    const QString prevVideoPath = m_videoDirectory;
+
     QString path = storagePath();
     StoragePathStatus oldStatus = m_storagePathStatus;
 
@@ -139,13 +135,24 @@ void DeclarativeSettings::verifyStoragePath()
         }
     }
 
-    QDir(photoDirectory()).mkpath(QLatin1String("."));
-    QDir(videoDirectory()).mkpath(QLatin1String(".recording"));
+    if (m_storagePathStatus == Available && !path.isEmpty()) {
+        m_photoDirectory = path + QStringLiteral("/Pictures/Camera");
+        m_videoDirectory = path + QStringLiteral("/Videos/Camera");
+    } else {
+        m_photoDirectory = QStandardPaths::writableLocation(QStandardPaths::PicturesLocation) + QLatin1String("/Camera");
+        m_videoDirectory = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation) + QLatin1String("/Camera");
+    }
 
-    if (prevPhotoPath != photoDirectory()) {
+    QDir(m_photoDirectory).mkpath(QLatin1String("."));
+    QDir(m_videoDirectory).mkpath(QLatin1String(".recording"));
+
+    if (prevPhotoPath != m_photoDirectory) {
         emit photoDirectoryChanged();
+    }
+    if (prevVideoPath != m_videoDirectory) {
         emit videoDirectoryChanged();
     }
+
     if (oldStatus != m_storagePathStatus)
         emit storagePathStatusChanged();
 }
