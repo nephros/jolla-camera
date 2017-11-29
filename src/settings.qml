@@ -134,12 +134,6 @@ SettingsBase {
                 : qsTrId("camera_settings-la-timer-no-delay")
     }
 
-    function isoIcon(iso) {
-        return iso > 0
-                ? "image://theme/icon-camera-iso-" + iso
-                : "image://theme/icon-camera-iso"
-    }
-
     function isoText(iso) {
         if (iso == 0) {
             //% "Light sensitivity • Automatic"

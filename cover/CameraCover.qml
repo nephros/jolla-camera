@@ -96,8 +96,10 @@ CoverBackground {
         CoverIcon {
             icon: Settings.whiteBalanceIcon(Settings.global.whiteBalance)
         }
-        CoverIcon {
-            icon: Settings.isoIcon(Settings.mode.iso)
+        IsoItem {
+            scale: 0.75
+            value: Settings.mode.iso
+            color: Theme.highlightColor
         }
         CoverIcon {
             visible: !flashIcon.visible

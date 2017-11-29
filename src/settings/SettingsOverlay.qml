@@ -57,16 +57,6 @@ PinchArea {
         upperHeader.pressedMenu = null
     }
 
-    property list<SettingsMenuItem> _menus
-    _menus: {
-        var menuItems = [ ]
-        if (Settings.mode.flashValues.length > 0) {
-            menuItems.push(flashMenu.currentItem)
-        }
-        menuItems.push(isoMenu.currentItem)
-        return menuItems
-    }
-
     signal clicked(var mouse)
 
     function close() {
@@ -436,12 +426,16 @@ PinchArea {
                     title: Settings.isoText
                     header: upperHeader
                     model: Settings.mode.isoValues
-                    delegate: SettingsMenuItem {
+                    delegate: SettingsMenuItemBase {
                         settings: Settings.mode
                         property: "iso"
                         value: modelData
-                        icon: Settings.isoIcon(modelData)
-                        iconVisible: !selected
+
+                        IsoItem {
+                            anchors.centerIn: parent
+                            visible: !selected
+                            value: modelData
+                        }
                     }
                 }
 
@@ -481,23 +475,31 @@ PinchArea {
         opacity: _commonControlOpacity
         visible: opacity > 0.0
 
-        Repeater {
-            model: overlay._menus
-            delegate: Item {
-                id: statusItem
+        function dragY(yValue) {
+            return yValue != undefined ? Math.max(topRow._topRowMargin, row.y + yValue)
+                                       : topRow._topRowMargin
+        }
 
-                y: model.y != undefined
-                        ? Math.max(topRow._topRowMargin, row.y + model.y)
-                        : topRow._topRowMargin
+        Item {
+            width: overlay._menuWidth
+            height: width
+            visible: Settings.mode.flashValues.length > 0
+            y: topRow.dragY(flashMenu.currentItem.y)
 
-                width: overlay._menuWidth
-                height: width
+            Image {
+                anchors.centerIn: parent
+                source: Settings.flashIcon(Settings.mode.flash)
+            }
+        }
 
-                Image {
-                    anchors.centerIn: parent
-                    source: model.icon != undefined ? model.icon : ""
-                    smooth: true
-                }
+        Item {
+            width: overlay._menuWidth
+            height: width
+            y: topRow.dragY(isoMenu.currentItem.y)
+
+            IsoItem {
+                anchors.centerIn: parent
+                value: isoMenu.currentItem.value
             }
         }
     }
