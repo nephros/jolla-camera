@@ -119,6 +119,7 @@ ListView {
 
             readonly property bool isImage: mimeType.indexOf("image/") == 0
             readonly property bool scaled: item && item.scaled
+            readonly property bool error: item && item.error
 
             readonly property bool isCurrentItem: PathView.isCurrentItem
 
@@ -139,7 +140,6 @@ ListView {
                     orientation: model.orientation
                     enableZoom: !moving && !overlay.active
                     interactive: scaled && !overlay.active
-
                 }
             }
 
@@ -238,6 +238,7 @@ ListView {
         itemId: currentItem ? currentItem.itemId : ""
         isImage: currentItem ? currentItem.isImage : true
         duration: currentItem ? currentItem.duration : 1
+        error: currentItem && currentItem.error
         editingAllowed: false
 
         IconButton {
