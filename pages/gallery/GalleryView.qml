@@ -138,8 +138,7 @@ ListView {
 
                     active: isCurrentItem
                     orientation: model.orientation
-                    enableZoom: !moving && !overlay.active
-                    interactive: scaled && !overlay.active
+                    viewMoving: root.moving
                 }
             }
 
