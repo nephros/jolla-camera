@@ -190,6 +190,8 @@ SettingsOverlay {
                     return 0.2
                 } else if (captureButton.pressed) {
                     return 0.5
+                } else if (captureView._captureOnFocus) {
+                    return 0.7
                 } else {
                     return 1.0
                 }
