@@ -40,4 +40,5 @@ OTHER_FILES = \
         DisabledByMdmView.qml \
         capture/*.qml \
         settings/*.qml \
-        settings.qml
+        settings.qml \
+        qmldir

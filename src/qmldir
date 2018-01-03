@@ -2,3 +2,4 @@ module com.jolla.camera
 plugin jollacameraplugin
 CaptureView 1.0 capture/CaptureView.qml
 DisabledByMdmView 1.0 DisabledByMdmView.qml
+IsoItem 1.0 settings/IsoItem.qml
