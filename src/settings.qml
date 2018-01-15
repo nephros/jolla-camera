@@ -83,6 +83,7 @@ SettingsBase {
 
             property string imageResolution: "1280x720"
             property string videoResolution: "1280x720"
+            property int videoFrameRate: 30
             property string viewfinderResolution: "1280x720"
 
             property var isoValues: [ 0, 100, 200, 400 ]

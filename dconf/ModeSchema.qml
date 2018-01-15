@@ -13,6 +13,7 @@ QtObject {
 
     property string imageResolution
     property string videoResolution
+    property int videoFrameRate: 30
     property string viewfinderResolution
 
     property int iso: 0

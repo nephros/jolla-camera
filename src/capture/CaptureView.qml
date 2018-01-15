@@ -434,7 +434,7 @@ FocusScope {
         videoRecorder {
             resolution: Settings.mode.videoResolution
             onResolutionChanged: reload()
-            frameRate: 30
+            frameRate: Settings.mode.videoFrameRate
             audioChannels: 2
             audioSampleRate: Settings.global.audioSampleRate
             audioCodec: Settings.global.audioCodec
@@ -469,8 +469,7 @@ FocusScope {
 
         viewfinder {
             resolution: Settings.mode.viewfinderResolution
-            minimumFrameRate: 30
-            maximumFrameRate: 30
+            // Let gst-droid decide the best framerate
         }
 
         metaData {
