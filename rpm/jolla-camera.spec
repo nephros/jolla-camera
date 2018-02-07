@@ -21,7 +21,7 @@ BuildRequires:  qt5-qttools-linguist
 BuildRequires:  oneshot
 
 Requires:  jolla-settings-accounts >= 0.1.31
-Requires:  sailfishsilica-qt5 >= 0.13.44
+Requires:  sailfishsilica-qt5 >= 0.26.0
 Requires:  mapplauncherd >= 4.1.22
 Requires:  mapplauncherd-booster-silica-qt5
 Requires:  qt5-qtdeclarative-import-models2
@@ -39,7 +39,7 @@ Requires:  nemo-qml-plugin-configuration-qt5
 Requires:  nemo-qml-plugin-notifications-qt5 >= 1.1.2
 Requires:  sailfish-content-graphics-default-base >= 0.7.47
 Requires:  sailfish-components-media-qt5 >= 0.0.18
-Requires:  sailfish-components-gallery-qt5 >= 0.0.48
+Requires:  sailfish-components-gallery-qt5 >= 0.2.0
 Requires:  sailfish-policy >= 0.2.59
 Requires:  libjollasignonuiservice-qt5-plugin >= 0.0.29
 Requires:  libngf-qt5-declarative
