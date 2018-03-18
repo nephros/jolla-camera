@@ -229,9 +229,8 @@ ListView {
         error: currentItem && currentItem.error
         editingAllowed: false
 
-        IconButton {
-            parent: overlay.toolbar
-            icon.source: "image://theme/icon-m-camera"
+        Private.DismissButton {
+            popPageOnClick: false
             onClicked: switcherView.returnToCaptureMode()
         }
     }

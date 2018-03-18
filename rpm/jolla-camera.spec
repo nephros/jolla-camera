@@ -21,7 +21,7 @@ BuildRequires:  qt5-qttools-linguist
 BuildRequires:  oneshot
 
 Requires:  jolla-settings-accounts >= 0.1.31
-Requires:  sailfishsilica-qt5 >= 0.26.0
+Requires:  sailfishsilica-qt5 >= 0.26.5
 Requires:  mapplauncherd >= 4.1.22
 Requires:  mapplauncherd-booster-silica-qt5
 Requires:  qt5-qtdeclarative-import-models2
