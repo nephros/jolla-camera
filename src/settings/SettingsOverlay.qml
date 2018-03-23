@@ -15,6 +15,7 @@ PinchArea {
                 || _closing
                 || verticalAnimation.running
                 || dragArea.drag.active
+    property alias deviceToggleEnabled: deviceToggle.enabled
     default property alias _data: container.data
 
     readonly property int _captureButtonLocation: overlay.isPortrait
@@ -148,6 +149,8 @@ PinchArea {
     }
 
     ToggleButton {
+        id: deviceToggle
+
         parent: _overlayPosition.cameraDevice
         anchors.centerIn: parent
         model: [ "primary", "secondary" ]
