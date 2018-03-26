@@ -97,6 +97,7 @@ SettingsOverlay {
     showCommonControls: !captureView.recording
     isPortrait: captureView.isPortrait
     topButtonRowHeight: Screen.sizeCategory >= Screen.Large ? Theme.itemSizeLarge : Theme.itemSizeSmall
+    deviceToggleEnabled: !captureView.captureBusy
 
     onPinchStarted: {
         // We're not getting notifications when the maximumDigitalZoom changes,
