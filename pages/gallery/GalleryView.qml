@@ -118,7 +118,7 @@ ListView {
             readonly property bool scaled: item && item.scaled
             readonly property bool error: item && item.error
 
-            readonly property bool isCurrentItem: PathView.isCurrentItem
+            readonly property bool isCurrentItem: ListView.isCurrentItem
 
             width: root.width
             height: root.height
@@ -133,7 +133,7 @@ ListView {
                     onClicked: overlay.active = !overlay.active
                     source: parent.source
 
-                    active: isCurrentItem
+                    active: isCurrentItem && root.active
                     orientation: model.orientation
                     viewMoving: root.moving
                 }

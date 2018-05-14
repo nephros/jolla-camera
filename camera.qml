@@ -44,7 +44,8 @@ ApplicationWindow {
         }
     }
 
-    onApplicationActiveChanged:
+    onApplicationActiveChanged: {
         if (applicationActive)
             Settings.updateLocation()
+    }
 }
