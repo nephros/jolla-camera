@@ -44,6 +44,36 @@ Page {
             property string imageResolution_4_3
             property string viewfinderResolution_4_3
         }
+
+        ConfigurationGroup {
+            id: primaryVideoSettings
+
+            path: "primary/video"
+
+            property string videoResolution
+            property string viewfinderResolution
+            property string videoResolution_1080p
+            property string viewfinderResolution_1080p
+            property string videoResolution_720p
+            property string viewfinderResolution_720p
+            property string videoResolution_360p
+            property string viewfinderResolution_360p
+        }
+
+        ConfigurationGroup {
+            id: secondaryVideoSettings
+
+            path: "secondary/video"
+
+            property string videoResolution
+            property string viewfinderResolution
+            property string videoResolution_1080p
+            property string viewfinderResolution_1080p
+            property string videoResolution_720p
+            property string viewfinderResolution_720p
+            property string videoResolution_360p
+            property string viewfinderResolution_360p
+        }
     }
 
     function resolutionText(ratioHorizontal, ratioVertical, resolution) {
@@ -53,6 +83,11 @@ Page {
         //: template for resolution text, %1 and %2 are aspect ratio, %3 is megapixel value. e.g. 16:9 (2Mpix)"
         //% "%1:%2 (%3Mpix)"
         return qsTrId("camera_settings-me-resolution_template").arg(ratioHorizontal).arg(ratioVertical).arg(megaPixels)
+    }
+
+    function videoResolutionText(resolution) {
+        var dimensions = resolution.split("x")
+        return dimensions[1] + "p"
     }
 
     SilicaFlickable {
@@ -193,6 +228,32 @@ Page {
                 }
             }
 
+            VideoResolutionComboBox {
+                settings: primaryVideoSettings
+
+                //% "Video resolution"
+                label: qsTrId("camera_settings-cb-video-resolution")
+                enabled: AccessPolicy.cameraEnabled
+                visible: primaryVideoSettings.videoResolution_360p != ""
+                menu: ContextMenu {
+                    ResolutionComboItem {
+                        text: videoResolutionText(videoResolution)
+                        videoResolution: primaryVideoSettings.videoResolution_1080p
+                        viewfinderResolution: primaryVideoSettings.viewfinderResolution_1080p
+                    }
+                    ResolutionComboItem {
+                        text: videoResolutionText(videoResolution)
+                        videoResolution: primaryVideoSettings.videoResolution_720p
+                        viewfinderResolution: primaryVideoSettings.viewfinderResolution_720p
+                    }
+                    ResolutionComboItem {
+                        text: videoResolutionText(videoResolution)
+                        videoResolution: primaryVideoSettings.videoResolution_360p
+                        viewfinderResolution: primaryVideoSettings.viewfinderResolution_360p
+                    }
+                }
+            }
+
             SectionHeader {
                 //% "Front camera"
                 text: qsTrId("camera-ph-front-camera")
@@ -214,6 +275,32 @@ Page {
                         text: resolutionText(4, 3, imageResolution)
                         imageResolution: secondaryImageSettings.imageResolution_4_3
                         viewfinderResolution: secondaryImageSettings.viewfinderResolution_4_3
+                    }
+                }
+            }
+
+            VideoResolutionComboBox {
+                settings: secondaryVideoSettings
+
+                //% "Video resolution"
+                label: qsTrId("camera_settings-cb-video-resolution")
+                enabled: AccessPolicy.cameraEnabled
+                visible: secondaryVideoSettings.videoResolution_360p != ""
+                menu: ContextMenu {
+                    ResolutionComboItem {
+                        text: videoResolutionText(videoResolution)
+                        videoResolution: secondaryVideoSettings.videoResolution_1080p
+                        viewfinderResolution: secondaryVideoSettings.viewfinderResolution_1080p
+                    }
+                    ResolutionComboItem {
+                        text: videoResolutionText(videoResolution)
+                        videoResolution: secondaryVideoSettings.videoResolution_720p
+                        viewfinderResolution: secondaryVideoSettings.viewfinderResolution_720p
+                    }
+                    ResolutionComboItem {
+                        text: videoResolutionText(videoResolution)
+                        videoResolution: secondaryVideoSettings.videoResolution_360p
+                        viewfinderResolution: secondaryVideoSettings.viewfinderResolution_360p
                     }
                 }
             }

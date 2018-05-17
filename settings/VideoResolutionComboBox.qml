@@ -9,7 +9,7 @@ ComboBox {
     function updateCurrentIndex() {
         for (var i = 0; i < menu.children.length; ++i) {
             var item = menu.children[i]
-            if (item.imageResolution !== undefined && item.imageResolution == resolution) {
+            if (item.videoResolution !== undefined && item.videoResolution == resolution) {
                 _updatingIndex = true
                 currentIndex = i
                 _updatingIndex = false
@@ -21,13 +21,13 @@ ComboBox {
 
     Component.onCompleted: updateCurrentIndex()
 
-    property var resolution: settings.imageResolution
+    property var resolution: settings.videoResolution
     onResolutionChanged: updateCurrentIndex()
 
     onCurrentItemChanged: {
         if (currentItem) {
             settings.viewfinderResolution = currentItem.viewfinderResolution
-            settings.imageResolution = currentItem.imageResolution
+            settings.videoResolution = currentItem.videoResolution
         }
     }
 }

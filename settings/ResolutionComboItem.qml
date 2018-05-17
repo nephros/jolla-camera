@@ -4,4 +4,5 @@ import Sailfish.Silica 1.0
 MenuItem {
     property string imageResolution
     property string viewfinderResolution
+    property string videoResolution
 }

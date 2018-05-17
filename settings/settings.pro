@@ -7,6 +7,7 @@ settingsqml.files = \
         ResolutionComboBox.qml \
         ResolutionComboItem.qml \
         SettingsPage.qml \
+        VideoResolutionComboBox.qml \
 
 plugin_entry.path = /usr/share/jolla-settings/entries
 plugin_entry.files = jolla-camera.json
