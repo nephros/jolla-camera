@@ -18,9 +18,7 @@ ApplicationWindow {
     Timer {
         running: window.Window.visibility === Window.Hidden
         interval: 20000
-
         onTriggered: Qt.quit()
-
     }
 
     initialPage: Component {
@@ -77,8 +75,9 @@ ApplicationWindow {
                     target: captureView.viewfinder
                     property: "y"
                     value: cameraPage.orientation == Orientation.LandscapeInverted
-                            ? -captureView.viewfinderOffset
-                            : captureView.viewfinderOffset
+                           || cameraPage.orientation == Orientation.PortraitInverted
+                           ? -captureView.viewfinderOffset
+                           : captureView.viewfinderOffset
                 }
             }
 
