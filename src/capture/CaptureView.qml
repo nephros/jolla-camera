@@ -50,10 +50,6 @@ FocusScope {
     property bool _captureOnFocus
     property real _captureCountdown
 
-    readonly property real _viewfinderPosition: orientation == Orientation.Portrait || orientation == Orientation.Landscape
-                                                ? parent.x + x
-                                                : -parent.x - x
-
     readonly property real viewfinderOffset: Math.min(0, isPortrait ? (focusArea.width - height)/2 : (focusArea.width - width)/2)
 
     readonly property bool isPortrait: orientation == Orientation.Portrait

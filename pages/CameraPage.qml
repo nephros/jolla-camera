@@ -185,8 +185,10 @@ Page {
                     target: captureView.viewfinder
                     property: "y"
                     value: !captureView.isPortrait
-                            ? captureView._viewfinderPosition + (page.orientation == Orientation.Landscape ? captureView.viewfinderOffset : -captureView.viewfinderOffset)
-                            : captureView.viewfinderOffset
+                           ? captureView._viewfinderPosition + (page.orientation == Orientation.Landscape
+                                                                ? captureView.viewfinderOffset : -captureView.viewfinderOffset)
+                           : (page.orientation == Orientation.Portrait ? captureView.viewfinderOffset
+                                                                       : -captureView.viewfinderOffset)
                 }
             }
         }
