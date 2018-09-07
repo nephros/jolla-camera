@@ -2,8 +2,11 @@ TEMPLATE = aux
 TARGET  = jollacamerasettingsplugin
 TARGET = $$qtLibraryTarget($$TARGET)
 
-settingsqml.path = /usr/share/jolla-settings/pages/jolla-camera
-settingsqml.files = \
+CONFIG += \
+    sailfish_install_qml
+
+SAILFISH_QML_INSTALL = /usr/share/jolla-settings/pages/jolla-camera
+QML_FILES = \
         ResolutionComboBox.qml \
         ResolutionComboItem.qml \
         SettingsPage.qml \
@@ -16,4 +19,4 @@ DEFINES += \
 
 OTHER_FILES += *.qml
 
-INSTALLS += settingsqml plugin_entry
+INSTALLS += plugin_entry

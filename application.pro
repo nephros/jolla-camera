@@ -3,7 +3,9 @@ TARGET = jolla-camera
 TARGETPATH = /usr/bin
 
 QT += qml quick
-CONFIG += link_pkgconfig
+CONFIG += \
+    link_pkgconfig \
+    sailfish_install_qml
 
 SOURCES += camera.cpp
 
@@ -27,8 +29,11 @@ desktop.files = \
 
 DEPLOYMENT_PATH = /usr/share/$$TARGET
 DEFINES *= DEPLOYMENT_PATH=\"\\\"\"$${DEPLOYMENT_PATH}/\"\\\"\"
-qml.path = $$DEPLOYMENT_PATH
-qml.files = *.qml cover pages gconf
+
+QML_FILES = \
+    $$files(*.qml) \
+    $$files(cover/*.qml, true) \
+    $$files(pages/*.qml, true)
 
 service.files = com.jolla.camera.service
 service.path  = /usr/share/dbus-1/services
@@ -40,7 +45,7 @@ oneshot.path  = /usr/lib/oneshot.d
 schema.files = dconf/jolla-camera.txt
 schema.path  = /etc/dconf/db/vendor.d/
 
-INSTALLS += target desktop qml service schema oneshot
+INSTALLS += target desktop service schema oneshot
 
 packagesExist(qdeclarative5-boostable) {
     message("Building with qdeclarative-boostable support")
