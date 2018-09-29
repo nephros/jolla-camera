@@ -4,7 +4,7 @@ import Sailfish.Silica 1.0
 import Sailfish.Silica.private 1.0 as Private
 import Sailfish.Gallery 1.0
 import Sailfish.Media 1.0
-import QtDocGallery 5.0
+import QtMultimedia 5.0
 import com.jolla.camera 1.0
 import org.nemomobile.policy 1.0
 import ".."
@@ -12,13 +12,15 @@ import ".."
 ListView {
     id: root
 
+    property alias overlay: overlay
     readonly property bool positionLocked: !overlay.active && playing
 
     readonly property bool active: page.galleryActive
-    property alias captureModel: captureModelItem
+    property QtObject captureModel
 
     property CameraPage page
 
+    readonly property url source: currentItem ? currentItem.source : ""
     readonly property QtObject player: playerLoader.item ? playerLoader.item.player : null
     readonly property bool playing: player && player.playing
     property int _preOrientationChangeIndex
@@ -64,7 +66,13 @@ ListView {
             positionViewAtIndex(currentIndex, ListView.SnapPosition)
         }
     }
-    onActiveChanged: if (!active) overlay.active = true
+    onActiveChanged: {
+        if (!active) {
+            // TODO: Don't touch internal property that can change
+            if (overlay._remorsePopup && overlay._remorsePopup.active) overlay._remorsePopup.trigger()
+            overlay.active = Qt.binding( function () { return captureModel && captureModel.count > 0 })
+        }
+    }
 
     property Item previousItem
     onMovingChanged: {
@@ -75,30 +83,9 @@ ListView {
         }
     }
 
-
-    CaptureModel {
-        id: captureModelItem
-
-        source: DocumentGalleryModel {
-            id: galleryModel
-
-            property bool populated
-
-            rootType: DocumentGallery.File
-            properties: [ "url", "mimeType", "orientation", "duration", "width", "height" ]
-            sortProperties: ["lastModified"]
-            autoUpdate: true
-            filter: GalleryFilterUnion {
-                GalleryEqualsFilter { property: "path"; value: Settings.photoDirectory }
-                GalleryEqualsFilter { property: "path"; value: Settings.videoDirectory }
-            }
-            onStatusChanged: {
-                if (status === DocumentGalleryModel.Finished) {
-                    populated = true
-                    _positionViewAtBeginning()
-                }
-            }
-        }
+    Connections {
+        target: captureModel
+        onCountChanged: if (captureModel.count === 0) page.returnToCaptureMode()
     }
 
     DelegateModel {
@@ -171,13 +158,6 @@ ListView {
         }
     }
 
-    ViewPlaceholder {
-        //: Placeholder text for an empty camera reel view
-        //% "Captured photos and videos will appear here when you take some"
-        text: qsTrId("camera-la-no-photos")
-        enabled: count == 0 && galleryModel.populated
-    }
-
     contentItem.children: [
         Private.FadeBlocker {},
         Loader {
@@ -188,7 +168,7 @@ ListView {
             height: root.height
             sourceComponent: GStreamerVideoOutput {
                 property alias player: mediaPlayer
-                visible: player.playbackState != MediaPlayer.StoppedState
+                visible: player.playbackState !== MediaPlayer.StoppedState
                 source: GalleryMediaPlayer {
                     id: mediaPlayer
                     active: currentItem && !currentItem.isImage && Qt.application.active
@@ -205,6 +185,7 @@ ListView {
         }
     ]
 
+
     GalleryOverlay {
         id: overlay
 
@@ -220,9 +201,10 @@ ListView {
         }
         onCreatePlayer: playerLoader.active = true
 
+        active: captureModel && captureModel.count > 0
         anchors.fill: parent
         player: root.player
-        source: currentItem ? currentItem.source : ""
+        source: root.source
         itemId: currentItem ? currentItem.itemId : ""
         isImage: currentItem ? currentItem.isImage : true
         duration: currentItem ? currentItem.duration : 1
@@ -231,7 +213,7 @@ ListView {
 
         Private.DismissButton {
             popPageOnClick: false
-            onClicked: switcherView.returnToCaptureMode()
+            onClicked: page.returnToCaptureMode()
         }
     }
 }

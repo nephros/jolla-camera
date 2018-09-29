@@ -26,7 +26,9 @@ DEFINES += \
 
 import.files = \
         DisabledByMdmView.qml \
+        CameraPage.qml \
         capture \
+        gallery \
         qmldir \
         settings \
         settings.qml
@@ -38,7 +40,9 @@ INSTALLS += target import
 
 OTHER_FILES = \
         DisabledByMdmView.qml \
+        CameraPage.qml \
         capture/*.qml \
+        gallery/*.qml \
         settings/*.qml \
         settings.qml \
         qmldir

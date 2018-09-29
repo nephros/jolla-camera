@@ -39,7 +39,7 @@ Requires:  nemo-qml-plugin-configuration-qt5
 Requires:  nemo-qml-plugin-notifications-qt5 >= 1.1.2
 Requires:  sailfish-content-graphics-default-base >= 0.7.47
 Requires:  sailfish-components-media-qt5 >= 0.0.18
-Requires:  sailfish-components-gallery-qt5 >= 0.2.0
+Requires:  sailfish-components-gallery-qt5 >= 0.3.1
 Requires:  sailfish-policy >= 0.2.59
 Requires:  libjollasignonuiservice-qt5-plugin >= 0.0.29
 Requires:  libngf-qt5-declarative
@@ -126,8 +126,9 @@ chmod +x %{buildroot}/%{_oneshotdir}/*
 %{_datadir}/dbus-1/services/com.jolla.camera.service
 %{_libdir}/qt5/qml/com/jolla/camera/libjollacameraplugin.so
 %{_libdir}/qt5/qml/com/jolla/camera/capture/*
+%{_libdir}/qt5/qml/com/jolla/camera/gallery/*
 %{_libdir}/qt5/qml/com/jolla/camera/qmldir
-%{_libdir}/qt5/qml/com/jolla/camera/DisabledByMdmView.qml
+%{_libdir}/qt5/qml/com/jolla/camera/*.qml
 %{_libdir}/qt5/qml/com/jolla/camera/settings/*
 %{_libdir}/qt5/qml/com/jolla/camera/settings.qml
 %{_sysconfdir}/dconf/db/vendor.d/jolla-camera.txt
@@ -142,6 +143,7 @@ chmod +x %{buildroot}/%{_oneshotdir}/*
 %{_bindir}/jolla-camera-lockscreen
 %{_datadir}/applications/jolla-camera-lockscreen.desktop
 %{_datadir}/jolla-camera/lockscreen.qml
+%{_datadir}/jolla-camera/LockedGalleryView.qml
 
 %files settings
 %{_datadir}/jolla-settings/*

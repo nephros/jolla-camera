@@ -19,7 +19,7 @@ ApplicationWindow {
     cover: Qt.resolvedUrl("cover/CameraCover.qml")
 
     initialPage: Component {
-        CameraPage {
+        MainCameraPage {
             viewfinder: videoOutput
         }
     }
