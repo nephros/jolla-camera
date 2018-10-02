@@ -210,7 +210,7 @@ SettingsOverlay {
             text: captureTimer.running ? Math.floor(captureView._captureCountdown + 1) : Settings.mode.timer
             visible: Settings.mode.timer != 0
             opacity: captureTimer.running ? captureView._captureCountdown % 1 : 1.0
-            color: captureTimer.running ? Theme.primaryColor : Theme.highlightDimmerColor
+            color: captureTimer.running ? Theme.lightPrimaryColor : Theme.highlightDimmerColor
             font {
                 pixelSize: captureTimer.running ? Theme.fontSizeHuge : Theme.fontSizeTiny
                 weight: Font.Light

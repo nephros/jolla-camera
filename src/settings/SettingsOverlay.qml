@@ -138,7 +138,7 @@ PinchArea {
 
             icon {
                 opacity: pressed ? 0.5 : 1.0
-                source: "image://theme/icon-camera-reset?" + (pressed ? Theme.highlightColor : Theme.primaryColor)
+                source: "image://theme/icon-camera-reset?" + (pressed ? Theme.highlightColor : Theme.lightPrimaryColor)
             }
 
             onClicked: {
@@ -491,7 +491,7 @@ PinchArea {
 
             Image {
                 anchors.centerIn: parent
-                source: Settings.flashIcon(Settings.mode.flash)
+                source: Settings.flashIcon(Settings.mode.flash) + "?" + Theme.lightPrimaryColor
             }
         }
 
