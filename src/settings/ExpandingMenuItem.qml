@@ -60,7 +60,7 @@ MouseArea {
             anchors.centerIn: parent
             source: menuItem.pressed
                     ? menuItem.icon + "?" + Theme.highlightColor
-                    : menuItem.icon
+                    : menuItem.icon + "?" + Theme.lightPrimaryColor
         }
     }
 }
