@@ -24,11 +24,13 @@ ApplicationWindow {
         }
     }
 
+    // viewfinder background
     Rectangle {
         parent: window
         anchors.fill: parent
         z: -1
         color: "black"
+        visible: pageStack.depth < 2 && !pageStack.busy
     }
 
     GStreamerVideoOutput {
