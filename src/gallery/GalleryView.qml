@@ -109,7 +109,7 @@ ListView {
 
             width: root.width
             height: root.height
-            sourceComponent: isImage ? imageComponent: videoComponent
+            sourceComponent: isImage ? imageComponent : videoComponent
             asynchronous: !isCurrentItem
 
             Component {
