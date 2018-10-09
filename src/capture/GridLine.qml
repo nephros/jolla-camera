@@ -4,7 +4,7 @@ import Sailfish.Silica.private 1.0
 
 Underline {
     height: Theme.paddingSmall / 2
-    primaryColor: Theme.rgba(Theme.secondaryColor, 0.5)
-    secondaryColor: Theme.rgba(Theme.secondaryColor, 0.0)
+    primaryColor: Theme.rgba(Theme.lightSecondaryColor, 0.5)
+    secondaryColor: Theme.rgba(Theme.lightSecondaryColor, 0.0)
     horizontalAlignment: Qt.AlignHCenter
 }
