@@ -2,7 +2,6 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 import Sailfish.Media 1.0
 import com.jolla.camera 1.0
-import org.nemomobile.dbus 2.0
 import QtMultimedia 5.4
 import "capture"
 import "gallery"
@@ -12,33 +11,17 @@ Page {
 
     property alias viewfinder: captureView.viewfinder
     property bool galleryActive
+    property url galleryView
+    readonly property bool captureModeActive: switcherView.currentIndex === 1
+    readonly property bool galleryVisible: galleryLoader.visible
+    readonly property int galleryIndex: galleryLoader.item ? galleryLoader.item.currentIndex : 0
+    readonly property QtObject captureModel: galleryLoader.item ? galleryLoader.item.captureModel : null
 
-    Binding {
-        target: window
-        property: "galleryActive"
-        value: page.galleryActive
-    }
-
-    Binding {
-        target: window
-        property: "galleryVisible"
-        value: galleryLoader.visible
-    }
-
-    Binding {
-        target: window
-        property: "galleryIndex"
-        value: galleryLoader.item ? galleryLoader.item.currentIndex : 0
-    }
-
-    Binding {
-        target: window
-        property: "captureModel"
-        value: galleryLoader.item ? galleryLoader.item.captureModel : null
+    function returnToCaptureMode() {
+        switcherView.returnToCaptureMode()
     }
 
     allowedOrientations: captureView.inButtonLayout ? page.orientation : Orientation.All
-
     orientationTransitions: Transition {
         to: 'Portrait,Landscape,PortraitInverted,LandscapeInverted'
         from: 'Portrait,Landscape,PortraitInverted,LandscapeInverted'
@@ -70,12 +53,6 @@ Page {
         }
     }
 
-    Timer {
-        running: Qt.application.state != Qt.ApplicationActive && switcherView.currentIndex != 1
-        interval: 15*60*1000
-        onTriggered: switherView.returnToCaptureMode()
-    }
-
     ListView {
         id: switcherView
 
@@ -105,12 +82,12 @@ Page {
         boundsBehavior: Flickable.StopAtBounds
         highlightRangeMode: ListView.StrictlyEnforceRange
         interactive: (!galleryLoader.item || !galleryLoader.item.positionLocked)
-                    && !captureView.recording
+                     && !captureView.recording
         currentIndex: 1
         focus: true
 
         flickDeceleration: Theme.flickDeceleration
-        maximumFlickVelocity: Theme.maximumFlickVelocity 
+        maximumFlickVelocity: Theme.maximumFlickVelocity
 
         // Normally transition is handled through a different path when flicking,
         // avoid slow transition if triggered by ListView for some reason
@@ -160,13 +137,13 @@ Page {
 
                 orientation: page.orientation
                 pageRotation: page.rotation
-                captureModel: window.captureModel
+                captureModel: page.captureModel
 
                 visible: switcherView.moving || captureView.active
 
                 onLoaded: {
                     if (galleryLoader.source == "") {
-                        galleryLoader.setSource("gallery/GalleryView.qml", { page: page })
+                        galleryLoader.setSource(galleryView, { page: page })
                     }
                 }
 
@@ -212,7 +189,6 @@ Page {
                 }
             }
         }
-
     }
 
 
@@ -220,25 +196,8 @@ Page {
 
     ScreenBlank {
         suspend: (galleryLoader.item && galleryLoader.item.playing)
-                    || captureView.camera.videoRecorder.recorderState == CameraRecorder.RecordingState
+                 || captureView.camera.videoRecorder.recorderState == CameraRecorder.RecordingState
     }
 
-    DBusAdaptor {
-        iface: "com.jolla.camera.ui"
-        service: "com.jolla.camera"
-        path: "/"
 
-        signal showViewfinder(variant args)
-        onShowViewfinder: {
-            switcherView.returnToCaptureMode()
-            window.activate()
-        }
-
-        signal showFrontViewfinder()
-        onShowFrontViewfinder: {
-            Settings.cameraDevice = "secondary"
-            switcherView.returnToCaptureMode()
-            window.activate()
-        }
-    }
 }

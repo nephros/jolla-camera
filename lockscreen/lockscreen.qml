@@ -22,70 +22,10 @@ ApplicationWindow {
     }
 
     initialPage: Component {
-        Page {
+        CameraPage {
             id: cameraPage
-
-            allowedOrientations: captureView.inButtonLayout ? cameraPage.orientation : Orientation.All
-
-            orientationTransitions: Transition {
-                to: 'Portrait,Landscape,PortraitInverted,LandscapeInverted'
-                from: 'Portrait,Landscape,PortraitInverted,LandscapeInverted'
-                SequentialAnimation {
-                    PropertyAction {
-                        target: cameraPage
-                        property: 'orientationTransitionRunning'
-                        value: true
-                    }
-                    FadeAnimation {
-                        target: window.pageStack
-                        to: 0
-                        duration: 150
-                    }
-                    PropertyAction {
-                        target: cameraPage
-                        properties: 'width,height,rotation,orientation'
-                    }
-                    FadeAnimation {
-                        target: window.pageStack
-                        to: 1
-                        duration: 150
-                    }
-                    PropertyAction {
-                        target: cameraPage
-                        property: 'orientationTransitionRunning'
-                        value: false
-                    }
-                }
-            }
-
-            CaptureView {
-                id: captureView
-
-                width: cameraPage.width
-                height: cameraPage.height
-
-                active: true
-                focus: true
-
-                viewfinder: videoOutput
-                orientation: cameraPage.orientation
-                pageRotation: cameraPage.rotation
-
-                Binding {
-                    target: captureView.viewfinder
-                    property: "y"
-                    value: cameraPage.orientation == Orientation.LandscapeInverted
-                           || cameraPage.orientation == Orientation.PortraitInverted
-                           ? -captureView.viewfinderOffset
-                           : captureView.viewfinderOffset
-                }
-            }
-
-            ScreenBlank {
-                suspend: captureView.camera.videoRecorder.recorderState == CameraRecorder.RecordingState
-            }
-
-            DisabledByMdmView {}
+            viewfinder: videoOutput
+            galleryView: Qt.resolvedUrl("LockedGalleryView.qml")
         }
     }
 

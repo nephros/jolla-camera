@@ -8,7 +8,7 @@ CONFIG += link_pkgconfig
 SOURCES += main.cpp
 
 OTHER_FILES += \
-        lockscreen.qml
+        *.qml
 
 target.path = $$TARGETPATH
 
