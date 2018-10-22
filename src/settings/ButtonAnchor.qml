@@ -33,7 +33,8 @@ OverlayAnchor {
         anchors.centerIn: parent
 
         border {
-            color: Theme.highlightColor
+            color: Theme.colorScheme == Theme.LightOnDark
+                   ? Theme.highlightColor : Theme.highlightFromColor(Theme.highlightColor, Theme.LightOnDark)
             width: 5
         }
         z: 1

@@ -654,7 +654,10 @@ FocusScope {
                     radius: width / 2
                     border {
                         width: Math.round(Theme.pixelRatio * 2)
-                        color: status == Camera.FocusAreaFocused ? Theme.highlightColor : "white"
+                        color: status == Camera.FocusAreaFocused
+                               ? (Theme.colorScheme == Theme.LightOnDark
+                                  ? Theme.highlightColor : Theme.highlightFromColor(Theme.highlightColor, Theme.LightOnDark))
+                               : "white"
                     }
                     color: "#00000000"
                 }
