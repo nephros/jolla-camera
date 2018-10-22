@@ -206,7 +206,13 @@ SettingsOverlay {
         }
 
         Label {
-            anchors.centerIn: parent
+            anchors {
+                centerIn: parent
+                // The font is not monospaced so countdown values over 10 seconds will be slightly off center
+                // TODO: FontMetrics might make more sense than magic below, but also be quite much more complex codewise
+                verticalCenterOffset: -Math.round(font.pixelSize/20)
+                horizontalCenterOffset: text.length > 1 ? -Math.round(font.pixelSize/20) : 0
+            }
             text: captureTimer.running ? Math.floor(captureView._captureCountdown + 1) : Settings.mode.timer
             visible: Settings.mode.timer != 0
             opacity: captureTimer.running ? captureView._captureCountdown % 1 : 1.0
@@ -232,6 +238,7 @@ SettingsOverlay {
         text: Format.formatDuration(_recordingDuration,
                                     _recordingDuration >= 3600 ? Formatter.DurationLong : Formatter.DurationShort)
         font.pixelSize: Theme.fontSizeLarge
+        color: Theme.lightPrimaryColor
         style: Text.Outline
         styleColor: "#20000000"
     }
