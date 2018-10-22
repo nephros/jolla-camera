@@ -12,7 +12,9 @@ SettingsMenuItemBase {
 
         anchors.centerIn: parent
         source: menuItem.pressed
-                ? menuItem.icon + "?" + Theme.highlightColor
+                ? menuItem.icon + "?" + (Theme.colorScheme == Theme.LightOnDark
+                                         ? Theme.highlightColor
+                                         : Theme.highlightFromColor(Theme.highlightColor, Theme.LightOnDark))
                 : menuItem.icon + "?" + Theme.lightPrimaryColor
         smooth: true
     }

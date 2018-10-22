@@ -47,6 +47,10 @@ PinchArea {
     property alias anchorContainer: anchorContainer
     property alias container: container
     readonly property alias settingsOpacity: row.opacity
+    property color _highlightColor: Theme.colorScheme == Theme.LightOnDark
+                                    ? Theme.highlightColor
+                                    : Theme.highlightFromColor(Theme.highlightColor, Theme.LightOnDark)
+
 
     property bool showCommonControls: true
     property real _commonControlOpacity: showCommonControls ? 1.0 : 0.0
@@ -138,7 +142,7 @@ PinchArea {
 
             icon {
                 opacity: pressed ? 0.5 : 1.0
-                source: "image://theme/icon-camera-reset?" + (pressed ? Theme.highlightColor : Theme.lightPrimaryColor)
+                source: "image://theme/icon-camera-reset?" + (pressed ? _highlightColor : Theme.lightPrimaryColor)
             }
 
             onClicked: {
@@ -180,7 +184,7 @@ PinchArea {
             height: Theme.itemSizeExtraSmall
             anchors.horizontalCenter: parent.horizontalCenter
             radius: width / 2
-            color: Theme.rgba(Theme.highlightColor, 0.4)
+            color: Theme.rgba(_highlightColor, 0.4)
             opacity: y < -captureModeMenu.itemStep ? 1.0 - (captureModeMenu.itemStep + y) / (-captureModeMenu.itemStep/2)
                                                    : (y > 0 ? 1.0 - y/(captureModeMenu.itemStep/2) : 1.0)
             y: {
@@ -570,7 +574,7 @@ PinchArea {
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.Wrap
             textFormat: Text.AutoText
-            color: Theme.highlightColor
+            color: _highlightColor
 
             text: overlay.isPortrait
                     //% "Select location for the portrait capture key"

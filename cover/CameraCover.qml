@@ -99,7 +99,8 @@ CoverBackground {
         IsoItem {
             scale: 0.75
             value: Settings.mode.iso
-            color: Theme.highlightColor
+            color: Theme.colorScheme == Theme.LightOnDark
+                   ? Theme.highlightColor : Theme.highlightFromColor(Theme.highlightColor, Theme.LightOnDark)
         }
         CoverIcon {
             visible: !flashIcon.visible
