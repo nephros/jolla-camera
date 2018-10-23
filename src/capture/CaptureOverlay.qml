@@ -215,7 +215,9 @@ SettingsOverlay {
             }
             text: captureTimer.running ? Math.floor(captureView._captureCountdown + 1) : Settings.mode.timer
             visible: Settings.mode.timer != 0
-            opacity: captureTimer.running ? captureView._captureCountdown % 1 : 1.0
+            // hack: xperia x chokes on opacity change on each frame here. work around by restricting the steps.
+            opacity: captureTimer.running ? Math.round(20 * (captureView._captureCountdown % 1)) / 20
+                                          : 1.0
             color: captureTimer.running ? Theme.lightPrimaryColor : Theme.highlightDimmerColor
             font {
                 pixelSize: captureTimer.running ? Theme.fontSizeHuge : Theme.fontSizeTiny
