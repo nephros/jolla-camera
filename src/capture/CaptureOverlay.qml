@@ -117,8 +117,7 @@ SettingsOverlay {
         ignoreUnknownSignals: true
         onEffectiveActiveChanged: {
             if (!captureView.effectiveActive) {
-                settingsOverlay.open = false
-                settingsOverlay.inButtonLayout = false
+                settingsOverlay.closeMenus()
             }
         }
     }
