@@ -115,41 +115,6 @@ PinchArea {
         enabled: !overlay._topMenuOpen && !overlay.inButtonLayout
     }
 
-    Item {
-        parent: overlay
-        anchors {
-            right: parent.right
-            bottom: parent.bottom
-            margins: Theme.paddingLarge
-        }
-
-        width: Theme.itemSizeMedium
-        height: Theme.itemSizeMedium
-        opacity: !Settings.defaultSettings ? row.opacity : 0.0
-        visible: overlay._expanded
-        z: 1
-
-        Behavior on opacity {
-            enabled: overlay._expanded
-            FadeAnimation {}
-        }
-
-        CameraButton {
-            background.visible: false
-            enabled: !Settings.defaultSettings && parent.opacity > 0.0
-
-            icon {
-                opacity: pressed ? 0.5 : 1.0
-                source: "image://theme/icon-camera-reset?" + (pressed ? _highlightColor : Theme.lightPrimaryColor)
-            }
-
-            onClicked: {
-                upperHeader.pressedMenu = null
-                Settings.reset()
-            }
-        }
-    }
-
     ToggleButton {
         parent: _overlayPosition.cameraDevice
         anchors.centerIn: parent
@@ -222,8 +187,7 @@ PinchArea {
     MouseArea {
         id: captureModeDragArea
 
-        width: overlay.width
-        height: overlay.height
+        anchors.fill: parent
         enabled: !overlay._topMenuOpen && !overlay.inButtonLayout && showCommonControls
 
         Item {
@@ -260,8 +224,7 @@ PinchArea {
             property real _lastPos
             property real _direction
 
-            width: overlay.width
-            height: overlay.height
+            anchors.fill: parent
             enabled: overlay._topMenuOpen
 
             drag {
@@ -295,8 +258,7 @@ PinchArea {
                 property real pressX
                 property real pressY
 
-                width: overlay.width
-                height: overlay.height
+                anchors.fill: parent
                 opacity: Math.min(1 - overlay._progress, 1 - anchorContainer.opacity)
                 enabled: !overlay._pinchActive && showCommonControls
 
@@ -322,7 +284,6 @@ PinchArea {
                         var dragDistance = Math.max(Math.abs(mouseX - pressX),
                                                     Math.abs(mouseY - pressY))
                         if (dragDistance < Theme.startDragDistance) {
-
                             overlay.inButtonLayout = true
                         }
                     }
@@ -372,9 +333,8 @@ PinchArea {
 
             Rectangle {
                 id: highlight
-                width: overlay.width
-                height: overlay.height
 
+                anchors.fill: parent
                 visible: overlay._expanded
                 color: "black"
                 opacity: 0.6 * (1 - container.opacity)
@@ -511,6 +471,39 @@ PinchArea {
         }
     }
 
+    Item {
+        anchors {
+            right: parent.right
+            bottom: parent.bottom
+            margins: Theme.paddingLarge
+        }
+
+        width: Theme.itemSizeMedium
+        height: Theme.itemSizeMedium
+        opacity: !Settings.defaultSettings ? row.opacity : 0.0
+        visible: overlay._expanded
+
+        Behavior on opacity {
+            enabled: overlay._expanded
+            FadeAnimation {}
+        }
+
+        CameraButton {
+            background.visible: false
+            enabled: !Settings.defaultSettings && parent.opacity > 0.0
+
+            icon {
+                opacity: pressed ? 0.5 : 1.0
+                source: "image://theme/icon-camera-reset?" + (pressed ? _highlightColor : Theme.lightPrimaryColor)
+            }
+
+            onClicked: {
+                upperHeader.pressedMenu = null
+                Settings.reset()
+            }
+        }
+    }
+
     Column {
         x: exposureSlider.alignment == Qt.AlignLeft ? (isPortrait ? 0 : Theme.paddingLarge)
                                                     : parent.width - width - (isPortrait ? 0 : Theme.paddingLarge)
@@ -545,19 +538,13 @@ PinchArea {
     Item {
         id: anchorContainer
 
-        width: overlay.width
-        height: overlay.height
-
+        anchors.fill: parent
         visible: overlay.inButtonLayout || layoutAnimation.running
         opacity: overlay.inButtonLayout ? 1.0 : 0.0
         Behavior on opacity { FadeAnimation { id: layoutAnimation } }
 
         Rectangle {
-            id: layoutHighlight
-
-            width: overlay.width
-            height: overlay.height
-
+            anchors.fill: parent
             opacity: 0.8
             color: "black"
         }
