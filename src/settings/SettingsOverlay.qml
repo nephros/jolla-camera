@@ -118,7 +118,6 @@ PinchArea {
 
         parent: overlay._buttonAnchors[overlay._captureButtonLocation]
         anchors.fill: parent
-        enabled: !overlay._topMenuOpen && !overlay.inButtonLayout
     }
 
     ToggleButton {
@@ -276,8 +275,6 @@ PinchArea {
                 onClicked: {
                     if (whiteBalanceMenu.expanded) {
                         whiteBalanceMenu.open = false
-                    } else if (overlay._expanded) {
-                        overlay._topMenuOpen = false
                     } else if (overlay.inButtonLayout) {
                         overlay.inButtonLayout = false
                     } else {
@@ -313,6 +310,12 @@ PinchArea {
                 OverlayAnchor { id: overlayAnchorCR; anchors { right: parent.right; verticalCenter: parent.verticalCenter } }
                 OverlayAnchor { id: overlayAnchorTL; anchors { left: parent.left; top: parent.top } }
                 OverlayAnchor { id: overlayAnchorTR; anchors { right: parent.right; top: parent.top } }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                enabled: overlay._expanded
+                onClicked: overlay._topMenuOpen = false
             }
 
             Item {
