@@ -169,6 +169,8 @@ SettingsOverlay {
     shutter: CameraButton {
         id: captureButton
 
+        property bool canStopVideo: startRecordTimer.running || camera.videoRecorder.recorderState == CameraRecorder.RecordingState
+
         z: settingsOverlay.inButtonLayout ? 1 : 0
         size: Theme.iconSizeMedium
         background.visible: icon.opacity < 1.0
@@ -198,7 +200,7 @@ SettingsOverlay {
                 }
             }
 
-            source: startRecordTimer.running || camera.videoRecorder.recorderState == CameraRecorder.RecordingState
+            source: canStopVideo
                     ? "image://theme/icon-camera-video-shutter-off"
                     : (camera.captureMode == Camera.CaptureVideo
                        ? "image://theme/icon-camera-video-shutter-on"
@@ -214,9 +216,9 @@ SettingsOverlay {
                 horizontalCenterOffset: text.length > 1 ? -Math.round(font.pixelSize/20) : 0
             }
             text: captureTimer.running ? Math.floor(captureView._captureCountdown + 1) : Settings.mode.timer
-            visible: Settings.mode.timer != 0
+            visible: Settings.mode.timer != 0 && !captureButton.canStopVideo
             opacity: captureTimer.running ? captureView._captureCountdown % 1 : 1.0
-            color: captureTimer.running ? Theme.lightPrimaryColor : Theme.highlightDimmerColor
+            color: captureTimer.running ? Theme.lightPrimaryColor : Theme.darkPrimaryColor
             font {
                 pixelSize: captureTimer.running ? Theme.fontSizeHuge : Theme.fontSizeTiny
                 weight: Font.Light
