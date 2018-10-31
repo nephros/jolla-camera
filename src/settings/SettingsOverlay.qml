@@ -54,6 +54,12 @@ PinchArea {
     property real _commonControlOpacity: showCommonControls ? 1.0 : 0.0
     Behavior on _commonControlOpacity { FadeAnimation {} }
 
+    onShowCommonControlsChanged: {
+        if (!showCommonControls) {
+            closeMenus()
+        }
+    }
+
     on_CaptureButtonLocationChanged: inButtonLayout = false
 
     onIsPortraitChanged: {
