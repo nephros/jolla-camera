@@ -21,7 +21,7 @@ PinchArea {
     property bool _topMenuOpen
     property bool _closing
     // top menu open or transitioning
-    readonly property bool _expanded: _topMenuOpen
+    readonly property bool _exposed: _topMenuOpen
                 || _closing
                 || verticalAnimation.running
                 || dragArea.drag.active
@@ -296,7 +296,7 @@ PinchArea {
                     anchors.horizontalCenter: parent.horizontalCenter
                     width: row.width
                     height: Theme.itemSizeLarge
-                    enabled: !overlay._expanded && !overlay.inButtonLayout && showCommonControls
+                    enabled: !overlay._exposed && !overlay.inButtonLayout && showCommonControls
 
                     onClicked: overlay._topMenuOpen = true
 
@@ -314,7 +314,7 @@ PinchArea {
 
             MouseArea {
                 anchors.fill: parent
-                enabled: overlay._expanded
+                enabled: overlay._exposed
                 onClicked: overlay._topMenuOpen = false
             }
 
@@ -344,7 +344,7 @@ PinchArea {
                 id: highlight
 
                 anchors.fill: parent
-                visible: overlay._expanded
+                visible: overlay._exposed
                 color: "black"
                 opacity: 0.6 * (1 - container.opacity)
             }
@@ -358,8 +358,8 @@ PinchArea {
                 height: Screen.height / 2
 
                 opacity: 1 - container.opacity
-                enabled: overlay._expanded
-                visible: overlay._expanded
+                enabled: overlay._exposed
+                visible: overlay._exposed
 
                 spacing: overlay._menuItemHorizontalSpacing
 
@@ -490,10 +490,10 @@ PinchArea {
         width: Theme.itemSizeMedium
         height: Theme.itemSizeMedium
         opacity: !Settings.defaultSettings ? row.opacity : 0.0
-        visible: overlay._expanded
+        visible: overlay._exposed
 
         Behavior on opacity {
-            enabled: overlay._expanded
+            enabled: overlay._exposed
             FadeAnimation {}
         }
 
