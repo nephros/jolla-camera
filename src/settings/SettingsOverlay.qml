@@ -8,25 +8,31 @@ PinchArea {
 
     property bool isPortrait
     property real topButtonRowHeight
-    property bool open
+    property bool showCommonControls: true // any controls from here
+    property bool deviceToggleEnabled
     property bool inButtonLayout
-    property bool pinchActive
-    readonly property bool expanded: open
+
+    property alias shutter: shutterContainer.children
+    property alias anchorContainer: anchorContainer
+    property alias container: container
+    readonly property alias settingsOpacity: row.opacity
+
+    property bool _pinchActive
+    property bool _topMenuOpen
+    property bool _closing
+    // top menu open or transitioning
+    readonly property bool _exposed: _topMenuOpen
                 || _closing
                 || verticalAnimation.running
                 || dragArea.drag.active
-    property alias deviceToggleEnabled: deviceToggle.enabled
+
     default property alias _data: container.data
 
     readonly property int _captureButtonLocation: overlay.isPortrait
                 ? Settings.global.portraitCaptureButtonLocation
                 : Settings.global.landscapeCaptureButtonLocation
 
-    property real _lastPos
-    property real _direction
-
     property real _progress: (panel.y + panel.height) / panel.height
-    property bool _closing
 
     property real _menuItemHorizontalSpacing: Screen.sizeCategory >= Screen.Large
                                               ? Theme.paddingLarge * 2
@@ -41,20 +47,18 @@ PinchArea {
                                        ? Theme.iconSizeLarge + Theme.paddingMedium*2 // increase icon hitbox
                                        : Theme.iconSizeMedium + Theme.paddingMedium + Theme.paddingSmall
 
-    property bool interactive: true
-
-    property alias shutter: shutterContainer.children
-    property alias anchorContainer: anchorContainer
-    property alias container: container
-    readonly property alias settingsOpacity: row.opacity
     property color _highlightColor: Theme.colorScheme == Theme.LightOnDark
                                     ? Theme.highlightColor
                                     : Theme.highlightFromColor(Theme.highlightColor, Theme.LightOnDark)
 
-
-    property bool showCommonControls: true
     property real _commonControlOpacity: showCommonControls ? 1.0 : 0.0
     Behavior on _commonControlOpacity { FadeAnimation {} }
+
+    onShowCommonControlsChanged: {
+        if (!showCommonControls) {
+            closeMenus()
+        }
+    }
 
     on_CaptureButtonLocationChanged: inButtonLayout = false
 
@@ -64,16 +68,16 @@ PinchArea {
 
     signal clicked(var mouse)
 
-    function close() {
+    function closeMenus() {
         _closing = true
         whiteBalanceMenu.open = false
-        open = false
+        _topMenuOpen = false
         inButtonLayout = false
         _closing = false
     }
 
-    onPinchStarted: pinchActive = true
-    onPinchFinished: pinchActive = false
+    onPinchStarted: _pinchActive = true
+    onPinchFinished: _pinchActive = false
 
     property list<Item> _buttonAnchors
     _buttonAnchors: [
@@ -114,47 +118,9 @@ PinchArea {
 
         parent: overlay._buttonAnchors[overlay._captureButtonLocation]
         anchors.fill: parent
-        enabled: !overlay.open && !overlay.inButtonLayout
-    }
-
-    Item {
-        parent: overlay
-        anchors {
-            right: parent.right
-            bottom: parent.bottom
-            margins: Theme.paddingLarge
-        }
-
-        width: Theme.itemSizeMedium
-        height: Theme.itemSizeMedium
-        opacity: !Settings.defaultSettings ? row.opacity : 0.0
-        visible: overlay.expanded
-        z: 1
-
-        Behavior on opacity {
-            enabled: overlay.expanded
-            FadeAnimation {}
-        }
-
-        CameraButton {
-            background.visible: false
-            enabled: !Settings.defaultSettings && parent.opacity > 0.0
-
-            icon {
-                opacity: pressed ? 0.5 : 1.0
-                source: "image://theme/icon-camera-reset?" + (pressed ? _highlightColor : Theme.lightPrimaryColor)
-            }
-
-            onClicked: {
-                upperHeader.pressedMenu = null
-                Settings.reset()
-            }
-        }
     }
 
     ToggleButton {
-        id: deviceToggle
-
         parent: _overlayPosition.cameraDevice
         anchors.centerIn: parent
         model: [ "primary", "secondary" ]
@@ -163,6 +129,7 @@ PinchArea {
         icon: "image://theme/icon-camera-switch"
         opacity: _commonControlOpacity
         visible: opacity > 0.0
+        enabled: overlay.deviceToggleEnabled
     }
 
     CaptureModeMenu {
@@ -225,9 +192,8 @@ PinchArea {
     MouseArea {
         id: captureModeDragArea
 
-        width: overlay.width
-        height: overlay.height
-        enabled: !overlay.open && overlay.interactive && !overlay.inButtonLayout && showCommonControls
+        anchors.fill: parent
+        enabled: !overlay._topMenuOpen && !overlay.inButtonLayout && showCommonControls
 
         Item {
             id: captureModeDragTarget
@@ -260,33 +226,35 @@ PinchArea {
         MouseArea {
             id: dragArea
 
-            width: overlay.width
-            height: overlay.height
-            enabled: overlay.open
+            property real _lastPos
+            property real _direction
+
+            anchors.fill: parent
+            enabled: overlay._topMenuOpen
 
             drag {
-                target: overlay.interactive && !overlay.inButtonLayout ? panel : undefined
+                target: !overlay.inButtonLayout ? panel : undefined
                 minimumY: -panel.height
                 maximumY: 0
                 axis: Drag.YAxis
                 filterChildren: true
                 onActiveChanged: {
-                    if (!drag.active && panel.y < -(panel.height / 3) && overlay._direction <= 0) {
-                        overlay.open = false
-                    } else if (!drag.active && panel.y > (-panel.height * 2 / 3) && overlay._direction >= 0) {
-                        overlay.open = true
+                    if (!drag.active && panel.y < -(panel.height / 3) && _direction <= 0) {
+                        overlay._topMenuOpen = false
+                    } else if (!drag.active && panel.y > (-panel.height * 2 / 3) && _direction >= 0) {
+                        overlay._topMenuOpen = true
                     }
                 }
             }
 
             onPressed: {
-                overlay._direction = 0
-                overlay._lastPos = panel.y
+                _direction = 0
+                _lastPos = panel.y
             }
             onPositionChanged: {
                 var pos = panel.y
-                overlay._direction = (overlay._direction + pos - _lastPos) / 2
-                overlay._lastPos = panel.y
+                _direction = (_direction + pos - _lastPos) / 2
+                _lastPos = panel.y
             }
 
             MouseArea {
@@ -295,10 +263,9 @@ PinchArea {
                 property real pressX
                 property real pressY
 
-                width: overlay.width
-                height: overlay.height
+                anchors.fill: parent
                 opacity: Math.min(1 - overlay._progress, 1 - anchorContainer.opacity)
-                enabled: !overlay.pinchActive && showCommonControls
+                enabled: !overlay._pinchActive && showCommonControls
 
                 onPressed: {
                     pressX = mouseX
@@ -308,8 +275,6 @@ PinchArea {
                 onClicked: {
                     if (whiteBalanceMenu.expanded) {
                         whiteBalanceMenu.open = false
-                    } else if (overlay.expanded) {
-                        overlay.open = false
                     } else if (overlay.inButtonLayout) {
                         overlay.inButtonLayout = false
                     } else {
@@ -318,11 +283,10 @@ PinchArea {
                 }
 
                 onPressAndHold: {
-                    if (!overlay.open) {
+                    if (!overlay._topMenuOpen) {
                         var dragDistance = Math.max(Math.abs(mouseX - pressX),
                                                     Math.abs(mouseY - pressY))
                         if (dragDistance < Theme.startDragDistance) {
-
                             overlay.inButtonLayout = true
                         }
                     }
@@ -332,9 +296,9 @@ PinchArea {
                     anchors.horizontalCenter: parent.horizontalCenter
                     width: row.width
                     height: Theme.itemSizeLarge
-                    enabled: !overlay.expanded && !overlay.inButtonLayout && showCommonControls
+                    enabled: !overlay._exposed && !overlay.inButtonLayout && showCommonControls
 
-                    onClicked: overlay.open = true
+                    onClicked: overlay._topMenuOpen = true
 
                     onPressAndHold: container.pressAndHold(mouse)
                 }
@@ -348,13 +312,19 @@ PinchArea {
                 OverlayAnchor { id: overlayAnchorTR; anchors { right: parent.right; top: parent.top } }
             }
 
+            MouseArea {
+                anchors.fill: parent
+                enabled: overlay._exposed
+                onClicked: overlay._topMenuOpen = false
+            }
+
             Item {
                 id: panel
 
                 Binding {
                     target: panel
                     property: "y"
-                    value: open ? 0 : -panel.height
+                    value: _topMenuOpen ? 0 : -panel.height
                     when: expandBehavior.enabled
                 }
                 Behavior on y {
@@ -372,10 +342,9 @@ PinchArea {
 
             Rectangle {
                 id: highlight
-                width: overlay.width
-                height: overlay.height
 
-                visible: overlay.expanded
+                anchors.fill: parent
+                visible: overlay._exposed
                 color: "black"
                 opacity: 0.6 * (1 - container.opacity)
             }
@@ -389,8 +358,8 @@ PinchArea {
                 height: Screen.height / 2
 
                 opacity: 1 - container.opacity
-                enabled: overlay.expanded
-                visible: overlay.expanded
+                enabled: overlay._exposed
+                visible: overlay._exposed
 
                 spacing: overlay._menuItemHorizontalSpacing
 
@@ -511,6 +480,39 @@ PinchArea {
         }
     }
 
+    Item {
+        anchors {
+            right: parent.right
+            bottom: parent.bottom
+            margins: Theme.paddingLarge
+        }
+
+        width: Theme.itemSizeMedium
+        height: Theme.itemSizeMedium
+        opacity: !Settings.defaultSettings ? row.opacity : 0.0
+        visible: overlay._exposed
+
+        Behavior on opacity {
+            enabled: overlay._exposed
+            FadeAnimation {}
+        }
+
+        CameraButton {
+            background.visible: false
+            enabled: !Settings.defaultSettings && parent.opacity > 0.0
+
+            icon {
+                opacity: pressed ? 0.5 : 1.0
+                source: "image://theme/icon-camera-reset?" + (pressed ? _highlightColor : Theme.lightPrimaryColor)
+            }
+
+            onClicked: {
+                upperHeader.pressedMenu = null
+                Settings.reset()
+            }
+        }
+    }
+
     Column {
         x: exposureSlider.alignment == Qt.AlignLeft ? (isPortrait ? 0 : Theme.paddingLarge)
                                                     : parent.width - width - (isPortrait ? 0 : Theme.paddingLarge)
@@ -536,7 +538,7 @@ PinchArea {
         ExposureSlider {
             id: exposureSlider
             alignment: _overlayPosition.exposure
-            enabled: !overlay.open && !overlay.inButtonLayout && !whiteBalanceMenu.open
+            enabled: !overlay._topMenuOpen && !overlay.inButtonLayout && !whiteBalanceMenu.open
             opacity: (1.0 - settingsOpacity) * (1.0 - whiteBalanceMenu.openProgress)
             height: Theme.itemSizeSmall * 5
         }
@@ -545,19 +547,13 @@ PinchArea {
     Item {
         id: anchorContainer
 
-        width: overlay.width
-        height: overlay.height
-
+        anchors.fill: parent
         visible: overlay.inButtonLayout || layoutAnimation.running
         opacity: overlay.inButtonLayout ? 1.0 : 0.0
         Behavior on opacity { FadeAnimation { id: layoutAnimation } }
 
         Rectangle {
-            id: layoutHighlight
-
-            width: overlay.width
-            height: overlay.height
-
+            anchors.fill: parent
             opacity: 0.8
             color: "black"
         }

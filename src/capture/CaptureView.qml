@@ -316,7 +316,7 @@ FocusScope {
         id: camera
 
         function lockAutoFocus() {
-            captureOverlay.close()
+            captureOverlay.closeMenus()
             // timed capture locks when timer triggers
             if (camera.captureMode == Camera.CaptureStillImage
                     && focus.focusMode != Camera.FocusInfinity

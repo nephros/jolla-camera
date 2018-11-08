@@ -9,7 +9,7 @@ OverlayAnchor {
 
     enabled: !anchorContainer.visible || overlay._captureButtonLocation != index
     parent: overlay._captureButtonLocation == index
-                ? (anchorContainer.visible ? settingsOverlay : container)
+                ? (anchorContainer.visible ? overlay : container)
                 : anchorContainer
 
     MouseArea {
