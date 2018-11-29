@@ -402,6 +402,11 @@ FocusScope {
             } else {
                 startFailedTimer.stop()
             }
+
+            if (camera.cameraStatus !== Camera.ActiveStatus) {
+                _captureQueued = false
+                captureBusy = false
+            }
         }
 
         imageCapture {
