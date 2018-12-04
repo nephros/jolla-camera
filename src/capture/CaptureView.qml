@@ -27,9 +27,8 @@ FocusScope {
         case Orientation.PortraitInverted: rotation = 180; break;
         case Orientation.LandscapeInverted: rotation = 270; break;
         }
-        return camera.position == Camera.FrontFace
-                ? (720 + camera.orientation - rotation) % 360
-                : (720 + camera.orientation + rotation) % 360
+
+        return (720 + camera.orientation + rotation) % 360
     }
     property int captureOrientation
     property int pageRotation
@@ -79,7 +78,9 @@ FocusScope {
             captureOnVolumeRelease = false
     }
 
-    readonly property bool _mirrorViewfinder: Settings.global.cameraDevice == "secondary"
+    readonly property bool _mirrorViewfinder: camera.position === Camera.FrontFace
+    readonly property bool _horizontalMirror: _mirrorViewfinder && camera.orientation % 180 == 0
+    readonly property bool _verticalMirror: _mirrorViewfinder && camera.orientation % 180 != 0
 
     readonly property bool _applicationActive: Qt.application.state == Qt.ApplicationActive
     on_ApplicationActiveChanged: if (_applicationActive) flashlightServiceProbe.checkFlashlightServiceStatus()
@@ -443,7 +444,12 @@ FocusScope {
             // could expect that locking focus on auto or continous behaves the same, but
             // continuous doesn't work as well
             focusMode: {
-                if (tapFocusActive) {
+                // The cameraStatus doesn't really matter as a precondition but incorporating
+                // it ensures the binding is reevaluated when the status changes and the desired
+                // focus mode is assigned. Otherwise QtMultimedia may reject a mode as unsupported
+                // and default to auto because the binding was evaluated in the unloaded state and
+                // real support was unknown at that time.
+                if (camera.cameraStatus == Camera.ActiveStatus && tapFocusActive) {
                     return Camera.FocusAuto
                 } else if (Settings.mode.focusDistanceValues.indexOf(Camera.FocusContinuous) >= 0) {
                     return Camera.FocusContinuous
@@ -636,10 +642,12 @@ FocusScope {
         Repeater {
             model: camera.focus.focusZones
             delegate: Item {
-                x: focusArea.width * (captureView._mirrorViewfinder
+                x: focusArea.width * (captureView._horizontalMirror
                                       ? 1 - area.x - area.width
                                       : area.x)
-                y: focusArea.height * area.y
+                y: focusArea.height * (captureView._verticalMirror
+                                      ? 1 - area.y - area.height
+                                      : area.y)
                 width: focusArea.width * area.width
                 height: focusArea.height * area.height
 

@@ -155,8 +155,11 @@ SettingsOverlay {
             focusPoint.y = focusPoint.y / focusArea.height
 
             // Mirror the point if the viewfinder is mirrored.
-            if (captureView._mirrorViewfinder) {
+            if (captureView._horizontalMirror) {
                 focusPoint.x = 1 - focusPoint.x
+            }
+            if (captureView._verticalMirror) {
+                focusPoint.y = 1 - focusPoint.y
             }
 
             if (focusPoint.x >= 0.0 && focusPoint.x <= 1.0 && focusPoint.y >= 0.0 && focusPoint.y <= 1.0) {
