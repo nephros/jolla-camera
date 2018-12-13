@@ -44,7 +44,7 @@ Requires:  sailfish-policy >= 0.2.59
 Requires:  libjollasignonuiservice-qt5-plugin >= 0.0.29
 Requires:  libngf-qt5-declarative
 Requires:  ambienced
-Requires:  jolla-theme >= 0.9.4
+Requires:  sailfish-content-graphics
 Requires:  gstreamer1.0-plugins-good
 Requires:  gstreamer1.0-plugins-bad
 Requires:  dconf
