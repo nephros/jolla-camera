@@ -130,7 +130,6 @@ chmod +x %{buildroot}/%{_oneshotdir}/*
 %{_libdir}/qt5/qml/com/jolla/camera/qmldir
 %{_libdir}/qt5/qml/com/jolla/camera/*.qml
 %{_libdir}/qt5/qml/com/jolla/camera/settings/*
-%{_libdir}/qt5/qml/com/jolla/camera/settings.qml
 %{_sysconfdir}/dconf/db/vendor.d/jolla-camera.txt
 %{_oneshotdir}/camera-enable-hints
 %{_oneshotdir}/camera-remove-deprecated-dconfkeys
@@ -150,9 +149,7 @@ chmod +x %{buildroot}/%{_oneshotdir}/*
 
 %files tests
 %defattr(-,root,root,-)
-# >> files tests
 /opt/tests/jolla-camera/*
-# << files tests
 
 %post
 %{_bindir}/add-oneshot dconf-update
