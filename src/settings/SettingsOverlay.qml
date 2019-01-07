@@ -128,7 +128,7 @@ PinchArea {
         property: "cameraDevice"
         icon: "image://theme/icon-camera-switch"
         opacity: _commonControlOpacity
-        visible: opacity > 0.0
+        visible: opacity > 0.0 && Settings.hasMultipleCameras
         enabled: overlay.deviceToggleEnabled
     }
 
