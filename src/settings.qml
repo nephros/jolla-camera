@@ -22,6 +22,11 @@ SettingsBase {
                                             modeSettings.timer === settingsDefaults["timer"] &&
                                             modeSettings.viewfinderGrid === settingsDefaults["viewfinderGrid"] &&
                                             modeSettings.flash == settingsDefaults["flash"]
+    // FIXME: should use something like QtMultimedia.availableCameras.length > 1, but that currently
+    // returns bogus cameras on Sailfish when they don't really exist.
+    // Also now only handling missing back camera which is somewhat hard-coded in qtmultimedia gstreamer integration
+    // to be the primary camera.
+    readonly property bool hasMultipleCameras: primaryResolution.value != "" && primaryResolution.value[0] != "0"
 
     function reset() {
         var basePath = globalSettings.path + "/" + modeSettings.path
@@ -33,6 +38,11 @@ SettingsBase {
     }
 
     property ConfigurationValue _singleValue: ConfigurationValue {}
+    property ConfigurationValue _primaryCameraResolution: ConfigurationValue {
+        id: primaryResolution
+        key: globalSettings.path + "/primary/image/imageResolution"
+        defaultValue: ""
+    }
 
     property ConfigurationGroup _global: ConfigurationGroup {
         id: globalSettings
