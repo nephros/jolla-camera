@@ -122,6 +122,9 @@ install -m 644 -p %{SOURCE1} %{buildroot}%{_datadir}/mapplauncherd/privileges.d/
 %defattr(-,root,root,-)
 %{_datadir}/applications/jolla-camera.desktop
 %{_datadir}/applications/jolla-camera-viewfinder.desktop
+# Define directory ownership explicitly as part of files in the datadir
+# belongs to jolla-camera-lockscreen.
+%dir %{_datadir}/jolla-camera
 %{_datadir}/jolla-camera/camera.qml
 %{_datadir}/jolla-camera/pages/*
 %{_datadir}/jolla-camera/cover/*
@@ -129,12 +132,7 @@ install -m 644 -p %{SOURCE1} %{buildroot}%{_datadir}/mapplauncherd/privileges.d/
 %{_bindir}/jolla-camera
 %{_datadir}/translations/jolla-camera_eng_en.qm
 %{_datadir}/dbus-1/services/com.jolla.camera.service
-%{_libdir}/qt5/qml/com/jolla/camera/libjollacameraplugin.so
-%{_libdir}/qt5/qml/com/jolla/camera/capture/*
-%{_libdir}/qt5/qml/com/jolla/camera/gallery/*
-%{_libdir}/qt5/qml/com/jolla/camera/qmldir
-%{_libdir}/qt5/qml/com/jolla/camera/*.qml
-%{_libdir}/qt5/qml/com/jolla/camera/settings/*
+%{_libdir}/qt5/qml/com/jolla/camera
 %{_sysconfdir}/dconf/db/vendor.d/jolla-camera.txt
 %{_oneshotdir}/camera-enable-hints
 %{_oneshotdir}/camera-remove-deprecated-dconfkeys
@@ -150,7 +148,7 @@ install -m 644 -p %{SOURCE1} %{buildroot}%{_datadir}/mapplauncherd/privileges.d/
 %{_datadir}/jolla-camera/LockedGalleryView.qml
 
 %files settings
-%{_datadir}/jolla-settings/*
+%{_datadir}/jolla-settings
 
 %files tests
 %defattr(-,root,root,-)
