@@ -6,6 +6,7 @@ Group:      Applications/Multimedia
 License:    Proprietary
 URL:        https://bitbucket.org/jolla/ui-jolla-camera
 Source0:    %{name}-%{version}.tar.bz2
+Source1:    %{name}.privileges
 BuildRequires:  pkgconfig(Qt5Core)
 BuildRequires:  pkgconfig(Qt5Gui)
 BuildRequires:  pkgconfig(Qt5Qml)
@@ -114,6 +115,9 @@ desktop-file-install --delete-original       \
    %{buildroot}%{_datadir}/applications/*.desktop
 chmod +x %{buildroot}/%{_oneshotdir}/*
 
+mkdir -p %{buildroot}%{_datadir}/mapplauncherd/privileges.d
+install -m 644 -p %{SOURCE1} %{buildroot}%{_datadir}/mapplauncherd/privileges.d/
+
 %files
 %defattr(-,root,root,-)
 %{_datadir}/applications/jolla-camera.desktop
@@ -121,6 +125,7 @@ chmod +x %{buildroot}/%{_oneshotdir}/*
 %{_datadir}/jolla-camera/camera.qml
 %{_datadir}/jolla-camera/pages/*
 %{_datadir}/jolla-camera/cover/*
+%{_datadir}/mapplauncherd/privileges.d/*
 %{_bindir}/jolla-camera
 %{_datadir}/translations/jolla-camera_eng_en.qm
 %{_datadir}/dbus-1/services/com.jolla.camera.service
