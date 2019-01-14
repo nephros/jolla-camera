@@ -103,7 +103,7 @@ This package contains QML unit tests for Jolla Camera application
 
 %qmake5 %{name}.pro
 
-make %{?jobs:-j%jobs}
+make %{_smp_mflags}
 
 %install
 rm -rf %{buildroot}
