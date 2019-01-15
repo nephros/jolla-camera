@@ -6,6 +6,7 @@ Group:      Applications/Multimedia
 License:    Proprietary
 URL:        https://bitbucket.org/jolla/ui-jolla-camera
 Source0:    %{name}-%{version}.tar.bz2
+Source1:    %{name}.privileges
 BuildRequires:  pkgconfig(Qt5Core)
 BuildRequires:  pkgconfig(Qt5Gui)
 BuildRequires:  pkgconfig(Qt5Qml)
@@ -102,7 +103,7 @@ This package contains QML unit tests for Jolla Camera application
 
 %qmake5 %{name}.pro
 
-make %{?jobs:-j%jobs}
+make %{_smp_mflags}
 
 %install
 rm -rf %{buildroot}
@@ -114,22 +115,24 @@ desktop-file-install --delete-original       \
    %{buildroot}%{_datadir}/applications/*.desktop
 chmod +x %{buildroot}/%{_oneshotdir}/*
 
+mkdir -p %{buildroot}%{_datadir}/mapplauncherd/privileges.d
+install -m 644 -p %{SOURCE1} %{buildroot}%{_datadir}/mapplauncherd/privileges.d/
+
 %files
 %defattr(-,root,root,-)
 %{_datadir}/applications/jolla-camera.desktop
 %{_datadir}/applications/jolla-camera-viewfinder.desktop
+# Define directory ownership explicitly as part of files in the datadir
+# belongs to jolla-camera-lockscreen.
+%dir %{_datadir}/jolla-camera
 %{_datadir}/jolla-camera/camera.qml
 %{_datadir}/jolla-camera/pages/*
 %{_datadir}/jolla-camera/cover/*
+%{_datadir}/mapplauncherd/privileges.d/*
 %{_bindir}/jolla-camera
 %{_datadir}/translations/jolla-camera_eng_en.qm
 %{_datadir}/dbus-1/services/com.jolla.camera.service
-%{_libdir}/qt5/qml/com/jolla/camera/libjollacameraplugin.so
-%{_libdir}/qt5/qml/com/jolla/camera/capture/*
-%{_libdir}/qt5/qml/com/jolla/camera/gallery/*
-%{_libdir}/qt5/qml/com/jolla/camera/qmldir
-%{_libdir}/qt5/qml/com/jolla/camera/*.qml
-%{_libdir}/qt5/qml/com/jolla/camera/settings/*
+%{_libdir}/qt5/qml/com/jolla/camera
 %{_sysconfdir}/dconf/db/vendor.d/jolla-camera.txt
 %{_oneshotdir}/camera-enable-hints
 %{_oneshotdir}/camera-remove-deprecated-dconfkeys
@@ -145,7 +148,7 @@ chmod +x %{buildroot}/%{_oneshotdir}/*
 %{_datadir}/jolla-camera/LockedGalleryView.qml
 
 %files settings
-%{_datadir}/jolla-settings/*
+%{_datadir}/jolla-settings
 
 %files tests
 %defattr(-,root,root,-)
