@@ -27,7 +27,16 @@ SettingsOverlay {
     height: captureView.height
 
     function writeMetaData() {
-        captureView.captureOrientation = captureView.viewfinderOrientation
+        var rotation = 0
+        switch (captureView.orientation) {
+        case Orientation.Landscape: rotation = 90; break;
+        case Orientation.PortraitInverted: rotation = 180; break;
+        case Orientation.LandscapeInverted: rotation = 270; break;
+        }
+        captureView.captureOrientation = camera.position === Camera.FrontFace
+                       ? (720 + camera.orientation - rotation) % 360
+                       : (720 + camera.orientation + rotation) % 360
+
         // Camera documentation says dateTimeOriginal should be used but at the moment CameraBinMetaData uses only
         // date property (which the documentation doesn't even list)
         camera.metaData.date = new Date()
