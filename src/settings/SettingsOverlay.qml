@@ -155,7 +155,7 @@ PinchArea {
             opacity: y < -captureModeMenu.itemStep ? 1.0 - (captureModeMenu.itemStep + y) / (-captureModeMenu.itemStep/2)
                                                    : (y > 0 ? 1.0 - y/(captureModeMenu.itemStep/2) : 1.0)
             y: {
-                var val = captureModeDragTarget.y
+                var val = captureModeDragArea.dragY
                 if (!captureModeDragArea.drag.active) {
                     return val
                 }
@@ -164,21 +164,21 @@ PinchArea {
                     if (val < -captureModeMenu.itemStep*1.5) {
                         // if drag is clearly started up or down, canceling it shouldn't require moving finger back
                         // to initial y -> enter one way mode
-                        captureModeDragArea.drag.maximumY = -captureModeMenu.itemStep
+                        captureModeDragArea.maximumDragY = -captureModeMenu.itemStep
                         val += captureModeMenu.itemStep*2
                     } else {
                         if (val > (-0.5 * captureModeMenu.itemStep)) {
-                            captureModeDragArea.drag.minimumY = -captureModeMenu.itemStep
+                            captureModeDragArea.minimumDragY = -captureModeMenu.itemStep
                         }
                         val = Math.min(val, 0)
                     }
                 } else if (captureModeMenu.currentIndex == 1) {
                     if (val > captureModeMenu.itemStep*0.5) {
                         val -= captureModeMenu.itemStep*2
-                        captureModeDragArea.drag.minimumY = 0
+                        captureModeDragArea.minimumDragY = 0
                     } else {
                         if (val < -0.5 * captureModeMenu.itemStep) {
-                            captureModeDragArea.drag.maximumY = 0
+                            captureModeDragArea.maximumDragY = 0
                         }
                         val = Math.max(val, -captureModeMenu.itemStep)
                     }
@@ -192,6 +192,13 @@ PinchArea {
     MouseArea {
         id: captureModeDragArea
 
+        // dragRatio increases the multiplier how much drag has to happen compared to how much
+        // the values really change.
+        property real dragRatio: 2
+        property real minimumDragY: -captureModeMenu.itemStep * 2
+        property real maximumDragY: captureModeMenu.itemStep
+        property real dragY: captureModeDragTarget.y / dragRatio
+
         anchors.fill: parent
         enabled: !overlay._topMenuOpen && !overlay.inButtonLayout && showCommonControls
 
@@ -200,7 +207,7 @@ PinchArea {
 
             Binding on y {
                 when: !captureModeDragArea.drag.active
-                value: (captureModeMenu.currentIndex - 1) * captureModeMenu.itemStep
+                value: captureModeDragArea.dragRatio * (captureModeMenu.currentIndex - 1) * captureModeMenu.itemStep
             }
         }
 
@@ -208,8 +215,8 @@ PinchArea {
             target: captureModeDragTarget
             // Extend the range beyond the allowed range so that a vertical drag always
             // changes the current mode, wrapping around at the ends
-            minimumY: -captureModeMenu.itemStep * 2
-            maximumY: captureModeMenu.itemStep
+            minimumY: captureModeDragArea.dragRatio * captureModeDragArea.minimumDragY
+            maximumY: captureModeDragArea.dragRatio * captureModeDragArea.maximumDragY
             axis: Drag.YAxis
             filterChildren: true
             onActiveChanged: {
@@ -217,8 +224,8 @@ PinchArea {
                 if (!drag.active) {
                     var index = Math.round((captureModeHighlight.y + captureModeMenu.itemStep) / captureModeMenu.itemStep) % 2
                     captureModeMenu.selectItem(index)
-                    drag.minimumY = -captureModeMenu.itemStep * 2
-                    drag.maximumY = captureModeMenu.itemStep
+                    captureModeDragArea.minimumDragY = -captureModeMenu.itemStep * 2
+                    captureModeDragArea.maximumDragY = captureModeMenu.itemStep
                 }
             }
         }
