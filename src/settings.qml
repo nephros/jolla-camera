@@ -99,7 +99,7 @@ SettingsBase {
             property var isoValues: [ 0, 100, 200, 400 ]
             property var focusDistanceValues: [ Camera.FocusInfinity ]
             property var flashValues: [ Camera.FlashOff ]
-            property var exposureModeValues: [ Camera.ExposureAuto ]
+            property var exposureModeValues: [ Camera.ExposureManual ]
             property var meteringModeValues: [
                 Camera.MeteringMatrix,
                 Camera.MeteringAverage,
