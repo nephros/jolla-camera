@@ -102,7 +102,6 @@ ListView {
             readonly property int duration: model.duration
 
             readonly property bool isImage: mimeType.indexOf("image/") == 0
-            readonly property bool scaled: item && item.scaled
             readonly property bool error: item && item.error
 
             readonly property bool isCurrentItem: ListView.isCurrentItem
@@ -121,7 +120,7 @@ ListView {
                     source: parent.source
 
                     active: isCurrentItem && root.active
-                    orientation: model.orientation
+                    contentRotation: -model.orientation
                     viewMoving: root.moving
                 }
             }
