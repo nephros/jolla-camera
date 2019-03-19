@@ -116,7 +116,15 @@ ListView {
 
                 ImageViewer {
 
-                    onClicked: overlay.active = !overlay.active
+                    onZoomedChanged: overlay.active = !zoomed
+                    onClicked: {
+                        if (zoomed) {
+                            zoomOut()
+                        } else {
+                            overlay.active = !overlay.active
+                        }
+                    }
+
                     source: parent.source
 
                     active: isCurrentItem && root.active
