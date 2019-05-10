@@ -361,9 +361,6 @@ FocusScope {
             captureBusy = true
             captureOverlay.writeMetaData()
 
-            shutterEvent.play()
-            captureAnimation.start()
-
             camera.imageCapture.captureToLocation(Settings.photoCapturePath('jpg'))
 
             if (focusTimer.running) {
@@ -426,6 +423,10 @@ FocusScope {
                                 0,
                                 camera.imageCapture.resolution)
                 }
+            }
+            onImageExposed: {
+                shutterEvent.play()
+                captureAnimation.start()
             }
             onCaptureFailed: {
                 camera.unlockAutoFocus()
