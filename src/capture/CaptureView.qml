@@ -512,12 +512,6 @@ FocusScope {
         value: camera
     }
 
-    Binding {
-        target: captureView.viewfinder
-        property: "mirror"
-        value: captureView._mirrorViewfinder
-    }
-
     SequentialAnimation {
         id: captureAnimation
 
