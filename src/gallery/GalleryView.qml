@@ -3,7 +3,6 @@ import QtQml.Models 2.1
 import Sailfish.Silica 1.0
 import Sailfish.Silica.private 1.0 as Private
 import Sailfish.Gallery 1.0
-import Sailfish.Media 1.0
 import QtMultimedia 5.0
 import com.jolla.camera 1.0
 import org.nemomobile.policy 1.0
@@ -173,7 +172,7 @@ ListView {
             active: false
             width: root.width
             height: root.height
-            sourceComponent: GStreamerVideoOutput {
+            sourceComponent: VideoOutput {
                 property alias player: mediaPlayer
                 visible: player.playbackState !== MediaPlayer.StoppedState
                 source: GalleryMediaPlayer {
