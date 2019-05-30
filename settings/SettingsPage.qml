@@ -87,7 +87,7 @@ Page {
                 description: Settings.locationEnabled
                             //% "Save current GPS coordinates in captured photos."
                             ? qsTrId("camera_settings-la-save_location_description")
-                            //% "Positioning is turned off.  Enable it in Settings | System | Location"
+                            //% "Positioning is turned off.  Enable it in Settings | Connectivity | Location"
                             : qsTrId("camera_settings-la-enable_location")
 
                 enabled: Settings.locationEnabled && AccessPolicy.cameraEnabled
