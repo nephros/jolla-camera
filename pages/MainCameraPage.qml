@@ -7,6 +7,8 @@ CameraPage {
     id: page
     galleryView: Qt.resolvedUrl("gallery/MainGalleryView.qml")
 
+    palette.colorScheme: Theme.LightOnDark
+
     Binding {
         target: window
         property: "galleryActive"
