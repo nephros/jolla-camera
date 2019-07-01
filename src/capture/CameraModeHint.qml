@@ -30,7 +30,7 @@ Loader {
             }
             TouchInteractionHint {
                 id: touchInteractionHint
-                loops: 1
+                loops: 3
                 alwaysRunToEnd: true
                 distance: Theme.itemSizeMedium
                 color: Theme.lightPrimaryColor
