@@ -131,7 +131,7 @@ Page {
                         text: qsTrId("camera_settings-la-memory_card_not_inserted")
                         visible: partitions.count == 0 && Settings.storagePath !== ""
                         onVisibleChanged: storageCombo.updateCurrentIndex()
-                        opacity: 0.4
+                        opacity: Theme.opacityLow
                     }
                     Repeater {
                         model: partitions
@@ -148,7 +148,7 @@ Page {
                                       ? qsTrId("camera_settings-la-unmounted_memory_card")
                                         //% "Memory card not inserted"
                                       : qsTrId("camera_settings-la-memory_card_not_inserted")
-                            opacity: model.devicePath !== "" && model.status == PartitionModel.Mounted ? 1.0 : 0.4
+                            opacity: model.devicePath !== "" && model.status == PartitionModel.Mounted ? 1.0 : Theme.opacityLow
                             onClicked: Settings.storagePath = model.mountPath
                         }
                     }
@@ -169,7 +169,7 @@ Page {
             SectionHeader {
                 //% "Back camera"
                 text: qsTrId("camera-ph-back-camera")
-                opacity: AccessPolicy.cameraEnabled ? 1.0 : 0.4
+                opacity: AccessPolicy.cameraEnabled ? 1.0 : Theme.opacityLow
             }
 
             ResolutionComboBox {
@@ -196,7 +196,7 @@ Page {
             SectionHeader {
                 //% "Front camera"
                 text: qsTrId("camera-ph-front-camera")
-                opacity: AccessPolicy.cameraEnabled ? 1.0 : 0.4
+                opacity: AccessPolicy.cameraEnabled ? 1.0 : Theme.opacityLow
             }
 
             ResolutionComboBox {

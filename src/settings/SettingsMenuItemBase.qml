@@ -37,7 +37,7 @@ MouseArea {
         radius: width / 2
         color: Theme.highlightBackgroundColor
 
-        opacity: menuItem.selected || menuItem.pressed ? 0.2 : 0.0
+        opacity: menuItem.selected || menuItem.pressed ? Theme.opacityFaint : 0.0
         Behavior on opacity { FadeAnimation {} }
     }
 }
