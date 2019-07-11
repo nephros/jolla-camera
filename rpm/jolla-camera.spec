@@ -38,6 +38,7 @@ Requires:  nemo-qml-plugin-policy-qt5
 Requires:  nemo-qml-plugin-time-qt5
 Requires:  nemo-qml-plugin-configuration-qt5
 Requires:  nemo-qml-plugin-notifications-qt5 >= 1.1.2
+Requires:  nemo-qml-plugin-systemsettings >= 0.5.18
 Requires:  sailfish-components-media-qt5 >= 0.0.18
 Requires:  sailfish-components-gallery-qt5 >= 1.0.4
 Requires:  sailfish-policy >= 0.2.59
