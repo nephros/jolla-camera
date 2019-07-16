@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 import Sailfish.Policy 1.0
+import org.nemomobile.systemsettings 1.0
 
 Loader {
     anchors.fill: parent
@@ -33,9 +34,15 @@ Loader {
             font.pixelSize: Theme.fontSizeExtraLarge
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
-            //% "Camera disabled by Sailfish Device Manager."
+            //: %1 is an operating system name without the OS suffix
+            //% "Camera disabled by %1 Device Manager."
             text: qsTrId("jolla-camera-la-camera_disabled_by_device_manager")
+                .arg(aboutSettings.baseOperatingSystemName)
             color: Theme.highlightColor
         }
+    }
+
+    AboutSettings {
+        id: aboutSettings
     }
 }

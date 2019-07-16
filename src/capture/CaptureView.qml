@@ -7,6 +7,7 @@ import org.nemomobile.policy 1.0
 import org.nemomobile.ngf 1.0
 import org.nemomobile.dbus 2.0
 import org.nemomobile.notifications 1.0
+import org.nemomobile.systemsettings 1.0
 import QtSystemInfo 5.0
 
 import "../settings"
@@ -162,9 +163,10 @@ FocusScope {
         }
 
         category: "x-nemo.general.warning"
-        //: Camera audio won't be recorded, microphone disabled by Sailfish Device Manager (could be shorter translation).
-        //% "Camera audio won't be recorded, microphone disabled by Sailfish Device Manager"
+        //: %1 is an operating system name without the OS suffix
+        //% "Camera audio won't be recorded, microphone disabled by %1 Device Manager"
         previewBody: qsTrId("jolla-camera-la-microphone_disallowed_by_policy")
+            .arg(aboutSettings.baseOperatingSystemName)
     }
 
     onEffectiveIsoChanged: {
@@ -805,5 +807,9 @@ FocusScope {
                 if (isOn) flashlightDbus.call("toggleFlashlight")
             }
         }
+    }
+
+    AboutSettings {
+        id: aboutSettings
     }
 }
