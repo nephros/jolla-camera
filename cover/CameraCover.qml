@@ -70,7 +70,7 @@ CoverBackground {
         height: settingsBar.height + 2 * Theme.paddingMedium
 
         gradient: Gradient {
-            GradientStop { position: 0.0; color: Theme.rgba("black", 0.7) }
+            GradientStop { position: 0.0; color: Theme.rgba("black", Theme.opacityOverlay) }
             GradientStop { position: 1.0; color: "transparent" }
         }
     }

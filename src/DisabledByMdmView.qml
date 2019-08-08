@@ -10,7 +10,7 @@ Loader {
     Behavior on opacity { FadeAnimation { duration: 400 } }
 
     sourceComponent: Rectangle {
-        color: Theme.rgba(Theme.highlightDimmerColor, 0.8)
+        color: Theme.rgba(Theme.highlightDimmerColor, Theme.opacityOverlay)
 
         TouchBlocker {
             anchors.fill: parent

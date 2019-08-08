@@ -201,11 +201,11 @@ SettingsOverlay {
         icon {
             opacity: {
                 if (captureTimer.running) {
-                    return 0.2
+                    return Theme.opacityLow
                 } else if (captureButton.pressed) {
-                    return 0.5
+                    return Theme.opacityHigh
                 } else if (captureView._captureOnFocus) {
-                    return 0.7
+                    return Theme.opacityOverlay
                 } else {
                     return 1.0
                 }

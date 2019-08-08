@@ -151,7 +151,7 @@ PinchArea {
             height: Theme.itemSizeExtraSmall
             anchors.horizontalCenter: parent.horizontalCenter
             radius: width / 2
-            color: Theme.rgba(_highlightColor, 0.4)
+            color: Theme.rgba(_highlightColor, Theme.opacityLow)
             opacity: y < -captureModeMenu.itemStep ? 1.0 - (captureModeMenu.itemStep + y) / (-captureModeMenu.itemStep/2)
                                                    : (y > 0 ? 1.0 - y/(captureModeMenu.itemStep/2) : 1.0)
             y: {
@@ -353,7 +353,7 @@ PinchArea {
                 anchors.fill: parent
                 visible: overlay._exposed
                 color: "black"
-                opacity: 0.6 * (1 - container.opacity)
+                opacity: Theme.opacityHigh * (1 - container.opacity)
             }
 
             Row {
@@ -509,7 +509,7 @@ PinchArea {
             enabled: !Settings.defaultSettings && parent.opacity > 0.0
 
             icon {
-                opacity: pressed ? 0.5 : 1.0
+                opacity: pressed ? Theme.opacityLow : 1.0
                 source: "image://theme/icon-camera-reset?" + (pressed ? _highlightColor : Theme.lightPrimaryColor)
             }
 
@@ -561,7 +561,7 @@ PinchArea {
 
         Rectangle {
             anchors.fill: parent
-            opacity: 0.8
+            opacity: Theme.opacityOverlay
             color: "black"
         }
 

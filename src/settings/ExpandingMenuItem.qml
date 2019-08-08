@@ -54,7 +54,7 @@ MouseArea {
             radius: width / 2
 
             color: highlightColor
-            opacity: menuItem.highlighted ? 0.4 : 0.0
+            opacity: menuItem.highlighted ? Theme.opacityLow : 0.0
             Behavior on opacity { FadeAnimation {} }
         }
 
