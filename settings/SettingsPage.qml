@@ -97,14 +97,15 @@ Page {
 
             ComboBox {
                 id: storageCombo
-                property int storageStatus: Settings.storagePathStatus
-                property string storagePath: Settings.storagePath
+                readonly property int storageStatus: Settings.storagePathStatus
+                readonly property string storagePath: Settings.storagePath
 
                 function updateCurrentIndex() {
                     for (var i = 0; i < menu.children.length; ++i) {
                         var item = menu.children[i]
                         if (item.hasOwnProperty("__silica_menuitem") && item.visible && item.mountPath == Settings.storagePath) {
                             currentIndex = i
+                            currentItem = item
                             return
                         }
                     }
