@@ -101,6 +101,9 @@ Page {
                 readonly property string storagePath: Settings.storagePath
 
                 function updateCurrentIndex() {
+                    if (!partitions.externalStoragesPopulated)
+                        return
+
                     for (var i = 0; i < menu.children.length; ++i) {
                         var item = menu.children[i]
                         if (item.hasOwnProperty("__silica_menuitem") && item.visible && item.mountPath == Settings.storagePath) {
@@ -130,13 +133,12 @@ Page {
                         // This is a placeholder for a card that was previously selected, but is no longer inserted
                         property string mountPath: Settings.storagePath
                         text: qsTrId("camera_settings-la-memory_card_not_inserted")
-                        visible: partitions.count == 0 && Settings.storagePath !== ""
+                        visible: partitions.externalStoragesPopulated && partitions.count == 0 && Settings.storagePath !== ""
                         onVisibleChanged: storageCombo.updateCurrentIndex()
                         opacity: Theme.opacityLow
                     }
                     Repeater {
                         model: partitions
-                        onCountChanged: storageCombo.updateCurrentIndex()
                         delegate: MenuItem {
                             property string mountPath: model.mountPath
                             onMountPathChanged: storageCombo.updateCurrentIndex()
@@ -224,5 +226,6 @@ Page {
     PartitionModel {
         id: partitions
         storageTypes: PartitionModel.External | PartitionModel.ExcludeParents
+        onExternalStoragesPopulatedChanged: storageCombo.updateCurrentIndex()
     }
 }
