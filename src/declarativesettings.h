@@ -49,6 +49,7 @@ public:
     Q_INVOKABLE QString videoCapturePath(const QString &extension);
 
     Q_INVOKABLE QUrl completeCapture(const QUrl &file);
+    Q_INVOKABLE void completePhoto(const QUrl &file);
 
 public slots:
     void updateLocation();
@@ -64,6 +65,7 @@ private slots:
     void verifyStoragePath();
 
 private:
+    void fixupPermissions(const QString &targetPath);
     bool verifyWritable(const QString &path);
     void verifyCapturePrefix();
     QString capturePath(const QString &format);
