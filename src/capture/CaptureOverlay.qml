@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import QtQuick.Window 2.0
 import QtMultimedia 5.4
 import QtPositioning 5.1
 import Sailfish.Silica 1.0
@@ -9,6 +10,7 @@ import org.nemomobile.policy 1.0
 import org.nemomobile.ngf 1.0
 import org.nemomobile.configuration 1.0
 import org.nemomobile.notifications 1.0
+import QtSensors 5.0
 import QtSystemInfo 5.0
 
 import "../settings"
@@ -26,16 +28,31 @@ SettingsOverlay {
     width: captureView.width
     height: captureView.height
 
-    function writeMetaData() {
-        var rotation = 0
-        switch (captureView.orientation) {
-        case Orientation.Landscape: rotation = 90; break;
-        case Orientation.PortraitInverted: rotation = 180; break;
-        case Orientation.LandscapeInverted: rotation = 270; break;
+    property int _pictureRotation: Screen.primaryOrientation == Qt.PortraitOrientation ? 0 : 90
+
+    OrientationSensor {
+        active: captureView.effectiveActive
+
+        onReadingChanged: {
+            switch (reading.orientation) {
+            case OrientationReading.TopUp:
+                _pictureRotation = 0; break
+            case OrientationReading.TopDown:
+                _pictureRotation = 180; break
+            case OrientationReading.LeftUp:
+                _pictureRotation = 270; break
+            case OrientationReading.RightUp:
+                _pictureRotation = 90; break
+            default:
+                // Keep device orientation at previous state
+            }
         }
+    }
+
+    function writeMetaData() {
         captureView.captureOrientation = camera.position === Camera.FrontFace
-                       ? (720 + camera.orientation - rotation) % 360
-                       : (720 + camera.orientation + rotation) % 360
+                       ? (720 + camera.orientation - _pictureRotation) % 360
+                       : (720 + camera.orientation + _pictureRotation) % 360
 
         // Camera documentation says dateTimeOriginal should be used but at the moment CameraBinMetaData uses only
         // date property (which the documentation doesn't even list)
