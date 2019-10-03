@@ -18,6 +18,7 @@ import "../settings"
 SettingsOverlay {
     id: settingsOverlay
 
+    property bool reallyWideScreen: captureView.reallyWideScreen
     property var captureView
     property var camera
     property Item focusArea
