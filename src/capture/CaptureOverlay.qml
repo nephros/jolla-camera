@@ -11,7 +11,6 @@ import org.nemomobile.ngf 1.0
 import org.nemomobile.configuration 1.0
 import org.nemomobile.notifications 1.0
 import QtSensors 5.0
-import QtSystemInfo 5.0
 
 import "../settings"
 

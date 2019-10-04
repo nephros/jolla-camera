@@ -8,7 +8,6 @@ import org.nemomobile.ngf 1.0
 import org.nemomobile.dbus 2.0
 import org.nemomobile.notifications 1.0
 import org.nemomobile.systemsettings 1.0
-import QtSystemInfo 5.0
 
 import "../settings"
 
@@ -483,6 +482,8 @@ FocusScope {
 
         metaData {
             orientation: captureView.captureOrientation
+            cameraModel: deviceInfo.model
+            cameraManufacturer: deviceInfo.manufacturer
         }
 
         onDeviceIdChanged: captureView.reload()
@@ -498,10 +499,7 @@ FocusScope {
     }
 
     DeviceInfo {
-        Component.onCompleted: {
-            camera.metaData.cameraModel = model()
-            camera.metaData.cameraManufacturer = manufacturer()
-        }
+        id: deviceInfo
     }
 
     CameraExtensions {
