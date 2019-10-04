@@ -5,7 +5,8 @@ Item {
     // Position bottom controls so that they are vertically centered
     // inside the bottom area below the 4:3 aspect ratio viewport
     property int smallMargin: Theme.paddingLarge + Theme.paddingMedium
-    property int largeMargin: Math.max(smallMargin, (Screen.height - 4/3*Screen.width)/2 - height/2)
+    property int largeMargin: Math.max(smallMargin,
+                                       (Screen.height - 4/3*Screen.width - (reallyWideScreen ? Theme.itemSizeLarge : 0))/2 - height/2)
     anchors {
         topMargin: smallMargin
         leftMargin: smallMargin

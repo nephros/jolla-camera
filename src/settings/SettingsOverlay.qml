@@ -525,7 +525,7 @@ PinchArea {
                                                     : parent.width - width - (isPortrait ? 0 : Theme.paddingLarge)
         anchors {
             verticalCenter: parent.verticalCenter
-            verticalCenterOffset: isPortrait ? Theme.paddingMedium : 0
+            verticalCenterOffset: isPortrait ? (reallyWideScreen ? -Theme.itemSizeSmall : Theme.paddingMedium) : 0
         }
         spacing: Theme.paddingSmall
         opacity: _commonControlOpacity
