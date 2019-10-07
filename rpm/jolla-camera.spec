@@ -51,7 +51,6 @@ Requires:  sailfish-content-graphics
 Requires:  gstreamer1.0-plugins-good
 Requires:  gstreamer1.0-plugins-bad
 Requires:  dconf
-Requires:  qt5-qtdeclarative-systeminfo
 Requires:  %{name}-lockscreen = %{version}
 Requires:  %{name}-settings = %{version}
 %{_oneshot_requires_post}
