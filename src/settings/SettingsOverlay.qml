@@ -270,6 +270,11 @@ PinchArea {
                 property real pressX
                 property real pressY
 
+                function outOfBounds(mouseX, mouseY) {
+                    return mouseX < Theme.paddingLarge || mouseX > width - Theme.paddingLarge
+                            || mouseY < Theme.paddingLarge || mouseY > height - Theme.paddingLarge
+                }
+
                 anchors.fill: parent
                 opacity: Math.min(1 - overlay._progress, 1 - anchorContainer.opacity)
                 enabled: !overlay._pinchActive && showCommonControls
@@ -280,6 +285,8 @@ PinchArea {
                 }
 
                 onClicked: {
+                    // don't react near display edges
+                    if (outOfBounds(mouseX, mouseY)) return
                     if (whiteBalanceMenu.expanded) {
                         whiteBalanceMenu.open = false
                     } else if (overlay.inButtonLayout) {
@@ -290,6 +297,8 @@ PinchArea {
                 }
 
                 onPressAndHold: {
+                    // don't react near display edges
+                    if (outOfBounds(mouseX, mouseY)) return
                     if (!overlay._topMenuOpen) {
                         var dragDistance = Math.max(Math.abs(mouseX - pressX),
                                                     Math.abs(mouseY - pressY))
