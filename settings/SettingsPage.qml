@@ -142,7 +142,8 @@ Page {
                         delegate: MenuItem {
                             property string mountPath: model.mountPath
                             onMountPathChanged: storageCombo.updateCurrentIndex()
-                            text: model.status == PartitionModel.Mounted
+                            enabled: model.status === PartitionModel.Mounted && model.devicePath !== ""
+                            text: model.status === PartitionModel.Mounted
                                     //: the parameter is the capacity of the memory card, e.g. "4.2 GB"
                                     //% "Memory card %1"
                                   ? qsTrId("camera_settings-la-memory_card").arg(Format.formatFileSize(model.bytesAvailable))
@@ -151,7 +152,6 @@ Page {
                                       ? qsTrId("camera_settings-la-unmounted_memory_card")
                                         //% "Memory card not inserted"
                                       : qsTrId("camera_settings-la-memory_card_not_inserted")
-                            opacity: model.devicePath !== "" && model.status == PartitionModel.Mounted ? 1.0 : Theme.opacityLow
                             onClicked: Settings.storagePath = model.mountPath
                         }
                     }
