@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2013 - 2020 Jolla Ltd.
+ * Copyright (c) 2020 Open Mobile Platform LLC.
+ *
+ * License: Proprietary
+ */
+
 import QtQuick 2.1
 import QtQml.Models 2.1
 import Sailfish.Silica 1.0
@@ -171,7 +178,6 @@ ListView {
     }
 
     contentItem.children: [
-        Private.FadeBlocker {},
         Loader {
             id: playerLoader
 
