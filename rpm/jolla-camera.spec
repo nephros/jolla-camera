@@ -44,6 +44,7 @@ Requires:  libkeepalive >= 1.7.0
 Requires:  sailfish-components-media-qt5 >= 0.0.18
 Requires:  sailfish-components-gallery-qt5 >= 1.0.4
 Requires:  sailfish-policy >= 0.2.59
+Requires:  jolla-settings-system >= 1.0.70
 Requires:  libjollasignonuiservice-qt5-plugin >= 0.0.29
 Requires:  libngf-qt5-declarative
 Requires:  ambienced
