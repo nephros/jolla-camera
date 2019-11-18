@@ -186,6 +186,11 @@ ListView {
                         }
                     }
                     onLoadedChanged: if (loaded) playerLoader.anchors.centerIn = currentItem
+                    onStatusChanged: {
+                        if (status === MediaPlayer.InvalidMedia) {
+                            root.currentItem.item.displayError()
+                        }
+                    }
                 }
             }
         }
