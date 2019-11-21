@@ -13,6 +13,9 @@
 #include <QTemporaryFile>
 #include <partitionmanager.h>
 
+#include <unistd.h>
+#include <sys/types.h>
+
 DeclarativeSettings::DeclarativeSettings(QObject *parent)
     : QObject(parent)
     , m_partitionManager(new PartitionManager(this))
@@ -29,7 +32,9 @@ DeclarativeSettings::DeclarativeSettings(QObject *parent)
 
     // protect against camera crashes leaving files in the hidden directory
     for (const QFileInfo &info : QDir(videoDirectory() + QLatin1String("/.recording")).entryInfoList(QDir::Files)) {
-        QFile(info.absoluteFilePath()).rename(videoDirectory() + info.fileName());
+        QString targetPath = videoDirectory() + "/" + info.fileName();
+        QFile(info.absoluteFilePath()).rename(targetPath);
+        fixupPermissions(targetPath);
     }
 
     updateLocation();
@@ -105,6 +110,13 @@ DeclarativeSettings::StoragePathStatus DeclarativeSettings::storagePathStatus() 
     return m_storagePathStatus;
 }
 
+void DeclarativeSettings::fixupPermissions(const QString &targetPath)
+{
+    const QByteArray path = targetPath.toUtf8();
+    if (chown(path.constData(), getuid(), getgid()) != 0)
+         qWarning() << "Could not change owner/group of resulting photo capture file:" << targetPath << strerror(errno);
+}
+
 bool DeclarativeSettings::verifyWritable(const QString &path)
 {
     QTemporaryFile file(path + QStringLiteral("/XXXXXX.tmp"));
@@ -173,6 +185,11 @@ QString DeclarativeSettings::videoCapturePath(const QString &extension)
     return capturePath(fileFormat);
 }
 
+void DeclarativeSettings::completePhoto(const QUrl &file)
+{
+    fixupPermissions(file.path());
+}
+
 QUrl DeclarativeSettings::completeCapture(const QUrl &file)
 {
     const QString recordingDir = QStringLiteral("/.recording/");
@@ -186,6 +203,7 @@ QUrl DeclarativeSettings::completeCapture(const QUrl &file)
     targetPath.remove(index, recordingDir.length() - 1);
 
     if (QFile::rename(absolutePath, targetPath)) {
+        fixupPermissions(targetPath);
         return QUrl::fromLocalFile(targetPath);
     } else {
         QFile::remove(absolutePath);
