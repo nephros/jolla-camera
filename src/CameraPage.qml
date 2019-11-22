@@ -30,6 +30,7 @@ Page {
         switcherView.returnToCaptureMode()
     }
 
+    palette.colorScheme: Theme.LightOnDark
     allowedOrientations: captureView.inButtonLayout ? page.orientation : Orientation.All
     orientationTransitions: Transition {
         to: 'Portrait,Landscape,PortraitInverted,LandscapeInverted'
@@ -125,11 +126,9 @@ Page {
                 }
 
                 BusyIndicator {
-                    id: galleryIndicator
-                    visible: galleryLoader.status == Loader.Loading
                     anchors.centerIn: parent
                     size: BusyIndicatorSize.Large
-                    running: true
+                    running: galleryLoader.status == Loader.Loading
                 }
             }
 
@@ -211,6 +210,4 @@ Page {
         preventBlanking: (galleryLoader.item && galleryLoader.item.playing)
                          || captureView.camera.videoRecorder.recorderState == CameraRecorder.RecordingState
     }
-
-
 }
