@@ -23,6 +23,7 @@ ListView {
     readonly property QtObject player: playerLoader.item ? playerLoader.item.player : null
     readonly property bool playing: player && player.playing
     property int _preOrientationChangeIndex
+    property int _oldCount
 
     function _positionViewAtBeginning() {
         currentIndex = count - 1
@@ -84,7 +85,12 @@ ListView {
 
     Connections {
         target: captureModel
-        onCountChanged: if (captureModel.count === 0) page.returnToCaptureMode()
+        onCountChanged: {
+            if (captureModel.count === 0) page.returnToCaptureMode()
+            // Move to the new added item if we are currently in the first one
+            if (count > _oldCount && currentIndex === count - 2) _positionViewAtBeginning()
+            _oldCount = count
+        }
     }
 
     DelegateModel {
