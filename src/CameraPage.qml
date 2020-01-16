@@ -31,35 +31,28 @@ Page {
     }
 
     palette.colorScheme: Theme.LightOnDark
+
+    _opaqueBackground: true
+
     allowedOrientations: captureView.inButtonLayout ? page.orientation : Orientation.All
-    orientationTransitions: Transition {
-        to: 'Portrait,Landscape,PortraitInverted,LandscapeInverted'
-        from: 'Portrait,Landscape,PortraitInverted,LandscapeInverted'
-        SequentialAnimation {
-            PropertyAction {
-                target: page
-                property: 'orientationTransitionRunning'
-                value: true
-            }
-            FadeAnimation {
-                target: pageStack
-                to: 0
-                duration: 150
-            }
-            PropertyAction {
-                target: page
-                properties: 'width,height,rotation,orientation'
-            }
-            FadeAnimation {
-                target: pageStack
-                to: 1
-                duration: 150
-            }
-            PropertyAction {
-                target: page
-                property: 'orientationTransitionRunning'
-                value: false
-            }
+
+
+    Item {
+        parent: page.parent
+
+        width: page.width
+        height: page.height
+        rotation: page.rotation
+
+        anchors.centerIn: parent
+        z: -1
+
+        Rectangle {
+            x: galleryItem.x - switcherView.contentX
+            y: galleryItem.y - switcherView.contentY
+            width: galleryItem.width
+            height: galleryItem.height
+            color: "black"
         }
     }
 
