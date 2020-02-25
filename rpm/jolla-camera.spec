@@ -137,7 +137,6 @@ install -m 644 -p %{SOURCE1} %{buildroot}%{_datadir}/mapplauncherd/privileges.d/
 %{_libdir}/qt5/qml/com/jolla/camera
 %{_sysconfdir}/dconf/db/vendor.d/jolla-camera.txt
 %{_oneshotdir}/camera-enable-hints
-%{_oneshotdir}/camera-remove-deprecated-dconfkeys
 
 %files ts-devel
 %defattr(-,root,root,-)
@@ -158,10 +157,6 @@ install -m 644 -p %{SOURCE1} %{buildroot}%{_datadir}/mapplauncherd/privileges.d/
 
 %post
 %{_bindir}/add-oneshot dconf-update
-
-if [ "$1" -eq 2 ]; then
-%{_bindir}/add-oneshot --user camera-remove-deprecated-dconfkeys
-fi
 
 if [ "$1" -eq 1 ]; then
 %{_bindir}/add-oneshot --user --now camera-enable-hints
