@@ -2,7 +2,6 @@ Name:       jolla-camera
 Summary:    Jolla Camera application
 Version:    1.0.24
 Release:    1
-Group:      Applications/Multimedia
 License:    Proprietary
 URL:        https://bitbucket.org/jolla/ui-jolla-camera
 Source0:    %{name}-%{version}.tar.bz2
@@ -61,33 +60,29 @@ The Jolla Camera application.
 
 %package ts-devel
 Summary:   Translation source for Jolla Camera
-Group:     Applications/Multimedia
 
 %description ts-devel
-Translation source for Jolla Camera
+Translation source for Jolla Camera.
 
 %package lockscreen
 Summary:   Quick capture viewfinder for the lockscreen.
-Group:     System/Applications
 Requires:   %{name} = %{version}-%{release}
 
 %description lockscreen
-%{summary}
+%{summary}.
 
 %package settings
 Summary:   Setting page for jolla-camera
-Group:     System/Applications
 Requires:   %{name} = %{version}-%{release}
 Requires:  jolla-settings
 Requires:  jolla-settings-system >= 0.11.37
 Requires:  sailfish-policy
 
 %description settings
-%{summary}
+%{summary}.
 
 %package tests
 Summary:    Unit tests for Jolla Camera
-Group:      Applications/Multimedia
 BuildRequires:  pkgconfig(Qt5Test)
 BuildRequires:  pkgconfig(Qt5Multimedia)
 Requires:   %{name} = %{version}-%{release}
@@ -96,7 +91,7 @@ Requires:   qt5-qtdeclarative-devel-tools
 Requires:   dbus-x11
 
 %description tests
-This package contains QML unit tests for Jolla Camera application
+This package contains QML unit tests for Jolla Camera application.
 
 %prep
 %setup -q -n %{name}-%{version}
@@ -105,7 +100,7 @@ This package contains QML unit tests for Jolla Camera application
 
 %qmake5 %{name}.pro
 
-make %{_smp_mflags}
+make %{?_smp_mflags}
 
 %install
 rm -rf %{buildroot}
@@ -128,8 +123,8 @@ install -m 644 -p %{SOURCE1} %{buildroot}%{_datadir}/mapplauncherd/privileges.d/
 # belongs to jolla-camera-lockscreen.
 %dir %{_datadir}/jolla-camera
 %{_datadir}/jolla-camera/camera.qml
-%{_datadir}/jolla-camera/pages/*
-%{_datadir}/jolla-camera/cover/*
+%{_datadir}/jolla-camera/pages
+%{_datadir}/jolla-camera/cover
 %{_datadir}/mapplauncherd/privileges.d/*
 %{_bindir}/jolla-camera
 %{_datadir}/translations/jolla-camera_eng_en.qm
@@ -153,7 +148,7 @@ install -m 644 -p %{SOURCE1} %{buildroot}%{_datadir}/mapplauncherd/privileges.d/
 
 %files tests
 %defattr(-,root,root,-)
-/opt/tests/jolla-camera/*
+/opt/tests/jolla-camera
 
 %post
 %{_bindir}/add-oneshot dconf-update || :
