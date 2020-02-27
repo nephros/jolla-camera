@@ -156,10 +156,5 @@ install -m 644 -p %{SOURCE1} %{buildroot}%{_datadir}/mapplauncherd/privileges.d/
 /opt/tests/jolla-camera/*
 
 %post
-%{_bindir}/add-oneshot dconf-update
-
-if [ "$1" -eq 1 ]; then
-%{_bindir}/add-oneshot --user --now camera-enable-hints
-fi
-
-
+%{_bindir}/add-oneshot dconf-update || :
+%{_bindir}/add-oneshot --new-users camera-enable-hints || :
