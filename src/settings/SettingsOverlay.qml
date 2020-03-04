@@ -412,6 +412,23 @@ PinchArea {
                 }
 
                 SettingsMenu {
+                    id: exposureModeMenu
+
+                    visible: model.length > 1
+                    width: overlay._menuWidth
+                    title: Settings.exposureModeText
+                    header: upperHeader
+                    model: Settings.mode.exposureModeValues
+                    delegate: SettingsMenuItem {
+                        settings: Settings.mode
+                        property: "exposureMode"
+                        value: modelData
+                        icon: Settings.exposureModeIcon(modelData)
+                        iconVisible: !selected
+                    }
+                }
+
+                SettingsMenu {
                     id: isoMenu
 
                     width: overlay._menuWidth
@@ -487,6 +504,18 @@ PinchArea {
         Item {
             width: overlay._menuWidth
             height: width
+            visible: Settings.mode.exposureModeValues.length > 1
+            y: topRow.dragY(exposureModeMenu.currentItem.y)
+
+            Image {
+                anchors.centerIn: parent
+                source: Settings.exposureModeIcon(Settings.mode.exposureMode) + "?" + Theme.lightPrimaryColor
+            }
+        }
+
+        Item {
+            width: overlay._menuWidth
+            height: width
             y: topRow.dragY(isoMenu.currentItem.y)
 
             IsoItem {
@@ -538,7 +567,7 @@ PinchArea {
         }
         spacing: Theme.paddingSmall
         opacity: _commonControlOpacity
-        visible: opacity > 0.0
+        visible: opacity > 0.0 && Settings.mode.exposureMode == Camera.ExposureManual
 
         WhiteBalanceMenu {
             id: whiteBalanceMenu

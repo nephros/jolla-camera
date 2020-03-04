@@ -13,6 +13,7 @@ SettingsBase {
                                                  "iso": 0,
                                                  "timer": 0,
                                                  "viewfinderGrid": "none",
+                                                 "exposureMode": Camera.ExposureManual,
                                                  "flash": ((modeSettings.captureMode == Camera.CaptureStillImage) &&
                                                            (globalSettings.cameraDevice === "primary") ?
                                                                Camera.FlashAuto : Camera.FlashOff)
@@ -21,6 +22,7 @@ SettingsBase {
     readonly property bool defaultSettings: modeSettings.iso === settingsDefaults["iso"] &&
                                             modeSettings.timer === settingsDefaults["timer"] &&
                                             modeSettings.viewfinderGrid === settingsDefaults["viewfinderGrid"] &&
+                                            modeSettings.exposureMode === settingsDefaults["exposureMode"] &&
                                             modeSettings.flash == settingsDefaults["flash"]
     // FIXME: should use something like QtMultimedia.availableCameras.length > 1, but that currently
     // returns bogus cameras on Sailfish when they don't really exist.
@@ -89,7 +91,7 @@ SettingsBase {
 
             property int iso: 0
             property int flash: Camera.FlashOff
-            property int exposureMode: 0
+            property int exposureMode: Camera.ExposureManual
             property int meteringMode: Camera.MeteringMatrix
             property int timer: 0
             property string viewfinderGrid: "none"
@@ -102,7 +104,12 @@ SettingsBase {
             property var isoValues: [ 0, 100, 200, 400 ]
             property var focusDistanceValues: [ Camera.FocusInfinity ]
             property var flashValues: [ Camera.FlashOff ]
-            property var exposureModeValues: [ Camera.ExposureManual ]
+            property var exposureModeValues: [
+                Camera.ExposureManual,
+                Camera.ExposureNight,
+                Camera.ExposurePortrait,
+                Camera.ExposureSports
+            ]
             property var meteringModeValues: [
                 Camera.MeteringMatrix,
                 Camera.MeteringAverage,
@@ -164,6 +171,36 @@ SettingsBase {
         case Camera.MeteringMatrix:  return "image://theme/icon-camera-metering-matrix"
         case Camera.MeteringAverage: return "image://theme/icon-camera-metering-weighted"
         case Camera.MeteringSpot:    return "image://theme/icon-camera-metering-spot"
+        }
+    }
+
+    function exposureModeIcon(exposureMode) {
+        switch (exposureMode) {
+        case Camera.ExposureManual:         return "image://theme/icon-camera-mode-automatic"
+        case Camera.ExposurePortrait:       return "image://theme/icon-camera-mode-portrait"
+        case Camera.ExposureNight:          return "image://theme/icon-camera-mode-night"
+        case Camera.ExposureSports:         return "image://theme/icon-camera-mode-sports"
+        case Camera.ExposureHDR:            return "image://theme/icon-camera-mode-hdr"
+        }
+    }
+
+    function exposureModeText(exposureMode) {
+        switch (exposureMode) {
+        //: "Automatic exposure mode"
+        //% "Automatic exposure"
+        case Camera.ExposureManual:         return qsTrId("camera_settings-la-exposure-automatic")
+        //: "Portrait exposure mode"
+        //% "Portrait exposure"
+        case Camera.ExposurePortrait:       return qsTrId("camera_settings-la-exposure-portrait")
+        //: "Night exposure mode"
+        //% "Night exposure"
+        case Camera.ExposureNight:          return qsTrId("camera_settings-la-exposure-night")
+        //: "Sports exposure mode"
+        //% "Sports exposure"
+        case Camera.ExposureSports:         return qsTrId("camera_settings-la-exposure-sports")
+        //: "HDR exposure mode"
+        //% "HDR exposure"
+        case Camera.ExposureHDR:            return qsTrId("camera_settings-la-exposure-hdr")
         }
     }
 
