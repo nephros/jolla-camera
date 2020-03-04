@@ -94,13 +94,21 @@ CoverBackground {
                   : ""
         }
         CoverIcon {
+            visible: Settings.mode.exposureMode == Camera.ExposureManual
             icon: Settings.whiteBalanceIcon(Settings.global.whiteBalance)
         }
         IsoItem {
             scale: 0.75
+            visible: Settings.mode.exposureMode == Camera.ExposureManual
             value: Settings.mode.iso
             color: Theme.colorScheme == Theme.LightOnDark
                    ? Theme.highlightColor : Theme.highlightFromColor(Theme.highlightColor, Theme.LightOnDark)
+        }
+        CoverIcon {
+            visible: icon != ""
+            icon: Settings.mode.exposureModeValues.length > 0
+                  ? Settings.exposureModeIcon(Settings.mode.exposureMode)
+                  : ""
         }
         CoverIcon {
             visible: !flashIcon.visible
