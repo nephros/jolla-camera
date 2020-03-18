@@ -1,5 +1,6 @@
 import QtQuick 2.1
 import QtQuick.Window 2.1
+import Sailfish.QrFilter 1.0
 import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
 import QtMultimedia 5.0
@@ -47,6 +48,12 @@ ApplicationWindow {
 
             width: window.width
             height: window.height
+            filters: [ qrFilter ]
+        }
+
+        QrFilter {
+            id: qrFilter
+            active: false
         }
     }
 }
