@@ -175,7 +175,7 @@ FocusScope {
         urgency: Notification.Critical
         //: %1 is an operating system name without the OS suffix
         //% "Camera audio won't be recorded, microphone disabled by %1 Device Manager"
-        previewBody: qsTrId("jolla-camera-la-microphone_disallowed_by_policy")
+        body: qsTrId("jolla-camera-la-microphone_disallowed_by_policy")
             .arg(aboutSettings.baseOperatingSystemName)
     }
 
