@@ -20,6 +20,7 @@ class DeclarativeSettings : public QObject
     Q_PROPERTY(QString photoDirectory READ photoDirectory NOTIFY photoDirectoryChanged)
     Q_PROPERTY(QString videoDirectory READ videoDirectory NOTIFY videoDirectoryChanged)
     Q_PROPERTY(QString storagePath READ storagePath WRITE setStoragePath NOTIFY storagePathChanged)
+    Q_PROPERTY(qint64 storageMaxFileSize READ storageMaxFileSize NOTIFY storageMaxFileSizeChanged)
     Q_PROPERTY(StoragePathStatus storagePathStatus READ storagePathStatus NOTIFY storagePathStatusChanged)
     Q_PROPERTY(bool locationEnabled READ locationEnabled NOTIFY locationEnabledChanged)
     Q_ENUMS(StoragePathStatus)
@@ -44,6 +45,9 @@ public:
     QString storagePath() const;
     void setStoragePath(const QString &path);
     StoragePathStatus storagePathStatus() const;
+    QString storagePathFilesystem() const;
+    qint64 storageMaxFileSize() const;
+    Q_INVOKABLE void refreshMaxFileSize();
 
     Q_INVOKABLE QString photoCapturePath(const QString &extension);
     Q_INVOKABLE QString videoCapturePath(const QString &extension);
@@ -60,6 +64,7 @@ signals:
     void videoDirectoryChanged();
     void storagePathChanged();
     void storagePathStatusChanged();
+    void storageMaxFileSizeChanged();
 
 private slots:
     void verifyStoragePath();
@@ -72,6 +77,7 @@ private:
 
     PartitionManager *m_partitionManager;
     MGConfItem m_storagePath;
+    MGConfItem m_minSpaceForRecording;
 
     QString m_prefix;
     QString m_photoDirectory;
@@ -80,6 +86,7 @@ private:
 
     bool m_locationEnabled;
     StoragePathStatus m_storagePathStatus;
+    qint64 m_storageMaxFileSize;
 };
 
 #endif

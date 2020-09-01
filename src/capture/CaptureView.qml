@@ -66,8 +66,17 @@ FocusScope {
                 || orientation == Orientation.PortraitInverted
     readonly property bool effectiveActive: (active || recording) && _applicationActive
 
-    readonly property bool _canCapture: (camera.captureMode == Camera.CaptureStillImage && camera.imageCapture.ready)
-                || (camera.captureMode == Camera.CaptureVideo && camera.videoRecorder.recorderStatus >= CameraRecorder.LoadedStatus)
+    readonly property bool _canCapture: {
+        switch (camera.captureMode) {
+            case Camera.CaptureStillImage: 
+                return camera.imageCapture.ready
+            case Camera.CaptureVideo:
+                return camera.videoRecorder.recorderStatus >= CameraRecorder.LoadedStatus 
+                    && captureOverlay != null && captureOverlay._recSecsRemaining > 0
+            default: 
+                return false
+        }
+    }
 
     property bool _captureQueued
     property bool captureBusy
@@ -152,14 +161,16 @@ FocusScope {
             startRecordTimer.running = false
         } else if (camera.videoRecorder.recorderState == CameraRecorder.RecordingState) {
             camera.videoRecorder.stop()
-        } else if (Settings.mode.timer != 0) {
-            microphoneWarningNotification.publishIfNeeded()
-            captureTimer.restart()
-        } else if (camera.captureMode == Camera.CaptureStillImage) {
-            camera.captureImage()
-        } else {
-            microphoneWarningNotification.publishIfNeeded()
-            camera.record()
+        } else if (_canCapture) {
+            if (Settings.mode.timer != 0) {
+                microphoneWarningNotification.publishIfNeeded()
+                captureTimer.restart()
+            } else if (camera.captureMode == Camera.CaptureStillImage) {
+                camera.captureImage()
+            } else {
+                microphoneWarningNotification.publishIfNeeded()
+                camera.record()
+            }
         }
     }
 
