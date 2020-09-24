@@ -15,13 +15,16 @@
 
 #include <unistd.h>
 #include <sys/types.h>
+#include <limits.h>
 
 DeclarativeSettings::DeclarativeSettings(QObject *parent)
     : QObject(parent)
     , m_partitionManager(new PartitionManager(this))
     , m_storagePath(QStringLiteral("/apps/jolla-camera/storagePath"))
+    , m_minSpaceForRecording(QStringLiteral("/apps/jolla-camera/minSpaceForRecording"))
     , m_locationEnabled(false)
     , m_storagePathStatus(NotSet)
+    , m_storageMaxFileSize(0)
 {
     connect(&m_storagePath, SIGNAL(valueChanged()), this, SLOT(verifyStoragePath()));
     connect(m_partitionManager, SIGNAL(partitionRemoved(const Partition&)), this, SLOT(verifyStoragePath()));
@@ -110,6 +113,11 @@ DeclarativeSettings::StoragePathStatus DeclarativeSettings::storagePathStatus() 
     return m_storagePathStatus;
 }
 
+qint64 DeclarativeSettings::storageMaxFileSize() const
+{
+    return m_storageMaxFileSize;
+}
+
 void DeclarativeSettings::fixupPermissions(const QString &targetPath)
 {
     const QByteArray path = targetPath.toUtf8();
@@ -124,6 +132,15 @@ bool DeclarativeSettings::verifyWritable(const QString &path)
     return file.open();
 }
 
+static qint64 getMaxBytes(Partition partition)
+{
+    qint64 realMaxBytes = partition.bytesAvailable();
+    if (partition.filesystemType() == "vfat" && partition.bytesAvailable() > ULONG_MAX)
+        realMaxBytes = ULONG_MAX;
+
+    return realMaxBytes;
+}
+
 void DeclarativeSettings::verifyStoragePath()
 {
     const QString prevPhotoPath = m_photoDirectory;
@@ -131,6 +148,7 @@ void DeclarativeSettings::verifyStoragePath()
 
     QString path = storagePath();
     StoragePathStatus oldStatus = m_storagePathStatus;
+    qint64 oldMaxBytes = m_storageMaxFileSize;
 
     m_storagePathStatus = path.isEmpty() ? NotSet : Unavailable;
 
@@ -140,9 +158,16 @@ void DeclarativeSettings::verifyStoragePath()
         if (it != partitions.end()) {
             const Partition &partition = *it;
             if (partition.status() == Partition::Mounted) {
-                m_storagePathStatus = verifyWritable(storagePath()) ? Available : Unavailable;
+                if (verifyWritable(storagePath())) {
+                    m_storagePathStatus = Available;
+                    m_storageMaxFileSize = getMaxBytes(partition);
+                } else {
+                    m_storagePathStatus = Unavailable;
+                    m_storageMaxFileSize = 0;
+                }
             } else if(partition.status() == Partition::Mounting) {
                 m_storagePathStatus = Mounting;
+                m_storageMaxFileSize = 0;
             }
         }
     }
@@ -153,6 +178,15 @@ void DeclarativeSettings::verifyStoragePath()
     } else {
         m_photoDirectory = QStandardPaths::writableLocation(QStandardPaths::PicturesLocation) + QLatin1String("/Camera");
         m_videoDirectory = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation) + QLatin1String("/Camera");
+        QVector<Partition> partitions = m_partitionManager->partitions(Partition::User | Partition::Mass);
+        auto it = std::find_if(partitions.begin(), partitions.end(), [path](const Partition &partition) {
+            return QStandardPaths::writableLocation(QStandardPaths::MoviesLocation).startsWith(partition.mountPath()); });
+        if (it != partitions.end()) {
+            const Partition &partition = *it;
+            m_storageMaxFileSize = qMax((qint64)0, getMaxBytes(partition) - (m_minSpaceForRecording.value(100).toLongLong() << 20));
+        } else {
+            m_storageMaxFileSize = 0;
+        }
     }
 
     QDir(m_photoDirectory).mkpath(QLatin1String("."));
@@ -165,8 +199,13 @@ void DeclarativeSettings::verifyStoragePath()
         emit videoDirectoryChanged();
     }
 
-    if (oldStatus != m_storagePathStatus)
+    if (oldStatus != m_storagePathStatus) {
         emit storagePathStatusChanged();
+    }
+
+    if (oldMaxBytes != m_storageMaxFileSize) {
+        emit storageMaxFileSizeChanged();
+    }
 }
 
 QString DeclarativeSettings::photoCapturePath(const QString &extension)
@@ -190,6 +229,11 @@ void DeclarativeSettings::completePhoto(const QUrl &file)
     fixupPermissions(file.path());
 }
 
+void DeclarativeSettings::refreshMaxFileSize()
+{
+    m_partitionManager->refresh();
+}
+
 QUrl DeclarativeSettings::completeCapture(const QUrl &file)
 {
     const QString recordingDir = QStringLiteral("/.recording/");
@@ -204,6 +248,7 @@ QUrl DeclarativeSettings::completeCapture(const QUrl &file)
 
     if (QFile::rename(absolutePath, targetPath)) {
         fixupPermissions(targetPath);
+        refreshMaxFileSize();
         return QUrl::fromLocalFile(targetPath);
     } else {
         QFile::remove(absolutePath);
