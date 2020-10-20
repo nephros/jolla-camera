@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2013 - 2019 Jolla Ltd.
+ * Copyright (c) 2020 Open Mobile Platform LLC.
+ *
+ * License: Proprietary
+ */
 import QtQuick 2.4
 import QtMultimedia 5.4
 import Sailfish.Silica 1.0
@@ -166,10 +172,10 @@ FocusScope {
             }
         }
 
-        category: "x-nemo.general.warning"
+        urgency: Notification.Critical
         //: %1 is an operating system name without the OS suffix
         //% "Camera audio won't be recorded, microphone disabled by %1 Device Manager"
-        previewBody: qsTrId("jolla-camera-la-microphone_disallowed_by_policy")
+        body: qsTrId("jolla-camera-la-microphone_disallowed_by_policy")
             .arg(aboutSettings.baseOperatingSystemName)
     }
 
