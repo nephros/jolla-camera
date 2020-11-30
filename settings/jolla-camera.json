@@ -3,7 +3,7 @@
         {
             "path": "applications/jolla-camera.desktop",
             "title": "Camera",
-            "type": "page",
+            "type": "application",
             "icon": "image://theme/icon-m-camera",
             "params": {
                 "source": "/usr/share/jolla-settings/pages/jolla-camera/SettingsPage.qml"
