@@ -53,6 +53,7 @@ Requires:  gstreamer1.0-plugins-bad
 Requires:  dconf
 Requires:  %{name}-lockscreen = %{version}
 Requires:  %{name}-settings = %{version}
+Requires:  sailjail-launch-approval
 %{_oneshot_requires_post}
 
 %description
