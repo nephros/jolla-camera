@@ -5,5 +5,5 @@ Name=Camera
 X-MeeGo-Logical-Id=jolla-camera-ap-name
 X-MeeGo-Translation-Catalog=jolla-camera
 Icon=icon-launcher-camera
-Exec=invoker -s --type=silica-media,silica-qt5 /usr/bin/jolla-camera-lockscreen
+Exec=/usr/bin/sailjail -p jolla-camera.desktop /usr/bin/jolla-camera-lockscreen
 Comment=Jolla Camera
