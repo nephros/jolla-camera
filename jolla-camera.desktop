@@ -8,6 +8,6 @@ Exec=/usr/bin/sailjail -p jolla-camera.desktop /usr/bin/jolla-camera
 Comment=Jolla Camera
 
 [X-Sailjail]
-ApplicationName=com.jolla
-OrganizationName=camera
+ApplicationName=camera
+OrganizationName=com.jolla
 Permissions=Camera;Pictures;Videos;MediaIndexing;Location;Privileged;Sharing
