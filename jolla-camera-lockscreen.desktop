@@ -5,5 +5,10 @@ Name=Camera
 X-MeeGo-Logical-Id=jolla-camera-ap-name
 X-MeeGo-Translation-Catalog=jolla-camera
 Icon=icon-launcher-camera
-Exec=/usr/bin/sailjail -p jolla-camera.desktop /usr/bin/jolla-camera-lockscreen
+Exec=/usr/bin/sailjail -p jolla-camera-lockscreen.desktop -a jolla-camera /usr/bin/jolla-camera-lockscreen
 Comment=Jolla Camera
+
+[X-Sailjail]
+ApplicationName=camera
+OrganizationName=com.jolla
+Permissions=Camera;Pictures;Videos;MediaIndexing;Location;Privileged;Sharing
