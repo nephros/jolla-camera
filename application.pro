@@ -5,6 +5,9 @@ TARGETPATH = /usr/bin
 QT += qml quick
 CONFIG += link_pkgconfig
 
+PKGCONFIG += \
+    sailfishsilica
+
 SOURCES += camera.cpp
 
 OTHER_FILES += \
@@ -41,11 +44,3 @@ schema.files = dconf/jolla-camera.txt
 schema.path  = /etc/dconf/db/vendor.d/
 
 INSTALLS += target desktop qml service schema oneshot
-
-packagesExist(qdeclarative5-boostable) {
-    message("Building with qdeclarative-boostable support")
-    DEFINES += HAS_BOOSTER
-    PKGCONFIG += qdeclarative5-boostable
-} else {
-    warning("qdeclarative-boostable not available; startup times will be slower")
-}
