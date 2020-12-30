@@ -49,10 +49,4 @@ ApplicationWindow {
             height: window.height
         }
     }
-
-    onApplicationActiveChanged: {
-        if (applicationActive) {
-            Settings.updateLocation()
-        }
-    }
 }

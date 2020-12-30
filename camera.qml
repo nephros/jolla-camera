@@ -45,9 +45,4 @@ ApplicationWindow {
             NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
         }
     }
-
-    onApplicationActiveChanged: {
-        if (applicationActive)
-            Settings.updateLocation()
-    }
 }

@@ -9,13 +9,6 @@ import com.jolla.settings.system 1.0
 import Sailfish.Policy 1.0
 
 ApplicationSettings {
-    // This relies on the detail that ApplicationSettings is still a page
-    onStatusChanged: {
-        if (status == PageStatus.Activating) {
-            Settings.updateLocation()
-        }
-    }
-
     ConfigurationGroup {
         id: globalSettings
 
@@ -48,6 +41,8 @@ ApplicationSettings {
         }
     }
 
+    LocationSettings { id: locationSettings }
+
     function resolutionText(ratioHorizontal, ratioVertical, resolution) {
         var dimensions = resolution.split("x")
         var megaPixels = dimensions.length == 2 ? (Math.round((dimensions[0] * dimensions[1]) / 1000000))
@@ -67,15 +62,22 @@ ApplicationSettings {
         //: Save GPS coordinates in photos.
         //% "Save location"
         text: qsTrId("camera_settings-la-save_location")
-        description: Settings.locationEnabled
-                    //% "Save current GPS coordinates in captured photos."
-                    ? qsTrId("camera_settings-la-save_location_description")
-                    //% "Positioning is turned off.  Enable it in Settings | Connectivity | Location"
-                    : qsTrId("camera_settings-la-enable_location")
-
-        enabled: Settings.locationEnabled && AccessPolicy.cameraEnabled
-        checked: Settings.global.saveLocationInfo && Settings.locationEnabled
+        //% "Save current GPS coordinates in captured photos."
+        description: qsTrId("camera_settings-la-save_location_description")
+        enabled: AccessPolicy.cameraEnabled
+        checked: Settings.global.saveLocationInfo
         onClicked: Settings.global.saveLocationInfo = !Settings.global.saveLocationInfo
+    }
+
+    Label {
+        //% "Positioning is turned off. Enable it in Settings | Connectivity | Location"
+        text: qsTrId("camera_settings-la-enable_location")
+        wrapMode: Text.Wrap
+        x: Theme.horizontalPageMargin
+        width: parent.width - 2*x
+        color: Theme.highlightColor
+        font.pixelSize: Theme.fontSizeSmall
+        visible: !locationSettings.locationEnabled
     }
 
     ComboBox {
