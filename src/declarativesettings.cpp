@@ -22,7 +22,6 @@ DeclarativeSettings::DeclarativeSettings(QObject *parent)
     , m_partitionManager(new PartitionManager(this))
     , m_storagePath(QStringLiteral("/apps/jolla-camera/storagePath"))
     , m_minSpaceForRecording(QStringLiteral("/apps/jolla-camera/minSpaceForRecording"))
-    , m_locationEnabled(false)
     , m_storagePathStatus(NotSet)
     , m_storageMaxFileSize(0)
 {
@@ -39,8 +38,6 @@ DeclarativeSettings::DeclarativeSettings(QObject *parent)
         QFile(info.absoluteFilePath()).rename(targetPath);
         fixupPermissions(targetPath);
     }
-
-    updateLocation();
 }
 
 DeclarativeSettings::~DeclarativeSettings()
@@ -58,23 +55,6 @@ QObject *DeclarativeSettings::factory(QQmlEngine *engine, QJSEngine *)
         qWarning() << "Failed to instantiate Settings";
         qWarning() << component.errors();
         return 0;
-    }
-}
-
-bool DeclarativeSettings::locationEnabled() const
-{
-    return m_locationEnabled;
-}
-
-void DeclarativeSettings::updateLocation()
-{
-    QSettings locationSettings(QStringLiteral("/etc/location/location.conf"), QSettings::IniFormat);
-    locationSettings.beginGroup(QStringLiteral("location"));
-
-    bool locationEnabled = locationSettings.value(QStringLiteral("enabled")).toBool();
-    if (m_locationEnabled != locationEnabled) {
-        m_locationEnabled = locationEnabled;
-        emit locationEnabledChanged();
     }
 }
 

@@ -10,6 +10,7 @@ import org.nemomobile.policy 1.0
 import org.nemomobile.ngf 1.0
 import org.nemomobile.configuration 1.0
 import org.nemomobile.notifications 1.0
+import org.nemomobile.systemsettings 1.0
 import QtSensors 5.0
 
 import "../settings"
@@ -127,7 +128,9 @@ SettingsOverlay {
         // The internal position source may not be initialised until the component completes,
         // and in that instance the active property may be reset.
         // So, initialise the property after component completion to ensure correct behaviour.
-        Component.onCompleted: positionSource.active = Qt.binding(function() { return captureView.effectiveActive && Settings.locationEnabled && Settings.global.saveLocationInfo })
+        Component.onCompleted: positionSource.active = Qt.binding(function() {
+            return captureView.effectiveActive && locationSettings.locationEnabled && Settings.global.saveLocationInfo
+        })
     }
 
     opacity: 0.0
@@ -416,6 +419,8 @@ SettingsOverlay {
         isTransient: true
         urgency: Notification.Critical
     }
+
+    LocationSettings { id: locationSettings }
 
     ConfigurationValue {
         id: previousStoragePathStatus
