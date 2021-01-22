@@ -7,17 +7,6 @@ CameraPage {
     id: page
     galleryView: Qt.resolvedUrl("gallery/MainGalleryView.qml")
 
-    function dummyTranslations() {
-        //% "Enable QR-code recognition"
-        qsTrId("camera_settings-la-enable_qr")
-        //% "Detect QR-code via camera."
-        qsTrId("camera_settings-la-detect_qr_description")
-        //% "QR-code"
-        qsTrId("jolla-camera-la-qr_code_header")
-        //% "Copy"
-        qsTrId("jolla-camera-la-qr_code_copy")
-    }
-
     Binding {
         target: window
         property: "galleryActive"

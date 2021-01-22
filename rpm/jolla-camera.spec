@@ -44,6 +44,7 @@ Requires:  sailfish-policy >= 0.2.59
 Requires:  jolla-settings-system >= 1.0.70
 Requires:  libjollasignonuiservice-qt5-plugin >= 0.0.29
 Requires:  libngf-qt5-declarative
+Requires:  qr-filter-qml-plugin
 Requires:  ambienced
 Requires:  sailfish-content-graphics
 Requires:  gstreamer1.0-plugins-good

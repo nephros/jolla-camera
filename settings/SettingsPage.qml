@@ -69,6 +69,18 @@ ApplicationSettings {
         onClicked: Settings.global.saveLocationInfo = !Settings.global.saveLocationInfo
     }
 
+    IconTextSwitch {
+        automaticCheck: false
+        icon.source: "image://theme/icon-m-qr"
+        //% "Enable QR-code recognition"
+        text: qsTrId("camera_settings-la-enable_qr")
+        //% "Detect QR-code via camera."
+        description: qsTrId("camera_settings-la-detect_qr_description")
+        enabled: AccessPolicy.cameraEnabled
+        checked: Settings.global.qrFilterEnabled
+        onClicked: Settings.global.qrFilterEnabled = !Settings.global.qrFilterEnabled
+    }
+
     Label {
         //% "Positioning is turned off. Enable it in Settings | Connectivity | Location"
         text: qsTrId("camera_settings-la-enable_location")
