@@ -11,7 +11,6 @@ ApplicationWindow {
     property var captureModel: null
     property bool galleryActive
     property bool galleryVisible
-    property bool qrResultVisible
     property int galleryIndex
 
     allowedOrientations: defaultAllowedOrientations
@@ -55,6 +54,7 @@ ApplicationWindow {
         active: Settings.global.qrFilterEnabled
                 && Settings.global.captureMode === "image"
                 && Settings.cameraDevice === "primary"
-                && !qrResultVisible
+
+        onActiveChanged: qrFilter.clearResult()
     }
 }

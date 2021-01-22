@@ -64,7 +64,7 @@ FocusScope {
 
     readonly property bool isPortrait: orientation == Orientation.Portrait
                 || orientation == Orientation.PortraitInverted
-    readonly property bool effectiveActive: (active || recording) && _applicationActive
+    readonly property bool effectiveActive: (active || recording) && _applicationActive && pageStack.depth < 2
 
     readonly property bool _canCapture: {
         switch (camera.captureMode) {
@@ -224,6 +224,8 @@ FocusScope {
     }
 
     onEffectiveActiveChanged: {
+        qrFilter.clearResult()
+
         if (!effectiveActive) {
             _resetFocus()
             captureTimer.reset()
