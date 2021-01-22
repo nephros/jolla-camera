@@ -48,11 +48,12 @@ ApplicationWindow {
 
             width: window.width
             height: window.height
-            filters: [ qrFilter ]
+            // filters: [ qrFilter ]
         }
 
         QrFilter {
             id: qrFilter
+            // TODO: trigger result url clicking only after unlocking and enable with such
             active: false
         }
     }

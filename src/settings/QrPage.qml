@@ -52,5 +52,4 @@ Page {
 
         VerticalScrollDecorator {}
     }
-    onStatusChanged: if (root.status === PageStatus.Inactive) qrResultVisible = false
 }

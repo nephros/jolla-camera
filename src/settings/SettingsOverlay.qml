@@ -580,7 +580,6 @@ PinchArea {
             background.visible: false
             onClicked: {
                 pageStack.push("QrPage.qml", { text: qrFilter.result })
-                qrResultVisible = true
             }
         }
     }

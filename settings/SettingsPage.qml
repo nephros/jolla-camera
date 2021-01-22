@@ -68,7 +68,7 @@ ApplicationSettings {
         checked: Settings.global.saveLocationInfo
         onClicked: Settings.global.saveLocationInfo = !Settings.global.saveLocationInfo
     }
-    
+
     IconTextSwitch {
         automaticCheck: false
         icon.source: "image://theme/icon-m-qr"
