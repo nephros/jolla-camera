@@ -84,6 +84,7 @@ SettingsBase {
             id: modeSettings
             path: globalSettings.cameraDevice + "/" + globalSettings.captureMode
 
+            property int cameraId: -1
             property int captureMode: Camera.CaptureStillImage
 
             property int iso: 0
