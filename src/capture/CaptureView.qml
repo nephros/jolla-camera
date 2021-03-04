@@ -206,7 +206,9 @@ FocusScope {
 
     Component.onCompleted: {
         flashlightServiceProbe.checkFlashlightServiceStatus()
-        camera.deviceId = Settings.global.cameraDevice
+        camera.deviceId = Settings.mode.cameraId >= 0
+                          ? Settings.mode.cameraId
+                          : Settings.global.cameraDevice === "primary" ? 0 : 1
         loadOverlay()
         _complete = true
     }
@@ -219,8 +221,10 @@ FocusScope {
         reload()
         _resetFocus()
         captureTimer.reset()
-        camera.deviceId = Settings.cameraDevice
         Settings.global.cameraDevice = Settings.cameraDevice
+        camera.deviceId = Settings.mode.cameraId >= 0
+                          ? Settings.mode.cameraId
+                          : Settings.cameraDevice === "primary" ? 0 : 1
     }
 
     onEffectiveActiveChanged: {

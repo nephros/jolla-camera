@@ -4,6 +4,7 @@ import QtMultimedia 5.0
 QtObject {
     property string path
 
+    property int cameraId: -1
     property int captureMode: Camera.CaptureStillImage
     property int flash: Camera.FlashOff
     property int exposureMode: Camera.ExposureManual
