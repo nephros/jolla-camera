@@ -17,7 +17,7 @@ GalleryView {
 
     captureModel: ListModel {
         function appendCapture(url, mimeType, orientation, duration, resolution) {
-            append({
+            prepend({
                        url: url + "", mimeType: mimeType, orientation: orientation,
                        duration: duration, width: resolution.width, height: resolution.height,
                        itemId: "", title: "", resolved: false
