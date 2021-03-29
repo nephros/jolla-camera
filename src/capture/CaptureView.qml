@@ -214,11 +214,6 @@ FocusScope {
     }
 
     onCameraDeviceChanged: {
-        // We must call reload() first so camera reaches UnloadedState
-        // If we switch Camera::deviceId then camera will not start again
-        // which seems to be a bug in QtMultimedia
-        // Qt bug: https://bugreports.qt.io/browse/QTBUG-46995
-        reload()
         _resetFocus()
         captureTimer.reset()
         Settings.global.cameraDevice = Settings.cameraDevice
