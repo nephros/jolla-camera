@@ -441,6 +441,13 @@ FocusScope {
             onResolutionChanged: reload()
 
             onImageSaved: {
+                // HDR case emits the exposed already on the first image, delay the feedback so user avoids
+                // moving the device until it's safe again.
+                if (camera.exposure.exposureMode == Camera.ExposureHDR) {
+                    shutterEvent.play()
+                    captureAnimation.start()
+                }
+
                 camera.unlockAutoFocus()
                 captureBusy = false
 
@@ -456,8 +463,10 @@ FocusScope {
                 Settings.completePhoto(Qt.resolvedUrl(path))
             }
             onImageExposed: {
-                shutterEvent.play()
-                captureAnimation.start()
+                if (camera.exposure.exposureMode != Camera.ExposureHDR) {
+                    shutterEvent.play()
+                    captureAnimation.start()
+                }
             }
             onCaptureFailed: {
                 camera.unlockAutoFocus()
