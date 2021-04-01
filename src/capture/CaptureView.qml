@@ -466,6 +466,8 @@ FocusScope {
                 if (camera.exposure.exposureMode != Camera.ExposureHDR) {
                     shutterEvent.play()
                     captureAnimation.start()
+                } else {
+                    flashAnimation.start()
                 }
             }
             onCaptureFailed: {
@@ -549,6 +551,34 @@ FocusScope {
         target: captureView.viewfinder
         property: "source"
         value: camera
+    }
+
+    Rectangle {
+        id: flashRectangle
+        anchors.fill: parent
+        color: "white"
+        opacity: 0
+    }
+
+    SequentialAnimation {
+        id: flashAnimation
+
+        PropertyAction {
+            target: flashRectangle
+            property: "visible"
+            value: true
+        }
+        OpacityAnimator {
+            target: flashRectangle
+            from: Theme.opacityHigh
+            to: 0
+            duration: 250
+        }
+        PropertyAction {
+            target: flashRectangle
+            property: "visible"
+            value: false
+        }
     }
 
     SequentialAnimation {
