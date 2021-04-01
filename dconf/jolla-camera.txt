@@ -17,7 +17,7 @@ timer=0
 viewfinderGrid='none'
 viewfinderGridValues=['none', 'thirds', 'ambience']
 meteringModeValues=[1, 2, 3]
-exposureModeValues=[1, 2, 3, 6]
+exposureModeValues=[1, 2, 3, 6, 23]
 
 [apps/jolla-camera/secondary/image]
 captureMode=1
@@ -29,7 +29,7 @@ timer=0
 viewfinderGrid='none'
 viewfinderGridValues=['none', 'thirds', 'ambience']
 meteringModeValues=[1, 2, 3]
-exposureModeValues=[1, 2, 3, 6]
+exposureModeValues=[1, 2, 3, 6, 23]
 
 [apps/jolla-camera/primary/video]
 captureMode=2

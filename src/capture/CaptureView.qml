@@ -441,6 +441,13 @@ FocusScope {
             onResolutionChanged: reload()
 
             onImageSaved: {
+                // HDR case emits the exposed already on the first image, delay the feedback so user avoids
+                // moving the device until it's safe again.
+                if (camera.exposure.exposureMode == Camera.ExposureHDR) {
+                    shutterEvent.play()
+                    captureAnimation.start()
+                }
+
                 camera.unlockAutoFocus()
                 captureBusy = false
 
@@ -456,8 +463,12 @@ FocusScope {
                 Settings.completePhoto(Qt.resolvedUrl(path))
             }
             onImageExposed: {
-                shutterEvent.play()
-                captureAnimation.start()
+                if (camera.exposure.exposureMode != Camera.ExposureHDR) {
+                    shutterEvent.play()
+                    captureAnimation.start()
+                } else {
+                    flashAnimation.start()
+                }
             }
             onCaptureFailed: {
                 camera.unlockAutoFocus()
@@ -540,6 +551,34 @@ FocusScope {
         target: captureView.viewfinder
         property: "source"
         value: camera
+    }
+
+    Rectangle {
+        id: flashRectangle
+        anchors.fill: parent
+        color: "white"
+        opacity: 0
+    }
+
+    SequentialAnimation {
+        id: flashAnimation
+
+        PropertyAction {
+            target: flashRectangle
+            property: "visible"
+            value: true
+        }
+        OpacityAnimator {
+            target: flashRectangle
+            from: Theme.opacityHigh
+            to: 0
+            duration: 250
+        }
+        PropertyAction {
+            target: flashRectangle
+            property: "visible"
+            value: false
+        }
     }
 
     SequentialAnimation {

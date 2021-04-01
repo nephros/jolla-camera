@@ -108,7 +108,8 @@ SettingsBase {
                 Camera.ExposureManual,
                 Camera.ExposureNight,
                 Camera.ExposurePortrait,
-                Camera.ExposureSports
+                Camera.ExposureSports,
+                Camera.ExposureHDR
             ]
             property var meteringModeValues: [
                 Camera.MeteringMatrix,
