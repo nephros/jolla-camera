@@ -567,7 +567,7 @@ PinchArea {
         }
         spacing: Theme.paddingSmall
         opacity: _commonControlOpacity
-        visible: opacity > 0.0 && Settings.mode.exposureMode == Camera.ExposureManual
+        visible: opacity > 0.0
 
         WhiteBalanceMenu {
             id: whiteBalanceMenu
