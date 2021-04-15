@@ -10,4 +10,4 @@ Comment=Jolla Camera
 [X-Sailjail]
 ApplicationName=camera
 OrganizationName=com.jolla
-Permissions=Camera;Pictures;Videos;MediaIndexing;Location;Privileged;Sharing;Ambience
+Permissions=Camera;Pictures;Videos;MediaIndexing;Location;Privileged;Sharing;Ambience;RemovableMedia
