@@ -13,7 +13,7 @@ GalleryView {
 
             rootType: DocumentGallery.File
             properties: [ "url", "mimeType", "orientation", "duration", "width", "height" ]
-            sortProperties: ["lastModified"]
+            sortProperties: ["-lastModified"]
             autoUpdate: true
             filter: GalleryFilterUnion {
                 GalleryEqualsFilter { property: "path"; value: Settings.photoDirectory }

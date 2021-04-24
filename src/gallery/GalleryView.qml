@@ -15,7 +15,7 @@ import com.jolla.camera 1.0
 import org.nemomobile.policy 1.0
 import ".."
 
-ListView {
+PagedView {
     id: root
 
     property alias overlay: overlay
@@ -29,50 +29,19 @@ ListView {
     readonly property url source: currentItem ? currentItem.source : ""
     readonly property QtObject player: playerLoader.item ? playerLoader.item.player : null
     readonly property bool playing: player && player.playing
-    property int _preOrientationChangeIndex
     property int _oldCount
 
     function _positionViewAtBeginning() {
-        currentIndex = count - 1
-        positionViewAtEnd()
+        moveTo(0, PagedView.Immediate)
     }
 
     model: delegateModel
-    boundsBehavior: Flickable.StopAtBounds
-    cacheBuffer: width
-
-    snapMode: ListView.SnapOneItem
-    highlightRangeMode: ListView.StrictlyEnforceRange
-    // Normally transition is handled through a different path when flicking,
-    // avoid slow transition if triggered by ListView for some reason
-    highlightMoveDuration: 300
-
-    orientation: ListView.Horizontal
-    currentIndex: count - 1
-    pressDelay: 0
 
     clip: true
-    interactive: count > 1 && !positionLocked
-    flickDeceleration: Theme.flickDeceleration
-    maximumFlickVelocity: Theme.maximumFlickVelocity
+    interactive: !positionLocked
+    direction: PagedView.RightToLeft
+    wrapMode: PagedView.NoWrap
 
-    onCurrentIndexChanged: {
-        if (!moving) {
-            // ListView's item positioning and currentIndex can get out of sync
-            // when items are removed from and possibly when inserted into the
-            // model.  Finding and fixing all the corner cases in ListView is a
-            // bit of a battle so as a final safeguard, we force the position to
-            // update if anything other than flicking the list changes the current
-            // index.
-            if (page.orientationTransitionRunning && currentIndex != _preOrientationChangeIndex) {
-                // Changing the size of the view can cause the currentIndex to change - fix it.
-                // The recursion doesn't cause any problems. Hurrah.
-                currentIndex = _preOrientationChangeIndex
-                return
-            }
-            positionViewAtIndex(currentIndex, ListView.SnapPosition)
-        }
-    }
     onActiveChanged: {
         if (!active) {
             // TODO: Don't touch internal property that can change
@@ -95,7 +64,7 @@ ListView {
         onCountChanged: {
             if (captureModel.count === 0) page.returnToCaptureMode()
             // Move to the new added item if we are currently in the first one
-            if (count > _oldCount && currentIndex === count - 2) _positionViewAtBeginning()
+            if (count > _oldCount && currentIndex === 1) _positionViewAtBeginning()
             _oldCount = count
         }
     }
@@ -165,15 +134,6 @@ ListView {
                     loaded: player && player.loaded
                     overlayMode: overlay.active
                 }
-            }
-        }
-    }
-
-    Connections {
-        target: page
-        onOrientationTransitionRunningChanged: {
-            if (page.orientationTransitionRunning) {
-                _preOrientationChangeIndex = root.currentIndex
             }
         }
     }
