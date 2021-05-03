@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Name=Camera test
+Exec=invoker --type=silica-qt5 -n -d 5 -s /usr/bin/cameratestapp
+Icon=icon-launcher-camera

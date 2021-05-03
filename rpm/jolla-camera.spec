@@ -92,6 +92,12 @@ Requires:   qt5-qtdeclarative-devel-tools
 %description tests
 This package contains QML unit tests for Jolla Camera application.
 
+%package examples
+Summary: Camera examples
+
+%description examples
+%{summary}
+
 %prep
 %setup -q -n %{name}-%{version}
 
@@ -148,6 +154,11 @@ install -m 644 -p %{SOURCE1} %{buildroot}%{_datadir}/mapplauncherd/privileges.d/
 %files tests
 %defattr(-,root,root,-)
 /opt/tests/jolla-camera
+
+%files examples
+%{_datadir}/cameratestapp
+%{_bindir}/cameratestapp
+%{_datadir}/applications/cameratestapp.desktop
 
 %post
 %{_bindir}/add-oneshot dconf-update || :

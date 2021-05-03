@@ -3,6 +3,7 @@ TEMPLATE = subdirs
 SUBDIRS = \
         application.pro \
         lockscreen \
+        examples \
         src \
         settings \
         translations \
