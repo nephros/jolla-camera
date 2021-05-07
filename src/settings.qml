@@ -167,14 +167,6 @@ SettingsBase {
         }
     }
 
-    function meteringModeIcon(mode) {
-        switch (mode) {
-        case Camera.MeteringMatrix:  return "image://theme/icon-camera-metering-matrix"
-        case Camera.MeteringAverage: return "image://theme/icon-camera-metering-weighted"
-        case Camera.MeteringSpot:    return "image://theme/icon-camera-metering-spot"
-        }
-    }
-
     function exposureModeIcon(exposureMode) {
         switch (exposureMode) {
         case Camera.ExposureManual:         return "image://theme/icon-camera-mode-automatic"
