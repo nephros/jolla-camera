@@ -6,109 +6,198 @@ import com.jolla.camera 1.0
 Item {
     id: main
 
+    readonly property var fileNames1: [
+        "captures1/20210514_160038.jpg",
+        "captures1/20210514_152532.jpg",
+        "captures1/20210514_152221.jpg",
+        "captures1/20210514_112217.jpg",
+        "captures1/20210504_165124.jpg",
+        "captures1/20210424_154127.jpg",
+        "captures1/20210424_154116.jpg"
+    ]
+    readonly property var fileNames2: [
+        "captures2/20210521_091613.jpg",
+        "captures2/20210514_145420.jpg",
+        "captures2/20210514_145049.jpg"
+    ]
+
+    readonly property var fileNames3: [
+        "captures3/20210514_151510.jpg",
+        "captures3/20210514_151454.jpg",
+        "captures3/20210514_151437.jpg",
+        "captures3/20210514_151435.jpg",
+        "captures3/20210514_151048.jpg",
+        "captures3/20210504_165204.jpg",
+        "captures3/20210504_165138.jpg"
+    ]
+
+
     width: 540
     height: 960
 
     CaptureModel {
         id: captureModel
-
-        source: ListModel {
-            id: sourceModel
-            ListElement { url: "file:///pictures/image_01.jpg"; title: "image1"; mimeType: "image/jpeg"; orientation: 0; duration: 0 }
-            ListElement { url: "file:///videos/movie_02.jpg"; title: "movie2"; mimeType: "video/mpeg"; orientation: 180; duration: 32 }
-            ListElement { url: "file:///pictures/image_03.jpg"; title: "image3"; mimeType: "image/jpeg"; orientation: 270; duration: 0 }
-
-        }
     }
 
-    VisualDataModel {
-        id: visualModel
+    Item {
+        Repeater {
+            id: repeater
 
-        model: captureModel
-        delegate: Item {
-            property url url: model.url
-            property string title: model.title
-            property string mimeType: model.mimeType
-            property int orientation: model.orientation
-            property size resolution: model.resolution
+            model: captureModel
+            delegate: Item {
+                property string url: model.url
+                property string mimeType: model.mimeType
+            }
         }
     }
 
     TestCase {
 
-        function test_append() {
+        function init() {
+            captureModel.directories = []
+            tryCompare(captureModel, "count", 0)
+            tryCompare(repeater, "count", 0)
+        }
+
+        function test_directories() {
+            var i
             var item
 
-            compare(visualModel.items.count, 3)
+            captureModel.directories = [
+                "/opt/tests/jolla-camera/auto/captures1"
+            ]
 
-            item = visualModel.items.get(0)
-            compare(item.model.url, "file:///pictures/image_01.jpg")
-            compare(item.model.title, "image1")
-            compare(item.model.mimeType, "image/jpeg")
-            compare(item.model.orientation, 0)
+            tryCompare(captureModel, "count", fileNames1.length)
+            tryCompare(repeater, "count", fileNames1.length)
 
-            item = visualModel.items.get(1)
-            compare(item.model.url, "file:///videos/movie_02.jpg")
-            compare(item.model.title, "movie2")
-            compare(item.model.mimeType, "video/mpeg")
-            compare(item.model.orientation, 180)
+            for (i = 0; i < fileNames1.length; ++i) {
+                item = repeater.itemAt(i)
+                verify(item)
 
-            item = visualModel.items.get(2)
-            compare(item.model.url, "file:///pictures/image_03.jpg")
-            compare(item.model.title, "image3")
-            compare(item.model.mimeType, "image/jpeg")
-            compare(item.model.orientation, 270)
+                compare(item.url, "file:///opt/tests/jolla-camera/auto/" + fileNames1[i])
+            }
 
-            captureModel.appendCapture("file:///pictures/image_04.jpg", "image/jpeg", 0, 0, item.model.resolution)
-            captureModel.appendCapture("file:///videos/movie_05.jpg", "video/mpeg", 0, 60, item.model.resolution)
-            captureModel.appendCapture("file:///pictures/image_06.jpg", "image/jpeg", 0, 0, item.model.resolution)
-            compare(visualModel.items.count, 6)
+            captureModel.directories = [
+                "/opt/tests/jolla-camera/auto/captures2"
+            ]
 
-            item = visualModel.items.get(2)
-            compare(item.model.url, "file:///pictures/image_03.jpg")
-            compare(item.model.title, "image3")
-            compare(item.model.mimeType, "image/jpeg")
-            compare(item.model.orientation, 270)
 
-            item = visualModel.items.get(3)
-            compare(item.model.url, "file:///pictures/image_04.jpg")
-            compare(item.model.title, "image 04")
-            compare(item.model.mimeType, "image/jpeg")
-            compare(item.model.orientation, 0)
+            tryCompare(captureModel, "count", fileNames2.length)
+            tryCompare(repeater, "count", fileNames2.length)
 
-            item = visualModel.items.get(4)
-            compare(item.model.url, "file:///videos/movie_05.jpg")
-            compare(item.model.title, "movie 05")
-            compare(item.model.mimeType, "video/mpeg")
-            compare(item.model.orientation, 0)
+            for (i = 0; i < fileNames2.length; ++i) {
+                item = repeater.itemAt(i)
+                verify(item)
 
-            item = visualModel.items.get(5)
-            compare(item.model.url, "file:///pictures/image_06.jpg")
-            compare(item.model.title, "image 06")
-            compare(item.model.mimeType, "image/jpeg")
-            compare(item.model.orientation, 0)
+                compare(item.url, "file:///opt/tests/jolla-camera/auto/" + fileNames2[i])
+            }
 
-            compare(visualModel.items.get(0).model.url, "file:///pictures/image_01.jpg")
-            compare(visualModel.items.get(1).model.url, "file:///videos/movie_02.jpg")
-            compare(visualModel.items.get(2).model.url, "file:///pictures/image_03.jpg")
-            compare(visualModel.items.get(3).model.url, "file:///pictures/image_04.jpg")
-            compare(visualModel.items.get(4).model.url, "file:///videos/movie_05.jpg")
-            compare(visualModel.items.get(5).model.url, "file:///pictures/image_06.jpg")
+            captureModel.directories = [
+                "/opt/tests/jolla-camera/auto/captures3"
+            ]
 
-            sourceModel.insert(2, { url: "file:///videos/movie_05.jpg", title: "movie5", mimeType: "video/mpeg", orientation: 90, duration: 60 })
-            sourceModel.insert(4, { url: "file:///pictures/image_07.jpg", title: "image7", mimeType: "image/jpeg", orientation: 90, duration: 0 })
-            sourceModel.insert(5, { url: "file:///pictures/image_04.jpg", title: "image4", mimeType: "image/jpeg", orientation: 90, duration: 0 })
-            sourceModel.insert(6, { url: "file:///pictures/image_06.jpg", title: "image6", mimeType: "image/jpeg", orientation: 90, duration: 0 })
+            tryCompare(captureModel, "count", fileNames3.length)
+            tryCompare(repeater, "count", fileNames3.length)
 
-            compare(visualModel.items.count, 7)
+            for (i = 0; i < fileNames3.length; ++i) {
+                item = repeater.itemAt(i)
+                verify(item)
 
-            compare(visualModel.items.get(0).model.url, "file:///pictures/image_01.jpg")
-            compare(visualModel.items.get(1).model.url, "file:///videos/movie_02.jpg")
-            compare(visualModel.items.get(2).model.url, "file:///videos/movie_05.jpg")
-            compare(visualModel.items.get(3).model.url, "file:///pictures/image_03.jpg")
-            compare(visualModel.items.get(4).model.url, "file:///pictures/image_07.jpg")
-            compare(visualModel.items.get(5).model.url, "file:///pictures/image_04.jpg")
-            compare(visualModel.items.get(6).model.url, "file:///pictures/image_06.jpg")
+                compare(item.url, "file:///opt/tests/jolla-camera/auto/" + fileNames3[i])
+            }
+
+            captureModel.directories = [
+                "/opt/tests/jolla-camera/auto/captures1",
+                "/opt/tests/jolla-camera/auto/captures3"
+            ]
+
+            var fileNames = fileNames1.concat(fileNames3).sort(function (left, right) { return -left.slice(11).localeCompare(right.slice(11)) })
+
+            tryCompare(captureModel, "count", fileNames.length)
+            tryCompare(repeater, "count", fileNames.length)
+
+            for (i = 0; i < fileNames.length; ++i) {
+                item = repeater.itemAt(i)
+                verify(item)
+
+                compare(item.url, "file:///opt/tests/jolla-camera/auto/" + fileNames[i])
+            }
+
+            captureModel.directories = [
+                "/opt/tests/jolla-camera/auto/captures1",
+                "/opt/tests/jolla-camera/auto/captures2"
+            ]
+
+            fileNames = fileNames1.concat(fileNames2).sort(function (left, right) { return -left.slice(11).localeCompare(right.slice(11)) })
+
+            tryCompare(captureModel, "count", fileNames.length)
+            tryCompare(repeater, "count", fileNames.length)
+
+            for (i = 0; i < fileNames.length; ++i) {
+                item = repeater.itemAt(i)
+                verify(item)
+
+                compare(item.url, "file:///opt/tests/jolla-camera/auto/" + fileNames[i])
+            }
+
+            captureModel.directories = [
+                "/opt/tests/jolla-camera/auto/captures2"
+            ]
+
+            tryCompare(captureModel, "count", fileNames2.length)
+            tryCompare(repeater, "count", fileNames2.length)
+
+            for (i = 0; i < fileNames2.length; ++i) {
+                item = repeater.itemAt(i)
+                verify(item)
+
+                compare(item.url, "file:///opt/tests/jolla-camera/auto/" + fileNames2[i])
+            }
+        }
+
+        function test_append() {
+            var i
+            var item
+
+            captureModel.directories = [
+                "/opt/tests/jolla-camera/auto/captures1"
+            ]
+
+            tryCompare(captureModel, "count", fileNames1.length)
+            tryCompare(repeater, "count", fileNames1.length)
+
+            for (i = 0; i < fileNames1.length; ++i) {
+                item = repeater.itemAt(i)
+                verify(item)
+
+                compare(item.url, "file:///opt/tests/jolla-camera/auto/" + fileNames1[i])
+            }
+
+            var url = "file:///opt/tests/jolla-camera/auto/captures1/20300000_000000.jpg"
+            var mimeType = "image/jpeg"
+
+            captureModel.appendCapture(url, mimeType)
+
+            compare(captureModel.count, fileNames1.length + 1)
+            tryCompare(repeater, "count", fileNames1.length + 1)
+
+            item = repeater.itemAt(0)
+            verify(item)
+
+            compare(item.url, url)
+            compare(item.mimeType, mimeType)
+
+            captureModel.deleteFile(0)
+
+            tryCompare(captureModel, "count", fileNames1.length)
+            tryCompare(repeater, "count", fileNames1.length)
+
+            for (i = 0; i < fileNames1.length; ++i) {
+                item = repeater.itemAt(i)
+                verify(item)
+
+                compare(item.url, "file:///opt/tests/jolla-camera/auto/" + fileNames1[i])
+            }
         }
     }
 }

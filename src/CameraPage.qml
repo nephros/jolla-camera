@@ -70,7 +70,7 @@ Page {
                 }
             } else {
                 pageStack.pop(page, PageStackAction.Immediate)
-                positionViewAtEnd()
+                moveTo(1, PagedView.Immediate)
             }
         }
 

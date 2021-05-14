@@ -367,12 +367,7 @@ FocusScope {
 
     onRecordingStopped: {
         if (captureModel) {
-            captureModel.appendCapture(
-                        url,
-                        mimeType,
-                        captureOrientation,
-                        camera.videoRecorder.duration / 1000,
-                        camera.videoRecorder.resolution)
+            captureModel.appendCapture(url, mimeType)
         }
     }
 
@@ -541,12 +536,7 @@ FocusScope {
                 captureBusy = false
 
                 if (captureModel) {
-                    captureModel.appendCapture(
-                                path,
-                                "image/jpeg",
-                                captureOrientation,
-                                0,
-                                camera.imageCapture.resolution)
+                    captureModel.appendCapture(path, "image/jpeg")
                 }
 
                 Settings.completePhoto(Qt.resolvedUrl(path))

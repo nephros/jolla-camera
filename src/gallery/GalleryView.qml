@@ -6,7 +6,6 @@
  */
 
 import QtQuick 2.1
-import QtQml.Models 2.1
 import Sailfish.Silica 1.0
 import Sailfish.Silica.private 1.0 as Private
 import Sailfish.Gallery 1.0
@@ -34,7 +33,7 @@ PagedView {
         moveTo(0, PagedView.Immediate)
     }
 
-    model: delegateModel
+    model: captureModel
 
     clip: true
     interactive: !positionLocked
@@ -68,71 +67,61 @@ PagedView {
         }
     }
 
-    DelegateModel {
-        id: delegateModel
+    delegate: Loader {
+        readonly property int index: model.index
+        readonly property string mimeType: model.mimeType
+        readonly property url source: model.url
 
-        model: captureModel
+        readonly property bool isImage: mimeType.indexOf("image/") == 0
+        readonly property bool error: item && item.error
 
-        delegate: Loader {
-            readonly property var itemId: model.itemId
-            readonly property int index: model.index
-            readonly property string mimeType: model.mimeType
-            readonly property url source: model.url
-            readonly property bool resolved: model.resolved
-            readonly property int duration: model.duration
+        readonly property bool isCurrentItem: ListView.isCurrentItem
 
-            readonly property bool isImage: mimeType.indexOf("image/") == 0
-            readonly property bool error: item && item.error
+        width: root.width
+        height: root.height
+        sourceComponent: isImage ? imageComponent : videoComponent
+        asynchronous: !isCurrentItem
 
-            readonly property bool isCurrentItem: ListView.isCurrentItem
+        Component {
+            id: imageComponent
 
-            width: root.width
-            height: root.height
-            sourceComponent: isImage ? imageComponent : videoComponent
-            asynchronous: !isCurrentItem
+            ImageViewer {
 
-            Component {
-                id: imageComponent
-
-                ImageViewer {
-
-                    onZoomedChanged: overlay.active = !zoomed
-                    onClicked: {
-                        if (zoomed) {
-                            zoomOut()
-                        } else {
-                            overlay.active = !overlay.active
-                        }
+                onZoomedChanged: overlay.active = !zoomed
+                onClicked: {
+                    if (zoomed) {
+                        zoomOut()
+                    } else {
+                        overlay.active = !overlay.active
                     }
-
-                    source: parent.source
-
-                    active: isCurrentItem && root.active
-                    contentRotation: -model.orientation
-                    viewMoving: root.moving
                 }
+
+                source: parent.source
+
+                active: isCurrentItem && root.active
+                viewMoving: root.moving
             }
+        }
 
-            Component {
-                id: videoComponent
+        Component {
+            id: videoComponent
 
-                VideoPoster {
-                    onClicked: overlay.active = !overlay.active
-                    onTogglePlay: {
-                        playerLoader.active = true
-                        player.togglePlay()
-                    }
-                    onDoubleClicked: overlay.seekForward()
-
-                    contentWidth: root.width
-                    contentHeight: root.height
-
-                    source: parent.source
-                    mimeType: model.mimeType
-                    playing: player && player.playing
-                    loaded: player && player.loaded
-                    overlayMode: overlay.active
+            VideoPoster {
+                onClicked: overlay.active = !overlay.active
+                onTogglePlay: {
+                    playerLoader.active = true
+                    player.togglePlay()
                 }
+                onDoubleClicked: overlay.seekForward()
+
+                contentWidth: root.width
+                contentHeight: root.height
+
+                source: parent.source
+                mimeType: model.mimeType
+                playing: player && player.playing
+                loaded: player && player.loaded
+                overlayMode: overlay.active
             }
         }
     }
@@ -172,8 +161,7 @@ PagedView {
             //: Delete an image
             //% "Deleting"
             remorseAction( qsTrId("camera-la-deleting"), function() {
-                delegateModel.items.remove(item.DelegateModel.itemsIndex, 1)
-                delegateModel.model.deleteFile(item.index)
+                root.captureModel.deleteFile(item.index)
                 item.ListView.delayRemove = false
             })
         }
@@ -183,9 +171,7 @@ PagedView {
         anchors.fill: parent
         player: root.player
         source: root.source
-        itemId: currentItem ? currentItem.itemId : ""
-        isImage: currentItem ? currentItem.isImage : true
-        duration: currentItem ? currentItem.duration : 1
+        isImage: !root.currentItem || root.currentItem.isImage
         error: currentItem && currentItem.error
         editingAllowed: false
 
