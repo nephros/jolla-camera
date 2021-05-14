@@ -12,7 +12,6 @@ import Sailfish.Silica.private 1.0 as Private
 import Sailfish.Gallery 1.0
 import QtMultimedia 5.0
 import com.jolla.camera 1.0
-import org.nemomobile.policy 1.0
 import ".."
 
 PagedView {
