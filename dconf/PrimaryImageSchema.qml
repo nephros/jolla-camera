@@ -5,15 +5,4 @@ ImageSchema {
     path: "primary/image"
     captureMode: Camera.CaptureStillImage
     flash: Camera.FlashAuto
-
-    focusDistanceValues: [
-        Camera.FocusAuto,
-        Camera.FocusInfinity,
-        Camera.FocusContinuous
-    ]
-    flashValues: [
-        Camera.FlashAuto,
-        Camera.FlashOff,
-        Camera.FlashOn
-    ]
 }
