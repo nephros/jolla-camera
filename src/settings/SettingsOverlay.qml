@@ -1,5 +1,5 @@
 import QtQuick 2.4
-import QtMultimedia 5.0
+import QtMultimedia 5.6
 import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
 
@@ -82,32 +82,43 @@ PinchArea {
     property list<Item> _buttonAnchors
     _buttonAnchors: [
         ButtonAnchor { id: buttonAnchorTL; index: 0; anchors { left: parent.left; top: parent.top } visible: !overlay.isPortrait },
-        ButtonAnchor { id: buttonAnchorCL; index: 1; anchors { left: parent.left; verticalCenter: parent.verticalCenter } },
+        ButtonAnchor { id: buttonAnchorCL; index: 1; anchors { left: parent.left; verticalCenter: parent.verticalCenter } visible: !overlay.isPortrait },
         ButtonAnchor { id: buttonAnchorBL; index: 2; anchors { left: parent.left; bottom: parent.bottom } },
-        ButtonAnchor { id: buttonAnchorBC; index: 3; anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom } },
+        ButtonAnchor { id: buttonAnchorBC; index: 3; anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom } visible: overlay.isPortrait },
         ButtonAnchor { id: buttonAnchorBR; index: 4; anchors { right: parent.right; bottom: parent.bottom } },
-        ButtonAnchor { id: buttonAnchorCR; index: 5; anchors { right: parent.right; verticalCenter: parent.verticalCenter } },
+        ButtonAnchor { id: buttonAnchorCR; index: 5; anchors { right: parent.right; verticalCenter: parent.verticalCenter } visible: !overlay.isPortrait },
         ButtonAnchor { id: buttonAnchorTR; index: 6; anchors { right: parent.right; top: parent.top } visible: !overlay.isPortrait }
     ]
 
     // Position of other elements given the capture button position
     property var _portraitPositions: [
-        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBR, "exposure": Qt.AlignRight }, // buttonAnchorTL
-        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBR, "exposure": Qt.AlignRight }, // buttonAnchorCL
-        { "captureMode": overlayAnchorBR, "cameraDevice": overlayAnchorBC, "exposure": Qt.AlignRight }, // buttonAnchorBL
-        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBR, "exposure": Qt.AlignRight }, // buttonAnchorBC
-        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBC, "exposure": Qt.AlignRight }, // buttonAnchorBR
-        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBR, "exposure": Qt.AlignLeft  }, // buttonAnchorCR
-        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorBR, "exposure": Qt.AlignLeft  }, // buttonAnchorTR
+
+        // Unused
+        { "captureMode": overlayAnchorBL, "cameraPosition": overlayAnchorBR, "exposure": Qt.AlignRight, "backCameraToggle": Qt.AlignBottom }, // buttonAnchorTL
+        { "captureMode": overlayAnchorBL, "cameraPosition": overlayAnchorBR, "exposure": Qt.AlignRight, "backCameraToggle": Qt.AlignBottom }, // buttonAnchorCL
+
+        // Used
+        { "captureMode": overlayAnchorBR, "cameraPosition": overlayAnchorBC, "exposure": Qt.AlignRight, "backCameraToggle": Qt.AlignBottom }, // buttonAnchorBL
+        { "captureMode": overlayAnchorBL, "cameraPosition": overlayAnchorBR, "exposure": Qt.AlignRight, "backCameraToggle": Qt.AlignBottom }, // buttonAnchorBC
+        { "captureMode": overlayAnchorBL, "cameraPosition": overlayAnchorBC, "exposure": Qt.AlignRight, "backCameraToggle": Qt.AlignBottom }, // buttonAnchorBR
+
+        // Unused
+        { "captureMode": overlayAnchorBL, "cameraPosition": overlayAnchorBR, "exposure": Qt.AlignLeft,  "backCameraToggle": Qt.AlignBottom }, // buttonAnchorCR
+        { "captureMode": overlayAnchorBL, "cameraPosition": overlayAnchorBR, "exposure": Qt.AlignLeft,  "backCameraToggle": Qt.AlignBottom }, // buttonAnchorTR
     ]
     property var _landscapePositions: [
-        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorCL, "exposure": Qt.AlignRight }, // buttonAnchorTL
-        { "captureMode": overlayAnchorBL, "cameraDevice": overlayAnchorTL, "exposure": Qt.AlignRight }, // buttonAnchorCL
-        { "captureMode": overlayAnchorCL, "cameraDevice": overlayAnchorTL, "exposure": Qt.AlignRight }, // buttonAnchorBL
-        { "captureMode": overlayAnchorBR, "cameraDevice": overlayAnchorTR, "exposure": Qt.AlignLeft  }, // buttonAnchorBC
-        { "captureMode": overlayAnchorCR, "cameraDevice": overlayAnchorTR, "exposure": Qt.AlignLeft  }, // buttonAnchorBR
-        { "captureMode": overlayAnchorBR, "cameraDevice": overlayAnchorTR, "exposure": Qt.AlignLeft  }, // buttonAnchorCR
-        { "captureMode": overlayAnchorBR, "cameraDevice": overlayAnchorCR, "exposure": Qt.AlignLeft  }, // buttonAnchorTR
+        // Used
+        { "captureMode": overlayAnchorBL, "cameraPosition": overlayAnchorCL, "exposure": Qt.AlignRight, "backCameraToggle": Qt.AlignLeft   }, // buttonAnchorTL
+        { "captureMode": overlayAnchorBL, "cameraPosition": overlayAnchorTL, "exposure": Qt.AlignRight, "backCameraToggle": Qt.AlignLeft   }, // buttonAnchorCL
+        { "captureMode": overlayAnchorCL, "cameraPosition": overlayAnchorTL, "exposure": Qt.AlignRight, "backCameraToggle": Qt.AlignLeft   }, // buttonAnchorBL
+
+        // Unused
+        { "captureMode": overlayAnchorBR, "cameraPosition": overlayAnchorTR, "exposure": Qt.AlignLeft,  "backCameraToggle": Qt.AlignRight  }, // buttonAnchorBC
+
+        // Used
+        { "captureMode": overlayAnchorCR, "cameraPosition": overlayAnchorTR, "exposure": Qt.AlignLeft,  "backCameraToggle": Qt.AlignRight  }, // buttonAnchorBR
+        { "captureMode": overlayAnchorBR, "cameraPosition": overlayAnchorTR, "exposure": Qt.AlignLeft,  "backCameraToggle": Qt.AlignRight  }, // buttonAnchorCR
+        { "captureMode": overlayAnchorBR, "cameraPosition": overlayAnchorCR, "exposure": Qt.AlignLeft,  "backCameraToggle": Qt.AlignRight  }, // buttonAnchorTR
     ]
 
     property var _overlayPosition: overlay.isPortrait ? _portraitPositions[overlay._captureButtonLocation]
@@ -120,15 +131,62 @@ PinchArea {
         anchors.fill: parent
     }
 
+    CameraDeviceToggle {
+        onSelected: Settings.deviceId = deviceId
+
+        parent: {
+            switch(_overlayPosition.backCameraToggle) {
+            case Qt.AlignBottom:
+                return overlayAnchorBC
+            case Qt.AlignLeft:
+                return overlayAnchorCL
+            default:
+            case Qt.AlignRight:
+                return overlayAnchorCR
+            }
+        }
+
+        opacity: _commonControlOpacity
+        labels: Settings.global.backCameraLabels
+        visible: opacity > 0.0 && !!model && model.length > 1 && labels.length > 0 && Settings.deviceId !== camera.frontFacingDeviceId && !inButtonLayout
+        orientation: overlay.isPortrait ? Qt.Horizontal : Qt.Vertical
+        enabled: camera.cameraStatus === Camera.ActiveStatus
+        model: camera.backFacingCameras
+
+        x: {
+            if (_overlayPosition.backCameraToggle === Qt.AlignLeft) {
+                return parent.width + Theme.paddingLarge
+            } else if (_overlayPosition.backCameraToggle === Qt.AlignRight) {
+                return -width - (isPortrait ? 1 : 3) * Theme.paddingLarge
+            } else {
+                return parent.width/2 - width/2
+            }
+        }
+
+        y: {
+            var padding = Theme.paddingLarge
+            if (_overlayPosition.backCameraToggle & Qt.AlignBottom) {
+                return -height - (overlay.isPortrait ? 3 : 1) * Theme.paddingLarge
+            } else {
+                return parent.height/2 - height/2
+            }
+        }
+    }
+
     ToggleButton {
-        parent: _overlayPosition.cameraDevice
+        parent: _overlayPosition.cameraPosition
         anchors.centerIn: parent
-        model: [ "primary", "secondary" ]
-        settings: Settings
-        property: "cameraDevice"
+        onClicked: {
+            if (Settings.global.position === Camera.BackFace) {
+                Settings.deviceId = camera.frontFacingDeviceId
+            } else {
+                Settings.deviceId = Settings.global.previousBackFacingDeviceId
+            }
+        }
+
         icon: "image://theme/icon-camera-switch"
         opacity: _commonControlOpacity
-        visible: opacity > 0.0 && Settings.hasMultipleCameras
+        visible: opacity > 0.0 && camera.hasCameraOnBothSides
         enabled: overlay.deviceToggleEnabled
     }
 
@@ -139,7 +197,7 @@ PinchArea {
 
         parent: _overlayPosition.captureMode
         anchors.verticalCenterOffset: height/2
-        alignment: (parent.anchors.left == container.left ? Qt.AlignRight : Qt.AlignLeft) | Qt.AlignBottom
+        alignment: (parent.anchors.left === container.left ? Qt.AlignRight : Qt.AlignLeft) | Qt.AlignBottom
         open: true
         opacity: _commonControlOpacity
         visible: opacity > 0.0
@@ -371,7 +429,7 @@ PinchArea {
                 y: Math.round(height * panel.y / panel.height) + overlay._headerHeight + overlay._headerTopMargin
                 anchors.horizontalCenter: parent.horizontalCenter
 
-                height: Screen.height / 2
+                height: Math.max(implicitHeight, Screen.height / 2)
 
                 opacity: 1 - container.opacity
                 enabled: overlay._exposed
@@ -401,13 +459,12 @@ PinchArea {
                     width: overlay._menuWidth
                     title: Settings.flashText
                     header: upperHeader
-                    model: Settings.mode.flashValues
+                    model: CameraConfigs.supportedFlashModes
                     delegate: SettingsMenuItem {
                         settings: Settings.mode
                         property: "flash"
                         value: modelData
                         icon: Settings.flashIcon(modelData)
-                        iconVisible: !selected
                     }
                 }
 
@@ -418,13 +475,13 @@ PinchArea {
                     width: overlay._menuWidth
                     title: Settings.exposureModeText
                     header: upperHeader
-                    model: Settings.mode.exposureModeValues
+                    // Disabled in 4.2.0
+                    model: false && CameraConfigs.supportedExposureModes
                     delegate: SettingsMenuItem {
                         settings: Settings.mode
                         property: "exposureMode"
                         value: modelData
                         icon: Settings.exposureModeIcon(modelData)
-                        iconVisible: !selected
                     }
                 }
 
@@ -434,7 +491,7 @@ PinchArea {
                     width: overlay._menuWidth
                     title: Settings.isoText
                     header: upperHeader
-                    model: Settings.mode.isoValues
+                    model: CameraConfigs.supportedIsoSensitivities
                     delegate: SettingsMenuItemBase {
                         settings: Settings.mode
                         property: "iso"
@@ -442,7 +499,6 @@ PinchArea {
 
                         IsoItem {
                             anchors.centerIn: parent
-                            visible: !selected
                             value: modelData
                         }
                     }
@@ -492,35 +548,39 @@ PinchArea {
         Item {
             width: overlay._menuWidth
             height: width
-            visible: Settings.mode.flashValues.length > 0
+            visible: CameraConfigs.supportedFlashModes.length > 1
             y: flashMenu.currentItem != null ? topRow.dragY(flashMenu.currentItem.y) : 0
 
-            Image {
+            Icon {
                 anchors.centerIn: parent
-                source: Settings.flashIcon(Settings.mode.flash) + "?" + Theme.lightPrimaryColor
+                color: Theme.lightPrimaryColor
+                source: Settings.flashIcon(Settings.mode.flash)
             }
         }
 
         Item {
             width: overlay._menuWidth
             height: width
-            visible: Settings.mode.exposureModeValues.length > 1
-            y: topRow.dragY(exposureModeMenu.currentItem.y)
+            // Disabled in 4.2.0
+            visible: false && CameraConfigs.supportedExposureModes.length > 1
+            y: topRow.dragY(exposureModeMenu.currentItem ? exposureModeMenu.currentItem.y : 0)
 
-            Image {
+            Icon {
                 anchors.centerIn: parent
-                source: Settings.exposureModeIcon(Settings.mode.exposureMode) + "?" + Theme.lightPrimaryColor
+                color: Theme.lightPrimaryColor
+                source: Settings.exposureModeIcon(Settings.mode.exposureMode)
             }
         }
 
         Item {
             width: overlay._menuWidth
             height: width
-            y: topRow.dragY(isoMenu.currentItem.y)
+            y: topRow.dragY(isoMenu.currentItem ? isoMenu.currentItem.y : 0)
+            visible: CameraConfigs.supportedIsoSensitivities.length > 1
 
             IsoItem {
                 anchors.centerIn: parent
-                value: isoMenu.currentItem.value
+                value: isoMenu.currentItem ? isoMenu.currentItem.value : 0
             }
         }
     }

@@ -1,5 +1,4 @@
 [apps/jolla-camera]
-cameraDevice='primary'
 captureMode='image'
 portraitCaptureButtonLocation=3
 landscapeCaptureButtonLocation=5

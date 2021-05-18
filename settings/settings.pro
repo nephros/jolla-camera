@@ -3,10 +3,7 @@ TARGET  = jollacamerasettingsplugin
 TARGET = $$qtLibraryTarget($$TARGET)
 
 settingsqml.path = /usr/share/jolla-settings/pages/jolla-camera
-settingsqml.files = \
-        ResolutionComboBox.qml \
-        ResolutionComboItem.qml \
-        SettingsPage.qml \
+settingsqml.files = SettingsPage.qml
 
 plugin_entry.path = /usr/share/jolla-settings/entries
 plugin_entry.files = jolla-camera.json

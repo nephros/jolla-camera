@@ -6,7 +6,7 @@ QtObject {
 
     property string path: "/apps/jolla-camera"
 
-    property string cameraDevice: "primary"
+    property string deviceId: QtMultimedia.defaultCamera.deviceId
     property string captureMode: "image"
     property int portraitCaptureButtonLocation: 3
     property int landscapeCaptureButtonLocation: 4
@@ -14,13 +14,6 @@ QtObject {
     property int exposureCompensation: 0
     property int whiteBalance: CameraImageProcessing.WhiteBalanceAuto
     property var exposureCompensationValues: [ 4, 3, 2, 1, 0, -1, -2, -3, -4 ]
-    property var whiteBalanceValues: [
-        CameraImageProcessing.WhiteBalanceAuto,
-        CameraImageProcessing.WhiteBalanceCloudy,
-        CameraImageProcessing.WhiteBalanceSunlight,
-        CameraImageProcessing.WhiteBalanceFluorescent,
-        CameraImageProcessing.WhiteBalanceTungsten
-    ]
 
     property list<QtObject> _modes
     default property alias modes: schema._modes

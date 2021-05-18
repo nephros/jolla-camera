@@ -6,9 +6,4 @@ ModeSchema {
 
     captureMode: Camera.CaptureVideo
     flash: Camera.FlashOff
-    focusDistanceValues: [
-        Camera.FocusInfinity,
-        Camera.FocusContinuous
-    ]
-    flashValues: [ Camera.FlashOff/*, Camera.FlashTorch*/ ]
 }

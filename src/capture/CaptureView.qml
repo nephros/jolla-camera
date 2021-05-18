@@ -105,7 +105,7 @@ FocusScope {
     readonly property bool _applicationActive: Qt.application.state == Qt.ApplicationActive
     on_ApplicationActiveChanged: if (_applicationActive) flashlightServiceProbe.checkFlashlightServiceStatus()
 
-    readonly property string cameraDevice: Settings.cameraDevice
+    readonly property string deviceId: Settings.deviceId
 
     property var captureOverlay: null
 
@@ -174,6 +174,64 @@ FocusScope {
         }
     }
 
+
+    function _pickViewfinderResolution(resolutions, aspectRatio) {
+        var ratio
+        if (aspectRatio === CameraConfigs.AspectRatio_16_9) {
+            ratio = 16.0/9.0
+        } else { // CameraConfigs.AspectRatio_4_3
+            ratio = 4.0/3.0
+        }
+
+        if (resolutions && resolutions.length > 0) {
+            var selectedPixels = 0
+            var selectedIndex = 0
+            var targetWidth = Math.round(Screen.width * ratio)
+            for (var i = 0; i < resolutions.length; i++) {
+                var resolution = resolutions[i]
+                if (resolution.height === Screen.width && resolution.width === targetWidth) {
+                    return resolution
+                }
+            }
+            return _pickResolution(resolutions, aspectRatio)
+        }
+        return "-1x-1"
+    }
+
+    function aspectRatioToFraction(aspectRatio) {
+
+        var ratio = 4.0/3.0
+        if (aspectRatio === CameraConfigs.AspectRatio_16_9) {
+            ratio = 16.0/9.0
+        } else if (aspectRatio !== CameraConfigs.AspectRatio_4_3) {
+            console.warn("Unknown aspect ratio", aspectRatio)
+        }
+        return ratio
+    }
+
+    function _pickResolution(resolutions, aspectRatio) {
+
+        var ratio = aspectRatioToFraction(aspectRatio)
+
+        if (resolutions && resolutions.length > 0) {
+            var selectedPixels = 0
+            var selectedIndex = -1
+            for (var i = 0; i < resolutions.length; i++) {
+                var resolution = resolutions[i]
+                var pixels = resolution.width * resolution.height
+                if (Math.abs(ratio - resolution.width/resolution.height) < 0.05 && pixels > selectedPixels) {
+                    selectedPixels = pixels
+                    selectedIndex = i
+                }
+            }
+
+            if (selectedIndex >= 0) {
+                return resolutions[selectedIndex]
+            }
+        }
+        return "-1x-1"
+    }
+
     Notification {
         id: microphoneWarningNotification
 
@@ -206,20 +264,19 @@ FocusScope {
 
     Component.onCompleted: {
         flashlightServiceProbe.checkFlashlightServiceStatus()
-        camera.deviceId = Settings.mode.cameraId >= 0
-                          ? Settings.mode.cameraId
-                          : Settings.global.cameraDevice === "primary" ? 0 : 1
         loadOverlay()
         _complete = true
     }
 
-    onCameraDeviceChanged: {
+    onDeviceIdChanged: {
         _resetFocus()
         captureTimer.reset()
-        Settings.global.cameraDevice = Settings.cameraDevice
-        camera.deviceId = Settings.mode.cameraId >= 0
-                          ? Settings.mode.cameraId
-                          : Settings.cameraDevice === "primary" ? 0 : 1
+        Settings.global.deviceId = Settings.deviceId
+        camera.deviceId = Settings.deviceId
+        Settings.global.position = camera.position
+        if (camera.position === Camera.BackFace) {
+            Settings.global.previousBackFacingDeviceId = camera.deviceId
+        }
     }
 
     onEffectiveActiveChanged: {
@@ -404,19 +461,34 @@ FocusScope {
             }
         }
 
-        captureMode: Settings.mode.captureMode
+        property bool hasCameraOnBothSides
+        property string frontFacingDeviceId
+        property var backFacingCameras
+
+        deviceId: Settings.deviceId
+        captureMode: Settings.global.captureMode == "image" ? Camera.CaptureStillImage
+                                                            : Camera.CaptureVideo
 
         onCaptureModeChanged: captureView._resetFocus()
 
-        cameraState: captureView._complete && captureView.effectiveActive && !captureView._unload
-                    ? Camera.ActiveState
-                    : Camera.UnloadedState
+        cameraState: {
+            if (captureView.effectiveActive && !captureView._unload) {
+                if (CameraConfigs.ready) {
+                    return Camera.ActiveState
+                } else {
+                    return Camera.LoadedState
+                }
+            } else {
+                  return Camera.UnloadedState
+            }
+        }
 
         onCameraStateChanged: {
             if (cameraState == Camera.ActiveState && captureOverlay) {
                 captureView.loaded()
             }
         }
+        property bool initialized
 
         onCameraStatusChanged: {
             if (camera.cameraStatus == Camera.StartingStatus) {
@@ -429,10 +501,44 @@ FocusScope {
                 _captureQueued = false
                 captureBusy = false
             }
+
+            var backCameras = []
+            if (cameraStatus === Camera.LoadingStatus && !initialized) {
+                initialized = true
+                var hasFrontFace = false
+                var hasBackFace = false
+
+
+                for (var i = 0; i < QtMultimedia.availableCameras.length; i++) {
+                    var device = QtMultimedia.availableCameras[i]
+                    if (device.position === Camera.FrontFace) {
+                        hasFrontFace = true
+                        frontFacingDeviceId = device.deviceId
+                    } else if (device.position === Camera.BackFace) {
+                        hasBackFace = true
+                        backCameras.push(device)
+                    }
+                    if (device.position === Camera.FrontFace) {
+                        break
+                    }
+                }
+
+                backFacingCameras = backCameras
+
+                hasCameraOnBothSides = hasFrontFace && hasBackFace
+
+                if (Settings.global.previousBackFacingDeviceId.length === 0 && backCameras.length > 0) {
+                    if (backCameras.indexOf(QtMultimedia.defaultCamera.deviceId) >= 0) {
+                        Settings.global.previousBackFacingDeviceId = QtMultimedia.defaultCamera.deviceId
+                    } else {
+                        Settings.global.previousBackFacingDeviceId = backCameras[0].deviceId
+                    }
+                }
+            }
         }
 
         imageCapture {
-            resolution: Settings.mode.imageResolution
+            resolution: _pickResolution(CameraConfigs.supportedImageResolutions, Settings.aspectRatio)
             onResolutionChanged: reload()
 
             onImageSaved: {
@@ -471,9 +577,9 @@ FocusScope {
             }
         }
         videoRecorder {
-            resolution: Settings.mode.videoResolution
+            resolution: _pickResolution(CameraConfigs.supportedVideoResolutions, CameraConfigs.AspectRatio_16_9)
+
             onResolutionChanged: reload()
-            frameRate: Settings.mode.videoFrameRate
             audioChannels: 2
             audioSampleRate: Settings.global.audioSampleRate
             audioCodec: Settings.global.audioCodec
@@ -494,10 +600,12 @@ FocusScope {
                 // real support was unknown at that time.
                 if (camera.cameraStatus == Camera.ActiveStatus && tapFocusActive) {
                     return Camera.FocusAuto
-                } else if (Settings.mode.focusDistanceValues.indexOf(Camera.FocusContinuous) >= 0) {
+                } else if (CameraConfigs.supportedFocusModes.indexOf(Camera.FocusContinuous) >= 0) {
                     return Camera.FocusContinuous
+                } else if (CameraConfigs.supportedFocusModes.length > 0) {
+                    return CameraConfigs.supportedFocusModes[0]
                 } else {
-                    return Settings.mode.focusDistanceValues[0]
+                    return Camera.FocusAuto
                 }
             }
             focusPointMode: tapFocusActive ? Camera.FocusPointCustom : Camera.FocusPointAuto
@@ -512,7 +620,14 @@ FocusScope {
         }
 
         viewfinder {
-            resolution: Settings.mode.viewfinderResolution
+            resolution: {
+                var resolutions = CameraConfigs.supportedViewfinderResolutions
+                if (resolutions.length > 0) {
+                    return _pickViewfinderResolution(resolutions, Settings.aspectRatio)
+                }
+                return "-1x-1"
+            }
+
             // Let gst-droid decide the best framerate
         }
 
@@ -522,7 +637,6 @@ FocusScope {
             cameraManufacturer: deviceInfo.manufacturer
         }
 
-        onDeviceIdChanged: captureView.reload()
         viewfinder.onResolutionChanged: captureView.reload()
         focus.onFocusModeChanged: camera.unlock()
 
@@ -532,6 +646,12 @@ FocusScope {
                 camera._completeCapture()
             }
         }
+    }
+
+    Binding {
+        target: CameraConfigs
+        property: "camera"
+        value: camera
     }
 
     DeviceInfo {

@@ -1,0 +1,55 @@
+import QtQuick 2.6
+import Sailfish.Silica 1.0
+import com.jolla.camera 1.0
+
+Grid {
+    id: root
+
+    property var labels: []
+    property alias model: repeater.model
+    property int orientation: Qt.Vertical
+
+    signal selected(string deviceId)
+
+    columns: orientation === Qt.Vertical ? 1 : repeater.count
+    rows: orientation === Qt.Vertical ? repeater.count : 1
+    spacing: Theme.paddingMedium
+
+    readonly property bool _supportNotEnabled: model.length > 1 && labels.length === 0
+    on_SupportNotEnabledChanged: if (_supportNotEnabled) console.warn("Device supports multiple back cameras, please define dconf /apps/jolla-camera/backCameraLabels")
+
+    Repeater {
+        id: repeater
+        SilicaItem {
+            highlighted: mouseArea.pressed && mouseArea.containsMouse || modelData.deviceId === Settings.deviceId
+            width: Theme.itemSizeExtraSmall
+            height: Theme.itemSizeExtraSmall
+
+            MouseArea {
+                id: mouseArea
+                anchors.fill: parent
+                onClicked: if (modelData.deviceId !== Settings.deviceId) root.selected(modelData.deviceId)
+            }
+
+            Rectangle {
+                border {
+                    width: Theme._lineWidth
+                    color: parent.highlighted ? Theme.highlightColor : Theme.primaryColor
+                }
+
+                radius: width/2
+                anchors.fill: parent
+                color: "transparent"
+            }
+
+            Label {
+                // TODO: Don't hardcode these values
+                text: root.labels.length > model.index ? root.labels[model.index] : ""
+                color: parent.highlighted ? Theme.highlightColor : Theme.primaryColor
+                font.pixelSize: Theme.fontSizeMediumBase
+                anchors.verticalCenterOffset: -Theme.pixelRatio
+                anchors.centerIn: parent
+            }
+        }
+    }
+}
