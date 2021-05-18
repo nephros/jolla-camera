@@ -4,7 +4,6 @@ import QtMultimedia 5.0
 QtObject {
     property string path
 
-    property int cameraId: -1
     property int captureMode: Camera.CaptureStillImage
     property int flash: Camera.FlashOff
     property int exposureMode: Camera.ExposureManual
@@ -14,18 +13,8 @@ QtObject {
 
     property string imageResolution
     property string videoResolution
-    property int videoFrameRate: 30
     property string viewfinderResolution
 
     property int iso: 0
-    property var isoValues: [ 0, 100, 200, 400 ]
-    property var focusDistanceValues: [ Camera.FocusInfinity ]
-    property var flashValues: [ Camera.FlashOff ]
-    property var exposureModeValues: [ Camera.ExposureManual ]
-    property var meteringModeValues: [
-        Camera.MeteringMatrix,
-        Camera.MeteringAverage,
-        Camera.MeteringSpot
-    ]
     property var viewfinderGridValues: [ "none", "thirds", "ambience" ]
 }

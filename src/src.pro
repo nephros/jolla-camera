@@ -14,12 +14,14 @@ SOURCES += \
         cameraplugin.cpp \
         capturemodel.cpp \
         declarativecameraextensions.cpp \
-        declarativesettings.cpp
+        declarativesettings.cpp \
+        cameraconfigs.cpp
 
 HEADERS += \
         capturemodel.h \
         declarativecameraextensions.h \
-        declarativesettings.h
+        declarativesettings.h \
+        cameraconfigs.h
 
 DEFINES += \
         DEPLOYMENT_PATH=\"\\\"\"$${TARGETPATH}/\"\\\"\"

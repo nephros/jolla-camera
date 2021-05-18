@@ -1,21 +1,23 @@
 import QtQuick 2.0
-import QtMultimedia 5.0
+import QtMultimedia 5.6
 import org.nemomobile.configuration 1.0
 import com.jolla.camera 1.0
 
 SettingsBase {
     property alias mode: modeSettings
     property alias global: globalSettings
-    // mode change goes here, CaptureView updates to global.cameraDevice
-    property string cameraDevice: global.cameraDevice
+    // Camera change goes here, CaptureView updates to global.deviceId
+    property string deviceId: global.deviceId
+
+    readonly property int aspectRatio: mode.aspectRatio
 
     readonly property var settingsDefaults: ({
                                                  "iso": 0,
                                                  "timer": 0,
                                                  "viewfinderGrid": "none",
                                                  "exposureMode": Camera.ExposureManual,
-                                                 "flash": ((modeSettings.captureMode == Camera.CaptureStillImage) &&
-                                                           (globalSettings.cameraDevice === "primary") ?
+                                                 "flash": ((globalSettings.captureMode == "image") &&
+                                                           (globalSettings.position === Camera.BackFace) ?
                                                                Camera.FlashAuto : Camera.FlashOff)
                                              })
 
@@ -24,27 +26,6 @@ SettingsBase {
                                             modeSettings.viewfinderGrid === settingsDefaults["viewfinderGrid"] &&
                                             modeSettings.exposureMode === settingsDefaults["exposureMode"] &&
                                             modeSettings.flash == settingsDefaults["flash"]
-    // FIXME: should use something like QtMultimedia.availableCameras.length > 1, but that currently
-    // returns bogus cameras on Sailfish when they don't really exist.
-    // Also now only handling missing back camera which is somewhat hard-coded in qtmultimedia gstreamer integration
-    // to be the primary camera.
-    readonly property bool hasMultipleCameras: primaryResolution.value != "" && primaryResolution.value[0] != "0"
-
-    function reset() {
-        var basePath = globalSettings.path + "/" + modeSettings.path
-        var i
-        for (i in settingsDefaults) {
-            _singleValue.key = basePath + "/" + i
-            _singleValue.value = settingsDefaults[i]
-        }
-    }
-
-    property ConfigurationValue _singleValue: ConfigurationValue {}
-    property ConfigurationValue _primaryCameraResolution: ConfigurationValue {
-        id: primaryResolution
-        key: globalSettings.path + "/primary/image/imageResolution"
-        defaultValue: ""
-    }
 
     property ConfigurationGroup _global: ConfigurationGroup {
         id: globalSettings
@@ -52,7 +33,9 @@ SettingsBase {
         path: "/apps/jolla-camera"
 
         // Note! don't touch this for changing between cameras, see cameraDevice on root
-        property string cameraDevice: "primary"
+        property string deviceId
+        property string previousBackFacingDeviceId
+        property int position: Camera.BackFace
         property string captureMode: "image"
 
         property int portraitCaptureButtonLocation: 3
@@ -74,20 +57,14 @@ SettingsBase {
         property int whiteBalance: CameraImageProcessing.WhiteBalanceAuto
 
         property var exposureCompensationValues: [ 4, 3, 2, 1, 0, -1, -2, -3, -4 ]
-        property var whiteBalanceValues: [
-            CameraImageProcessing.WhiteBalanceAuto,
-            CameraImageProcessing.WhiteBalanceCloudy,
-            CameraImageProcessing.WhiteBalanceSunlight,
-            CameraImageProcessing.WhiteBalanceFluorescent,
-            CameraImageProcessing.WhiteBalanceTungsten
-        ]
 
         ConfigurationGroup {
             id: modeSettings
-            path: globalSettings.cameraDevice + "/" + globalSettings.captureMode
 
-            property int cameraId: -1
-            property int captureMode: Camera.CaptureStillImage
+            path: {
+                var position = globalSettings.position === Camera.FrontFace ? "front" : "back"
+                return position + "/" + globalSettings.captureMode
+            }
 
             property int iso: 0
             property int flash: Camera.FlashOff
@@ -95,28 +72,19 @@ SettingsBase {
             property int meteringMode: Camera.MeteringMatrix
             property int timer: 0
             property string viewfinderGrid: "none"
-
-            property string imageResolution: "1280x720"
-            property string videoResolution: "1280x720"
-            property int videoFrameRate: 30
-            property string viewfinderResolution: "1280x720"
-
-            property var isoValues: [ 0, 100, 200, 400 ]
-            property var focusDistanceValues: [ Camera.FocusInfinity ]
-            property var flashValues: [ Camera.FlashOff ]
-            property var exposureModeValues: [
-                Camera.ExposureManual,
-                Camera.ExposureNight,
-                Camera.ExposurePortrait,
-                Camera.ExposureSports,
-                Camera.ExposureHDR
-            ]
-            property var meteringModeValues: [
-                Camera.MeteringMatrix,
-                Camera.MeteringAverage,
-                Camera.MeteringSpot
-            ]
             property var viewfinderGridValues: [ "none", "thirds", "ambience" ]
+            property int aspectRatio: -1
+
+            Component.onCompleted: {
+                if (aspectRatio === -1) {
+                    if (globalSettings.captureMode === "image") {
+                        aspectRatio = CameraConfigs.AspectRatio_4_3
+                    } else {
+                        aspectRatio = CameraConfigs.AspectRatio_16_9
+                    }
+                }
+
+            }
         }
     }
 
@@ -182,6 +150,8 @@ SettingsBase {
         case Camera.ExposureNight:          return "image://theme/icon-camera-mode-night"
         case Camera.ExposureSports:         return "image://theme/icon-camera-mode-sports"
         case Camera.ExposureHDR:            return "image://theme/icon-camera-mode-hdr"
+        default:
+            return "" // not supported
         }
     }
 
@@ -202,6 +172,8 @@ SettingsBase {
         //: "HDR exposure mode"
         //% "HDR exposure"
         case Camera.ExposureHDR:            return qsTrId("camera_settings-la-exposure-hdr")
+        default:
+            return "" // not supported
         }
     }
 
@@ -211,7 +183,10 @@ SettingsBase {
         case Camera.FlashOff:               return "image://theme/icon-camera-flash-off"
         case Camera.FlashTorch:
         case Camera.FlashOn:                return "image://theme/icon-camera-flash-on"
-        case Camera.FlashRedEyeReduction:   return "image://theme/icon-camera-flash-redeye"
+        // JB#54201: Red-eye mode does not work
+        // case Camera.FlashRedEyeReduction:   return "image://theme/icon-camera-flash-redeye"
+        default:
+            return "" // not supported
         }
     }
 
@@ -232,6 +207,8 @@ SettingsBase {
         //: "Camera flash with red eye reduction"
         //% "Flash red eye"
         case Camera.FlashRedEyeReduction: return qsTrId("camera_settings-la-flash-redeye")
+        default:
+            return "" // not supported
         }
     }
 
@@ -240,11 +217,12 @@ SettingsBase {
         case CameraImageProcessing.WhiteBalanceAuto:        return "image://theme/icon-camera-wb-automatic"
         case CameraImageProcessing.WhiteBalanceSunlight:    return "image://theme/icon-camera-wb-sunny"
         case CameraImageProcessing.WhiteBalanceCloudy:      return "image://theme/icon-camera-wb-cloudy"
-        case CameraImageProcessing.WhiteBalanceShade:       return "image://theme/icon-camera-wb-shade"
-        case CameraImageProcessing.WhiteBalanceSunset:      return "image://theme/icon-camera-wb-sunset"
+        // case CameraImageProcessing.WhiteBalanceShade:       return "image://theme/icon-camera-wb-shade"
+        // case CameraImageProcessing.WhiteBalanceSunset:      return "image://theme/icon-camera-wb-sunset"
         case CameraImageProcessing.WhiteBalanceFluorescent: return "image://theme/icon-camera-wb-fluorecent"
         case CameraImageProcessing.WhiteBalanceTungsten:    return "image://theme/icon-camera-wb-tungsten"
-        default: return "image://theme/icon-camera-wb-default"
+        default:
+            return "" // not supported
         }
     }
 
@@ -271,7 +249,8 @@ SettingsBase {
         //: "Tungsten white balance"
         //% "Tungsten"
         case CameraImageProcessing.WhiteBalanceTungsten:    return qsTrId("camera_settings-la-wb-tungsten")
-        default: return ""
+        default:
+            return "" // not supported
         }
     }
 
