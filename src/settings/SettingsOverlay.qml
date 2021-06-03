@@ -681,4 +681,43 @@ PinchArea {
                     : qsTrId("camera-la-landscape-capture-key-location")
         }
     }
+
+    ColorFilterView {
+        id: colorFilter
+
+        property bool ready: CameraConfigs.supportedColorFilters.length > 0
+        property var allowedFilters: [
+            CameraImageProcessing.ColorFilterNone, CameraImageProcessing.ColorFilterGrayscale,
+            CameraImageProcessing.ColorFilterSepia, CameraImageProcessing.ColorFilterPosterize,
+            CameraImageProcessing.ColorFilterWhiteboard, CameraImageProcessing.ColorFilterBlackboard
+        ]
+
+        onReadyChanged: {
+            if (ready) {
+                var filters = []
+                var supportedFilters = CameraConfigs.supportedColorFilters
+                for (var i = 0; i < supportedFilters.length; i++) {
+                    var filter = supportedFilters[i]
+                    if (allowedFilters.indexOf(filter) >= 0) {
+                        filters.push(filter)
+                    }
+                }
+                model = filters
+            }
+        }
+
+        onCurrentIndexChanged: camera.imageProcessing.colorFilter = model[currentIndex]
+
+        x: overlay.isPortrait ? 0 : exposureSlider.width
+        width: overlay.isPortrait ? parent.width : Screen.width / 3 * 4 - x
+        anchors.bottom: parent.bottom
+    }
+
+    OpacityRampEffect {
+        offset: 1 - 1 / slope
+
+        sourceItem: colorFilter
+        slope: 1 + 20 * colorFilter.width / Screen.width
+        direction:  OpacityRamp.BothSides
+    }
 }

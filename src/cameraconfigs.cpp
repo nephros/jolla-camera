@@ -97,6 +97,24 @@ void CameraConfigs::handleStatus()
                 }
             }
 
+            m_supportedColorFilters.clear();
+            if (m_camera) {
+                // TODO: Use QMetaEnum::fromType<Class::EnumName>() once Qt Multimedia uses Q_ENUM
+                QMetaObject meta = QCameraImageProcessing::staticMetaObject;
+                for (int i=0; i < meta.enumeratorCount(); ++i) {
+                    QMetaEnum e = meta.enumerator(i);
+                    if (e.name() == QLatin1String("ColorFilter")) {
+                        for (int i = 0; i < e.keyCount(); i++) {
+                            int mode = e.value(i);
+                            if (m_camera->imageProcessing()->isColorFilterSupported(static_cast<QCameraImageProcessing::ColorFilter>(mode))) {
+                                m_supportedColorFilters.append(mode);
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+
             m_supportedExposureModes.clear();
             if (m_camera) {
                 // TODO: Use QMetaEnum::fromType<Class::EnumName>() once Qt Multimedia uses Q_ENUM
@@ -210,6 +228,7 @@ void CameraConfigs::handleStatus()
             emit supportedFocusPointModesChanged();
             emit supportedMeteringModesChanged();
             emit supportedFlashModesChanged();
+            emit supportedColorFiltersChanged();
         }
     }
 }
@@ -262,4 +281,9 @@ QVariantList CameraConfigs::supportedMeteringModes() const
 QVariantList CameraConfigs::supportedFlashModes() const
 {
     return m_supportedFlashModes;
+}
+
+QVariantList CameraConfigs::supportedColorFilters() const
+{
+    return m_supportedColorFilters;
 }

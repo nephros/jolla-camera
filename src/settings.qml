@@ -254,6 +254,40 @@ SettingsBase {
         }
     }
 
+    function colorFilterText(filter) {
+        switch (filter) {
+        case CameraImageProcessing.ColorFilterNone:
+            //% "None"
+            return qsTrId("camera_settings-la-colorfilter_none")
+        case CameraImageProcessing.ColorFilterGrayscale:
+            //% "Grayscale"
+            return qsTrId("camera_settings-la-colorfilter_grayscale")
+        case CameraImageProcessing.ColorFilterNegative:
+            //% "Negative"
+            return qsTrId("camera_settings-la-colorfilter_negative")
+        case CameraImageProcessing.ColorFilterSolarize:
+            //% "Solarize"
+            return qsTrId("camera_settings-la-colorfilter_solarize")
+        case CameraImageProcessing.ColorFilterSepia:
+            //% "Sepia"
+            return qsTrId("camera_settings-la-colorfilter_sepia")
+        case CameraImageProcessing.ColorFilterPosterize:
+            //% "Posterize"
+            return qsTrId("camera_settings-la-colorfilter_posterize")
+        case CameraImageProcessing.ColorFilterWhiteboard:
+            //% "Whiteboard"
+            return qsTrId("camera_settings-la-colorfilter_whiteboard")
+        case CameraImageProcessing.ColorFilterBlackboard:
+            //% "Blackboard"
+            return qsTrId("camera_settings-la-colorfilter_blackboard")
+        case CameraImageProcessing.ColorFilterAqua:
+            //% "Aqua"
+            return qsTrId("camera_settings-la-colorfilter_aqua")
+        default:
+            return "" // not supported
+        }
+    }
+
     function viewfinderGridIcon(grid) {
         switch (grid) {
         case "none": return "image://theme/icon-camera-grid-none"

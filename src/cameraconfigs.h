@@ -27,6 +27,7 @@ class CameraConfigs : public QObject
     Q_PROPERTY(QVariantList supportedFocusPointModes READ supportedFocusPointModes NOTIFY supportedFocusPointModesChanged)
     Q_PROPERTY(QVariantList supportedMeteringModes READ supportedMeteringModes NOTIFY supportedMeteringModesChanged)
     Q_PROPERTY(QVariantList supportedFlashModes READ supportedFlashModes NOTIFY supportedFlashModesChanged)
+    Q_PROPERTY(QVariantList supportedColorFilters READ supportedColorFilters NOTIFY supportedColorFiltersChanged)
 
 public:
     enum AspectRatio {
@@ -51,6 +52,8 @@ public:
     QVariantList supportedFocusPointModes() const;
     QVariantList supportedMeteringModes() const;
     QVariantList supportedFlashModes() const;
+    QVariantList supportedColorFilters() const;
+
 
     void setCamera(QObject *camera);
     QObject *camera() const;
@@ -67,6 +70,7 @@ signals:
     void supportedFocusPointModesChanged();
     void supportedMeteringModesChanged();
     void supportedFlashModesChanged();
+    void supportedColorFiltersChanged();
 private slots:
     void handleStatus();
     void handleState();
@@ -84,6 +88,7 @@ private:
     QVariantList m_supportedFocusPointModes;
     QVariantList m_supportedMeteringModes;
     QVariantList m_supportedFlashModes;
+    QVariantList m_supportedColorFilters;
 };
 
 #endif // CAMERACONFIGS_H
