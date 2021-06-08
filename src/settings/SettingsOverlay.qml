@@ -18,19 +18,19 @@ PinchArea {
     readonly property alias settingsOpacity: row.opacity
 
     property bool _pinchActive
-    property bool _topMenuOpen
+    property bool topMenuOpen
     property bool _closing
     // top menu open or transitioning
-    readonly property bool _exposed: _topMenuOpen
-                || _closing
-                || verticalAnimation.running
-                || dragArea.drag.active
+    readonly property bool _exposed: topMenuOpen
+                                     || _closing
+                                     || verticalAnimation.running
+                                     || dragArea.drag.active
 
     default property alias _data: container.data
 
     readonly property int _captureButtonLocation: overlay.isPortrait
-                ? Settings.global.portraitCaptureButtonLocation
-                : Settings.global.landscapeCaptureButtonLocation
+                                                  ? Settings.global.portraitCaptureButtonLocation
+                                                  : Settings.global.landscapeCaptureButtonLocation
 
     property real _progress: (panel.y + panel.height) / panel.height
 
@@ -71,7 +71,7 @@ PinchArea {
     function closeMenus() {
         _closing = true
         whiteBalanceMenu.open = false
-        _topMenuOpen = false
+        topMenuOpen = false
         inButtonLayout = false
         _closing = false
     }
@@ -212,323 +212,274 @@ PinchArea {
             color: Theme.rgba(_highlightColor, Theme.opacityLow)
             opacity: y < -captureModeMenu.itemStep ? 1.0 - (captureModeMenu.itemStep + y) / (-captureModeMenu.itemStep/2)
                                                    : (y > 0 ? 1.0 - y/(captureModeMenu.itemStep/2) : 1.0)
-            y: {
-                var val = captureModeDragArea.dragY
-                if (!captureModeDragArea.drag.active) {
-                    return val
-                }
-
-                if (captureModeMenu.currentIndex == 0) {
-                    if (val < -captureModeMenu.itemStep*1.5) {
-                        // if drag is clearly started up or down, canceling it shouldn't require moving finger back
-                        // to initial y -> enter one way mode
-                        captureModeDragArea.maximumDragY = -captureModeMenu.itemStep
-                        val += captureModeMenu.itemStep*2
-                    } else {
-                        if (val > (-0.5 * captureModeMenu.itemStep)) {
-                            captureModeDragArea.minimumDragY = -captureModeMenu.itemStep
-                        }
-                        val = Math.min(val, 0)
-                    }
-                } else if (captureModeMenu.currentIndex == 1) {
-                    if (val > captureModeMenu.itemStep*0.5) {
-                        val -= captureModeMenu.itemStep*2
-                        captureModeDragArea.minimumDragY = 0
-                    } else {
-                        if (val < -0.5 * captureModeMenu.itemStep) {
-                            captureModeDragArea.maximumDragY = 0
-                        }
-                        val = Math.max(val, -captureModeMenu.itemStep)
-                    }
-                }
-                return val
-            }
-            Behavior on y { id: captureModeBehavior; YAnimator { duration: 200; easing.type: Easing.OutQuad } }
+            y: captureModeMenu.currentIndex == 0 ? -captureModeMenu.itemStep : 0
+            Behavior on y { id: captureModeBehavior; YAnimator { duration: 400; easing.type: Easing.OutQuad } }
         }
     }
 
     MouseArea {
-        id: captureModeDragArea
+        id: dragArea
 
-        // dragRatio increases the multiplier how much drag has to happen compared to how much
-        // the values really change.
-        property real dragRatio: 2
-        property real minimumDragY: -captureModeMenu.itemStep * 2
-        property real maximumDragY: captureModeMenu.itemStep
-        property real dragY: captureModeDragTarget.y / dragRatio
+        property real _lastPos
+        property real _direction
+        property int _extraDragMargin: overlay.isPortrait ? Screen.height/4 - panel.height/2 : 0
 
         anchors.fill: parent
-        enabled: !overlay._topMenuOpen && !overlay.inButtonLayout && showCommonControls
-
-        Item {
-            id: captureModeDragTarget
-
-            Binding on y {
-                when: !captureModeDragArea.drag.active
-                value: captureModeDragArea.dragRatio * (captureModeMenu.currentIndex - 1) * captureModeMenu.itemStep
-            }
-        }
-
+        enabled: !overlay.inButtonLayout && showCommonControls
         drag {
-            target: captureModeDragTarget
-            // Extend the range beyond the allowed range so that a vertical drag always
-            // changes the current mode, wrapping around at the ends
-            minimumY: captureModeDragArea.dragRatio * captureModeDragArea.minimumDragY
-            maximumY: captureModeDragArea.dragRatio * captureModeDragArea.maximumDragY
+            target: panel
+            minimumY: -panel.height
+            maximumY: _extraDragMargin
             axis: Drag.YAxis
             filterChildren: true
             onActiveChanged: {
-                captureModeBehavior.enabled = !drag.active
                 if (!drag.active) {
-                    var index = Math.round((captureModeHighlight.y + captureModeMenu.itemStep) / captureModeMenu.itemStep) % 2
-                    captureModeMenu.selectItem(index)
-                    captureModeDragArea.minimumDragY = -captureModeMenu.itemStep * 2
-                    captureModeDragArea.maximumDragY = captureModeMenu.itemStep
+                    if (panel.y - _extraDragMargin < -(panel.height / 3) && _direction <= 0) {
+                        overlay.topMenuOpen = false
+                    } else if (panel.y > (-panel.height * 2 / 3) && _direction >= 0) {
+                        overlay.topMenuOpen = true
+                    }
+                    expandBehavior.enabled = true
+                    panel.updateY()
+                    expandBehavior.enabled = false
                 }
             }
+        }
+
+        onPressed: {
+            _direction = 0
+            _lastPos = panel.y
+        }
+        onPositionChanged: {
+            var pos = panel.y
+            _direction = (_direction + pos - _lastPos) / 2
+            _lastPos = panel.y
         }
 
         MouseArea {
-            id: dragArea
+            id: container
 
-            property real _lastPos
-            property real _direction
+            property real pressX
+            property real pressY
+
+            function outOfBounds(mouseX, mouseY) {
+                return mouseX < Theme.paddingLarge || mouseX > width - Theme.paddingLarge
+                        || mouseY < Theme.paddingLarge || mouseY > height - Theme.paddingLarge
+            }
 
             anchors.fill: parent
-            enabled: overlay._topMenuOpen
-
-            drag {
-                target: !overlay.inButtonLayout ? panel : undefined
-                minimumY: -panel.height
-                maximumY: 0
-                axis: Drag.YAxis
-                filterChildren: true
-                onActiveChanged: {
-                    if (!drag.active && panel.y < -(panel.height / 3) && _direction <= 0) {
-                        overlay._topMenuOpen = false
-                    } else if (!drag.active && panel.y > (-panel.height * 2 / 3) && _direction >= 0) {
-                        overlay._topMenuOpen = true
-                    }
-                }
-            }
+            opacity: Math.min(1 - overlay._progress, 1 - anchorContainer.opacity)
+            enabled: !overlay._pinchActive && showCommonControls
 
             onPressed: {
-                _direction = 0
-                _lastPos = panel.y
+                pressX = mouseX
+                pressY = mouseY
             }
-            onPositionChanged: {
-                var pos = panel.y
-                _direction = (_direction + pos - _lastPos) / 2
-                _lastPos = panel.y
+
+            onClicked: {
+                if (overlay.topMenuOpen) {
+                    overlay.topMenuOpen = false
+                }
+                // don't react near display edges
+                if (outOfBounds(mouseX, mouseY)) return
+                if (whiteBalanceMenu.expanded) {
+                    whiteBalanceMenu.open = false
+                } else if (overlay.inButtonLayout) {
+                    overlay.inButtonLayout = false
+                } else {
+                    overlay.clicked(mouse)
+                }
+            }
+
+            onPressAndHold: {
+                // don't react near display edges
+                if (outOfBounds(mouseX, mouseY)) return
+                if (!overlay.topMenuOpen) {
+                    var dragDistance = Math.max(Math.abs(mouseX - pressX),
+                                                Math.abs(mouseY - pressY))
+                    if (dragDistance < Theme.startDragDistance) {
+                        overlay.inButtonLayout = true
+                    }
+                }
             }
 
             MouseArea {
-                id: container
-
-                property real pressX
-                property real pressY
-
-                function outOfBounds(mouseX, mouseY) {
-                    return mouseX < Theme.paddingLarge || mouseX > width - Theme.paddingLarge
-                            || mouseY < Theme.paddingLarge || mouseY > height - Theme.paddingLarge
-                }
-
-                anchors.fill: parent
-                opacity: Math.min(1 - overlay._progress, 1 - anchorContainer.opacity)
-                enabled: !overlay._pinchActive && showCommonControls
-
-                onPressed: {
-                    pressX = mouseX
-                    pressY = mouseY
-                }
-
-                onClicked: {
-                    // don't react near display edges
-                    if (outOfBounds(mouseX, mouseY)) return
-                    if (whiteBalanceMenu.expanded) {
-                        whiteBalanceMenu.open = false
-                    } else if (overlay.inButtonLayout) {
-                        overlay.inButtonLayout = false
-                    } else {
-                        overlay.clicked(mouse)
-                    }
-                }
-
-                onPressAndHold: {
-                    // don't react near display edges
-                    if (outOfBounds(mouseX, mouseY)) return
-                    if (!overlay._topMenuOpen) {
-                        var dragDistance = Math.max(Math.abs(mouseX - pressX),
-                                                    Math.abs(mouseY - pressY))
-                        if (dragDistance < Theme.startDragDistance) {
-                            overlay.inButtonLayout = true
-                        }
-                    }
-                }
-
-                MouseArea {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    width: row.width
-                    height: Theme.itemSizeLarge
-                    enabled: !overlay._exposed && !overlay.inButtonLayout && showCommonControls
-
-                    onClicked: overlay._topMenuOpen = true
-
-                    onPressAndHold: container.pressAndHold(mouse)
-                }
-
-                OverlayAnchor { id: overlayAnchorBL; anchors { left: parent.left; bottom: parent.bottom } }
-                OverlayAnchor { id: overlayAnchorBC; anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom } }
-                OverlayAnchor { id: overlayAnchorBR; anchors { right: parent.right; bottom: parent.bottom } }
-                OverlayAnchor { id: overlayAnchorCL; anchors { left: parent.left; verticalCenter: parent.verticalCenter } }
-                OverlayAnchor { id: overlayAnchorCR; anchors { right: parent.right; verticalCenter: parent.verticalCenter } }
-                OverlayAnchor { id: overlayAnchorTL; anchors { left: parent.left; top: parent.top } }
-                OverlayAnchor { id: overlayAnchorTR; anchors { right: parent.right; top: parent.top } }
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                enabled: overlay._exposed
-                onClicked: overlay._topMenuOpen = false
-            }
-
-            Item {
-                id: panel
-
-                Binding {
-                    target: panel
-                    property: "y"
-                    value: _topMenuOpen ? 0 : -panel.height
-                    when: expandBehavior.enabled
-                }
-                Behavior on y {
-                    id: expandBehavior
-                    enabled: !dragArea.drag.active
-                    NumberAnimation {
-                        id: verticalAnimation
-                        duration: 200; easing.type: Easing.InOutQuad
-                    }
-                }
-
-                width: overlay.width
-                height: Screen.width / 2
-            }
-
-            Rectangle {
-                id: highlight
-
-                anchors.fill: parent
-                visible: overlay._exposed
-                color: "black"
-                opacity: Theme.opacityHigh * (1 - container.opacity)
-            }
-
-            Row {
-                id: row
-
-                y: Math.round(height * panel.y / panel.height) + overlay._headerHeight + overlay._headerTopMargin
                 anchors.horizontalCenter: parent.horizontalCenter
+                width: row.width
+                height: Theme.itemSizeLarge
+                enabled: !overlay._exposed && !overlay.inButtonLayout && showCommonControls
 
-                height: Math.max(implicitHeight, Screen.height / 2)
+                onClicked: overlay.topMenuOpen = true
 
-                opacity: 1 - container.opacity
-                enabled: overlay._exposed
-                visible: overlay._exposed
+                onPressAndHold: container.pressAndHold(mouse)
+            }
 
-                spacing: overlay._menuItemHorizontalSpacing
+            OverlayAnchor { id: overlayAnchorBL; anchors { left: parent.left; bottom: parent.bottom } }
+            OverlayAnchor { id: overlayAnchorBC; anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom } }
+            OverlayAnchor { id: overlayAnchorBR; anchors { right: parent.right; bottom: parent.bottom } }
+            OverlayAnchor { id: overlayAnchorCL; anchors { left: parent.left; verticalCenter: parent.verticalCenter } }
+            OverlayAnchor { id: overlayAnchorCR; anchors { right: parent.right; verticalCenter: parent.verticalCenter } }
+            OverlayAnchor { id: overlayAnchorTL; anchors { left: parent.left; top: parent.top } }
+            OverlayAnchor { id: overlayAnchorTR; anchors { right: parent.right; top: parent.top } }
+        }
 
-                SettingsMenu {
-                    id: timerMenu
+        MouseArea {
+            anchors.fill: parent
+            enabled: overlay._exposed
+            onClicked: overlay.topMenuOpen = false
+        }
 
-                    width: overlay._menuWidth
-                    title: Settings.timerText
-                    header: upperHeader
-                    model: [ 0, 3, 10, 15 ]
-                    delegate: SettingsMenuItem {
-                        settings: Settings.mode
-                        property: "timer"
-                        value: modelData
-                        icon: Settings.timerIcon(modelData)
-                    }
-                }
+        Item {
+            id: panel
 
-                SettingsMenu {
-                    id: flashMenu
+            y: -panel.height
 
-                    visible: model.length > 0
-                    width: overlay._menuWidth
-                    title: Settings.flashText
-                    header: upperHeader
-                    model: CameraConfigs.supportedFlashModes
-                    delegate: SettingsMenuItem {
-                        settings: Settings.mode
-                        property: "flash"
-                        value: modelData
-                        icon: Settings.flashIcon(modelData)
-                    }
-                }
-
-                SettingsMenu {
-                    id: exposureModeMenu
-
-                    visible: model.length > 1
-                    width: overlay._menuWidth
-                    title: Settings.exposureModeText
-                    header: upperHeader
-                    model: CameraConfigs.supportedExposureModes
-                    delegate: SettingsMenuItem {
-                        settings: Settings.mode
-                        property: "exposureMode"
-                        value: modelData
-                        icon: Settings.exposureModeIcon(modelData)
-                    }
-                }
-
-                SettingsMenu {
-                    id: isoMenu
-
-                    width: overlay._menuWidth
-                    title: Settings.isoText
-                    header: upperHeader
-                    model: CameraConfigs.supportedIsoSensitivities
-                    delegate: SettingsMenuItemBase {
-                        settings: Settings.mode
-                        property: "iso"
-                        value: modelData
-
-                        IsoItem {
-                            anchors.centerIn: parent
-                            value: modelData
-                        }
-                    }
-                }
-
-                SettingsMenu {
-                    id: gridMenu
-
-                    width: overlay._menuWidth
-                    title: Settings.viewfinderGridText
-                    header: upperHeader
-                    model: Settings.viewfinderGridValues
-                    delegate: SettingsMenuItem {
-                        settings: Settings.global
-                        property: "viewfinderGrid"
-                        value: modelData
-                        icon: Settings.viewfinderGridIcon(modelData)
+            function updateY() {
+                if (!dragArea.drag.active) {
+                    if (overlay.topMenuOpen) {
+                        panel.y = dragArea._extraDragMargin
+                    } else {
+                        panel.y = -panel.height
                     }
                 }
             }
 
-            HeaderLabel {
-                id: upperHeader
+            Connections {
+                target: overlay
+                onIsPortraitChanged: panel.updateY()
+                onTopMenuOpenChanged: {
+                    expandBehavior.enabled = true
+                    panel.updateY()
+                    expandBehavior.enabled = false
+                }
+            }
 
-                anchors { left: parent.left; bottom: row.top; right: parent.right }
-                height: overlay._headerHeight
-                opacity: row.opacity
+            Behavior on y {
+                id: expandBehavior
+                enabled: false
+                NumberAnimation {
+                    id: verticalAnimation
+                    duration: 200; easing.type: Easing.InOutQuad
+                }
+            }
+
+            width: overlay.width
+            height: Screen.width / 2
+        }
+
+        Rectangle {
+            id: highlight
+
+            anchors.fill: parent
+            visible: overlay._exposed
+            color: "black"
+            opacity: Theme.opacityHigh * (1 - container.opacity)
+        }
+
+        Row {
+            id: row
+
+            y: Math.round(height * panel.y / panel.height) + overlay._headerHeight + overlay._headerTopMargin
+            anchors.horizontalCenter: parent.horizontalCenter
+
+            height: Math.max(implicitHeight, Screen.height / 2)
+
+            opacity: 1 - container.opacity
+            enabled: overlay._exposed
+            visible: overlay._exposed
+
+            spacing: overlay._menuItemHorizontalSpacing
+
+            SettingsMenu {
+                id: timerMenu
+
+                width: overlay._menuWidth
+                title: Settings.timerText
+                header: upperHeader
+                model: [ 0, 3, 10, 15 ]
+                delegate: SettingsMenuItem {
+                    settings: Settings.mode
+                    property: "timer"
+                    value: modelData
+                    icon: Settings.timerIcon(modelData)
+                }
+            }
+
+            SettingsMenu {
+                id: flashMenu
+
+                visible: model.length > 0
+                width: overlay._menuWidth
+                title: Settings.flashText
+                header: upperHeader
+                model: CameraConfigs.supportedFlashModes
+                delegate: SettingsMenuItem {
+                    settings: Settings.mode
+                    property: "flash"
+                    value: modelData
+                    icon: Settings.flashIcon(modelData)
+                }
+            }
+
+            SettingsMenu {
+                id: exposureModeMenu
+
+                visible: model.length > 1
+                width: overlay._menuWidth
+                title: Settings.exposureModeText
+                header: upperHeader
+                model: CameraConfigs.supportedExposureModes
+                delegate: SettingsMenuItem {
+                    settings: Settings.mode
+                    property: "exposureMode"
+                    value: modelData
+                    icon: Settings.exposureModeIcon(modelData)
+                }
+            }
+
+            SettingsMenu {
+                id: isoMenu
+
+                width: overlay._menuWidth
+                title: Settings.isoText
+                header: upperHeader
+                model: CameraConfigs.supportedIsoSensitivities
+                delegate: SettingsMenuItemBase {
+                    settings: Settings.mode
+                    property: "iso"
+                    value: modelData
+
+                    IsoItem {
+                        anchors.centerIn: parent
+                        value: modelData
+                    }
+                }
+            }
+
+            SettingsMenu {
+                id: gridMenu
+
+                width: overlay._menuWidth
+                title: Settings.viewfinderGridText
+                header: upperHeader
+                model: Settings.viewfinderGridValues
+                delegate: SettingsMenuItem {
+                    settings: Settings.global
+                    property: "viewfinderGrid"
+                    value: modelData
+                    icon: Settings.viewfinderGridIcon(modelData)
+                }
             }
         }
-    }
 
+        HeaderLabel {
+            id: upperHeader
+
+            anchors { left: parent.left; bottom: row.top; right: parent.right }
+            height: overlay._headerHeight
+            opacity: row.opacity
+        }
+    }
     Row {
         id: topRow
 
@@ -641,7 +592,7 @@ PinchArea {
         ExposureSlider {
             id: exposureSlider
             alignment: _overlayPosition.exposure
-            enabled: !overlay._topMenuOpen && !overlay.inButtonLayout && !whiteBalanceMenu.open
+            enabled: !overlay.topMenuOpen && !overlay.inButtonLayout && !whiteBalanceMenu.open
             opacity: (1.0 - settingsOpacity) * (1.0 - whiteBalanceMenu.openProgress)
             height: Theme.itemSizeSmall * 5
         }
@@ -691,8 +642,8 @@ PinchArea {
                 verticalCenterOffset: -Theme.paddingLarge
             }
             width: overlay.isPortrait
-                    ? Screen.width - (2 * Theme.itemSizeExtraLarge)
-                    : Screen.width - Theme.itemSizeExtraLarge
+                   ? Screen.width - (2 * Theme.itemSizeExtraLarge)
+                   : Screen.width - Theme.itemSizeExtraLarge
             font.pixelSize: Theme.fontSizeExtraLarge
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.Wrap
@@ -700,10 +651,10 @@ PinchArea {
             color: _highlightColor
 
             text: overlay.isPortrait
-                    //% "Select location for the portrait capture key"
-                    ? qsTrId("camera-la-portrait-capture-key-location")
-                    //% "Select location for the landscape capture key"
-                    : qsTrId("camera-la-landscape-capture-key-location")
+                  ? //% "Select location for the portrait capture key"
+                    qsTrId("camera-la-portrait-capture-key-location")
+                  : //% "Select location for the landscape capture key"
+                    qsTrId("camera-la-landscape-capture-key-location")
         }
     }
 }
