@@ -105,11 +105,11 @@ SettingsBase {
             property var focusDistanceValues: [ Camera.FocusInfinity ]
             property var flashValues: [ Camera.FlashOff ]
             property var exposureModeValues: [
-                Camera.ExposureManual,
+                Camera.ExposureManual /*,
                 Camera.ExposureNight,
                 Camera.ExposurePortrait,
                 Camera.ExposureSports,
-                Camera.ExposureHDR
+                Camera.ExposureHDR */
             ]
             property var meteringModeValues: [
                 Camera.MeteringMatrix,
