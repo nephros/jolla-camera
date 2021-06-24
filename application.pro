@@ -42,6 +42,10 @@ schema.path  = /etc/dconf/db/vendor.d/
 
 INSTALLS += target desktop qml service schema oneshot
 
+usersession.path = /usr/lib/systemd/user/user-session.target.d
+usersession.files += 50-jolla-camera.conf
+INSTALLS += usersession
+
 packagesExist(qdeclarative5-boostable) {
     message("Building with qdeclarative-boostable support")
     DEFINES += HAS_BOOSTER
