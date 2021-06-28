@@ -24,6 +24,7 @@ class CameraConfigs : public QObject
     Q_PROPERTY(QVariantList supportedIsoSensitivities READ supportedIsoSensitivities NOTIFY supportedIsoSensitivitiesChanged)
     Q_PROPERTY(QVariantList supportedWhiteBalanceModes READ supportedWhiteBalanceModes NOTIFY supportedWhiteBalanceModesChanged)
     Q_PROPERTY(QVariantList supportedExposureModes READ supportedExposureModes NOTIFY supportedExposureModesChanged)
+    Q_PROPERTY(QVariantList supportedColorFilters READ supportedColorFilters NOTIFY supportedColorFiltersChanged)
     Q_PROPERTY(QVariantList supportedFocusModes READ supportedFocusModes NOTIFY supportedFocusModesChanged)
     Q_PROPERTY(QVariantList supportedFocusPointModes READ supportedFocusPointModes NOTIFY supportedFocusPointModesChanged)
     Q_PROPERTY(QVariantList supportedMeteringModes READ supportedMeteringModes NOTIFY supportedMeteringModesChanged)
@@ -48,6 +49,7 @@ public:
     QVariantList supportedIsoSensitivities() const;
     QVariantList supportedWhiteBalanceModes() const;
     QVariantList supportedExposureModes() const;
+    QVariantList supportedColorFilters() const;
     QVariantList supportedFocusModes() const;
     QVariantList supportedFocusPointModes() const;
     QVariantList supportedMeteringModes() const;
@@ -67,6 +69,7 @@ signals:
     void supportedIsoSensitivitiesChanged();
     void supportedWhiteBalanceModesChanged();
     void supportedExposureModesChanged();
+    void supportedColorFiltersChanged();
     void supportedFocusModesChanged();
     void supportedFocusPointModesChanged();
     void supportedMeteringModesChanged();
@@ -85,6 +88,7 @@ private:
     QVariantList m_supportedIsoSensitivities;
     QVariantList m_supportedWhiteBalanceModes;
     QVariantList m_supportedExposureModes;
+    QVariantList m_supportedColorFilters;
     QVariantList m_supportedFocusModes;
     QVariantList m_supportedFocusPointModes;
     QVariantList m_supportedMeteringModes;
