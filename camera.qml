@@ -53,7 +53,7 @@ ApplicationWindow {
         id: qrFilter
         active: Settings.global.qrFilterEnabled
                 && Settings.global.captureMode === "image"
-                && Settings.cameraDevice === "primary"
+                && Settings.global.position === Camera.BackFace
 
         onActiveChanged: qrFilter.clearResult()
     }

@@ -6,7 +6,7 @@ MODULENAME = com/jolla/camera
 TARGETPATH = $$[QT_INSTALL_QML]/$$MODULENAME
 
 QT += gui-private qml quick multimedia
-CONFIG += plugin link_pkgconfig c++11
+CONFIG += plugin link_pkgconfig c++14
 
 PKGCONFIG += mlite5 systemsettings
 
@@ -14,12 +14,14 @@ SOURCES += \
         cameraplugin.cpp \
         capturemodel.cpp \
         declarativecameraextensions.cpp \
-        declarativesettings.cpp
+        declarativesettings.cpp \
+        cameraconfigs.cpp
 
 HEADERS += \
         capturemodel.h \
         declarativecameraextensions.h \
-        declarativesettings.h
+        declarativesettings.h \
+        cameraconfigs.h
 
 DEFINES += \
         DEPLOYMENT_PATH=\"\\\"\"$${TARGETPATH}/\"\\\"\"

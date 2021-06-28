@@ -10,6 +10,12 @@
 #include "capturemodel.h"
 #include "declarativecameraextensions.h"
 #include "declarativesettings.h"
+#include "cameraconfigs.h"
+
+template <typename T> static QObject *singletonFactory(QQmlEngine *, QJSEngine *)
+{
+    return new T;
+}
 
 // using custom translator so it gets properly removed from qApp when engine is deleted
 class AppTranslator: public QTranslator
@@ -56,7 +62,7 @@ public:
         qmlRegisterType<DeclarativeCameraExtensions>("com.jolla.camera", 1, 0, "CameraExtensions");
         qmlRegisterType<DeclarativeSettings>("com.jolla.camera", 1, 0, "SettingsBase");
         qmlRegisterSingletonType<DeclarativeSettings>("com.jolla.camera", 1, 0, "Settings", DeclarativeSettings::factory);
-
+        qmlRegisterSingletonType<CameraConfigs>("com.jolla.camera", 1, 0, "CameraConfigs", singletonFactory<CameraConfigs>);
     }
 };
 

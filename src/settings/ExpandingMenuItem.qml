@@ -4,7 +4,7 @@ import Sailfish.Silica 1.0
 MouseArea {
     id: menuItem
 
-    property url icon
+    property string icon
     property var value
 
     property string property
