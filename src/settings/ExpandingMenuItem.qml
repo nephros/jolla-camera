@@ -60,9 +60,11 @@ MouseArea {
 
         Image {
             anchors.centerIn: parent
-            source: menuItem.pressed
-                    ? menuItem.icon + "?" + highlightColor
-                    : menuItem.icon + "?" + Theme.lightPrimaryColor
+            source: menuItem.icon != ""
+                    ? (menuItem.pressed
+                       ? menuItem.icon + "?" + highlightColor
+                       : menuItem.icon + "?" + Theme.lightPrimaryColor)
+                    : ""
         }
     }
 }
