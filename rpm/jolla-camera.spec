@@ -22,6 +22,8 @@ BuildRequires:  oneshot
 
 Requires:  jolla-settings-accounts >= 0.1.31
 Requires:  sailfishsilica-qt5 >= 1.1.79
+Requires:  mapplauncherd >= 4.1.22
+Requires:  mapplauncherd-booster-silica-qt5
 Requires:  qt5-qtdeclarative-import-models2
 Requires:  qt5-qtdeclarative-import-positioning
 Requires:  qt5-qtdeclarative-import-multimedia
@@ -52,7 +54,6 @@ Requires:  gstreamer1.0-plugins-bad
 Requires:  dconf
 Requires:  %{name}-lockscreen = %{version}
 Requires:  %{name}-settings = %{version}
-Requires:  sailjail-launch-approval
 %{_oneshot_requires_post}
 
 %description

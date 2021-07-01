@@ -1,3 +1,4 @@
 [D-BUS Service]
 Name=com.jolla.camera
-Exec=/usr/bin/invoker -s -n -d 5 --type=generic /usr/bin/sailjail -p jolla-camera.desktop /usr/bin/jolla-camera
+#Exec=/usr/bin/invoker -s -n -d 5 --type=generic /usr/bin/sailjail -p jolla-camera.desktop /usr/bin/jolla-camera
+Exec=/usr/bin/invoker --type=silica-media,silica-qt5 --desktop-file=jolla-camera.desktop -s -n -d 5 /usr/bin/jolla-camera
