@@ -79,8 +79,13 @@ void CameraConfigs::handleStatus()
 
             m_supportedIsoSensitivities.clear();
             for (int value : m_camera->exposure()->supportedIsoSensitivities()) {
-                m_supportedIsoSensitivities.append(value);
+
+                // Filter out invalid ISO value
+                if (value != 1) {
+                    m_supportedIsoSensitivities.append(value);
+                }
             }
+            std::sort(m_supportedIsoSensitivities.begin(), m_supportedIsoSensitivities.end());
 
             auto updateSupportedModes = [](QVariantList &modes, QLatin1String modeName, const QMetaObject &meta, auto isSupported) {
                 modes.clear();
