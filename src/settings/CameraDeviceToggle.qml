@@ -8,6 +8,8 @@ Grid {
     property var labels: []
     property alias model: repeater.model
     property int orientation: Qt.Vertical
+    property color highlightColor: Theme.colorScheme == Theme.LightOnDark
+                                   ? Theme.highlightColor : Theme.highlightFromColor(Theme.highlightColor, Theme.LightOnDark)
 
     signal selected(string deviceId)
 
@@ -34,7 +36,7 @@ Grid {
             Rectangle {
                 border {
                     width: Theme._lineWidth
-                    color: parent.highlighted ? Theme.highlightColor : Theme.primaryColor
+                    color: parent.highlighted ? root.highlightColor : Theme.lightPrimaryColor
                 }
 
                 radius: width/2
@@ -45,7 +47,7 @@ Grid {
             Label {
                 // TODO: Don't hardcode these values
                 text: root.labels.length > model.index ? root.labels[model.index] : ""
-                color: parent.highlighted ? Theme.highlightColor : Theme.primaryColor
+                color: parent.highlighted ? root.highlightColor : Theme.lightPrimaryColor
                 font.pixelSize: Theme.fontSizeMediumBase
                 anchors.verticalCenterOffset: -Theme.pixelRatio
                 anchors.centerIn: parent
