@@ -44,7 +44,6 @@ FocusScope {
 
     readonly property bool recording: active && camera.videoRecorder.recorderState == CameraRecorder.RecordingState
 
-    property bool _complete
     property bool _unload
 
     property bool touchFocusSupported: (camera.focus.focusMode == Camera.FocusAuto || camera.focus.focusMode == Camera.FocusContinuous)
@@ -129,12 +128,6 @@ FocusScope {
             width: isPortrait ? captureView.width : captureView.height
             height: isPortrait ? captureView.height : captureView.width
             rotation: -captureView.pageRotation
-        }
-    }
-
-    function reload() {
-        if (captureView._complete) {
-            captureView._unload = true
         }
     }
 
@@ -300,16 +293,6 @@ FocusScope {
         running: captureView._unload && camera.cameraStatus == Camera.UnloadedStatus
         onTriggered: {
             captureView._unload = false
-        }
-    }
-
-    Timer {
-        id: startFailedTimer
-        interval: 2000
-        onTriggered: {
-            if (camera.cameraStatus === Camera.StartingStatus) {
-                captureView.reload()
-            }
         }
     }
 
@@ -503,12 +486,6 @@ FocusScope {
         property bool initialized
 
         onCameraStatusChanged: {
-            if (camera.cameraStatus == Camera.StartingStatus) {
-                startFailedTimer.restart()
-            } else {
-                startFailedTimer.stop()
-            }
-
             if (camera.cameraStatus !== Camera.ActiveStatus) {
                 _captureQueued = false
                 captureBusy = false
@@ -551,7 +528,6 @@ FocusScope {
 
         imageCapture {
             resolution: _pickResolution(CameraConfigs.supportedImageResolutions, Settings.aspectRatio)
-            onResolutionChanged: reload()
 
             onImageSaved: {
                 // HDR case emits the exposed already on the first image, delay the feedback so user avoids
@@ -591,7 +567,6 @@ FocusScope {
         videoRecorder {
             resolution: _pickResolution(CameraConfigs.supportedVideoResolutions, CameraConfigs.AspectRatio_16_9)
 
-            onResolutionChanged: reload()
             audioChannels: 2
             audioSampleRate: Settings.global.audioSampleRate
             audioCodec: Settings.global.audioCodec
@@ -649,7 +624,6 @@ FocusScope {
             cameraManufacturer: deviceInfo.manufacturer
         }
 
-        viewfinder.onResolutionChanged: captureView.reload()
         focus.onFocusModeChanged: camera.unlock()
 
         onLockStatusChanged: {
