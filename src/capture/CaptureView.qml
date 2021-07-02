@@ -296,7 +296,7 @@ FocusScope {
 
     Timer {
         id: reloadTimer
-        interval: 100
+        interval: 1
         running: captureView._unload && camera.cameraStatus == Camera.UnloadedStatus
         onTriggered: {
             captureView._unload = false
@@ -463,6 +463,19 @@ FocusScope {
         property bool hasCameraOnBothSides
         property string frontFacingDeviceId
         property var backFacingCameras
+
+        // On some adaptations media booster makes camera initialization fail
+        // and Camera must be reloaded, try to do that once when that happens
+        property bool needsReload: camera.errorCode === Camera.CameraError
+                && camera.cameraState === Camera.UnloadedState
+                && camera.cameraStatus === Camera.UnloadedStatus
+
+        onNeedsReloadChanged: {
+            if (needsReload) {
+                captureView._unload = true
+                needsReload = false // break binding
+            }
+        }
 
         deviceId: Settings.deviceId
         captureMode: Settings.global.captureMode == "image" ? Camera.CaptureStillImage
