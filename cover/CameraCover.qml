@@ -7,9 +7,7 @@ import org.nemomobile.thumbnailer 1.0
 CoverBackground {
     id: cover
 
-    property int coverIndex: galleryActive
-                             ? galleryIndex
-                             : (captureModel != null ? captureModel.count - 1 : 0)
+    property int coverIndex: galleryActive ? galleryIndex : 0
 
     onCoverIndexChanged: {
         repositionTimer.restart()
