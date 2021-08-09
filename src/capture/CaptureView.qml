@@ -487,7 +487,7 @@ FocusScope {
             }
 
             var backCameras = []
-            if (cameraStatus === Camera.LoadingStatus && !initialized) {
+            if (cameraStatus === Camera.LoadedStatus && !initialized) {
                 initialized = true
                 var hasFrontFace = false
                 var hasBackFace = false
@@ -495,20 +495,24 @@ FocusScope {
 
                 for (var i = 0; i < QtMultimedia.availableCameras.length; i++) {
                     var device = QtMultimedia.availableCameras[i]
-                    if (device.position === Camera.FrontFace) {
+                    if (!hasFrontFace && device.position === Camera.FrontFace) {
                         hasFrontFace = true
                         frontFacingDeviceId = device.deviceId
                     } else if (device.position === Camera.BackFace) {
                         hasBackFace = true
                         backCameras.push(device)
                     }
-                    if (device.position === Camera.FrontFace) {
-                        break
-                    }
+                }
+
+                // If the dynamic camera position detection fails just assume they are there (works for some older devices)
+                if (QtMultimedia.availableCameras.length > 0 && !hasFrontFace && !hasBackFace) {
+                    hasFrontFace = true
+                    hasBackFace = true
+                    backCameras.push(QtMultimedia.defaultcamera)
+                    frontFacingDeviceId = "1"
                 }
 
                 backFacingCameras = backCameras
-
                 hasCameraOnBothSides = hasFrontFace && hasBackFace
 
                 if (Settings.global.previousBackFacingDeviceId.length === 0 && backCameras.length > 0) {
