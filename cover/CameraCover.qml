@@ -102,6 +102,7 @@ CoverBackground {
             icon: Settings.whiteBalanceIcon(Settings.mode.whiteBalance)
         }
         IsoItem {
+            visible: CameraConfigs.supportedIsoSensitivities.length > 0
             scale: 0.75
             value: Settings.mode.iso
             color: Theme.colorScheme == Theme.LightOnDark
