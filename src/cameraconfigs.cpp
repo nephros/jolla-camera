@@ -3,6 +3,7 @@
 #include <QCamera>
 #include <QMediaRecorder>
 #include <QCameraImageCapture>
+#include <mgconfitem.h>
 
 CameraConfigs::CameraConfigs(QObject *parent)
     : QObject(parent)
@@ -72,8 +73,21 @@ void CameraConfigs::handleStatus()
             if (recorders.count() > 0) {
                 QMediaRecorder *recorder = recorders[0];
                 m_supportedVideoResolutions.clear();
+
+                QSize maxVideoResolution;
+                QVariant value(MGConfItem("/apps/jolla-camera/maxVideoResolution").value());
+                if (!value.isNull()) {
+                    QStringList values = value.toString().split('x');
+                    if (values.size() == 2) {
+                        maxVideoResolution = QSize(values.at(0).toInt(), values.at(1).toInt());
+                    }
+                }
+
                 for (const QSize resolution : recorder->supportedResolutions()) {
-                    m_supportedVideoResolutions.append(resolution);
+                    if (!maxVideoResolution.isValid() || (resolution.height() <= maxVideoResolution.height() &&
+                                                          resolution.width() <= maxVideoResolution.width())) {
+                        m_supportedVideoResolutions.append(resolution);
+                    }
                 }
             }
 
