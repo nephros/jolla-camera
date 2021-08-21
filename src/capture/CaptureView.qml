@@ -520,15 +520,8 @@ FocusScope {
                     }
                 }
 
-                // If the dynamic camera position detection fails just assume they are there (works for some older devices)
-                if (QtMultimedia.availableCameras.length > 0 && !hasFrontFace && !hasBackFace) {
-                    hasFrontFace = true
-                    hasBackFace = true
-                    backCameras.push(QtMultimedia.defaultcamera)
-                    frontFacingDeviceId = "1"
-                }
-
                 backFacingCameras = backCameras
+
                 hasCameraOnBothSides = hasFrontFace && hasBackFace
 
                 if (Settings.global.previousBackFacingDeviceId.length === 0 && backCameras.length > 0) {
