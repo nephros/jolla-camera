@@ -3,7 +3,7 @@
 # Create a temporary DBus session to isolate us from the normal environment.
 export `dbus-launch`
 
-/usr/lib/qt5/bin/qmltestrunner $@
+qmltestrunner $@
 exit_code=$?
 
 kill $DBUS_SESSION_BUS_PID
