@@ -475,7 +475,8 @@ PinchArea {
                     width: overlay._menuWidth
                     title: Settings.exposureModeText
                     header: upperHeader
-                    model: CameraConfigs.supportedExposureModes
+                    // Disabled in 4.3.0
+                    model: false && CameraConfigs.supportedExposureModes
                     delegate: SettingsMenuItem {
                         settings: Settings.mode
                         property: "exposureMode"
@@ -560,7 +561,8 @@ PinchArea {
         Item {
             width: overlay._menuWidth
             height: width
-            visible: CameraConfigs.supportedExposureModes.length > 1
+            // Disabled in 4.3.0
+            visible: false && CameraConfigs.supportedExposureModes.length > 1
             y: topRow.dragY(exposureModeMenu.currentItem ? exposureModeMenu.currentItem.y : 0)
 
             Icon {
