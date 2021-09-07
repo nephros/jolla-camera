@@ -12,4 +12,4 @@ Comment=Jolla Camera
 ApplicationName=camera
 OrganizationName=com.jolla
 DataDirectory=jolla-camera
-Permissions=Camera;Audio;Microphone;Pictures;Videos;MediaIndexing;Location;Privileged;Sharing;RemovableMedia
+Permissions=Camera;Audio;Microphone;Pictures;Videos;MediaIndexing;Location;Privileged;RemovableMedia
