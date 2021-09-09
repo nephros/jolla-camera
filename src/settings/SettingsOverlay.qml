@@ -471,12 +471,14 @@ PinchArea {
                 SettingsMenu {
                     id: exposureModeMenu
 
-                    visible: model.length > 1
+                    visible: model.length > 1 || CameraConfigs.supportedIsoSensitivities.length == 0
                     width: overlay._menuWidth
                     title: Settings.exposureModeText
                     header: upperHeader
                     // Disabled in 4.3.0
-                    model: false && CameraConfigs.supportedExposureModes
+                    model: CameraConfigs.supportedIsoSensitivities.length == 0
+                           ? [Camera.ExposureManual] : []
+                    //CameraConfigs.supportedExposureModes
                     delegate: SettingsMenuItem {
                         settings: Settings.mode
                         property: "exposureMode"
@@ -562,13 +564,13 @@ PinchArea {
             width: overlay._menuWidth
             height: width
             // Disabled in 4.3.0
-            visible: false && CameraConfigs.supportedExposureModes.length > 1
+            visible: CameraConfigs.supportedIsoSensitivities.length == 0 // CameraConfigs.supportedExposureModes.length > 1
             y: topRow.dragY(exposureModeMenu.currentItem ? exposureModeMenu.currentItem.y : 0)
 
             Icon {
                 anchors.centerIn: parent
                 color: Theme.lightPrimaryColor
-                source: Settings.exposureModeIcon(Settings.mode.exposureMode)
+                source: Settings.exposureModeIcon(Camera.ExposureManual /*Settings.mode.exposureMode*/)
             }
         }
 
