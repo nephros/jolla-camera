@@ -74,6 +74,7 @@ signals:
 private slots:
     void handleStatus();
     void handleState();
+    void handleCaptureMode();
 private:
     bool m_ready = false;
     QCamera *m_camera = nullptr;
