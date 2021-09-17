@@ -33,7 +33,8 @@ void CameraConfigs::setCamera(QObject * camera)
         m_camera = qCamera;
 
         connect(m_camera, &QCamera::statusChanged, this, &CameraConfigs::handleStatus);
-        connect(m_camera, &QCamera::stateChanged , this, &CameraConfigs::handleState);
+        connect(m_camera, &QCamera::stateChanged, this, &CameraConfigs::handleState);
+        connect(m_camera, &QCamera::captureModeChanged, this, &CameraConfigs::handleCaptureMode);
         m_ready = false;
         handleStatus();
 
@@ -46,6 +47,11 @@ void CameraConfigs::handleState()
     if (m_camera && m_camera->state() == QCamera::UnloadedState) {
         m_ready = false;
     }
+}
+
+void CameraConfigs::handleCaptureMode()
+{
+    m_ready = false;
 }
 
 void CameraConfigs::handleStatus()

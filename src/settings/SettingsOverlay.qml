@@ -547,7 +547,7 @@ PinchArea {
         Item {
             width: overlay._menuWidth
             height: width
-            visible: CameraConfigs.supportedFlashModes.length > 1
+            visible: CameraConfigs.supportedFlashModes.length > 0
             y: flashMenu.currentItem != null ? topRow.dragY(flashMenu.currentItem.y) : 0
 
             Icon {
