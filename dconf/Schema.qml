@@ -14,6 +14,7 @@ QtObject {
     property int exposureCompensation: 0
     property int whiteBalance: CameraImageProcessing.WhiteBalanceAuto
     property var exposureCompensationValues: [ 4, 3, 2, 1, 0, -1, -2, -3, -4 ]
+    property string viewfinderGrid: "none"
 
     property list<QtObject> _modes
     default property alias modes: schema._modes

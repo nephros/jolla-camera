@@ -10,6 +10,7 @@ SettingsBase {
     property string deviceId: global.deviceId
 
     readonly property int aspectRatio: mode.aspectRatio
+    property var viewfinderGridValues: [ "none", "thirds" ]
 
     readonly property var settingsDefaults: ({
                                                  "iso": 0,
@@ -72,6 +73,7 @@ SettingsBase {
         property int whiteBalance: CameraImageProcessing.WhiteBalanceAuto
 
         property var exposureCompensationValues: [ 4, 3, 2, 1, 0, -1, -2, -3, -4 ]
+        property string viewfinderGrid: "none"
 
         ConfigurationGroup {
             id: modeSettings
@@ -86,8 +88,6 @@ SettingsBase {
             property int exposureMode: Camera.ExposureManual
             property int meteringMode: Camera.MeteringMatrix
             property int timer: 0
-            property string viewfinderGrid: "none"
-            property var viewfinderGridValues: [ "none", "thirds", "ambience" ]
             property int aspectRatio: -1
 
             Component.onCompleted: {
@@ -272,7 +272,6 @@ SettingsBase {
         switch (grid) {
         case "none": return "image://theme/icon-camera-grid-none"
         case "thirds": return "image://theme/icon-camera-grid-thirds"
-        case "ambience": return "image://theme/icon-camera-grid-ambience"
         default: return ""
         }
     }
@@ -285,9 +284,6 @@ SettingsBase {
         case "thirds":
             //% "Thirds grid"
             return qsTrId("camera_settings-la-thirds_grid")
-        case "ambience":
-            //% "Ambience grid"
-            return qsTrId("camera_settings-la-ambience_grid")
         default: return ""
         }
     }

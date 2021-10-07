@@ -9,12 +9,10 @@ QtObject {
     property int exposureMode: Camera.ExposureManual
     property int meteringMode: Camera.MeteringMatrix
     property int timer: 0
-    property string viewfinderGrid: "none"
 
     property string imageResolution
     property string videoResolution
     property string viewfinderResolution
 
     property int iso: 0
-    property var viewfinderGridValues: [ "none", "thirds", "ambience" ]
 }
