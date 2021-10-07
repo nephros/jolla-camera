@@ -6,6 +6,7 @@
 #include <QDir>
 #include <QTranslator>
 #include <QLocale>
+#include <QtGlobal>
 
 #include <QGuiApplication>
 #include <QQmlEngine>
@@ -22,6 +23,9 @@
 Q_DECL_EXPORT int main(int argc, char *argv[])
 {
     QQuickWindow::setDefaultAlphaBuffer(true);
+
+    // Use camcorder audio source with audio record stream.
+    qputenv("PULSE_PROP_droid.input.source", QByteArray("camcorder"));
 
 #ifdef HAS_BOOSTER
     QScopedPointer<QGuiApplication> app(MDeclarativeCache::qApplication(argc, argv));
