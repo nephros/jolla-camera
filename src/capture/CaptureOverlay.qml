@@ -342,22 +342,16 @@ SettingsOverlay {
 
         property real gridWidth: captureView.viewfinderOrientation % 180 == 0 ? focusArea.width : focusArea.height
         property real gridHeight: captureView.viewfinderOrientation % 180 == 0 ? focusArea.height : focusArea.width
-        property real ambienceScale: Math.min(Screen.width, Screen.height) /
-                                     Math.max(Screen.width, Screen.height)
 
         anchors.centerIn: parent
         anchors.verticalCenterOffset: isPortrait ? captureView.viewfinderOffset : 0
         anchors.horizontalCenterOffset: isPortrait ? 0 : captureView.viewfinderOffset
 
-        visible: Settings.mode.viewfinderGrid != "none"
+        visible: Settings.global.viewfinderGrid != "none"
                  && camera.cameraStatus == Camera.ActiveStatus
 
-        width: Settings.mode.viewfinderGrid == "ambience"
-               ? gridWidth * ambienceScale
-               : gridWidth / 3
-        height: Settings.mode.viewfinderGrid == "ambience"
-                ? gridHeight * ambienceScale
-                : gridHeight / 3
+        width: gridWidth / 3
+        height: gridHeight / 3
 
         GridLine {
             anchors {

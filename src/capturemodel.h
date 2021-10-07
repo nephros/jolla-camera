@@ -1,5 +1,5 @@
-#ifndef AMBIENCEINSTALLMODEL_H
-#define AMBIENCEINSTALLMODEL_H
+#ifndef CAPTUREMODEL_H
+#define CAPTUREMODEL_H
 
 #include <QAbstractItemModel>
 #include <QMimeDatabase>

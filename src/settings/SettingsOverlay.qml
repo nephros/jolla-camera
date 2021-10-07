@@ -509,9 +509,9 @@ PinchArea {
                     width: overlay._menuWidth
                     title: Settings.viewfinderGridText
                     header: upperHeader
-                    model: Settings.mode.viewfinderGridValues
+                    model: Settings.viewfinderGridValues
                     delegate: SettingsMenuItem {
-                        settings: Settings.mode
+                        settings: Settings.global
                         property: "viewfinderGrid"
                         value: modelData
                         icon: Settings.viewfinderGridIcon(modelData)
