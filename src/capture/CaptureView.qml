@@ -372,6 +372,17 @@ FocusScope {
         }
     }
 
+    Connections {
+        target: CameraConfigs
+        onReadyChanged: {
+            // Reset flash torch mode if it's not supported
+            if (camera.captureMode === Camera.CaptureVideo
+                    && CameraConfigs.supportedFlashModes.indexOf(Settings.mode.flash) === -1) {
+                Settings.mode.flash = Camera.FlashOff
+            }
+        }
+    }
+
     Camera {
         id: camera
 
@@ -460,7 +471,13 @@ FocusScope {
         captureMode: Settings.global.captureMode == "image" ? Camera.CaptureStillImage
                                                             : Camera.CaptureVideo
 
-        onCaptureModeChanged: captureView._resetFocus()
+        onCaptureModeChanged: {
+            // Reset flash mode when changing to video mode
+            if (initialized && captureMode === Camera.CaptureVideo) {
+                Settings.mode.flash = Camera.FlashOff
+            }
+            captureView._resetFocus()
+        }
 
         cameraState: {
             if (captureView.effectiveActive && !captureView._unload) {
@@ -515,6 +532,11 @@ FocusScope {
                     } else {
                         Settings.global.previousBackFacingDeviceId = backCameras[0].deviceId
                     }
+                }
+
+                // Always disable flash torch at startup
+                if (captureMode === Camera.CaptureVideo) {
+                    Settings.mode.flash = Camera.FlashOff
                 }
             }
         }
