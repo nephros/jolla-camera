@@ -68,6 +68,8 @@ SettingsBase {
         property bool saveLocationInfo
 
         property bool qrFilterEnabled: false
+        property bool colorFiltersEnabled: false
+        property bool colorFiltersAllowed: true
 
         property int exposureCompensation: 0
         property int whiteBalance: CameraImageProcessing.WhiteBalanceAuto
@@ -136,6 +138,18 @@ SettingsBase {
                 ? qsTrId("camera_settings-la-timer-seconds-delay").arg(timer)
                   //% "No delay"
                 : qsTrId("camera_settings-la-timer-no-delay")
+    }
+
+    function colorFiltersIcon(enabled) {
+        return "image://theme/icon-camera-filter-" + (enabled ? "on" : "off")
+    }
+
+    function colorFiltersEnabledText(enabled) {
+        return enabled
+                //% "Color filters on"
+                ? qsTrId("camera_settings-la-color-filters-on")
+                  //% "Color filters off"
+                : qsTrId("camera_settings-la-color-filters-off")
     }
 
     function isoText(iso) {
@@ -263,6 +277,40 @@ SettingsBase {
         //: "Tungsten white balance"
         //% "Tungsten"
         case CameraImageProcessing.WhiteBalanceTungsten:    return qsTrId("camera_settings-la-wb-tungsten")
+        default:
+            return "" // not supported
+        }
+    }
+
+    function colorFilterText(filter) {
+        switch (filter) {
+        case CameraImageProcessing.ColorFilterNone:
+            //% "Normal"
+            return qsTrId("camera_settings-la-colorfilter_normal")
+        case CameraImageProcessing.ColorFilterGrayscale:
+            //% "Grayscale"
+            return qsTrId("camera_settings-la-colorfilter_grayscale")
+        case CameraImageProcessing.ColorFilterNegative:
+            //% "Negative"
+            return qsTrId("camera_settings-la-colorfilter_negative")
+        case CameraImageProcessing.ColorFilterSolarize:
+            //% "Solarize"
+            return qsTrId("camera_settings-la-colorfilter_solarize")
+        case CameraImageProcessing.ColorFilterSepia:
+            //% "Sepia"
+            return qsTrId("camera_settings-la-colorfilter_sepia")
+        case CameraImageProcessing.ColorFilterPosterize:
+            //% "Posterize"
+            return qsTrId("camera_settings-la-colorfilter_posterize")
+        case CameraImageProcessing.ColorFilterWhiteboard:
+            //% "Whiteboard"
+            return qsTrId("camera_settings-la-colorfilter_whiteboard")
+        case CameraImageProcessing.ColorFilterBlackboard:
+            //% "Blackboard"
+            return qsTrId("camera_settings-la-colorfilter_blackboard")
+        case CameraImageProcessing.ColorFilterAqua:
+            //% "Aqua"
+            return qsTrId("camera_settings-la-colorfilter_aqua")
         default:
             return "" // not supported
         }

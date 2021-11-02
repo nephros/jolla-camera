@@ -130,6 +130,11 @@ void CameraConfigs::handleStatus()
             };
             updateSupportedModes(m_supportedExposureModes, QLatin1String("ExposureMode"), QCameraExposure::staticMetaObject, isExposureModeSupported);
 
+            auto isColorFilterSupported = [this](int mode) {
+                return m_camera->imageProcessing()->isColorFilterSupported(static_cast<QCameraImageProcessing::ColorFilter>(mode));
+            };
+            updateSupportedModes(m_supportedColorFilters, QLatin1String("ColorFilter"), QCameraImageProcessing::staticMetaObject, isColorFilterSupported);
+
             auto isFocusModeSupported = [this](int mode) {
                 return m_camera->focus()->isFocusModeSupported(static_cast<QCameraFocus::FocusMode>(mode));
             };
@@ -173,6 +178,7 @@ void CameraConfigs::handleStatus()
             emit supportedIsoSensitivitiesChanged();
             emit supportedWhiteBalanceModesChanged();
             emit supportedExposureModesChanged();
+            emit supportedColorFiltersChanged();
             emit supportedFocusModesChanged();
             emit supportedFocusPointModesChanged();
             emit supportedMeteringModesChanged();
@@ -205,6 +211,11 @@ QVariantList CameraConfigs::supportedIsoSensitivities() const
 QVariantList CameraConfigs::supportedExposureModes() const
 {
     return m_supportedExposureModes;
+}
+
+QVariantList CameraConfigs::supportedColorFilters() const
+{
+    return m_supportedColorFilters;
 }
 
 QVariantList CameraConfigs::supportedWhiteBalanceModes() const

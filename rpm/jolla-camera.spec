@@ -45,7 +45,7 @@ Requires:  libjollasignonuiservice-qt5-plugin >= 0.0.29
 Requires:  libngf-qt5-declarative
 Requires:  qr-filter-qml-plugin
 Requires:  ambienced
-Requires:  sailfish-content-graphics
+Requires:  sailfish-content-graphics >= 1.2.2
 Requires:  gstreamer1.0-plugins-good
 Requires:  gstreamer1.0-plugins-bad
 Requires:  dconf

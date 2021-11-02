@@ -15,7 +15,8 @@ PinchArea {
     property alias shutter: shutterContainer.children
     property alias anchorContainer: anchorContainer
     property alias container: container
-    readonly property alias settingsOpacity: row.opacity
+    readonly property alias settingsOpacity: grid.opacity
+    property bool orientationTransitionRunning
 
     property bool _pinchActive
     property bool topMenuOpen
@@ -222,7 +223,7 @@ PinchArea {
 
         property real _lastPos
         property real _direction
-        property int _extraDragMargin: overlay.isPortrait ? Screen.height/4 - panel.height/2 : 0
+        property int _extraDragMargin: overlay.isPortrait && grid.columns >= grid.count ? Screen.height/4 - panel.height/2 : 0
 
         anchors.fill: parent
         enabled: !overlay.inButtonLayout && showCommonControls
@@ -305,7 +306,7 @@ PinchArea {
 
             MouseArea {
                 anchors.horizontalCenter: parent.horizontalCenter
-                width: row.width
+                width: grid.width
                 height: Theme.itemSizeLarge
                 enabled: !overlay._exposed && !overlay.inButtonLayout && showCommonControls
 
@@ -376,19 +377,52 @@ PinchArea {
             opacity: Theme.opacityHigh * (1 - container.opacity)
         }
 
-        Row {
-            id: row
+        Grid {
+            id: grid
+
+            property int count: {
+                var c = 2 // timer, grid menu
+                c = c + (colorFilterMenu.active ? 1 : 0)
+                c = c + (flashMenu.active ? 1 : 0)
+                c = c + (exposureModeMenu.active ? 1 : 0)
+                c = c + (isoMenu.active ? 1 : 0)
+                return c
+            }
 
             y: Math.round(height * panel.y / panel.height) + overlay._headerHeight + overlay._headerTopMargin
-            anchors.horizontalCenter: parent.horizontalCenter
-
             height: Math.max(implicitHeight, Screen.height / 2)
+            anchors.horizontalCenter: parent.horizontalCenter
 
             opacity: 1 - container.opacity
             enabled: overlay._exposed
             visible: overlay._exposed
 
+            columns: Math.min(count, Math.floor((parent.width + spacing - 2 * Theme.horizontalPageMargin)/(overlay._menuWidth + spacing)))
             spacing: overlay._menuItemHorizontalSpacing
+
+            Item {
+                id: colorFilterParentBegin
+                width: colorFilterMenu.width
+                height: colorFilterMenu.height
+                visible: colorFilterMenu.parent === colorFilterParentBegin && Settings.global.colorFiltersAllowed
+            }
+
+            SettingsMenu {
+                id: colorFilterMenu
+
+                active: Settings.global.colorFiltersAllowed
+                parent: grid.count > grid.columns ? colorFilterParentEnd : colorFilterParentBegin
+                width: overlay._menuWidth
+                title: Settings.colorFiltersEnabledText
+                header: upperHeader
+                model: [false, true]
+                delegate: SettingsMenuItem {
+                    settings: Settings.global
+                    property: "colorFiltersEnabled"
+                    value: modelData
+                    icon: Settings.colorFiltersIcon(modelData)
+                }
+            }
 
             SettingsMenu {
                 id: timerMenu
@@ -408,7 +442,7 @@ PinchArea {
             SettingsMenu {
                 id: flashMenu
 
-                visible: model.length > 0
+                active: model.length > 0
                 width: overlay._menuWidth
                 title: Settings.flashText
                 header: upperHeader
@@ -424,7 +458,7 @@ PinchArea {
             SettingsMenu {
                 id: exposureModeMenu
 
-                visible: model.length > 1
+                active: model.length > 1
                 width: overlay._menuWidth
                 title: Settings.exposureModeText
                 header: upperHeader
@@ -457,7 +491,7 @@ PinchArea {
             }
 
             SettingsMenu {
-                id: gridMenu
+                // Grid menu
 
                 width: overlay._menuWidth
                 title: Settings.viewfinderGridText
@@ -470,29 +504,43 @@ PinchArea {
                     icon: Settings.viewfinderGridIcon(modelData)
                 }
             }
+
+            Item {
+                id: colorFilterParentEnd
+                width: colorFilterMenu.width
+                height: colorFilterMenu.height
+                visible: colorFilterMenu.parent === colorFilterParentEnd
+            }
         }
 
         HeaderLabel {
             id: upperHeader
 
-            anchors { left: parent.left; bottom: row.top; right: parent.right }
+            anchors { left: parent.left; bottom: grid.top; right: parent.right }
             height: overlay._headerHeight
-            opacity: row.opacity
+            opacity: grid.opacity
         }
     }
+
     Row {
         id: topRow
 
         property real _topRowMargin: overlay.topButtonRowHeight/2 - overlay._menuWidth/2
 
         anchors.horizontalCenter: parent.horizontalCenter
-        spacing: row.spacing
+        spacing: grid.spacing
         opacity: _commonControlOpacity
         visible: opacity > 0.0
 
         function dragY(yValue) {
-            return yValue != undefined ? Math.max(topRow._topRowMargin, row.y + yValue)
+            return yValue != undefined ? Math.max(topRow._topRowMargin, grid.y + yValue)
                                        : topRow._topRowMargin
+        }
+
+        Item {
+            height: 1
+            width: overlay._menuWidth
+            visible: colorFilterMenu.parent === colorFilterParentBegin && Settings.global.colorFiltersAllowed
         }
 
         Item {
@@ -535,25 +583,23 @@ PinchArea {
     }
 
     Item {
-        anchors {
-            right: parent.right
-            bottom: parent.bottom
-            margins: Theme.paddingLarge
-        }
-
-        width: Theme.itemSizeMedium
-        height: Theme.itemSizeMedium
-        opacity: !Settings.defaultSettings ? row.opacity : 0.0
+        width: parent.width
+        opacity: grid.opacity
         visible: overlay._exposed
-
-        Behavior on opacity {
-            enabled: overlay._exposed
-            FadeAnimation {}
-        }
+        anchors.bottom: parent.bottom
 
         CameraButton {
             background.visible: false
             enabled: !Settings.defaultSettings && parent.opacity > 0.0
+            opacity: !Settings.defaultSettings ? 1.0 : 0.0
+            Behavior on opacity { FadeAnimator {}}
+
+            width: Theme.itemSizeMedium
+            height: Theme.itemSizeMedium
+            anchors {
+                right: parent.right
+                bottom: parent.bottom
+            }
 
             icon {
                 opacity: pressed ? Theme.opacityLow : 1.0
@@ -584,8 +630,10 @@ PinchArea {
                 horizontalCenter: exposureSlider.horizontalCenter
                 centerIn: null
             }
+            enabled: !Settings.global.colorFiltersEnabled || camera.imageProcessing.colorFilter  === CameraImageProcessing.ColorFilterNone
+
             alignment: exposureSlider.alignment
-            opacity: 1.0 - settingsOpacity
+            opacity: enabled ? 1.0 - settingsOpacity : 0.0
             spacing: Theme.paddingMedium
         }
 
@@ -616,10 +664,72 @@ PinchArea {
         CameraButton {
             icon.source: "image://theme/icon-camera-qr"
             background.visible: false
+            anchors.centerIn: parent
             onClicked: {
                 pageStack.push("QrPage.qml", { text: qrFilter.result })
             }
         }
+    }
+
+    ColorFilterView {
+        id: colorFilter
+
+        property bool ready: CameraConfigs.supportedColorFilters.length > 0
+                             && Settings.global.colorFiltersEnabled && Settings.global.colorFiltersAllowed
+        property var allowedFilters: [
+            CameraImageProcessing.ColorFilterNone, CameraImageProcessing.ColorFilterGrayscale,
+            CameraImageProcessing.ColorFilterSepia, CameraImageProcessing.ColorFilterPosterize,
+            CameraImageProcessing.ColorFilterWhiteboard, CameraImageProcessing.ColorFilterBlackboard
+        ]
+
+        function update() {
+            if (!moving && !orientationTransitionRunning) camera.imageProcessing.colorFilter = colorFilter.model[colorFilter.currentIndex]
+        }
+
+        onReadyChanged: {
+            if (ready) {
+                var filters = []
+                var supportedFilters = CameraConfigs.supportedColorFilters
+                for (var i = 0; i < supportedFilters.length; i++) {
+                    var filter = supportedFilters[i]
+                    if (allowedFilters.indexOf(filter) >= 0) {
+                        filters.push(filter)
+                    }
+                }
+                model = filters
+            }
+        }
+        onCurrentIndexChanged: update()
+        onMovingChanged: update()
+
+        anchors.bottom: parent.bottom
+        orientationTransitionRunning: overlay.orientationTransitionRunning
+        x: overlay.isPortrait ? 0 : exposureSlider.width + Theme.paddingMedium
+
+        width: {
+            if (overlay.isPortrait) {
+                return Screen.width
+            } else {
+                var leftControlWidth = x
+                var rightControlWidth = buttonAnchorCR.width + buttonAnchorCR.largeMargin
+                var resolution = camera.viewfinder.resolution.width
+                var viewfinderWidth = Screen.width * (resolution.width > 0 ? resolution.width/resolution.height : 1.2)
+                return Math.min(Screen.height - rightControlWidth, viewfinderWidth) - leftControlWidth
+            }
+        }
+
+        height: overlay.isPortrait ? Screen.height/11 : Theme.itemSizeMedium
+        enabled: !overlay._exposed && Settings.global.colorFiltersEnabled
+    }
+
+    OpacityRampEffect {
+        offset: 1 - 1 / slope
+        sourceItem: colorFilter
+        slope: 1 + 20 * colorFilter.width / Screen.width
+        visible: Settings.global.colorFiltersEnabled
+
+        direction: OpacityRamp.BothSides
+        opacity: (1.0 - settingsOpacity) * _commonControlOpacity
     }
 
     Item {

@@ -38,6 +38,7 @@ FocusScope {
     }
     property int captureOrientation
     property int pageRotation
+    property bool orientationTransitionRunning
 
     property alias camera: camera
     property QtObject viewfinder
@@ -585,7 +586,10 @@ FocusScope {
             focusPointMode: tapFocusActive ? Camera.FocusPointCustom : Camera.FocusPointAuto
         }
         flash.mode: Settings.mode.flash
-        imageProcessing.whiteBalanceMode: Settings.global.whiteBalance
+        imageProcessing.whiteBalanceMode: {
+            var hasFilter = camera.imageProcessing.colorFilter !== CameraImageProcessing.ColorFilterNone
+            return hasFilter ? CameraImageProcessing.WhiteBalanceAuto : Settings.global.whiteBalance
+        }
 
         exposure {
             exposureMode: Settings.mode.exposureMode
@@ -761,6 +765,7 @@ FocusScope {
         overlayIncubator.onStatusChanged = function(status) {
             if (status == Component.Ready) {
                 captureOverlay = overlayIncubator.object
+                captureOverlay.orientationTransitionRunning = Qt.binding(function () { return captureView.orientationTransitionRunning  })
                 overlayFadeIn.start()
                 overlayIncubator = null
                 if (camera.cameraState == Camera.ActiveState && captureOverlay) {

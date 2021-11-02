@@ -131,6 +131,7 @@ Page {
                 orientation: page.orientation
                 pageRotation: page.rotation
                 captureModel: page.captureModel
+                orientationTransitionRunning: page.orientationTransitionRunning
 
                 visible: switcherView.moving || captureView.active
 
