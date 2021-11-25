@@ -35,7 +35,7 @@ ApplicationWindow {
     Rectangle {
         parent: window
         anchors.fill: parent
-        z: -1
+        z: -2
         color: "black"
         visible: (pageStack.depth < 2 && !pageStack.busy) || !galleryActive
     }
@@ -44,6 +44,7 @@ ApplicationWindow {
         id: videoOutput
 
         z: -1
+        parent: window
         width: window.width
         height: window.height
 

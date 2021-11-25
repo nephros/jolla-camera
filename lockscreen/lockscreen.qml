@@ -35,32 +35,29 @@ ApplicationWindow {
         }
     }
 
-    Item {
-        parent: window
-        z: -1
 
+    Rectangle {
+        parent: window
+        anchors.fill: parent
+
+        color: "black"
+        z: -2
+    }
+
+    VideoOutput {
+        id: videoOutput
+
+        z: -1
+        parent: window
         width: window.width
         height: window.height
 
-        Rectangle {
-            width: window.width
-            height: window.height
+        // filters: [ qrFilter ]
+    }
 
-            color: "black"
-        }
-
-        VideoOutput {
-            id: videoOutput
-
-            width: window.width
-            height: window.height
-            // filters: [ qrFilter ]
-        }
-
-        QrFilter {
-            id: qrFilter
-            // TODO: trigger result url clicking only after unlocking and enable with such
-            active: false
-        }
+    QrFilter {
+        id: qrFilter
+        // TODO: trigger result url clicking only after unlocking and enable with such
+        active: false
     }
 }

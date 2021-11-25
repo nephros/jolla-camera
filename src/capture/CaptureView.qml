@@ -23,7 +23,7 @@ FocusScope {
     property bool active
     property int orientation
     property int effectiveIso: Settings.mode.iso
-    property bool inButtonLayout: captureOverlay == null || captureOverlay.inButtonLayout
+    property bool inButtonLayout: captureOverlay && captureOverlay.inButtonLayout
     property QtObject captureModel
 
     readonly property int viewfinderOrientation: {
