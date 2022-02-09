@@ -133,7 +133,10 @@ PinchArea {
     }
 
     CameraDeviceToggle {
-        onSelected: Settings.deviceId = deviceId
+        onSelected: {
+            Settings.deviceId = deviceId
+            camera.digitalZoom = 1.0
+        }
 
         parent: {
             switch(_overlayPosition.backCameraToggle) {
