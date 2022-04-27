@@ -290,10 +290,25 @@ FocusScope {
 
     Timer {
         id: reloadTimer
-        interval: 1
-        running: captureView._unload && camera.cameraStatus == Camera.UnloadedStatus
+        interval: 1000
+        running: captureView._unload && (camera.cameraStatus === Camera.UnloadedStatus || camera.cameraStatus === Camera.CameraError)
         onTriggered: {
             captureView._unload = false
+        }
+    }
+
+    Timer {
+        id: reactivateTimer
+        property int retryCounter
+        readonly property bool abort: retryCounter >= 5
+
+        interval: 1000
+        running: camera.cameraStatus == Camera.LoadingStatus && !abort
+        onTriggered: {
+            // Try re-activate when stuck in loading status for 1sec.
+            active = false
+            active = true
+            ++retryCounter
         }
     }
 
@@ -457,13 +472,19 @@ FocusScope {
         // On some adaptations media booster makes camera initialization fail
         // and Camera must be reloaded, try to do that once when that happens
         property bool needsReload: camera.errorCode === Camera.CameraError
-                && camera.cameraState === Camera.UnloadedState
-                && camera.cameraStatus === Camera.UnloadedStatus
+                || (camera.cameraState === Camera.UnloadedState
+                && camera.cameraStatus === Camera.UnloadedStatus)
+
+
+        onErrorCodeChanged: {
+            if (errorCode == Camera.CameraError) {
+                captureView._unload = true
+            }
+        }
 
         onNeedsReloadChanged: {
             if (needsReload) {
                 captureView._unload = true
-                needsReload = false // break binding
             }
         }
 
@@ -487,7 +508,7 @@ FocusScope {
                     return Camera.LoadedState
                 }
             } else {
-                  return Camera.UnloadedState
+                return Camera.UnloadedState
             }
         }
 
@@ -499,7 +520,9 @@ FocusScope {
         property bool initialized
 
         onCameraStatusChanged: {
-            if (camera.cameraStatus !== Camera.ActiveStatus) {
+            if (camera.cameraStatus === Camera.ActiveStatus) {
+                reactivateTimer.retryCounter = 0
+            } else {
                 _captureQueued = false
                 captureBusy = false
             }
