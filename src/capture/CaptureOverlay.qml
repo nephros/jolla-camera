@@ -4,9 +4,9 @@ import QtMultimedia 5.4
 import QtPositioning 5.1
 import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
-import org.nemomobile.time 1.0
-import org.nemomobile.configuration 1.0
-import org.nemomobile.notifications 1.0
+import Nemo.Time 1.0
+import Nemo.Configuration 1.0
+import Nemo.Notifications 1.0
 import org.nemomobile.systemsettings 1.0
 import QtSensors 5.0
 
