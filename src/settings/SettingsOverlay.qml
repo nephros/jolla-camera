@@ -2,6 +2,7 @@ import QtQuick 2.4
 import QtMultimedia 5.6
 import Sailfish.Silica 1.0
 import com.jolla.camera 1.0
+import Nemo.Configuration 1.0
 
 PinchArea {
     id: overlay
@@ -462,10 +463,14 @@ PinchArea {
                 id: exposureModeMenu
 
                 active: model.length > 1
+                        || (!experimentalModes.value && CameraConfigs.supportedIsoSensitivities.length == 0)
                 width: overlay._menuWidth
                 title: Settings.exposureModeText
                 header: upperHeader
-                model: CameraConfigs.supportedExposureModes
+                model: experimentalModes.value
+                       ? CameraConfigs.supportedExposureModes
+                       : CameraConfigs.supportedIsoSensitivities.length == 0
+                         ? [Camera.ExposureManual] : []
                 delegate: SettingsMenuItem {
                     settings: Settings.mode
                     property: "exposureMode"
@@ -562,13 +567,15 @@ PinchArea {
         Item {
             width: overlay._menuWidth
             height: width
-            visible: CameraConfigs.supportedExposureModes.length > 1
+            visible: experimentalModes.value ? CameraConfigs.supportedExposureModes.length > 1
+                                             : CameraConfigs.supportedIsoSensitivities.length == 0
             y: topRow.dragY(exposureModeMenu.currentItem ? exposureModeMenu.currentItem.y : 0)
 
             Icon {
                 anchors.centerIn: parent
                 color: Theme.lightPrimaryColor
-                source: Settings.exposureModeIcon(Settings.mode.exposureMode)
+                source: Settings.exposureModeIcon(experimentalModes.value ? Settings.mode.exposureMode
+                                                                          : Camera.ExposureManual)
             }
         }
 
@@ -769,5 +776,12 @@ PinchArea {
                   : //% "Select location for the landscape capture key"
                     qsTrId("camera-la-landscape-capture-key-location")
         }
+    }
+
+    ConfigurationValue {
+        id: experimentalModes
+
+        key: "/apps/jolla-camera/enable_experimental_modes"
+        defaultValue: false
     }
 }
