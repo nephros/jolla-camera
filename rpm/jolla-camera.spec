@@ -19,7 +19,6 @@ BuildRequires:  qt5-qttools
 BuildRequires:  qt5-qttools-linguist
 BuildRequires:  oneshot
 
-Requires:  jolla-settings-accounts >= 0.1.31
 Requires:  sailfishsilica-qt5 >= 1.1.79
 Requires:  qt5-qtdeclarative-import-models2
 Requires:  qt5-qtdeclarative-import-positioning
