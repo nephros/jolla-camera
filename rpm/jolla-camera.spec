@@ -1,6 +1,6 @@
 Name:       jolla-camera
 Summary:    Jolla Camera application
-Version:    1.0.24
+Version:    1.2.24
 Release:    1
 License:    Proprietary
 URL:        https://bitbucket.org/jolla/ui-jolla-camera
@@ -40,7 +40,6 @@ Requires:  sailfish-components-media-qt5 >= 0.0.18
 Requires:  sailfish-components-gallery-qt5 >= 1.1.10
 Requires:  sailfish-policy >= 0.2.59
 Requires:  jolla-settings-system >= 1.0.70
-Requires:  libjollasignonuiservice-qt5-plugin >= 0.0.29
 Requires:  libngf-qt5-declarative
 Requires:  qr-filter-qml-plugin
 Requires:  ambienced
