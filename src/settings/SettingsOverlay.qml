@@ -401,7 +401,9 @@ PinchArea {
             enabled: overlay._exposed
             visible: overlay._exposed
 
-            columns: Math.min(count, Math.floor((parent.width + spacing - 2 * Theme.horizontalPageMargin)/(overlay._menuWidth + spacing)))
+            columns: Math.min(count,
+                              Math.floor((parent.width + spacing - 2 * Theme.horizontalPageMargin)
+                                         / (overlay._menuWidth + spacing)))
             spacing: overlay._menuItemHorizontalSpacing
 
             Item {
@@ -533,7 +535,9 @@ PinchArea {
     Row {
         id: topRow
 
-        property real _topRowMargin: overlay.topButtonRowHeight/2 - overlay._menuWidth/2
+        property real _topRowMargin: Math.max(overlay.topButtonRowHeight/2 - overlay._menuWidth/2,
+                                              (Screen.hasCutouts && overlay.isPortrait)
+                                              ? (Screen.topCutout.height + Theme.paddingSmall) : 0)
 
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: grid.spacing
