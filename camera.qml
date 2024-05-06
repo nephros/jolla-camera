@@ -51,6 +51,7 @@ ApplicationWindow {
 
     QrFilter {
         id: qrFilter
+
         active: Settings.global.qrFilterEnabled
                 && Settings.global.captureMode === "image"
                 && Settings.global.position === Camera.BackFace

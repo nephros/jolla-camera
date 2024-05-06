@@ -5,6 +5,7 @@ import Nemo.DBus 2.0
 
 CameraPage {
     id: page
+
     galleryView: Qt.resolvedUrl("gallery/MainGalleryView.qml")
 
     Binding {

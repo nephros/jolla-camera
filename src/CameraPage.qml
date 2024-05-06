@@ -35,7 +35,7 @@ Page {
     _opaqueBackground: true
 
     allowedOrientations: captureView.inButtonLayout ? page.orientation : Orientation.All
-
+    cutoutMode: CutoutMode.FullScreen
 
     Item {
         parent: page.parent
@@ -76,6 +76,7 @@ Page {
 
         Timer {
             id: returnToCaptureModeTimeout
+
             interval: 300 //switcherView.highlightMoveDuration
         }
 
