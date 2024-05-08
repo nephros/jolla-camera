@@ -1,3 +1,6 @@
 *.o
+*.so
 moc_*
+*.moc
 *.pro.user
+Makefile
