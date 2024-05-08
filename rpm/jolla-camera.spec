@@ -11,7 +11,8 @@ BuildRequires:  pkgconfig(Qt5Qml)
 BuildRequires:  pkgconfig(Qt5Quick)
 BuildRequires:  pkgconfig(Qt5Network)
 BuildRequires:  pkgconfig(Qt5Multimedia)
-BuildRequires:  desktop-file-utils
+BuildRequires:  pkgconfig(Qt5Test)
+BuildRequires:  pkgconfig(Qt5Multimedia)
 BuildRequires:  pkgconfig(qdeclarative5-boostable)
 BuildRequires:  pkgconfig(mlite5) >= 0.2.5
 BuildRequires:  pkgconfig(systemsettings) >= 0.2.13
@@ -42,7 +43,6 @@ Requires:  sailfish-policy >= 0.2.59
 Requires:  jolla-settings-system >= 1.0.70
 Requires:  libngf-qt5-declarative
 Requires:  qr-filter-qml-plugin
-Requires:  ambienced
 Requires:  sailfish-content-graphics >= 1.2.2
 Requires:  gstreamer1.0-plugins-good
 Requires:  gstreamer1.0-plugins-bad
@@ -81,8 +81,6 @@ Requires:  sailfish-policy
 
 %package tests
 Summary:    Unit tests for Jolla Camera
-BuildRequires:  pkgconfig(Qt5Test)
-BuildRequires:  pkgconfig(Qt5Multimedia)
 Requires:   %{name} = %{version}-%{release}
 Requires:   qt5-qtdeclarative-import-qttest
 Requires:   qt5-qtdeclarative-devel-tools
@@ -96,21 +94,21 @@ This package contains QML unit tests for Jolla Camera application.
 %build
 
 %qmake5 %{name}.pro
-
-make %{?_smp_mflags}
+%make_build
 
 %install
-rm -rf %{buildroot}
 %qmake5_install
 chmod +x %{buildroot}/opt/tests/jolla-camera/auto/run-tests.sh
-
-desktop-file-install --delete-original       \
-  --dir %{buildroot}%{_datadir}/applications             \
-   %{buildroot}%{_datadir}/applications/*.desktop
 chmod +x %{buildroot}/%{_oneshotdir}/*
 
+%post
+%{_bindir}/add-oneshot dconf-update || :
+%{_bindir}/add-oneshot --new-users camera-enable-hints || :
+if [ "$1" -eq 2 ]; then
+%{_bindir}/add-oneshot --user camera-reset-deprecated-dconfvalues || :
+fi
+
 %files
-%defattr(-,root,root,-)
 %{_datadir}/applications/jolla-camera.desktop
 %{_datadir}/applications/jolla-camera-viewfinder.desktop
 # Define directory ownership explicitly as part of files in the datadir
@@ -129,7 +127,6 @@ chmod +x %{buildroot}/%{_oneshotdir}/*
 %{_userunitdir}/user-session.target.d/50-jolla-camera.conf
 
 %files ts-devel
-%defattr(-,root,root,-)
 %{_datadir}/translations/source/jolla-camera.ts
 
 %files lockscreen
@@ -142,12 +139,4 @@ chmod +x %{buildroot}/%{_oneshotdir}/*
 %{_datadir}/jolla-settings
 
 %files tests
-%defattr(-,root,root,-)
 /opt/tests/jolla-camera
-
-%post
-%{_bindir}/add-oneshot dconf-update || :
-%{_bindir}/add-oneshot --new-users camera-enable-hints || :
-if [ "$1" -eq 2 ]; then
-%{_bindir}/add-oneshot --user camera-reset-deprecated-dconfvalues || :
-fi
