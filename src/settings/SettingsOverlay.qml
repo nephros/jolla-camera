@@ -311,7 +311,7 @@ PinchArea {
             MouseArea {
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: grid.width
-                height: Theme.itemSizeLarge
+                height: Math.max(Theme.itemSizeLarge, topRow._topRowMargin + Theme.iconSizeMedium)
                 enabled: !overlay._exposed && !overlay.inButtonLayout && showCommonControls
 
                 onClicked: overlay.topMenuOpen = true
