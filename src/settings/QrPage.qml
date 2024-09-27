@@ -12,6 +12,7 @@ Page {
 
     SilicaFlickable {
         id: flickable
+
         anchors.fill: parent
         contentHeight: column.height + Theme.paddingLarge
 
@@ -53,6 +54,7 @@ Page {
 
             Button {
                 id: button
+
                 //% "Copy"
                 text: qsTrId("jolla-camera-la-qr_code_copy")
                 preferredWidth: Screen.sizeCategory < Screen.Large && isPortrait

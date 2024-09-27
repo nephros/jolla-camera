@@ -9,7 +9,8 @@ Grid {
     property alias model: repeater.model
     property int orientation: Qt.Vertical
     property color highlightColor: Theme.colorScheme == Theme.LightOnDark
-                                   ? Theme.highlightColor : Theme.highlightFromColor(Theme.highlightColor, Theme.LightOnDark)
+                                   ? Theme.highlightColor
+                                   : Theme.highlightFromColor(Theme.highlightColor, Theme.LightOnDark)
 
     signal selected(string deviceId)
 
@@ -18,10 +19,14 @@ Grid {
     spacing: Theme.paddingMedium
 
     readonly property bool _supportNotEnabled: !!model && model.length > 1 && labels.length === 0
-    on_SupportNotEnabledChanged: if (_supportNotEnabled) console.warn("Device supports multiple back cameras, please define dconf /apps/jolla-camera/backCameraLabels")
+    on_SupportNotEnabledChanged: {
+        if (_supportNotEnabled)
+            console.warn("Device supports multiple back cameras, please define dconf /apps/jolla-camera/backCameraLabels")
+    }
 
     Repeater {
         id: repeater
+
         SilicaItem {
             highlighted: mouseArea.pressed && mouseArea.containsMouse || modelData.deviceId === Settings.deviceId
             width: Theme.itemSizeExtraSmall
@@ -30,8 +35,13 @@ Grid {
 
             MouseArea {
                 id: mouseArea
+
                 anchors.fill: parent
-                onClicked: if (modelData.deviceId !== Settings.deviceId) root.selected(modelData.deviceId)
+                onClicked: {
+                    if (modelData.deviceId !== Settings.deviceId) {
+                        root.selected(modelData.deviceId)
+                    }
+                }
             }
 
             Rectangle {
@@ -47,6 +57,7 @@ Grid {
 
             Label {
                 id: cameraLabel
+
                 // TODO: Don't hardcode these values
                 text: root.labels.length > model.index ? root.labels[model.index] : ""
                 color: parent.highlighted ? root.highlightColor : Theme.lightPrimaryColor

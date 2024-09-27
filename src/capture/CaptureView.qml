@@ -47,7 +47,8 @@ FocusScope {
 
     property bool _unload
 
-    property bool touchFocusSupported: (camera.focus.focusMode == Camera.FocusAuto || camera.focus.focusMode == Camera.FocusContinuous)
+    property bool touchFocusSupported: (camera.focus.focusMode == Camera.FocusAuto
+                                        || camera.focus.focusMode == Camera.FocusContinuous)
                                        && camera.captureMode != Camera.CaptureVideo
 
     // not bound to focusTimer.running, restarting timer shouldn't exit tap focus mode temporarily and lose focus state
@@ -115,13 +116,16 @@ FocusScope {
 
     Item {
         id: captureSnapshot
+
         property alias sourceItem: captureSnapshotEffect.sourceItem
         visible: false
         anchors.verticalCenter: parent.verticalCenter
         width: parent.width*captureSnapshotEffect.scale
         height: parent.height*captureSnapshotEffect.scale
+
         ShaderEffectSource {
             id: captureSnapshotEffect
+
             hideSource: false
             live: false
             scale: 0.4
@@ -147,7 +151,8 @@ FocusScope {
     }
 
     function _triggerCapture() {
-        captureOnVolumeRelease = false // avoid duplicate capture if volume key and some other key trigger (e.g. shutter)
+        // avoid duplicate capture if volume key and some other key trigger (e.g. shutter)
+        captureOnVolumeRelease = false
 
         if (captureTimer.running) {
             captureTimer.reset()
@@ -290,8 +295,10 @@ FocusScope {
 
     Timer {
         id: reloadTimer
+
         interval: 1000
-        running: captureView._unload && (camera.cameraStatus === Camera.UnloadedStatus || camera.cameraStatus === Camera.CameraError)
+        running: captureView._unload && (camera.cameraStatus === Camera.UnloadedStatus
+                                         || camera.cameraStatus === Camera.CameraError)
         onTriggered: {
             captureView._unload = false
         }
@@ -299,6 +306,7 @@ FocusScope {
 
     Timer {
         id: reactivateTimer
+
         property int retryCounter
         readonly property bool abort: retryCounter >= 5
 
@@ -472,8 +480,8 @@ FocusScope {
         // On some adaptations media booster makes camera initialization fail
         // and Camera must be reloaded, try to do that once when that happens
         property bool needsReload: camera.errorCode === Camera.CameraError
-                || (camera.cameraState === Camera.UnloadedState
-                && camera.cameraStatus === Camera.UnloadedStatus)
+                                   || (camera.cameraState === Camera.UnloadedState
+                                       && camera.cameraStatus === Camera.UnloadedStatus)
 
 
         onErrorCodeChanged: {
@@ -532,7 +540,6 @@ FocusScope {
                 initialized = true
                 var hasFrontFace = false
                 var hasBackFace = false
-
 
                 for (var i = 0; i < QtMultimedia.availableCameras.length; i++) {
                     var device = QtMultimedia.availableCameras[i]
@@ -692,6 +699,7 @@ FocusScope {
 
     Rectangle {
         id: flashRectangle
+
         anchors.fill: parent
         color: "white"
         opacity: 0
@@ -810,7 +818,9 @@ FocusScope {
         overlayIncubator.onStatusChanged = function(status) {
             if (status == Component.Ready) {
                 captureOverlay = overlayIncubator.object
-                captureOverlay.orientationTransitionRunning = Qt.binding(function () { return captureView.orientationTransitionRunning  })
+                captureOverlay.orientationTransitionRunning = Qt.binding(function () {
+                    return captureView.orientationTransitionRunning
+                })
                 overlayFadeIn.start()
                 overlayIncubator = null
                 if (camera.cameraState == Camera.ActiveState && captureOverlay) {
@@ -825,6 +835,7 @@ FocusScope {
 
     FadeAnimator {
         id: overlayFadeIn
+
         target: captureOverlay
         to: 1.0
         duration: 100
@@ -871,7 +882,8 @@ FocusScope {
                         width: Math.round(Theme.pixelRatio * 2)
                         color: status == Camera.FocusAreaFocused
                                ? (Theme.colorScheme == Theme.LightOnDark
-                                  ? Theme.highlightColor : Theme.highlightFromColor(Theme.highlightColor, Theme.LightOnDark))
+                                  ? Theme.highlightColor
+                                  : Theme.highlightFromColor(Theme.highlightColor, Theme.LightOnDark))
                                : "white"
                     }
                     color: "#00000000"
@@ -956,6 +968,7 @@ FocusScope {
 
         Resource {
             id: keysResource
+
             type: Resource.ScaleButton
             optional: true
         }
@@ -974,13 +987,15 @@ FocusScope {
 
     DBusInterface {
         id: flashlightServiceProbe
+
         service: "org.freedesktop.DBus"
         path: "/org/freedesktop/DBus"
         iface: "org.freedesktop.DBus"
         property bool flashlightServiceActive
         onFlashlightServiceActiveChanged: {
             if (flashlightServiceActive) {
-                if (flashlightComponentLoader.sourceComponent == null || flashlightComponentLoader.sourceComponent == undefined) {
+                if (flashlightComponentLoader.sourceComponent == null
+                        || flashlightComponentLoader.sourceComponent == undefined) {
                     flashlightComponentLoader.sourceComponent = flashlightComponent
                 } else {
                     flashlightComponentLoader.item.toggleFlashlight()
@@ -991,8 +1006,16 @@ FocusScope {
             var probe = flashlightServiceProbe // cache id resolution to avoid context destruction issues
             typedCall('NameHasOwner',
                       { 'type': 's', 'value': 'com.jolla.settings.system.flashlight' },
-                        function(result) { probe.flashlightServiceActive = false; probe.flashlightServiceActive = result }, // twiddle so that the change-handler is invoked
-                        function() { probe.flashlightServiceActive = false; probe.flashlightServiceActive = true })         // assume true in failed case, to ensure we turn it off
+                      function(result) {
+                          // twiddle so that the change-handler is invoked
+                          probe.flashlightServiceActive = false
+                          probe.flashlightServiceActive = result
+                      },
+                      function() {
+                          // assume true in failed case, to ensure we turn it off
+                          probe.flashlightServiceActive = false
+                          probe.flashlightServiceActive = true
+                      })
         }
     }
 
@@ -1000,8 +1023,10 @@ FocusScope {
 
     Component {
         id: flashlightComponent
+
         DBusInterface {
             id: flashlightDbus
+
             bus: DBusInterface.SessionBus
             service: "com.jolla.settings.system.flashlight"
             path: "/com/jolla/settings/system/flashlight"

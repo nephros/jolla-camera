@@ -6,7 +6,8 @@ Item {
     // inside the bottom area below the 4:3 aspect ratio viewport
     property int smallMargin: Theme.paddingLarge + Theme.paddingMedium
     property int largeMargin: Math.max(smallMargin,
-                                       (Screen.height - 4/3*Screen.width - (reallyWideScreen ? Theme.itemSizeLarge : 0))/2 - height/2)
+                                       (Screen.height - 4/3 * Screen.width
+                                        - (reallyWideScreen ? Theme.itemSizeLarge : 0)) / 2 - height / 2)
     anchors {
         topMargin: smallMargin
         leftMargin: smallMargin

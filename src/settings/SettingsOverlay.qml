@@ -44,7 +44,8 @@ PinchArea {
                                  : Theme.itemSizeSmall + Theme.paddingMedium
     property real _headerTopMargin: Screen.sizeCategory >= Screen.Large
                                     ? Theme.paddingLarge + Theme.paddingSmall
-                                    : -((Theme.paddingMedium + Theme.paddingSmall) / 2) // first button reactive area overlapping slightly
+                                    : // first button reactive area overlapping slightly
+                                      -((Theme.paddingMedium + Theme.paddingSmall) / 2)
     readonly property real _menuWidth: Screen.sizeCategory >= Screen.Large
                                        ? Theme.iconSizeLarge + Theme.paddingMedium*2 // increase icon hitbox
                                        : Theme.iconSizeMedium + Theme.paddingMedium + Theme.paddingSmall
@@ -153,7 +154,11 @@ PinchArea {
 
         opacity: _commonControlOpacity
         labels: Settings.global.backCameraLabels
-        visible: opacity > 0.0 && !!model && model.length > 1 && labels.length > 0 && Settings.deviceId !== camera.frontFacingDeviceId && !inButtonLayout
+        visible: opacity > 0.0
+                 && !!model && model.length > 1
+                 && labels.length > 0
+                 && Settings.deviceId !== camera.frontFacingDeviceId
+                 && !inButtonLayout
         orientation: overlay.isPortrait ? Qt.Horizontal : Qt.Vertical
         enabled: camera.cameraStatus === Camera.ActiveStatus
         model: camera.backFacingCameras
@@ -209,6 +214,7 @@ PinchArea {
 
         Rectangle {
             id: captureModeHighlight
+
             z: -1
             width: Theme.itemSizeExtraSmall
             height: Theme.itemSizeExtraSmall
@@ -216,9 +222,13 @@ PinchArea {
             radius: width / 2
             color: Theme.rgba(_highlightColor, Theme.opacityLow)
             opacity: y < -captureModeMenu.itemStep ? 1.0 - (captureModeMenu.itemStep + y) / (-captureModeMenu.itemStep/2)
-                                                   : (y > 0 ? 1.0 - y/(captureModeMenu.itemStep/2) : 1.0)
+                                                   : (y > 0 ? 1.0 - y / (captureModeMenu.itemStep/2) : 1.0)
             y: captureModeMenu.currentIndex == 0 ? -captureModeMenu.itemStep : 0
-            Behavior on y { id: captureModeBehavior; YAnimator { duration: 400; easing.type: Easing.OutQuad } }
+            Behavior on y {
+                id: captureModeBehavior
+
+                YAnimator { duration: 400; easing.type: Easing.OutQuad }
+            }
         }
     }
 
@@ -227,7 +237,8 @@ PinchArea {
 
         property real _lastPos
         property real _direction
-        property int _extraDragMargin: overlay.isPortrait && grid.columns >= grid.count ? Screen.height/4 - panel.height/2 : 0
+        property int _extraDragMargin: overlay.isPortrait && grid.columns >= grid.count
+                                       ? Screen.height/4 - panel.height/2 : 0
 
         anchors.fill: parent
         enabled: !overlay.inButtonLayout && showCommonControls
@@ -361,6 +372,7 @@ PinchArea {
 
             Behavior on y {
                 id: expandBehavior
+
                 enabled: false
                 NumberAnimation {
                     id: verticalAnimation
@@ -408,6 +420,7 @@ PinchArea {
 
             Item {
                 id: colorFilterParentBegin
+
                 width: colorFilterMenu.width
                 height: colorFilterMenu.height
                 visible: colorFilterMenu.parent === colorFilterParentBegin && Settings.global.colorFiltersAllowed
@@ -502,7 +515,6 @@ PinchArea {
 
             SettingsMenu {
                 // Grid menu
-
                 width: overlay._menuWidth
                 title: Settings.viewfinderGridText
                 header: upperHeader
@@ -517,6 +529,7 @@ PinchArea {
 
             Item {
                 id: colorFilterParentEnd
+
                 width: colorFilterMenu.width
                 height: colorFilterMenu.height
                 visible: colorFilterMenu.parent === colorFilterParentEnd
@@ -640,11 +653,13 @@ PinchArea {
 
         WhiteBalanceMenu {
             id: whiteBalanceMenu
+
             anchors {
                 horizontalCenter: exposureSlider.horizontalCenter
                 centerIn: null
             }
-            enabled: !Settings.global.colorFiltersEnabled || camera.imageProcessing.colorFilter  === CameraImageProcessing.ColorFilterNone
+            enabled: !Settings.global.colorFiltersEnabled
+                     || camera.imageProcessing.colorFilter === CameraImageProcessing.ColorFilterNone
 
             alignment: exposureSlider.alignment
             opacity: enabled ? 1.0 - settingsOpacity : 0.0
@@ -653,6 +668,7 @@ PinchArea {
 
         ExposureSlider {
             id: exposureSlider
+
             alignment: _overlayPosition.exposure
             enabled: !overlay.topMenuOpen && !overlay.inButtonLayout && !whiteBalanceMenu.open
             opacity: (1.0 - settingsOpacity) * (1.0 - whiteBalanceMenu.openProgress)
@@ -697,7 +713,9 @@ PinchArea {
         ]
 
         function update() {
-            if (!moving && !orientationTransitionRunning) camera.imageProcessing.colorFilter = colorFilter.model[colorFilter.currentIndex]
+            if (!moving && !orientationTransitionRunning) {
+                camera.imageProcessing.colorFilter = colorFilter.model[colorFilter.currentIndex]
+            }
         }
 
         onReadyChanged: {
@@ -752,7 +770,11 @@ PinchArea {
         anchors.fill: parent
         visible: overlay.inButtonLayout || layoutAnimation.running
         opacity: overlay.inButtonLayout ? 1.0 : 0.0
-        Behavior on opacity { FadeAnimation { id: layoutAnimation } }
+        Behavior on opacity {
+            FadeAnimation {
+                id: layoutAnimation
+            }
+        }
 
         Rectangle {
             anchors.fill: parent

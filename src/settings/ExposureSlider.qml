@@ -10,7 +10,8 @@ Item {
     property real divisionSize_: (height - handle.height)/(valueCount_-1)
     property int value: Settings.global.exposureCompensation
     property color highlightColor: Theme.colorScheme == Theme.LightOnDark
-                                   ? Theme.highlightColor : Theme.highlightFromColor(Theme.highlightColor, Theme.LightOnDark)
+                                   ? Theme.highlightColor
+                                   : Theme.highlightFromColor(Theme.highlightColor, Theme.LightOnDark)
 
     onValueChanged: {
         if (!mouseArea.drag.active) {
@@ -41,17 +42,20 @@ Item {
 
     Rectangle {
         id: handle
+
         color: "black"
-        width: icon.width*0.8
-        height: icon.height*0.8
-        radius: Theme.paddingSmall/2
+        width: icon.width * 0.8
+        height: icon.height * 0.8
+        radius: Theme.paddingSmall / 2
         anchors.horizontalCenter: parent.horizontalCenter
 
         Behavior on y {
             id: handleBehavior
+
             enabled: false
             NumberAnimation {
                 id: handleAnimation
+
                 duration: 200
                 easing.type: Easing.InOutQuad
             }
@@ -59,7 +63,8 @@ Item {
 
         onYChanged: {
             if (mouseArea.drag.active) {
-                var index = Math.round((y - mouseArea.drag.minimumY)/(mouseArea.drag.maximumY-mouseArea.drag.minimumY) * (valueCount_-1))
+                var index = Math.round((y - mouseArea.drag.minimumY)
+                                       / (mouseArea.drag.maximumY - mouseArea.drag.minimumY) * (valueCount_ - 1))
                 if (index >= 0) {
                     Settings.global.exposureCompensation = Settings.global.exposureCompensationValues[index]
                 }
@@ -68,6 +73,7 @@ Item {
 
         MouseArea {
             id: mouseArea
+
             width: Theme.itemSizeMedium
             height: Theme.itemSizeMedium
             anchors.centerIn: icon
@@ -95,6 +101,7 @@ Item {
         }
         Image {
             id: icon
+
             anchors.centerIn: parent
             source: "image://theme/icon-camera-exposure-compensation" + (mouseArea.pressed ? "?" + highlightColor : "")
         }

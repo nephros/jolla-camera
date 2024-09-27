@@ -115,7 +115,7 @@ bool DeclarativeSettings::verifyWritable(const QString &path)
 static qint64 getMaxBytes(Partition partition)
 {
     qint64 realMaxBytes = partition.bytesAvailable();
-    if (partition.filesystemType() == "vfat" && partition.bytesAvailable() > ULONG_MAX)
+    if (partition.filesystemType() == "vfat" && partition.bytesAvailable() > static_cast<qint64>(ULONG_MAX))
         realMaxBytes = ULONG_MAX;
 
     return realMaxBytes;
@@ -134,7 +134,8 @@ void DeclarativeSettings::verifyStoragePath()
 
     if (!path.isEmpty()) {
         QVector<Partition> partitions = m_partitionManager->partitions(Partition::External | Partition::ExcludeParents);
-        auto it = std::find_if(partitions.begin(), partitions.end(), [path](const Partition &partition) { return partition.mountPath() == path; });
+        auto it = std::find_if(partitions.begin(), partitions.end(),
+                               [path](const Partition &partition) { return partition.mountPath() == path; });
         if (it != partitions.end()) {
             const Partition &partition = *it;
             if (partition.status() == Partition::Mounted) {
@@ -163,7 +164,8 @@ void DeclarativeSettings::verifyStoragePath()
             return QStandardPaths::writableLocation(QStandardPaths::MoviesLocation).startsWith(partition.mountPath()); });
         if (it != partitions.end()) {
             const Partition &partition = *it;
-            m_storageMaxFileSize = qMax((qint64)0, getMaxBytes(partition) - (m_minSpaceForRecording.value(100).toLongLong() << 20));
+            m_storageMaxFileSize = qMax((qint64)0,
+                                        getMaxBytes(partition) - (m_minSpaceForRecording.value(100).toLongLong() << 20));
         } else {
             m_storageMaxFileSize = 0;
         }

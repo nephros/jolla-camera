@@ -53,8 +53,8 @@ SettingsOverlay {
 
     OrientationSensor {
         id: orientationSensor
-        active: captureView.effectiveActive
 
+        active: captureView.effectiveActive
         onReadingChanged: {
             switch (reading.orientation) {
             case OrientationReading.TopUp:
@@ -139,6 +139,7 @@ SettingsOverlay {
 
     PositionSource {
         id: positionSource
+
         // QDeclarativePositionSource::active property is not well behaved.
         // The internal position source may not be initialised until the component completes,
         // and in that instance the active property may be reset.
@@ -163,7 +164,8 @@ SettingsOverlay {
 
     onPinchUpdated: {
         camera.digitalZoom = Math.max(1, Math.min(
-                    camera.digitalZoom + ((camera.maximumDigitalZoom - 1) * ((pinch.scale / Math.abs(pinch.previousScale) - 1))),
+                    camera.digitalZoom + ((camera.maximumDigitalZoom - 1)
+                                          * ((pinch.scale / Math.abs(pinch.previousScale) - 1))),
                     camera.maximumDigitalZoom))
         zoomIndicator.show()
     }
@@ -227,7 +229,8 @@ SettingsOverlay {
     shutter: CameraButton {
         id: captureButton
 
-        property bool canStopVideo: startRecordTimer.running || camera.videoRecorder.recorderState == CameraRecorder.RecordingState
+        property bool canStopVideo: startRecordTimer.running
+                                    || camera.videoRecorder.recorderState == CameraRecorder.RecordingState
 
         z: settingsOverlay.inButtonLayout ? 1 : 0
         size: Theme.iconSizeMedium
@@ -341,6 +344,7 @@ SettingsOverlay {
 
     WallClock {
         id: clock
+
         updateFrequency: WallClock.Second
         enabled: camera.videoRecorder.recorderState == CameraRecorder.RecordingState
         onEnabledChanged: {
@@ -409,6 +413,7 @@ SettingsOverlay {
 
     ZoomIndicator {
         id: zoomIndicator
+
         anchors {
             top: timerLabel.bottom
             horizontalCenter: parent.horizontalCenter

@@ -121,7 +121,8 @@ Page {
             CaptureView {
                 id: captureView
 
-                readonly property real _viewfinderPosition: orientation == Orientation.Portrait || orientation == Orientation.Landscape
+                readonly property real _viewfinderPosition: orientation == Orientation.Portrait
+                                                            || orientation == Orientation.Landscape
                                                             ? parent.x + x
                                                             : -parent.x - x
                 width: page.width
@@ -157,8 +158,9 @@ Page {
                     target: captureView.viewfinder
                     property: "y"
                     value: !captureView.isPortrait
-                           ? captureView._viewfinderPosition + (page.orientation == Orientation.Landscape
-                                                                ? captureView.viewfinderOffset : -captureView.viewfinderOffset)
+                           ? captureView._viewfinderPosition
+                             + (page.orientation == Orientation.Landscape
+                                ? captureView.viewfinderOffset : -captureView.viewfinderOffset)
                            : (page.orientation == Orientation.Portrait ? captureView.viewfinderOffset
                                                                        : -captureView.viewfinderOffset)
                 }

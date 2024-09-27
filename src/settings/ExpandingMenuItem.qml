@@ -14,9 +14,11 @@ MouseArea {
 
     property bool persistentHighlight
     readonly property bool selected: settings[property] == value
-    readonly property bool highlighted: (parent.open || parent.pressed) && ((persistentHighlight && selected) || menuItem.pressed)
+    readonly property bool highlighted: (parent.open || parent.pressed)
+                                        && ((persistentHighlight && selected) || menuItem.pressed)
     property color highlightColor: Theme.colorScheme == Theme.LightOnDark
-                                   ? Theme.highlightColor : Theme.highlightFromColor(Theme.highlightColor, Theme.LightOnDark)
+                                   ? Theme.highlightColor
+                                   : Theme.highlightFromColor(Theme.highlightColor, Theme.LightOnDark)
 
     width: parent.width
     height: selected ? parent.width : parent.itemHeight
