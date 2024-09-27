@@ -115,7 +115,7 @@ bool DeclarativeSettings::verifyWritable(const QString &path)
 static qint64 getMaxBytes(Partition partition)
 {
     qint64 realMaxBytes = partition.bytesAvailable();
-    if (partition.filesystemType() == "vfat" && partition.bytesAvailable() > ULONG_MAX)
+    if (partition.filesystemType() == "vfat" && partition.bytesAvailable() > static_cast<qint64>(ULONG_MAX))
         realMaxBytes = ULONG_MAX;
 
     return realMaxBytes;
