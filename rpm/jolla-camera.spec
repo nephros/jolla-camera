@@ -1,6 +1,6 @@
 Name:       jolla-camera
 Summary:    Jolla Camera application
-Version:    1.2.24
+Version:    1.2.31
 Release:    1
 License:    Proprietary
 URL:        https://bitbucket.org/jolla/ui-jolla-camera
@@ -40,6 +40,7 @@ Requires:  libkeepalive >= 1.7.0
 Requires:  sailfish-components-media-qt5 >= 0.0.18
 Requires:  sailfish-components-gallery-qt5 >= 1.1.10
 Requires:  sailfish-policy >= 0.2.59
+Requires:  jolla-settings
 Requires:  jolla-settings-system >= 1.0.70
 Requires:  libngf-qt5-declarative
 Requires:  qr-filter-qml-plugin
@@ -47,10 +48,13 @@ Requires:  sailfish-content-graphics >= 1.2.2
 Requires:  gstreamer1.0-plugins-good
 Requires:  gstreamer1.0-plugins-bad
 Requires:  dconf
-Requires:  %{name}-lockscreen = %{version}
-Requires:  %{name}-settings = %{version}
 Requires:  sailjail-launch-approval
 Requires:  mapplauncherd-booster-silica-qt5-media
+Provides:  jolla-camera-settings > 1.2.30
+Obsoletes: jolla-camera-settings <= 1.2.30
+Provides:  jolla-camera-lockscreen > 1.2.30
+Obsoletes: jolla-camera-lockscreen <= 1.2.30
+
 %{_oneshot_requires_post}
 
 %description
@@ -61,23 +65,6 @@ Summary:   Translation source for Jolla Camera
 
 %description ts-devel
 Translation source for Jolla Camera.
-
-%package lockscreen
-Summary:   Quick capture viewfinder for the lockscreen.
-Requires:   %{name} = %{version}-%{release}
-
-%description lockscreen
-%{summary}.
-
-%package settings
-Summary:   Setting page for jolla-camera
-Requires:   %{name} = %{version}-%{release}
-Requires:  jolla-settings
-Requires:  jolla-settings-system >= 0.11.37
-Requires:  sailfish-policy
-
-%description settings
-%{summary}.
 
 %package tests
 Summary:    Unit tests for Jolla Camera
@@ -125,18 +112,14 @@ fi
 %{_oneshotdir}/camera-enable-hints
 %{_oneshotdir}/camera-reset-deprecated-dconfvalues
 %{_userunitdir}/user-session.target.d/50-jolla-camera.conf
-
-%files ts-devel
-%{_datadir}/translations/source/jolla-camera.ts
-
-%files lockscreen
 %{_bindir}/jolla-camera-lockscreen
 %{_datadir}/applications/jolla-camera-lockscreen.desktop
 %{_datadir}/jolla-camera/lockscreen.qml
 %{_datadir}/jolla-camera/LockedGalleryView.qml
-
-%files settings
 %{_datadir}/jolla-settings
+
+%files ts-devel
+%{_datadir}/translations/source/jolla-camera.ts
 
 %files tests
 /opt/tests/jolla-camera
