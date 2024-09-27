@@ -26,6 +26,7 @@ MouseArea {
 
     Image {
         id: image
+
         anchors {
             centerIn: parent
             verticalCenterOffset: parent.verticalCenterOffset

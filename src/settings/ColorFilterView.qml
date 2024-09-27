@@ -66,13 +66,14 @@ ListView {
 
     delegate: MouseArea {
         property bool highlighted: (pressed && containsMouse) || ListView.isCurrentItem
-        onClicked: root.currentIndex = model.index
 
+        onClicked: root.currentIndex = model.index
         height: root.height
         width: root.itemWidth
 
         Label {
             id: label
+
             text: Settings.colorFilterText(modelData)
             anchors.centerIn: parent
             truncationMode: TruncationMode.Fade

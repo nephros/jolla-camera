@@ -60,7 +60,8 @@ MouseArea {
 
         anchors {
             horizontalCenter: menu.horizontalCenter
-            horizontalCenterOffset: (horizontalAlignment == Text.AlignRight ? -menu.width : menu.width) + Theme.paddingMedium
+            horizontalCenterOffset: (horizontalAlignment == Text.AlignRight ? -menu.width : menu.width)
+                                    + Theme.paddingMedium
             verticalCenter: column.verticalCenter
         }
 
@@ -77,7 +78,9 @@ MouseArea {
         opacity: menu.open ? 1.0 : 0.0
 
         Behavior on opacity {
-            FadeAnimation { id: fadeAnimation }
+            FadeAnimation {
+                id: fadeAnimation
+            }
         }
     }
 }

@@ -7,7 +7,9 @@ import Nemo.DBus 2.0
 
 GalleryView {
     id: root
+
     property bool hidden: window.Window.visibility === Window.Hidden
+
     onHiddenChanged: {
         if (hidden) {
             captureModel.clear()

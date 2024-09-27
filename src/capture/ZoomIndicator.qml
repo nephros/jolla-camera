@@ -51,6 +51,7 @@ Item {
 
     Rectangle {
         id: dot
+
         anchors {
             verticalCenter: line.verticalCenter
             horizontalCenter: line.left

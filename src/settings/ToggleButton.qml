@@ -6,7 +6,8 @@ MouseArea {
 
     property url icon
     property color highlightColor: Theme.colorScheme == Theme.LightOnDark
-                                   ? Theme.highlightColor : Theme.highlightFromColor(Theme.highlightColor, Theme.LightOnDark)
+                                   ? Theme.highlightColor
+                                   : Theme.highlightFromColor(Theme.highlightColor, Theme.LightOnDark)
 
 
     width: Theme.itemSizeExtraSmall

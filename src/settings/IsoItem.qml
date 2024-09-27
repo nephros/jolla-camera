@@ -16,6 +16,7 @@ Column {
 
     Text {
         id: textItem
+
         color: "white"
         text: root.value == 0 ? "Auto" : root.value
         font.pixelSize: Theme.fontSizeExtraSmallBase
