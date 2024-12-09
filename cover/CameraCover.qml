@@ -15,6 +15,7 @@ CoverBackground {
 
     Timer {
         id: repositionTimer
+
         interval: 1
         running: true // for initial positioning
         onTriggered: {
@@ -75,6 +76,7 @@ CoverBackground {
 
     Row {
         id: settingsBar
+
         anchors {
             top: parent.top
             topMargin: Theme.paddingMedium
@@ -86,6 +88,7 @@ CoverBackground {
         }
         CoverIcon {
             id: flashIcon
+
             visible: icon != ""
             icon: CameraConfigs.supportedFlashModes.length > 0
                   ? Settings.flashIcon(Settings.mode.flashMode)

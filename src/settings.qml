@@ -134,10 +134,10 @@ SettingsBase {
 
     function timerText(timer) {
         return timer > 0
-                //% "%1 second delay"
-                ? qsTrId("camera_settings-la-timer-seconds-delay").arg(timer)
-                  //% "No delay"
-                : qsTrId("camera_settings-la-timer-no-delay")
+                ? //% "%1 second delay"
+                  qsTrId("camera_settings-la-timer-seconds-delay").arg(timer)
+                : //% "No delay"
+                  qsTrId("camera_settings-la-timer-no-delay")
     }
 
     function colorFiltersIcon(enabled) {
@@ -146,10 +146,10 @@ SettingsBase {
 
     function colorFiltersEnabledText(enabled) {
         return enabled
-                //% "Color filters on"
-                ? qsTrId("camera_settings-la-color-filters-on")
-                  //% "Color filters off"
-                : qsTrId("camera_settings-la-color-filters-off")
+                ? //% "Color filters on"
+                  qsTrId("camera_settings-la-color-filters-on")
+                : //% "Color filters off"
+                  qsTrId("camera_settings-la-color-filters-off")
     }
 
     function isoText(iso) {
