@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import QtQuick.Window 2.0
+import QtQuick.Window 2.0 as QuickWindow
 import QtMultimedia 5.4
 import QtPositioning 5.1
 import Sailfish.Silica 1.0
@@ -34,9 +34,9 @@ SettingsOverlay {
 
     property int _pictureRotation: {
         if (orientationSensor.connectedToBackend) {
-            return Screen.primaryOrientation == Qt.PortraitOrientation ? 0 : 90
+            return QuickWindow.Screen.primaryOrientation == Qt.PortraitOrientation ? 0 : 90
         } else {
-            switch (Screen.orientation) {
+            switch (QuickWindow.Screen.orientation) {
             case Qt.PortraitOrientation:
                 return 0
             case Qt.LandscapeOrientation:
@@ -295,6 +295,7 @@ SettingsOverlay {
         id: timerLabel
 
         y: Theme.paddingMedium
+           + (isPortrait ? Screen.topCutout.height : 0)
         anchors.horizontalCenter: parent.horizontalCenter
         opacity: captureView.recording ? 1.0 : 0.0
         Behavior on opacity { FadeAnimator {} }

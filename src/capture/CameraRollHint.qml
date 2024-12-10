@@ -8,7 +8,7 @@ Loader {
         Item {
             Connections {
                 target: captureView
-                onCaptured:  {
+                onCaptured: {
                     touchInteractionHint.restart()
                     counter.increase()
                 }
