@@ -57,10 +57,12 @@ FocusScope {
 
     property bool reallyWideScreen: (Screen.height / Screen.width) >= 2.0
     // wide screen can move 4:3 viewfinder a little lower and avoid overlap with top&bottom buttons
-    readonly property real viewfinderOffset: Math.min(0, isPortrait ? (focusArea.width - height)/2
-                                                                    : (focusArea.width - width)/2)
-                                             + ((reallyWideScreen && (focusArea.width/focusArea.height <= 1.4))
-                                                ? Theme.itemSizeLarge : 0)
+    readonly property real viewfinderOffset: Math.min(0,
+                                                      isPortrait ? (focusArea.width - height) / 2
+                                                                 : (focusArea.width - width) / 2)
+                                             + ((reallyWideScreen && (focusArea.width / focusArea.height <= 1.4))
+                                                ? Theme.itemSizeLarge + (isPortrait ? Screen.topCutout.height : 0)
+                                                : 0)
 
     readonly property bool isPortrait: orientation == Orientation.Portrait
                 || orientation == Orientation.PortraitInverted
