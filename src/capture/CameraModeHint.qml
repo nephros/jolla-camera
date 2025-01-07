@@ -8,16 +8,8 @@ Loader {
     asynchronous: true
     sourceComponent: Component {
         Item {
-            property string mode: Settings.global.captureMode
-            onModeChanged: {
-                touchInteractionHint.direction = mode == "image"
-                                                    ? TouchInteraction.Up
-                                                    : TouchInteraction.Down
-                touchInteractionHint.restart()
-                counter.increase()
-            }
-
             anchors.fill: parent
+
             InteractionHintLabel {
                 //% "Swipe down to access camera settings"
                 text: qsTrId("camera-la-camera_settings_hint")
@@ -32,10 +24,14 @@ Loader {
             TouchInteractionHint {
                 id: touchInteractionHint
 
+                direction: TouchInteraction.Down
+                running: true
                 loops: 3
                 alwaysRunToEnd: true
                 distance: Theme.itemSizeMedium
                 color: Theme.lightPrimaryColor
+
+                Component.onCompleted: restart()
             }
         }
     }
