@@ -7,6 +7,7 @@ GalleryView {
 
     captureModel: CaptureModel {
         id: model
+
         directories: Settings.storagePathStatus, [
             Settings.photoDirectory,
             Settings.videoDirectory

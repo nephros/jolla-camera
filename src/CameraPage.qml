@@ -26,6 +26,10 @@ Page {
     readonly property int galleryIndex: galleryLoader.item ? galleryLoader.item.currentIndex : 0
     readonly property QtObject captureModel: galleryLoader.item ? galleryLoader.item.captureModel : null
 
+    function resetZoom() {
+        switcherView.resetZoom()
+    }
+
     function returnToCaptureMode() {
         switcherView.returnToCaptureMode()
     }
@@ -61,6 +65,10 @@ Page {
         id: switcherView
 
         readonly property bool transitioning: moving || returnToCaptureModeTimeout.running
+
+        function resetZoom() {
+            captureView.camera.digitalZoom = 1.0
+        }
 
         function returnToCaptureMode() {
             if (Qt.application.active) {

@@ -16,7 +16,6 @@ Loader {
 
             anchors.fill: parent
             InteractionHintLabel {
-                //: Swipe right to access the Camera Roll
                 //% "Swipe right to access the Camera Roll"
                 text: qsTrId("camera-la-camera_roll_hint")
                 anchors.bottom: parent.bottom

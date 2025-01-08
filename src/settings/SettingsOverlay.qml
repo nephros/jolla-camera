@@ -192,6 +192,8 @@ PinchArea {
             } else {
                 Settings.deviceId = Settings.global.previousBackFacingDeviceId
             }
+
+            camera.digitalZoom = 1.0
         }
 
         icon: "image://theme/icon-camera-switch"
