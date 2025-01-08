@@ -25,7 +25,6 @@ Loader {
                 id: touchInteractionHint
 
                 direction: TouchInteraction.Down
-                running: true
                 loops: 3
                 alwaysRunToEnd: true
                 distance: Theme.itemSizeMedium
