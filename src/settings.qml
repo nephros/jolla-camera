@@ -17,16 +17,16 @@ SettingsBase {
                                                  "timer": 0,
                                                  "viewfinderGrid": "none",
                                                  "exposureMode": Camera.ExposureManual,
-                                                 "flash": ((globalSettings.captureMode == "image") &&
-                                                           (globalSettings.position === Camera.BackFace) ?
-                                                               Camera.FlashAuto : Camera.FlashOff)
+                                                 "flash": ((globalSettings.captureMode == "image")
+                                                           && (globalSettings.position === Camera.BackFace)
+                                                           ? Camera.FlashAuto : Camera.FlashOff)
                                              })
 
-    readonly property bool defaultSettings: modeSettings.iso === settingsDefaults["iso"] &&
-                                            modeSettings.timer === settingsDefaults["timer"] &&
-                                            modeSettings.viewfinderGrid === settingsDefaults["viewfinderGrid"] &&
-                                            modeSettings.exposureMode === settingsDefaults["exposureMode"] &&
-                                            modeSettings.flash == settingsDefaults["flash"]
+    readonly property bool defaultSettings: modeSettings.iso === settingsDefaults["iso"]
+                                            && modeSettings.timer === settingsDefaults["timer"]
+                                            && modeSettings.viewfinderGrid === settingsDefaults["viewfinderGrid"]
+                                            && modeSettings.exposureMode === settingsDefaults["exposureMode"]
+                                            && modeSettings.flash == settingsDefaults["flash"]
 
     function reset() {
         var basePath = globalSettings.path + "/" + modeSettings.path

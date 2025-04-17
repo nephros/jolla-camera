@@ -81,6 +81,7 @@ ApplicationSettings {
 
     ComboBox {
         id: storageCombo
+
         readonly property int storageStatus: Settings.storagePathStatus
         readonly property string storagePath: Settings.storagePath
 
@@ -116,6 +117,7 @@ ApplicationSettings {
             MenuItem {
                 // This is a placeholder for a card that was previously selected, but is no longer inserted
                 property string mountPath: Settings.storagePath
+
                 text: qsTrId("camera_settings-la-memory_card_not_inserted")
                 visible: partitions.externalStoragesPopulated && partitions.count == 0 && Settings.storagePath !== ""
                 onVisibleChanged: storageCombo.updateCurrentIndex()
@@ -125,17 +127,18 @@ ApplicationSettings {
                 model: partitions
                 delegate: MenuItem {
                     property string mountPath: model.mountPath
+
                     onMountPathChanged: storageCombo.updateCurrentIndex()
                     enabled: model.status === PartitionModel.Mounted && model.devicePath !== ""
                     text: model.status === PartitionModel.Mounted
-                            //: the parameter is the capacity of the memory card, e.g. "4.2 GB"
+                          ? //: the parameter is the capacity of the memory card, e.g. "4.2 GB"
                             //% "Memory card %1"
-                          ? qsTrId("camera_settings-la-memory_card").arg(Format.formatFileSize(model.bytesAvailable))
+                            qsTrId("camera_settings-la-memory_card").arg(Format.formatFileSize(model.bytesAvailable))
                           : model.devicePath !== ""
-                                //% "Memory card not mounted"
-                              ? qsTrId("camera_settings-la-unmounted_memory_card")
-                                //% "Memory card not inserted"
-                              : qsTrId("camera_settings-la-memory_card_not_inserted")
+                            ? //% "Memory card not mounted"
+                              qsTrId("camera_settings-la-unmounted_memory_card")
+                            : //% "Memory card not inserted"
+                              qsTrId("camera_settings-la-memory_card_not_inserted")
                     onClicked: Settings.storagePath = model.mountPath
                 }
             }
@@ -202,6 +205,7 @@ ApplicationSettings {
 
     PartitionModel {
         id: partitions
+
         storageTypes: PartitionModel.External | PartitionModel.ExcludeParents
         onExternalStoragesPopulatedChanged: storageCombo.updateCurrentIndex()
     }
