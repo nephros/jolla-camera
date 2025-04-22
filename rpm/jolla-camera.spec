@@ -28,7 +28,6 @@ Requires:  qt5-qtdeclarative-import-sensors
 Requires:  qt5-qtmultimedia-plugin-mediaservice-gstcamerabin >= 5.6.2+git25
 Requires:  qt5-qtmultimedia-plugin-mediaservice-gstmediaplayer
 Requires:  declarative-transferengine-qt5 >= 0.0.49
-Requires:  nemo-qml-plugin-thumbnailer-qt5-video
 Requires:  nemo-qml-plugin-thumbnailer-qt5
 Requires:  nemo-qml-plugin-dbus-qt5
 Requires:  nemo-qml-plugin-policy-qt5
