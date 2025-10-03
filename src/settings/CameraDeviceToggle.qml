@@ -1,3 +1,8 @@
+// SPDX-FileCopyrightText: 2021 - 2024 Jolla Ltd.
+// SPDX-FileCopyrightText: 2025 Jolla Mobile Ltd
+//
+// SPDX-License-Identifier: BSD-3-Clause
+
 import QtQuick 2.6
 import Sailfish.Silica 1.0
 import com.jolla.camera 1.0

@@ -1,3 +1,10 @@
+#!/bin/sh
+
+# SPDX-FileCopyrightText: 2021 Jolla Ltd.
+# SPDX-FileCopyrightText: 2025 Jolla Mobile Ltd
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
 portraitCaptureButtonLocation=$(dconf read /apps/jolla-camera/portraitCaptureButtonLocation)
 if [[ "$portraitCaptureButtonLocation" == 1 || "$portraitCaptureButtonLocation" == 5 ]]; then
     dconf write /apps/jolla-camera/portraitCaptureButtonLocation 3

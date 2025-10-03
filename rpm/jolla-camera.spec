@@ -1,9 +1,15 @@
+# SPDX-FileCopyrightText: 2013 - 2024 Jolla Ltd.
+# SPDX-FileCopyrightText: 2019 - 2020 Open Mobile Platform LLC.
+# SPDX-FileCopyrightText: 2025 Jolla Mobile Ltd
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
 Name:       jolla-camera
 Summary:    Jolla Camera application
-Version:    1.2.31
+Version:    1.3.0
 Release:    1
-License:    Proprietary
-URL:        https://bitbucket.org/jolla/ui-jolla-camera
+License:    BSD-3-Clause
+URL:        https://github.com/sailfishos/jolla-camera
 Source0:    %{name}-%{version}.tar.bz2
 BuildRequires:  pkgconfig(Qt5Core)
 BuildRequires:  pkgconfig(Qt5Gui)
@@ -95,6 +101,7 @@ if [ "$1" -eq 2 ]; then
 fi
 
 %files
+%license LICENSES/BSD-3-Clause.txt
 %{_datadir}/applications/jolla-camera.desktop
 %{_datadir}/applications/jolla-camera-viewfinder.desktop
 # Define directory ownership explicitly as part of files in the datadir
