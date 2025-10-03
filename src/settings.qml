@@ -1,3 +1,8 @@
+// SPDX-FileCopyrightText: 2014 - 2022 Jolla Ltd.
+// SPDX-FileCopyrightText: 2025 Jolla Mobile Ltd
+//
+// SPDX-License-Identifier: BSD-3-Clause
+
 import QtQuick 2.0
 import QtMultimedia 5.6
 import Nemo.Configuration 1.0

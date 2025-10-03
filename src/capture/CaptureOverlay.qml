@@ -1,3 +1,8 @@
+// SPDX-FileCopyrightText: 2016 - 2024 Jolla Ltd.
+// SPDX-FileCopyrightText: 2024 - 2025 Jolla Mobile Ltd
+//
+// SPDX-License-Identifier: BSD-3-Clause
+
 import QtQuick 2.0
 import QtQuick.Window 2.0 as QuickWindow
 import QtMultimedia 5.4

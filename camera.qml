@@ -1,3 +1,9 @@
+// SPDX-FileCopyrightText: 2013 - 2024 Jolla Ltd.
+// SPDX-FileCopyrightText: 2020 - 2021 Open Mobile Platform LLC.
+// SPDX-FileCopyrightText: 2025 Jolla Mobile Ltd
+//
+// SPDX-License-Identifier: BSD-3-Clause
+
 import QtQuick 2.1
 import QtMultimedia 5.0
 import Amber.QrFilter 1.0

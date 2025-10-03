@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Jolla Mobile Ltd
+//
+// SPDX-License-Identifier: BSD-3-Clause
+
 // add translations for quick actions
 function qsTrIdString() {
     //% "Take a selfie"
